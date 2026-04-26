@@ -263,7 +263,7 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, fontFamily: "var(--display)", fontSize: 16, textTransform: "uppercase", letterSpacing: "-.01em" }}>
             <span>Subtotal</span><span>${subtotal.toLocaleString()}</span>
           </div>
-          <button className="btn" style={{ width: "100%", justifyContent: "center" }} data-cursor="link">Checkout <ArrowRight /></button>
+          <button className="btn" style={{ width: "100%", justifyContent: "center" }} data-cursor="link" onClick={() => window.shopifyCart.checkout()}>Checkout <ArrowRight /></button>
           <div style={{ marginTop: 12, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)", textAlign: "center" }}>Free shipping over $150</div>
         </div>
       </aside>

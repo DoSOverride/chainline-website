@@ -65,25 +65,53 @@ const ShopPage = () => {
   );
 };
 
-const BikeCardLarge = ({ b, idx }) => (
-  <a href="#" data-cursor="link" className={"reveal reveal-d-" + (idx % 3 + 1)} style={{ display: "block" }}>
-    <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
-      {b.img ? (
-        <img src={b.img} alt={b.brand + " " + b.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
-      ) : (
-        <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
-      )}
-      {b.badge && (
-        <div style={{ position: "absolute", top: 16, right: 16, padding: "4px 10px", border: "1px solid var(--black)", color: "var(--black)", background: "rgba(255,255,255,0.85)", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", zIndex: 2 }}>{b.badge}</div>
-      )}
+const BikeCardLarge = ({ b, idx }) => {
+  const [adding, setAdding] = React.useState(false);
+  const [added, setAdded] = React.useState(false);
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAdding(true);
+    try {
+      await window.clAddToCart(b.handle || b.name);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch(err) {
+      console.warn('Add to cart error:', err);
+    }
+    setAdding(false);
+  };
+
+  return (
+    <div className={"reveal reveal-d-" + (idx % 3 + 1)} style={{ display: "block" }}>
+      <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
+        {b.img ? (
+          <img src={b.img} alt={b.brand + " " + b.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
+        ) : (
+          <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
+        )}
+        {b.badge && (
+          <div style={{ position: "absolute", top: 16, right: 16, padding: "4px 10px", border: "1px solid var(--black)", color: "var(--black)", background: "rgba(255,255,255,0.85)", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", zIndex: 2 }}>{b.badge}</div>
+        )}
+      </div>
+      <div className="eyebrow" style={{ marginBottom: 6 }}>{b.brand}  ·  {b.type}</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
+        <div className="display-s">{b.name}</div>
+        <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500 }}>${b.price.toLocaleString()}</div>
+      </div>
+      <button
+        className="btn btn-outline"
+        data-cursor="link"
+        onClick={handleAdd}
+        disabled={adding}
+        style={{ width: "100%", justifyContent: "center" }}
+      >
+        {added ? "Added ✓" : adding ? "Adding…" : "Add to Cart"}
+      </button>
     </div>
-    <div className="eyebrow" style={{ marginBottom: 6 }}>{b.brand}  ·  {b.type}</div>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-      <div className="display-s">{b.name}</div>
-      <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500 }}>${b.price.toLocaleString()}</div>
-    </div>
-  </a>
-);
+  );
+};
 
 // SubHero
 const SubHero = ({ eyebrow, title, italic }) => (
