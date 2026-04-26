@@ -1,0 +1,308 @@
+[
+  {
+    "title": "Marin Bobcat Trail 4 27.5",
+    "handle": "marin-bobcat-trail-4-27-5",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 27.5\" wheels",
+    "price": 1000,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_4_275_BLUE_SIDE_grande.png?v=1753779684"
+  },
+  {
+    "title": "Marin Fairfax 2",
+    "handle": "marin-fairfax-2",
+    "vendor": "Marin",
+    "type": "Dual-Sport Bike",
+    "tags": "Bike, Marin, Dual-Sport Bike",
+    "price": 960,
+    "img": "https://marinbikes.com/cdn/shop/files/2022_MARIN_FAIRFAX_2_MAROON_SIDE_391346d2-76af-4fa7-8e8a-4f0a68e0cf32_grande.png?v=1753872171"
+  },
+  {
+    "title": "Marin Gestalt X10",
+    "handle": "marin-gestalt-x10",
+    "vendor": "Marin",
+    "type": "Gravel Bike",
+    "tags": "Bike, Marin, Gravel Bike",
+    "price": 1400,
+    "img": "https://marinbikes.com/cdn/shop/files/2023_Gestalt_X10_GalleryE_side.jpg?v=1744825311&width=1000"
+  },
+  {
+    "title": "Marin Bolinas Ridge 1 27.5",
+    "handle": "marin-bolinas-ridge-1-27-5",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 27.5\" wheels",
+    "price": 760,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_1_27_CHARCOAL_SIDE_grande.png?v=1755782077"
+  },
+  {
+    "title": "Marin Bolinas Ridge 1 29",
+    "handle": "marin-bolinas-ridge-1-29",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 29\" wheels",
+    "price": 760,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_1_27_CHARCOAL_SIDE_grande.png?v=1755782077"
+  },
+  {
+    "title": "Marin Bobcat Trail 3 29",
+    "handle": "marin-bobcat-trail-3-29",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 29\" wheels",
+    "price": 960,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_3_29_RED_GRAY_SIDE_grande.png?v=1753779938"
+  },
+  {
+    "title": "Marin Bobcat Trail 4 29",
+    "handle": "marin-bobcat-trail-4-29",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 29\" wheels",
+    "price": 1060,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_4_275_BLUE_SIDE_grande.png?v=1753779684"
+  },
+  {
+    "title": "Marin Wildcat Trail 1 27.5",
+    "handle": "marin-wildcat-trail-1-27-5",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 27.5\" wheels, Women's",
+    "price": 860,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_E_SILVER_SIDE.png?v=1753785175&width=500"
+  },
+  {
+    "title": "Marin Pine Mountain 1 29",
+    "handle": "marin-pine-mountain-1-29",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 29\" wheels",
+    "price": 1960,
+    "img": "https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935"
+  },
+  {
+    "title": "Marin Fairfax 1",
+    "handle": "marin-fairfax-1",
+    "vendor": "Marin",
+    "type": "Dual-Sport Bike",
+    "tags": "Bike, Marin, Dual-Sport Bike",
+    "price": 700,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_1_RED_SIDE_4f661e02-11de-454f-bb55-5ef9d8d805fc_grande.png?v=1755769099"
+  },
+  {
+    "title": "Marin Kentfield ST 1",
+    "handle": "marin-kentfield-st-1",
+    "vendor": "Marin",
+    "type": "Comfort/Cruiser Bike",
+    "tags": "Bike, Marin, Comfort/Cruiser Bike",
+    "price": 670,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_E_SILVER_SIDE.png?v=1753785175&width=500"
+  },
+  {
+    "title": "Marin Stinson 1 27.5",
+    "handle": "marin-stinson-1-27-5",
+    "vendor": "Marin",
+    "type": "Comfort/Cruiser Bike",
+    "tags": "Bike, Marin, Comfort/Cruiser Bike, 27.5\" wheels",
+    "price": 860,
+    "img": "https://marinbikes.com/cdn/shop/files/2024_MARIN_STINSON_1_BLACK_SIDE_grande.png?v=1755792681"
+  },
+  {
+    "title": "Marin Bayview Trail",
+    "handle": "marin-bayview-trail",
+    "vendor": "Marin",
+    "type": "Kids Bike",
+    "tags": "Bike, Marin, Kids Bike, Kids",
+    "price": 600,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BAYVIEW_TRAIL_24_RED_SIDE_b00a2921-5476-4067-9ed7-c48ee7cd06c1.png?v=1755780477&width=500"
+  },
+  {
+    "title": "Transition Sentinel",
+    "handle": "transition-sentinel",
+    "vendor": "Transition",
+    "type": "Mountain Bike",
+    "tags": "Bike, Transition, Mountain Bike",
+    "price": 8900,
+    "img": "https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg"
+  },
+  {
+    "title": "Marin Rift Zone Jr",
+    "handle": "marin-rift-zone-jr",
+    "vendor": "Marin",
+    "type": "Kids Bike",
+    "tags": "Bike, Marin, Kids Bike, Kids",
+    "price": 2200,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_RIFT_ZONE_JR_24_GREEN_SIDE_grande.png?v=1753783522"
+  },
+  {
+    "title": "Marin Presidio 3",
+    "handle": "marin-presidio-3",
+    "vendor": "Marin",
+    "type": "Gravel Bike",
+    "tags": "Bike, Marin, Gravel Bike",
+    "price": 1470,
+    "img": "https://marinbikes.com/cdn/shop/files/2024_MARIN_PRESIDIO_3_BLUE_SIDE_grande.png?v=1753868606"
+  },
+  {
+    "title": "Marin Stinson 2 LS 27.5",
+    "handle": "marin-stinson-2-ls-27-5",
+    "vendor": "Marin",
+    "type": "Comfort/Cruiser Bike",
+    "tags": "Bike, Marin, Comfort/Cruiser Bike, 27.5\" wheels",
+    "price": 900,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_LS_2_SILVER_SIDE_grande.png?v=1753799688"
+  },
+  {
+    "title": "Marin Bolinas Ridge 2 29",
+    "handle": "marin-bolinas-ridge-2-29",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 29\" wheels",
+    "price": 800,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_2_27_BLACK_grande.png?v=1755781803"
+  },
+  {
+    "title": "Marin Nicasio 2",
+    "handle": "marin-nicasio-2",
+    "vendor": "Marin",
+    "type": "Gravel Bike",
+    "tags": "Bike, Marin, Gravel Bike",
+    "price": 2300,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_NICASIO_2_RED_SIDE_grande.png?v=1753866430"
+  },
+  {
+    "title": "Marin Kentfield ST 2",
+    "handle": "marin-kentfield-st-2",
+    "vendor": "Marin",
+    "type": "Comfort/Cruiser Bike",
+    "tags": "Bike, Marin, Comfort/Cruiser Bike",
+    "price": 900,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_E_SILVER_SIDE.png?v=1753785175&width=500"
+  },
+  {
+    "title": "Marin Stinson E",
+    "handle": "marin-stinson-e",
+    "vendor": "Marin",
+    "type": "Electric Bike",
+    "tags": "Bike, Marin, Electric Bike",
+    "price": 2100,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_BLACK_SIDE_1_grande.png?v=1753862906"
+  },
+  {
+    "title": "Marin Four Corners 1",
+    "handle": "marin-four-corners-1",
+    "vendor": "Marin",
+    "type": "Touring Bike",
+    "tags": "Bike, Marin, Touring Bike",
+    "price": 1600,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_FOUR_CORNERS_1_BLACK_SIDE_grande.png?v=1753786228"
+  },
+  {
+    "title": "Marin Gestalt 2",
+    "handle": "marin-gestalt-2",
+    "vendor": "Marin",
+    "type": "Gravel Bike",
+    "tags": "Bike, Marin, Gravel Bike",
+    "price": 2000,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_GESTALT_2_BLACK_SIDE_grande.png?v=1753870775"
+  },
+  {
+    "title": "Marin Donky Jr",
+    "handle": "marin-donky-jr",
+    "vendor": "Marin",
+    "type": "Kids Bike",
+    "tags": "Bike, Marin, Kids Bike, Kids",
+    "price": 430,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_DONKEY_JR_24_AQUA_BLUE_SIDE_2005a345-ce2b-4b9f-9baf-52f1bb79129a_grande.png?v=1755784888"
+  },
+  {
+    "title": "Marin Stinson 1 LS 27.5",
+    "handle": "marin-stinson-1-ls-27-5",
+    "vendor": "Marin",
+    "type": "Comfort/Cruiser Bike",
+    "tags": "Bike, Marin, Comfort/Cruiser Bike, 27.5\" wheels",
+    "price": 800,
+    "img": "https://marinbikes.com/cdn/shop/files/2024_MARIN_STINSON_1_ST_BROWN_SIDE_grande.png?v=1755792592"
+  },
+  {
+    "title": "Pivot Switchblade Ride Eagle 70/90",
+    "handle": "pivot-switchblade-ride-eagle-70-90",
+    "vendor": "Pivot",
+    "type": "Mountain Bike",
+    "tags": "Bike, Pivot, Mountain Bike",
+    "price": 8000,
+    "img": "https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg"
+  },
+  {
+    "title": "Pivot Shuttle AM Ride Eagle 70/90",
+    "handle": "pivot-shuttle-am-ride-eagle-70-90",
+    "vendor": "Pivot",
+    "type": "Electric Bike",
+    "tags": "Bike, Pivot, Electric Bike",
+    "price": 11500,
+    "img": "https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg"
+  },
+  {
+    "title": "Transition Regulator CX Eagle 90",
+    "handle": "transition-regulator-cx-eagle-90",
+    "vendor": "Transition",
+    "type": "Electric Bike",
+    "tags": "Bike, Transition, Electric Bike",
+    "price": 13000,
+    "img": "https://www.transitionbikes.com/WebStoreImages/Carbon_Eagle70_Button.png"
+  },
+  {
+    "title": "Surly Sorceress",
+    "handle": "surly-sorceress",
+    "vendor": "Surly",
+    "type": "Mountain Bike",
+    "tags": "Bike, Surly, Mountain Bike",
+    "price": 3400,
+    "img": "https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946"
+  },
+  {
+    "title": "Surly Bridge Club",
+    "handle": "surly-bridge-club",
+    "vendor": "Surly",
+    "type": "Gravel Bike",
+    "tags": "Bike, Surly, Gravel Bike",
+    "price": 1850,
+    "img": "https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946"
+  },
+  {
+    "title": "Transition Spire Carbon Eagle 90",
+    "handle": "transition-spire-carbon-eagle-90",
+    "vendor": "Transition",
+    "type": "Mountain Bike",
+    "tags": "Bike, Transition, Mountain Bike",
+    "price": 9700,
+    "img": "https://www.transitionbikes.com/images/MainLandingImage_Spire2020_V2.jpg"
+  },
+  {
+    "title": "Marin San Anselmo DS2",
+    "handle": "marin-san-anselmo-ds2",
+    "vendor": "Marin",
+    "type": "Dual-Sport Bike",
+    "tags": "Bike, Marin, Dual-Sport Bike, Women's",
+    "price": 960,
+    "img": "https://marinbikes.com/cdn/shop/files/2021_San_Anselmo_DS1_Color.jpg?v=1744825386&width=1000"
+  },
+  {
+    "title": "Marin Bobcat Trail 5 29",
+    "handle": "marin-bobcat-trail-5-29",
+    "vendor": "Marin",
+    "type": "Mountain Bike",
+    "tags": "Bike, Marin, Mountain Bike, 29\" wheels",
+    "price": 1360,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_5_275_BLUE_BLACK_FRONT_grande.png?v=1753779495"
+  },
+  {
+    "title": "Marin Stinson E ST",
+    "handle": "marin-stinson-e-st",
+    "vendor": "Marin",
+    "type": "Comfort/Cruiser Bike",
+    "tags": "Bike, Marin, Comfort/Cruiser Bike",
+    "price": 2100,
+    "img": "https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_SILVER_SIDE_52da63a1-edc3-401a-a329-2405e10cfb54_grande.png?v=1755715647"
+  }
+]
