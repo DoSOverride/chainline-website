@@ -227,6 +227,30 @@ const ShopPage = () => {
   const [type, setType]     = React.useState((intent && intent.type)  || "All");
   const [sort, setSort]     = React.useState("featured");
   const [saleOnly, setSale] = React.useState(false);
+  const [liveProducts, setLiveProducts] = React.useState(null);
+  const [liveLoading, setLiveLoading]   = React.useState(true);
+
+  // Load live Lightspeed inventory
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        await window.lightspeedReady;
+        if (window.CL_LS && window.CL_LS.loaded) {
+          const bikes = window.lightspeedGetBikes();
+          if (bikes && bikes.length > 0) setLiveProducts(bikes);
+        }
+      } catch(e) {}
+      setLiveLoading(false);
+    };
+    load();
+
+    const onReady = () => {
+      const bikes = window.lightspeedGetBikes();
+      if (bikes && bikes.length > 0) { setLiveProducts(bikes); setLiveLoading(false); }
+    };
+    window.addEventListener('lightspeed:ready', onReady);
+    return () => window.removeEventListener('lightspeed:ready', onReady);
+  }, []);
 
   React.useEffect(() => {
     if (window.cl && window.cl.intent) {
@@ -235,6 +259,9 @@ const ShopPage = () => {
       window.cl.intent = null;
     }
   });
+
+  // Use live Lightspeed data if available, otherwise fall back to static CSV catalog
+  const allProducts = liveProducts || SHOP_BIKES;
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
   const TYPES = [
@@ -249,8 +276,8 @@ const ShopPage = () => {
 
   const matchType = TYPES.find(t => t.label === type) || TYPES[0];
 
-  let filtered = SHOP_BIKES
-    .filter(b => (brand === "All" || b.brand === brand) && matchType.match(b));
+  let filtered = allProducts
+    .filter(b => (brand === "All" || (b.brand || b.vendor || "") === brand) && matchType.match(b));
 
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
@@ -282,7 +309,7 @@ const ShopPage = () => {
           {/* Brand chips */}
           {ALL_BRANDS.map(br => {
             const active = brand === br && !saleOnly;
-            const count  = SHOP_BIKES.filter(b => b.brand === br).length;
+            const count  = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
             return (
               <button key={br} onClick={() => { setBrand(br); setSale(false); }} data-cursor="link"
                 style={{ ...btnBase, padding:"10px 18px", fontSize:13, background:active?"var(--black)":"transparent", color:active?"var(--white)":"var(--black)", borderColor:active?"var(--black)":"var(--hairline)", display:"flex", alignItems:"center", gap:8 }}>
@@ -293,7 +320,7 @@ const ShopPage = () => {
           })}
 
           <div style={{ marginLeft:"auto", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", paddingRight:4 }}>
-            {saleOnly ? "Coming soon" : filtered.length + " bikes"}
+            {liveLoading ? "Loading live inventory…" : liveProducts ? `${filtered.length} bikes · Live from Lightspeed` : saleOnly ? "Coming soon" : filtered.length + " bikes"}
           </div>
         </div>
 
