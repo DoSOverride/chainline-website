@@ -4,9 +4,9 @@
 const getBikeSpecs = (b) => {
   const price = b.price || 0;
   const type  = (b.type || b.rawType || '').toLowerCase();
-  const isMTB    = type.includes('mountain');
-  const isGravel = type.includes('gravel') || type.includes('touring');
-  const isEBike  = type.includes('electric') || type.includes('e-bike');
+  const isMTB    = type === 'Mountain';
+  const isGravel = type === 'Gravel';
+  const isEBike  = type === 'E-Bike';
   const tags = (b.tags || '').toLowerCase();
   const wheelSize = tags.includes('27.5') ? '27.5"' : tags.includes('29') ? '29"' : isMTB ? '29"' : '700c';
 
@@ -52,17 +52,22 @@ const getBikeSpecs = (b) => {
 };
 
 const getBikeDescription = (b) => {
-  const type = (b.type || b.rawType || '').toLowerCase();
-  const name = b.name || b.title;
-  if (type.includes('mountain'))
-    return `The ${b.vendor} ${name} is built for the trails around Kelowna and the Okanagan. Whether you're lapping Knox Mountain, exploring Bear Creek, or heading into the backcountry — this bike is ready. Spec'd for performance at every price point, backed by ChainLine's expert service team.`;
-  if (type.includes('gravel') || type.includes('touring'))
-    return `The ${b.vendor} ${name} is your ticket to everything the Okanagan has to offer. Gravel roads, forest service tracks, loaded touring — it handles it all with confidence. Built for riders who want to explore beyond the pavement.`;
-  if (type.includes('road'))
-    return `The ${b.vendor} ${name} is built for speed and efficiency on the roads in and around Kelowna. Lightweight, responsive, and built to keep up with your ambitions — whether you're chasing KOMs or just enjoying the ride.`;
-  if (type.includes('electric') || type.includes('e-bike'))
-    return `The ${b.vendor} ${name} brings intelligent e-assist to your daily rides. Commuting, exploring, or just going further with less effort — this bike opens up more of Kelowna without breaking a sweat.`;
-  return `The ${b.vendor} ${name} is a versatile, reliable bike built for everyday riding in Kelowna. Quality components, solid performance, and backed by ChainLine's expert service team since 2009.`;
+  const vendor = b.vendor || b.brand || '';
+  const name   = b.name || b.title || '';
+  const type   = b.type || '';
+  if (type === 'Mountain')
+    return `The ${vendor} ${name} is built for the trails around Kelowna and the Okanagan. Whether you're lapping Knox Mountain, exploring Bear Creek, or heading into the backcountry — this bike is ready. Spec'd for performance at every price point, backed by ChainLine's expert service team.`;
+  if (type === 'Gravel')
+    return `The ${vendor} ${name} is your ticket to everything the Okanagan has to offer. Gravel roads, forest service tracks, loaded touring — it handles it all with confidence. Built for riders who want to explore beyond the pavement.`;
+  if (type === 'E-Bike')
+    return `The ${vendor} ${name} brings intelligent e-assist to your daily rides. Commuting, exploring, or just going further with less effort — this bike opens up more of Kelowna without breaking a sweat. Full-power assist with a natural ride feel.`;
+  if (type === 'Commuter')
+    return `The ${vendor} ${name} is built for getting around Kelowna efficiently and comfortably. Whether you're commuting to work, running errands, or exploring the Mission Creek Greenway — it's reliable, low-maintenance, and ready every day.`;
+  if (type === 'Comfort')
+    return `The ${vendor} ${name} is designed for riders who want a comfortable, relaxed ride. Upright geometry, cushioned saddle, and smooth-rolling tyres — perfect for the Okanagan Rail Trail, beach cruises, and easy weekend rides.`;
+  if (type === 'Kids')
+    return `The ${vendor} ${name} is built to grow young riders' confidence and love of cycling. Lightweight, properly sized, with quality components that make learning to ride easier and more fun. Because good bikes matter at every age.`;
+  return `The ${vendor} ${name} is a versatile, capable bike for riding in and around Kelowna. Quality components, solid performance, and backed by ChainLine's expert service team since 2009.`;
 };
 
 // ── Bike Detail Page ──────────────────────────────────────────
@@ -181,64 +186,154 @@ const BikePage = ({ bike, onBack, onCart }) => {
   );
 };
 
+// ── Master bike catalog (all 34 bikes from CSV) ───────────────
+const SHOP_BIKES = [
+  { brand:"Marin", name:"Bobcat Trail 4 27.5", handle:"marin-bobcat-trail-4-27-5", type:"Mountain", tags:"Mountain Bike, 27.5\" wheels", price:1000, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_4_275_BLUE_SIDE_grande.png?v=1753779684" },
+  { brand:"Marin", name:"Bobcat Trail 3 29",   handle:"marin-bobcat-trail-3-29",   type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:960,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_3_29_RED_GRAY_SIDE_grande.png?v=1753779938" },
+  { brand:"Marin", name:"Bobcat Trail 4 29",   handle:"marin-bobcat-trail-4-29",   type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:1060, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_4_275_BLUE_SIDE_grande.png?v=1753779684" },
+  { brand:"Marin", name:"Bobcat Trail 5 29",   handle:"marin-bobcat-trail-5-29",   type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:1360, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_5_275_BLUE_BLACK_FRONT_grande.png?v=1753779495" },
+  { brand:"Marin", name:"Bolinas Ridge 1 27.5",handle:"marin-bolinas-ridge-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels", price:760,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_1_27_CHARCOAL_SIDE_grande.png?v=1755782077" },
+  { brand:"Marin", name:"Bolinas Ridge 1 29",  handle:"marin-bolinas-ridge-1-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:760,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_1_27_CHARCOAL_SIDE_grande.png?v=1755782077" },
+  { brand:"Marin", name:"Bolinas Ridge 2 29",  handle:"marin-bolinas-ridge-2-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:800,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_2_27_BLACK_grande.png?v=1755781803" },
+  { brand:"Marin", name:"Wildcat Trail 1 27.5",handle:"marin-wildcat-trail-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels, Women's", price:860, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_WILDCAT_TRAIL_1_275_PURPLE_SIDE_grande.png?v=1753783522" },
+  { brand:"Marin", name:"Pine Mountain 1 29",  handle:"marin-pine-mountain-1-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:1960, img:"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935" },
+  { brand:"Transition", name:"Sentinel",             handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, badge:"PRO", img:"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg" },
+  { brand:"Transition", name:"Spire Carbon Eagle 90",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, badge:"PRO", img:"https://www.transitionbikes.com/images/MainLandingImage_Spire2020_V2.jpg" },
+  { brand:"Pivot", name:"Switchblade Ride Eagle 70/90", handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, badge:"PRO", img:"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg" },
+  { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Fat Bike",  price:3400, img:"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946" },
+  { brand:"Marin", name:"Gestalt 2",   handle:"marin-gestalt-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2000, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_GESTALT_2_BLACK_SIDE_grande.png?v=1753870775" },
+  { brand:"Marin", name:"Gestalt X10", handle:"marin-gestalt-x10",  type:"Gravel",   tags:"Gravel Bike, 700c",        price:1400, img:"https://marinbikes.com/cdn/shop/files/2023_Gestalt_X10_GalleryE_side.jpg?v=1744825311&width=1000" },
+  { brand:"Marin", name:"Nicasio 2",   handle:"marin-nicasio-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2300, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_NICASIO_2_RED_SIDE_grande.png?v=1753866430" },
+  { brand:"Marin", name:"Presidio 3",  handle:"marin-presidio-3",   type:"Gravel",   tags:"Gravel Bike, 700c",        price:1470, img:"https://marinbikes.com/cdn/shop/files/2024_MARIN_PRESIDIO_3_BLUE_SIDE_grande.png?v=1753868606" },
+  { brand:"Marin", name:"Four Corners 1",handle:"marin-four-corners-1",type:"Gravel",tags:"Touring Bike, Gravel",     price:1600, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_FOUR_CORNERS_1_BLACK_SIDE_grande.png?v=1753786228" },
+  { brand:"Surly", name:"Bridge Club", handle:"surly-bridge-club",  type:"Gravel",   tags:"Gravel Bike, Adventure",   price:1850, img:"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946" },
+  { brand:"Marin", name:"Stinson E",    handle:"marin-stinson-e",    type:"E-Bike",  tags:"Electric Bike, City",      price:2100, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_BLACK_SIDE_1_grande.png?v=1753862906" },
+  { brand:"Marin", name:"Stinson E ST", handle:"marin-stinson-e-st", type:"E-Bike",  tags:"Electric Bike, Step-Through", price:2100, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_SILVER_SIDE_52da63a1-edc3-401a-a329-2405e10cfb54_grande.png?v=1755715647" },
+  { brand:"Pivot",      name:"Shuttle AM Ride Eagle 70/90",handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, badge:"PRO", img:"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg" },
+  { brand:"Transition", name:"Regulator CX Eagle 90",      handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, badge:"PRO", img:"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg" },
+  { brand:"Marin", name:"Fairfax 1",       handle:"marin-fairfax-1",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:700,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_1_RED_SIDE_4f661e02-11de-454f-bb55-5ef9d8d805fc_grande.png?v=1755769099" },
+  { brand:"Marin", name:"Fairfax 2",       handle:"marin-fairfax-2",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:960,  img:"https://marinbikes.com/cdn/shop/files/2022_MARIN_FAIRFAX_2_MAROON_SIDE_391346d2-76af-4fa7-8e8a-4f0a68e0cf32_grande.png?v=1753872171" },
+  { brand:"Marin", name:"San Anselmo DS2", handle:"marin-san-anselmo-ds2",type:"Commuter", tags:"Dual-Sport, Women's",     price:960,  img:"https://marinbikes.com/cdn/shop/files/2021_San_Anselmo_DS1_Color.jpg?v=1744825386&width=1000" },
+  { brand:"Marin", name:"Kentfield ST 1",  handle:"marin-kentfield-st-1", type:"Commuter", tags:"City, Comfort",           price:670,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_KENTFIELD_1_ST_CHARCOAL_SIDE_grande.png?v=1753788056" },
+  { brand:"Marin", name:"Kentfield ST 2",  handle:"marin-kentfield-st-2", type:"Commuter", tags:"City, Comfort",           price:900,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_KENTFIELD_2_ST_SILVER_SIDE_grande.png?v=1753788076" },
+  { brand:"Marin", name:"Stinson 1 27.5",    handle:"marin-stinson-1-27-5",    type:"Comfort", tags:"Comfort, Cruiser, 27.5\"", price:860, img:"https://marinbikes.com/cdn/shop/files/2024_MARIN_STINSON_1_BLACK_SIDE_grande.png?v=1755792681" },
+  { brand:"Marin", name:"Stinson 1 LS 27.5", handle:"marin-stinson-1-ls-27-5", type:"Comfort", tags:"Comfort, Step-Through",   price:800, img:"https://marinbikes.com/cdn/shop/files/2024_MARIN_STINSON_1_ST_BROWN_SIDE_grande.png?v=1755792592" },
+  { brand:"Marin", name:"Stinson 2 LS 27.5", handle:"marin-stinson-2-ls-27-5", type:"Comfort", tags:"Comfort, Step-Through",   price:900, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_LS_2_SILVER_SIDE_grande.png?v=1753799688" },
+  { brand:"Marin", name:"Bayview Trail",  handle:"marin-bayview-trail",  type:"Kids", tags:"Kids Bike, 24\"", price:600, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BAYVIEW_TRAIL_24_RED_SIDE_b00a2921-5476-4067-9ed7-c48ee7cd06c1.png?v=1755780477&width=500" },
+  { brand:"Marin", name:"Donky Jr",       handle:"marin-donky-jr",       type:"Kids", tags:"Kids Bike, 24\"", price:430, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_DONKEY_JR_24_AQUA_BLUE_SIDE_2005a345-ce2b-4b9f-9baf-52f1bb79129a_grande.png?v=1755784888" },
+  { brand:"Marin", name:"Rift Zone Jr",   handle:"marin-rift-zone-jr",   type:"Kids", tags:"Kids Bike, Mountain, 24\"", price:2200, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_RIFT_ZONE_JR_24_GREEN_SIDE_grande.png?v=1753783522" },
+];
+
 // SHOP
 const ShopPage = () => {
-  const intent = (typeof window !== "undefined" && window.cl && window.cl.intent) || null;
-  const [brand, setBrand] = React.useState((intent && intent.brand) || "All");
-  const [type, setType] = React.useState((intent && intent.type) || "All");
-  // Clear intent so it doesn't stick
+  const intent = (window.cl && window.cl.intent) || null;
+  const [brand, setBrand]   = React.useState((intent && intent.brand) || "All");
+  const [type, setType]     = React.useState((intent && intent.type)  || "All");
+  const [sort, setSort]     = React.useState("featured");
+  const [saleOnly, setSale] = React.useState(false);
+
   React.useEffect(() => { if (window.cl) window.cl.intent = null; }, []);
-  const brands = ["All", "Marin", "Transition", "Surly", "Pivot"];
-  const types = ["All", "Mountain", "Road", "Gravel", "E-Bike", "Kids", "Commuter"];
-  const all = (typeof BIKE_CATALOG !== "undefined" ? BIKE_CATALOG : FEATURED_BIKES);
-  const matchesType = (b) => {
-    if (type === "All") return true;
-    const t = (b.type || "").toLowerCase();
-    if (type === "Mountain") return t.includes("mountain");
-    if (type === "Road") return t.includes("road");
-    if (type === "Gravel") return t.includes("gravel") || t.includes("touring");
-    if (type === "E-Bike") return t.includes("electric") || t.includes("e-bike");
-    if (type === "Kids") return t.includes("kid");
-    if (type === "Commuter") return t.includes("dual-sport") || t.includes("comfort") || t.includes("cruiser") || t.includes("commuter");
-    return true;
-  };
-  const filtered = all.filter(b => (brand === "All" || b.brand === brand) && matchesType(b));
+
+  const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
+  const TYPES = [
+    { label:"All",      match: () => true },
+    { label:"Mountain", match: b => b.type === "Mountain" },
+    { label:"Gravel",   match: b => b.type === "Gravel" },
+    { label:"E-Bike",   match: b => b.type === "E-Bike" },
+    { label:"Commuter", match: b => b.type === "Commuter" },
+    { label:"Comfort",  match: b => b.type === "Comfort" },
+    { label:"Kids",     match: b => b.type === "Kids" },
+  ];
+
+  const matchType = TYPES.find(t => t.label === type) || TYPES[0];
+
+  let filtered = SHOP_BIKES
+    .filter(b => (brand === "All" || b.brand === brand) && matchType.match(b));
+
+  if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
+  if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
+
+  const btnBase = { fontFamily:"var(--display)", fontWeight:600, letterSpacing:".1em", textTransform:"uppercase", border:"1.5px solid", transition:"all .25s", cursor:"pointer" };
+
   return (
-    <div className="page-fade" data-screen-label="P02 Shop">
-      <SubHero eyebrow="Shop  /  N°01" title="The Bikes." italic="Performance for every terrain." />
-      <section className="bg-white" style={{ position: "sticky", top: 78, zIndex: 50, borderBottom: "1px solid var(--hairline)", padding: "20px 0", backdropFilter: "blur(10px)", background: "rgba(250,250,250,0.95)" }}>
-        <div className="container-wide" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 32, alignItems: "center", flexWrap: "wrap" }}>
-            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-              <span className="eyebrow" style={{ marginRight: 8 }}>Brand</span>
-              {brands.map(b => (
-                <button key={b} onClick={() => setBrand(b)} data-cursor="link" style={{ padding: "6px 12px", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", border: "1px solid " + (brand === b ? "var(--black)" : "transparent"), background: brand === b ? "var(--black)" : "transparent", color: brand === b ? "var(--white)" : "var(--black)" }}>{b}</button>
-              ))}
-            </div>
+    <div className="page-fade">
+      <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
+
+      {/* ── Sticky filter bar ── */}
+      <div style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
+
+        {/* Row 1 — special + brands */}
+        <div className="container-wide" style={{ padding:"18px 0 0", display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+          {/* All Bikes */}
+          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "var(--hairline)" }}>
+            All Bikes
+          </button>
+          {/* Sale Bikes */}
+          <button onClick={() => { setSale(true); setBrand("All"); setType("All"); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:saleOnly?"var(--black)":"transparent", color:saleOnly?"var(--white)":"var(--black)", borderColor:saleOnly?"var(--black)":"var(--hairline)" }}>
+            Sale Bikes
+          </button>
+
+          <div style={{ width:1, height:28, background:"var(--hairline)", margin:"0 8px" }} />
+
+          {/* Brand chips */}
+          {ALL_BRANDS.map(br => {
+            const active = brand === br && !saleOnly;
+            const count  = SHOP_BIKES.filter(b => b.brand === br).length;
+            return (
+              <button key={br} onClick={() => { setBrand(br); setSale(false); }} data-cursor="link"
+                style={{ ...btnBase, padding:"10px 18px", fontSize:13, background:active?"var(--black)":"transparent", color:active?"var(--white)":"var(--black)", borderColor:active?"var(--black)":"var(--hairline)", display:"flex", alignItems:"center", gap:8 }}>
+                {br}
+                {count > 0 && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.6 }}>{count}</span>}
+              </button>
+            );
+          })}
+
+          <div style={{ marginLeft:"auto", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", paddingRight:4 }}>
+            {saleOnly ? "Coming soon" : filtered.length + " bikes"}
           </div>
-          <div className="eyebrow">{filtered.length} bikes</div>
         </div>
-        <div className="container-wide" style={{ marginTop: 12, display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-          <span className="eyebrow" style={{ marginRight: 8 }}>Type</span>
-          {types.map(t => (
-            <button key={t} onClick={() => setType(t)} data-cursor="link" style={{ padding: "4px 10px", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: type === t ? "var(--black)" : "var(--gray-500)", borderBottom: "1px solid " + (type === t ? "var(--black)" : "transparent") }}>{t}</button>
-          ))}
-          <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 16 }}>
-            <span className="eyebrow">Sort</span>
-            <select style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", border: "1px solid var(--hairline)", padding: "6px 10px", background: "var(--white)" }}>
-              <option>Featured</option><option>Price low → high</option><option>Price high → low</option><option>Newest</option>
-            </select>
-          </span>
+
+        {/* Row 2 — types + sort */}
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 0 14px", flexWrap:"wrap", gap:8 }}>
+          <div style={{ display:"flex", gap:0, flexWrap:"wrap" }}>
+            {TYPES.map(t => (
+              <button key={t.label} onClick={() => { setType(t.label); setSale(false); }} data-cursor="link"
+                style={{ padding:"6px 16px", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", background:"transparent", border:"none", color: type===t.label&&!saleOnly ? "var(--black)" : "var(--gray-400)", borderBottom:"2px solid " + (type===t.label&&!saleOnly ? "var(--black)" : "transparent"), transition:"all .2s" }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <select value={sort} onChange={e => setSort(e.target.value)}
+            style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"6px 12px", background:"var(--white)", outline:"none" }}>
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+          </select>
         </div>
-      </section>
-      <section className="section section-pad bg-white">
+      </div>
+
+      {/* ── Grid ── */}
+      <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          <div className="shop-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
-            {filtered.map((b, i) => <BikeCardLarge key={i} b={b} idx={i} />)}
-          </div>
-          <div style={{ marginTop: 80, textAlign: "center" }}>
-            <button className="btn btn-outline" data-cursor="link">Load More</button>
-          </div>
+          {saleOnly ? (
+            <div style={{ textAlign:"center", padding:"80px 0" }}>
+              <div className="display-m" style={{ marginBottom:16 }}>Sale bikes coming soon.</div>
+              <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Check back regularly or sign up for our newsletter to be notified of sales and clearance bikes.</p>
+              <button className="btn btn-outline" onClick={() => { setSale(false); setBrand("All"); setType("All"); }} data-cursor="link">View All Bikes <ArrowRight /></button>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign:"center", padding:"80px 0" }}>
+              <div className="display-m" style={{ marginBottom:16 }}>No bikes found.</div>
+              <p style={{ color:"var(--gray-500)", marginBottom:32 }}>We may be getting new {brand !== "All" ? brand : ""} stock in soon — check back or contact us.</p>
+              <button className="btn btn-outline" onClick={() => { setBrand("All"); setType("All"); }} data-cursor="link">Show All Bikes <ArrowRight /></button>
+            </div>
+          ) : (
+            <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
+              {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} />)}
+            </div>
+          )}
         </div>
       </section>
       <Newsletter />
@@ -248,56 +343,58 @@ const ShopPage = () => {
 
 const BikeCardLarge = ({ b, idx }) => {
   const [adding, setAdding] = React.useState(false);
-  const [added, setAdded] = React.useState(false);
+  const [added,  setAdded]  = React.useState(false);
+
+  const name  = b.name  || b.title  || "";
+  const brand = b.brand || b.vendor || "";
+  const img   = b.img   || b.image  || null;
+  const price = b.price || 0;
 
   const handleAdd = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e.preventDefault(); e.stopPropagation();
     setAdding(true);
     try {
-      await window.clAddToCart(b.handle, b.name, b.price, b.img);
+      await window.clAddToCart(b.handle, name, price, img);
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
-    } catch(err) {
-      console.warn('Add to cart error:', err);
-    }
+    } catch(err) { console.warn(err); }
     setAdding(false);
   };
 
   return (
-    <div className={"reveal reveal-d-" + (idx % 3 + 1)} style={{ display: "block" }}>
-      <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
-        {b.img ? (
-          <img src={b.img} alt={b.brand + " " + b.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
+    <div className={"reveal reveal-d-" + (idx % 3 + 1)}>
+      {/* Image */}
+      <div style={{ aspectRatio:"4/5", marginBottom:16, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
+        {img ? (
+          <img src={img} alt={brand + " " + name}
+            style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
+            onError={e => { e.target.style.display='none'; }} />
         ) : (
-          <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
+          <div className="ph ph-corners" style={{ position:"absolute", inset:0 }}>
+            <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
+          </div>
         )}
         {b.badge && (
-          <div style={{ position: "absolute", top: 16, right: 16, padding: "4px 10px", border: "1px solid var(--black)", color: "var(--black)", background: "rgba(255,255,255,0.85)", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", zIndex: 2 }}>{b.badge}</div>
+          <div style={{ position:"absolute", top:12, right:12, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>
         )}
       </div>
-      <div className="eyebrow" style={{ marginBottom: 6 }}>{b.brand}  ·  {b.type}</div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
-        <div className="display-s">{b.name}</div>
-        <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500 }}>${b.price.toLocaleString()}</div>
+      {/* Info */}
+      <div className="eyebrow" style={{ marginBottom:4 }}>{brand}  ·  {b.type}</div>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:12 }}>
+        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.5vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.2 }}>{name}</div>
+        <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, flexShrink:0 }}>${price.toLocaleString()}</div>
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button
-          className="btn btn-outline"
-          data-cursor="link"
-          onClick={(e) => { e.stopPropagation(); window.cl.go('bike', { bike: b }); }}
-          style={{ flex: 1, justifyContent: 'center' }}
-        >
+      {/* Actions */}
+      <div style={{ display:"flex", gap:8 }}>
+        <button className="btn btn-outline" data-cursor="link"
+          onClick={() => window.cl.go("bike", { bike: b })}
+          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
           View Bike
         </button>
-        <button
-          className="btn"
-          data-cursor="link"
-          onClick={handleAdd}
-          disabled={adding}
-          style={{ flex: 1, justifyContent: 'center' }}
-        >
-          {added ? '✓' : adding ? '…' : 'Add to Cart'}
+        <button className="btn" data-cursor="link"
+          onClick={handleAdd} disabled={adding}
+          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
+          {added ? "Added ✓" : adding ? "…" : "Add to Cart"}
         </button>
       </div>
     </div>
@@ -892,10 +989,10 @@ const ContactPage = () => (
         <div style={{ position: "absolute", left: 48, right: 48, bottom: 48, color: "var(--white)" }}>
           <h1 className="display-xl" style={{ marginBottom: 32 }}>Come<br/><span className="serif-italic">find us.</span></h1>
           <div style={{ borderTop: "1px solid var(--hairline-light)", paddingTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Address</div>2540 Highway 97 N<br/>Kelowna, BC V1X 4J2</div>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Hours</div>Mon–Fri  10–6<br/>Sat  9–5  ·  Sun closed</div>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Phone</div>(250) 555-0148</div>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Email</div>ride@chainline.ca</div>
+            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Address</div>1139 Ellis St<br/>Kelowna, BC V1Y 1Z4</div>
+            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Hours</div>Mon–Sat  10–6<br/>Sun  11–5</div>
+            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Phone</div>(250) 860-1968</div>
+            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Email</div>bikes@chainline.ca</div>
           </div>
         </div>
       </div>
@@ -930,11 +1027,12 @@ const ContactPage = () => (
       <div className="container-wide">
         <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
           {[
-            { t: "Call Us", v: "(250) 555-0148" },
-            { t: "Book a Service", v: "Online booking" },
-            { t: "Get Directions", v: "Open in Maps" },
+            { t: "Call Us", v: "(250) 860-1968", href: "tel:2508601968" },
+            { t: "Book a Service", v: "Online booking", route: "book" },
+            { t: "Get Directions", v: "Open in Maps", href: "https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC" },
           ].map((a, i) => (
-            <button key={i} className="btn btn-outline" data-cursor="link" style={{ padding: "32px", justifyContent: "space-between", flexDirection: "column", alignItems: "flex-start", gap: 16, height: "auto" }}>
+            <button key={i} className="btn btn-outline" data-cursor="link" style={{ padding: "32px", justifyContent: "space-between", flexDirection: "column", alignItems: "flex-start", gap: 16, height: "auto" }}
+              onClick={() => a.route ? window.cl.go(a.route) : window.open(a.href)}>
               <span className="eyebrow">{a.t}</span>
               <span style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", fontSize: 18, fontFamily: "var(--display)", textTransform: "uppercase", letterSpacing: "-.005em" }}>
                 {a.v} <ArrowRight />
@@ -947,4 +1045,36 @@ const ContactPage = () => (
   </div>
 );
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, BikeCardLarge, SubHero });
+// GIFT CARDS
+const GiftCardsPage = () => (
+  <div className="page-fade">
+    <SubHero eyebrow="Gift Cards  /  N°01" title="The perfect gift." italic="For every rider." />
+    <section className="section section-pad bg-white">
+      <div className="container-narrow" style={{ textAlign:"center" }}>
+        <p style={{ fontSize:16, color:"var(--gray-500)", lineHeight:1.75, marginBottom:56, maxWidth:560, margin:"0 auto 56px" }}>
+          Not sure what to get the rider in your life? A ChainLine gift card works on bikes, parts, accessories, and services. Good for anything in the store.
+        </p>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16, marginBottom:56 }}>
+          {[50,100,150,200,300,500].map(v => (
+            <button key={v} className="btn btn-outline" data-cursor="link"
+              style={{ flexDirection:"column", alignItems:"flex-start", padding:32, gap:8, height:"auto" }}
+              onClick={() => window.open("https://4nie4h-ek.myshopify.com/products/gift-card")}>
+              <span style={{ fontFamily:"var(--display)", fontSize:32, fontWeight:500 }}>${v}</span>
+              <span className="eyebrow">Gift Card</span>
+            </button>
+          ))}
+        </div>
+        <button className="btn" data-cursor="link"
+          onClick={() => window.open("https://4nie4h-ek.myshopify.com/products/gift-card")}>
+          Buy a Gift Card <ArrowRight />
+        </button>
+        <p style={{ marginTop:24, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+          Custom amounts available in-store  ·  No expiry  ·  bikes@chainline.ca
+        </p>
+      </div>
+    </section>
+    <Newsletter />
+  </div>
+);
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, BikeCardLarge, SubHero, SHOP_BIKES });

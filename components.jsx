@@ -140,7 +140,10 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     // Brand filters in mega
     if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots"].includes(l)) return ["shop", { brand: label }];
     // Parts / accessories — generic shop view
-    if (l.includes("helmet") || l.includes("apparel") || l.includes("component") || l.includes("tool") || l.includes("bag") || l.includes("light") || l.includes("sale") || l.includes("gift") || l.includes("classified")) return ["shop", null];
+    if (l.includes("gift")) return ["giftcards", null];
+    if (l.includes("classified")) return ["shop", null];
+    if (l.includes("sale")) return ["shop", { type: "Sale" }];
+    if (l.includes("helmet") || l.includes("apparel") || l.includes("component") || l.includes("tool") || l.includes("bag") || l.includes("light")) return ["shop", null];
     // Services / book
     if (l.startsWith("book")) return ["book", null];
     if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("warranty") || l.includes("fit") || l.includes("storage") || l.includes("demo")) return ["services", null];
