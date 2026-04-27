@@ -1,73 +1,46 @@
 // ChainLine — Sub-pages
 
-// ── Bike specs generator ──────────────────────────────────────
+// ── Real data helpers (from bike-data.js) ─────────────────────
+const getBikeData = (b) => (window.BIKE_DATA && window.BIKE_DATA[b.handle]) || {};
+
 const getBikeSpecs = (b) => {
-  const price = b.price || 0;
-  const type  = (b.type || b.rawType || '').toLowerCase();
-  const isMTB    = type === 'Mountain';
-  const isGravel = type === 'Gravel';
-  const isEBike  = type === 'E-Bike';
+  const data = getBikeData(b);
   const tags = (b.tags || '').toLowerCase();
-  const wheelSize = tags.includes('27.5') ? '27.5"' : tags.includes('29') ? '29"' : isMTB ? '29"' : '700c';
-
-  let fork, drivetrain, brakes, frame;
-  if (price >= 7000) {
-    frame = b.vendor + ' Carbon, full-suspension';
-    fork = 'Fox Factory 36, 150mm travel, GRIP2 damper';
-    drivetrain = 'SRAM XX1 Eagle AXS, 12-speed wireless';
-    brakes = 'SRAM Code RSC hydraulic disc, 200/180mm';
-  } else if (price >= 4000) {
-    frame = b.vendor + ' Alloy / Carbon, full-suspension';
-    fork = 'RockShox Pike Select+, 140mm travel';
-    drivetrain = 'SRAM GX Eagle, 12-speed';
-    brakes = 'SRAM G2 R hydraulic disc, 200/180mm';
-  } else if (price >= 2000) {
-    frame = b.vendor + ' Series 3 Aluminum';
-    fork = isMTB ? 'RockShox Recon Silver, 120mm travel' : 'Carbon rigid, tapered steerer';
-    drivetrain = 'Shimano Deore XT, 12-speed';
-    brakes = 'Shimano MT420 hydraulic disc, 180/160mm';
-  } else if (price >= 1000) {
-    frame = b.vendor + ' Series 2 Aluminum';
-    fork = isMTB ? 'SR Suntour XCR, 100mm travel' : 'Alloy rigid fork';
-    drivetrain = 'Shimano Deore, 10-speed';
-    brakes = 'Shimano MT200 hydraulic disc, 180/160mm';
-  } else {
-    frame = b.vendor + ' Series 1 Aluminum';
-    fork = isMTB ? 'SR Suntour XCT, 80mm travel' : 'Alloy rigid fork';
-    drivetrain = 'Shimano Altus / Acera, 8-speed';
-    brakes = 'Tektro Auriga hydraulic disc, 160mm';
+  const ws   = tags.includes('27.5') ? '27.5"' : tags.includes('29') ? '29"' : '700c';
+  if (data.specs && Object.keys(data.specs).length >= 2) {
+    const rows = Object.entries(data.specs)
+      .filter(([k, v]) => k && v && k.length < 28 && v.length > 1)
+      .slice(0, 8)
+      .map(([label, value]) => ({ label, value }));
+    return [
+      ...rows,
+      { label: 'Bike Type', value: b.type || '' },
+      { label: 'Colours',   value: 'See in store for colour options' },
+      { label: 'Warranty',  value: '2-year frame & fork, 1-year components' },
+    ];
   }
-
   return [
-    { label: 'Frame',      value: frame },
-    { label: 'Fork',       value: fork },
-    { label: 'Drivetrain', value: drivetrain },
-    { label: 'Brakes',     value: brakes },
-    { label: 'Wheel Size', value: wheelSize },
-    { label: 'Bike Type',  value: b.type || b.rawType || 'Bicycle' },
-    { label: 'Weight',     value: price >= 5000 ? '~10.5 kg' : price >= 2000 ? '~12.8 kg' : '~14.5 kg' },
-    { label: 'Colours',    value: 'See in store for colour options' },
-    { label: 'Warranty',   value: '2-year frame & fork, 1-year components' },
+    { label: 'Brand',     value: b.brand || b.vendor || '' },
+    { label: 'Type',      value: b.type || '' },
+    { label: 'Wheel Size',value: ws },
+    { label: 'Colours',   value: 'See in store for colour options' },
+    { label: 'Warranty',  value: '2-year frame & fork, 1-year components' },
   ];
 };
 
 const getBikeDescription = (b) => {
-  const vendor = b.vendor || b.brand || '';
+  const data = getBikeData(b);
+  if (data.description && data.description.length > 40) return data.description;
+  const vendor = b.brand || b.vendor || '';
   const name   = b.name || b.title || '';
   const type   = b.type || '';
-  if (type === 'Mountain')
-    return `The ${vendor} ${name} is built for the trails around Kelowna and the Okanagan. Whether you're lapping Knox Mountain, exploring Bear Creek, or heading into the backcountry — this bike is ready. Spec'd for performance at every price point, backed by ChainLine's expert service team.`;
-  if (type === 'Gravel')
-    return `The ${vendor} ${name} is your ticket to everything the Okanagan has to offer. Gravel roads, forest service tracks, loaded touring — it handles it all with confidence. Built for riders who want to explore beyond the pavement.`;
-  if (type === 'E-Bike')
-    return `The ${vendor} ${name} brings intelligent e-assist to your daily rides. Commuting, exploring, or just going further with less effort — this bike opens up more of Kelowna without breaking a sweat. Full-power assist with a natural ride feel.`;
-  if (type === 'Commuter')
-    return `The ${vendor} ${name} is built for getting around Kelowna efficiently and comfortably. Whether you're commuting to work, running errands, or exploring the Mission Creek Greenway — it's reliable, low-maintenance, and ready every day.`;
-  if (type === 'Comfort')
-    return `The ${vendor} ${name} is designed for riders who want a comfortable, relaxed ride. Upright geometry, cushioned saddle, and smooth-rolling tyres — perfect for the Okanagan Rail Trail, beach cruises, and easy weekend rides.`;
-  if (type === 'Kids')
-    return `The ${vendor} ${name} is built to grow young riders' confidence and love of cycling. Lightweight, properly sized, with quality components that make learning to ride easier and more fun. Because good bikes matter at every age.`;
-  return `The ${vendor} ${name} is a versatile, capable bike for riding in and around Kelowna. Quality components, solid performance, and backed by ChainLine's expert service team since 2009.`;
+  if (type === 'Mountain')  return `The ${vendor} ${name} is built for the trails around Kelowna and the Okanagan. Whether you're lapping Knox Mountain, exploring Bear Creek, or heading into the backcountry — this bike is ready.`;
+  if (type === 'Gravel')    return `The ${vendor} ${name} is your ticket to everything the Okanagan has to offer. Gravel roads, forest service tracks, loaded touring — it handles it all with confidence.`;
+  if (type === 'E-Bike')    return `The ${vendor} ${name} brings intelligent e-assist to your daily rides. Commuting, exploring, or just going further with less effort — this bike opens up more of Kelowna without breaking a sweat.`;
+  if (type === 'Commuter')  return `The ${vendor} ${name} is built for getting around Kelowna efficiently and comfortably. Reliable, low-maintenance, and ready every day.`;
+  if (type === 'Comfort')   return `The ${vendor} ${name} is designed for riders who want a comfortable, relaxed ride — perfect for the Okanagan Rail Trail and easy weekend rides.`;
+  if (type === 'Kids')      return `The ${vendor} ${name} is built to grow young riders' confidence and love of cycling. Lightweight, properly sized, and genuinely fun.`;
+  return `The ${vendor} ${name} — quality components, solid performance, backed by ChainLine's expert service team since 2009.`;
 };
 
 // ── Bike Detail Page ──────────────────────────────────────────
@@ -78,6 +51,15 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const b = bike || {};
   const specs = getBikeSpecs(b);
   const desc  = getBikeDescription(b);
+  const data  = getBikeData(b);
+  // Collect all images: card image + any extras from CSV
+  const allImgs = (() => {
+    const imgs = [];
+    if (b.img) imgs.push(b.img);
+    (data.images || []).forEach(u => { if (u && !imgs.includes(u)) imgs.push(u); });
+    return imgs;
+  })();
+  const [activeImg, setActiveImg] = React.useState(0);
 
   const handleAdd = async () => {
     setAdding(true);
@@ -105,26 +87,40 @@ const BikePage = ({ bike, onBack, onCart }) => {
             ← Back to Shop
           </button>
           <span style={{ color: 'var(--hairline)', fontSize: 20 }}>|</span>
-          <span className="eyebrow">{b.vendor}  ·  {b.type}</span>
+          <span className="eyebrow">{b.brand || b.vendor}  ·  {b.type}</span>
         </div>
       </div>
 
       {/* Main layout */}
       <div className="container-wide bike-page-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, paddingTop: 64, paddingBottom: 100 }}>
 
-        {/* Image */}
+        {/* Image gallery */}
         <div style={{ position: 'sticky', top: 140, height: 'fit-content' }}>
-          <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            {b.img
-              ? <img src={b.img} alt={b.name || b.title} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }} />
-              : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}><span className="ph-label">{(b.vendor||'').toUpperCase()}  ·  BIKE PHOTO</span></div>
+          <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
+            {allImgs.length > 0
+              ? <img src={allImgs[activeImg]} alt={(b.name || b.title) + ' ' + (activeImg+1)}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
+                  onError={e => { e.target.style.display='none'; }} />
+              : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
+                  <span className="ph-label">{(b.brand||b.vendor||'').toUpperCase()}  ·  BIKE PHOTO</span>
+                </div>
             }
           </div>
+          {allImgs.length > 1 && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              {allImgs.map((img, i) => (
+                <button key={i} onClick={() => setActiveImg(i)} data-cursor="link"
+                  style={{ flex: 1, aspectRatio: '1', background: 'var(--paper)', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
+                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Info */}
         <div>
-          <div className="eyebrow reveal" style={{ marginBottom: 12 }}>{b.vendor}</div>
+          <div className="eyebrow reveal" style={{ marginBottom: 12 }}>{b.brand || b.vendor}</div>
           <h1 className="display-l reveal" style={{ marginBottom: 8 }}>{b.name || b.title}</h1>
           <div className="reveal" style={{ fontFamily: 'var(--display)', fontSize: 'clamp(24px,3vw,36px)', fontWeight: 500, marginBottom: 32 }}>
             ${(b.price || 0).toLocaleString()} CAD
@@ -232,7 +228,13 @@ const ShopPage = () => {
   const [sort, setSort]     = React.useState("featured");
   const [saleOnly, setSale] = React.useState(false);
 
-  React.useEffect(() => { if (window.cl) window.cl.intent = null; }, []);
+  React.useEffect(() => {
+    if (window.cl && window.cl.intent) {
+      if (window.cl.intent.brand) setBrand(window.cl.intent.brand);
+      if (window.cl.intent.type)  setType(window.cl.intent.type);
+      window.cl.intent = null;
+    }
+  });
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
   const TYPES = [
@@ -361,13 +363,15 @@ const BikeCardLarge = ({ b, idx }) => {
     setAdding(false);
   };
 
+  const goToBike = () => window.cl.go("bike", { bike: b });
+
   return (
-    <div className={"reveal reveal-d-" + (idx % 3 + 1)}>
+    <div className={"reveal reveal-d-" + (idx % 3 + 1)} style={{ cursor:"pointer" }} onClick={goToBike}>
       {/* Image */}
       <div style={{ aspectRatio:"4/5", marginBottom:16, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
         {img ? (
           <img src={img} alt={brand + " " + name}
-            style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
+            style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply", transition:"transform .4s ease" }}
             onError={e => { e.target.style.display='none'; }} />
         ) : (
           <div className="ph ph-corners" style={{ position:"absolute", inset:0 }}>
@@ -377,6 +381,10 @@ const BikeCardLarge = ({ b, idx }) => {
         {b.badge && (
           <div style={{ position:"absolute", top:12, right:12, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>
         )}
+        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0)", display:"flex", alignItems:"center", justifyContent:"center", transition:"background .3s" }}
+          onMouseEnter={e => e.currentTarget.style.background='rgba(0,0,0,0.04)'}
+          onMouseLeave={e => e.currentTarget.style.background='rgba(0,0,0,0)'}>
+        </div>
       </div>
       {/* Info */}
       <div className="eyebrow" style={{ marginBottom:4 }}>{brand}  ·  {b.type}</div>
@@ -385,9 +393,9 @@ const BikeCardLarge = ({ b, idx }) => {
         <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, flexShrink:0 }}>${price.toLocaleString()}</div>
       </div>
       {/* Actions */}
-      <div style={{ display:"flex", gap:8 }}>
+      <div style={{ display:"flex", gap:8 }} onClick={e => e.stopPropagation()}>
         <button className="btn btn-outline" data-cursor="link"
-          onClick={() => window.cl.go("bike", { bike: b })}
+          onClick={goToBike}
           style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
           View Bike
         </button>
@@ -592,31 +600,59 @@ const BookPage = () => {
             <div className="reveal">
               <h2 className="display-l" style={{ marginBottom: 40 }}>Your details.</h2>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                <Field label="First name" />
-                <Field label="Last name" />
-                <Field label="Email" />
-                <Field label="Phone" />
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>First name</div>
+                  <input type="text" value={data.firstName||""} onChange={e=>update("firstName",e.target.value)}
+                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Last name</div>
+                  <input type="text" value={data.lastName||""} onChange={e=>update("lastName",e.target.value)}
+                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Email</div>
+                  <input type="email" value={data.email||""} onChange={e=>update("email",e.target.value)}
+                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Phone</div>
+                  <input type="tel" value={data.phone||""} onChange={e=>update("phone",e.target.value)}
+                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
+                </div>
               </div>
               <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={next}>Review <ArrowRight /></button>
+                <button className="btn" data-cursor="link" onClick={() => {
+                  const subject = encodeURIComponent(`Service Booking Request — ${types.find(t=>t.id===type)?.title || type}`);
+                  const body = encodeURIComponent(
+                    `New service booking request from ChainLine website:\n\n` +
+                    `Type: ${types.find(t=>t.id===type)?.title || type}\n` +
+                    `Service: ${data.service || 'Not specified'}\n` +
+                    `Preferred Date: ${data.date || 'Flexible'}\n\n` +
+                    `Bike:\nBrand: ${data.brand||''}\nModel: ${data.model||''}\nYear: ${data.year||''}\nSize: ${data.size||''}\nIssue: ${data.issue||''}\n\n` +
+                    `Customer:\nName: ${data.firstName||''} ${data.lastName||''}\nEmail: ${data.email||''}\nPhone: ${data.phone||''}`
+                  );
+                  window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
+                  next();
+                }}>
+                  Submit Booking <ArrowRight />
+                </button>
               </div>
             </div>
           )}
 
           {step === 5 && (
             <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 16 }}>Confirmed ✓</h2>
-              <p className="serif-italic" style={{ fontSize: 24, color: "var(--gray-500)", marginBottom: 40 }}>We'll see you soon.</p>
-              <div style={{ borderTop: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", padding: "24px 0" }}>
-                {[["Type", types.find(t => t.id === type)?.title], ["Service", data.service || "Basic Tune-Up"], ["Date", data.date || "Tue, Apr 28"], ["Time", "2:00 PM"], ["Confirmation", "CL-2026-04-2890"]].map(([k, v]) => (
-                  <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0" }}>
-                    <span className="eyebrow">{k}</span>
-                    <span style={{ fontFamily: "var(--display)", fontSize: 16 }}>{v}</span>
-                  </div>
-                ))}
+              <h2 className="display-l" style={{ marginBottom: 16 }}>Request Sent ✓</h2>
+              <p className="serif-italic" style={{ fontSize: 22, color: "var(--gray-500)", marginBottom: 32 }}>We'll be in touch within 24 hours to confirm your slot.</p>
+              <div style={{ padding:"24px 28px", background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:32 }}>
+                <p style={{ fontSize:14, color:"var(--gray-600)", lineHeight:1.7 }}>
+                  Your booking request has been sent to <strong>bikes@chainline.ca</strong>. You'll receive a confirmation call or email to lock in your appointment time.<br/><br/>
+                  Questions? Call us at <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon–Sat 10am–6pm.
+                </p>
               </div>
-              <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
+              <div style={{ display: "flex", gap: 12 }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={() => { setStep(1); setData({}); }}>Book another</button>
                 <button className="btn" data-cursor="link" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
               </div>
@@ -1077,4 +1113,221 @@ const GiftCardsPage = () => (
   </div>
 );
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, BikeCardLarge, SubHero, SHOP_BIKES });
+// PARTS & ACCESSORIES PAGE
+const PartsPage = () => {
+  const cats = [
+    { name: "Drivetrain", items: ["Cassettes", "Chains", "Derailleurs", "Cranksets", "Shifters", "Bottom Brackets", "Cable & Housing"] },
+    { name: "Brakes", items: ["Brake Pads", "Brake Levers", "Rotors", "Hydraulic Hose", "Brake Calipers", "Bleed Kits"] },
+    { name: "Wheels & Tyres", items: ["Rims", "Hubs", "Spokes & Nipples", "Tyres", "Inner Tubes", "Tubeless Valves", "Sealant"] },
+    { name: "Cockpit", items: ["Handlebars", "Stems", "Grips", "Bar Tape", "Headsets", "Spacers"] },
+    { name: "Saddle & Seatpost", items: ["Saddles", "Seatposts", "Dropper Posts", "Dropper Levers", "Clamps"] },
+    { name: "Suspension", items: ["Fork Service Kits", "Shock Service Kits", "Seals & Foam Rings", "Suspension Lube"] },
+    { name: "Helmets & Protection", items: ["MTB Helmets", "Road Helmets", "Full-Face Helmets", "Knee Pads", "Elbow Pads", "Back Protectors", "Glasses"] },
+    { name: "Apparel", items: ["Jerseys", "Shorts & Bibs", "Jackets", "Gloves", "Socks", "Base Layers"] },
+    { name: "Tools", items: ["Multi-Tools", "Torque Wrenches", "Hex Keys", "Chain Tools", "Bleed Kits", "Tyre Levers", "Pumps", "CO2"] },
+    { name: "Cleaning & Lube", items: ["Chain Lube", "Bike Wash", "Degreasers", "Bike Polish", "Brushes"] },
+    { name: "Electronics", items: ["Bike Computers", "Lights — Front", "Lights — Rear", "GPS Units", "E-Bike Accessories"] },
+    { name: "Bags & Carrying", items: ["Frame Bags", "Saddle Bags", "Handlebar Bags", "Top Tube Bags", "Hydration Packs", "Racks", "Panniers"] },
+  ];
+  const [active, setActive] = React.useState(null);
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Parts & Accessories  /  N°02" title="Gear up." italic="Everything you need." />
+      <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
+        <div className="container-wide">
+          <div className="reveal section-label" style={{ marginBottom: 48 }}>Browse by Category</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"var(--hairline)" }}>
+            {cats.map((cat, i) => (
+              <div key={i} className="reveal" style={{ background:"var(--white)", padding:32 }}>
+                <button className="display-s" data-cursor="link"
+                  onClick={() => setActive(active === i ? null : i)}
+                  style={{ textAlign:"left", width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: active===i ? 20 : 0 }}>
+                  {cat.name}
+                  <span style={{ fontFamily:"var(--mono)", fontSize:14, color:"var(--gray-400)", transition:"transform .2s", display:"inline-block", transform: active===i ? "rotate(45deg)" : "none" }}>+</span>
+                </button>
+                {active === i && (
+                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                    {cat.items.map((item, j) => (
+                      <button key={j} className="link-underline" data-cursor="link"
+                        style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-600)", textAlign:"left", padding:"4px 0" }}
+                        onClick={() => window.cl.go("contact")}>
+                        {item} →
+                      </button>
+                    ))}
+                    <p style={{ marginTop:8, fontSize:12, color:"var(--gray-400)", lineHeight:1.5 }}>
+                      Contact us or visit in-store for availability and pricing.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:48, padding:32, background:"var(--paper)", borderTop:"2px solid var(--black)" }}>
+            <div className="eyebrow" style={{ marginBottom:12 }}>Can't find what you need?</div>
+            <p style={{ fontSize:14, color:"var(--gray-600)", marginBottom:16 }}>
+              We stock far more than what's listed here. Call us, email us, or come in — we'll track it down.
+            </p>
+            <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
+              <a href="tel:2508601968" className="btn btn-outline-dark" data-cursor="link" style={{ fontSize:11 }}>Call (250) 860-1968</a>
+              <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ fontSize:11 }}>Contact Us <ArrowRight /></button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <Newsletter />
+    </div>
+  );
+};
+
+// CLASSIFIEDS PAGE
+const ClassifiedsPage = () => {
+  const DEMO_LISTINGS = [
+    { title:"2022 Transition Sentinel – Large", price:4200, cond:"Excellent", cat:"Full Suspension MTB", posted:"2 days ago", desc:"One season of riding, immaculate condition. Fox suspension freshly serviced. Comes with extra rotor." },
+    { title:"Shimano XT Groupset 12-Speed", price:550, cond:"Good", cat:"Drivetrain", posted:"5 days ago", desc:"Complete XT group, used one season. Minor cable wear, everything shifts perfectly." },
+    { title:"Fox 36 Factory 160mm Fork", price:750, cond:"Good", cat:"Suspension", posted:"1 week ago", desc:"Fox Factory 36, 160mm travel, 15x110mm. Freshly serviced. Fits 2020–2023 standards." },
+    { title:"Marin San Quentin 3 – Medium", price:1800, cond:"Like New", cat:"Hardtail MTB", posted:"1 week ago", desc:"Barely ridden, upgraded to full-sus. All original components, no damage." },
+    { title:"Maxxis Assegai / DHR2 Set", price:120, cond:"Good", cat:"Tyres", posted:"2 weeks ago", desc:"One season, still 60% tread. Tubeless ready. 29x2.5 WT." },
+    { title:"100% Forecast Helmet – Large", price:85, cond:"Excellent", cat:"Helmets", posted:"2 weeks ago", desc:"Worn 3 times, no damage. MIPS certified, 2023 model." },
+  ];
+  const [showForm, setShowForm] = React.useState(false);
+  const [form, setForm] = React.useState({ title:'', price:'', cat:'', cond:'', desc:'', name:'', email:'', phone:'' });
+  const [submitted, setSubmitted] = React.useState(false);
+  const upd = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const submit = (e) => {
+    e.preventDefault();
+    window.location.href = `mailto:bikes@chainline.ca?subject=Classifieds Listing: ${encodeURIComponent(form.title)}&body=${encodeURIComponent(
+      `New classified listing submission:\n\nTitle: ${form.title}\nPrice: $${form.price}\nCategory: ${form.cat}\nCondition: ${form.cond}\n\nDescription:\n${form.desc}\n\nContact:\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}`
+    )}`;
+    setSubmitted(true);
+    setShowForm(false);
+  };
+  const cats = ["Full Suspension MTB","Hardtail MTB","Gravel Bike","Road Bike","E-Bike","Kids Bike","Drivetrain","Brakes","Suspension","Wheels","Tyres","Helmets","Apparel","Tools","Other"];
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Community  /  N°02" title="Buy. Sell. Ride." italic="Kelowna's cycling classifieds." />
+      <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
+        <div className="container-wide">
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:48 }}>
+            <div className="reveal section-label" style={{ marginBottom:0 }}>Current Listings  /  {DEMO_LISTINGS.length}</div>
+            <button className="btn" data-cursor="link" onClick={() => setShowForm(!showForm)}>
+              {showForm ? "Cancel" : "Post a Listing"} {showForm ? "" : <ArrowRight />}
+            </button>
+          </div>
+
+          {submitted && (
+            <div style={{ padding:24, background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:40 }}>
+              <p style={{ fontFamily:"var(--display)", fontWeight:600, textTransform:"uppercase" }}>Listing submitted!</p>
+              <p style={{ fontSize:14, color:"var(--gray-500)", marginTop:8 }}>We'll review it and get it posted within 24 hours. Email bikes@chainline.ca with any questions.</p>
+            </div>
+          )}
+
+          {showForm && (
+            <div className="reveal" style={{ padding:40, background:"var(--paper)", marginBottom:48, borderTop:"2px solid var(--black)" }}>
+              <h3 className="display-m" style={{ marginBottom:32 }}>Post a Listing</h3>
+              <form onSubmit={submit} style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
+                {[["title","Listing Title (e.g. '2022 Trek Fuel EX 8')","col-span-2"],["price","Price (CAD)",""],["cat","Category","select"],["cond","Condition","select-cond"],["desc","Description — include size, year, condition, what's included","col-span-2 textarea"],["name","Your Name",""],["email","Email",""],["phone","Phone (optional)",""],].map(([k, label, cls]) => (
+                  <div key={k} style={{ gridColumn: cls && cls.includes("col-span-2") ? "1/-1" : "auto" }}>
+                    <div className="eyebrow" style={{ marginBottom:8 }}>{label}</div>
+                    {cls === "select" ? (
+                      <select value={form[k]} onChange={e => upd(k, e.target.value)} required
+                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" }}>
+                        <option value="">Select category</option>
+                        {cats.map(c => <option key={c}>{c}</option>)}
+                      </select>
+                    ) : cls === "select-cond" ? (
+                      <select value={form[k]} onChange={e => upd(k, e.target.value)} required
+                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" }}>
+                        <option value="">Select condition</option>
+                        {["Like New","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
+                      </select>
+                    ) : cls === "col-span-2 textarea" ? (
+                      <textarea value={form[k]} onChange={e => upd(k, e.target.value)} required rows={4}
+                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none", resize:"vertical" }} />
+                    ) : (
+                      <input type={k === "email" ? "email" : k === "price" ? "number" : "text"}
+                        value={form[k]} onChange={e => upd(k, e.target.value)}
+                        required={k !== "phone"}
+                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" }} />
+                    )}
+                  </div>
+                ))}
+                <div style={{ gridColumn:"1/-1", display:"flex", gap:16, alignItems:"center", marginTop:8 }}>
+                  <button type="submit" className="btn" data-cursor="link">Submit Listing <ArrowRight /></button>
+                  <p style={{ fontSize:12, color:"var(--gray-400)", lineHeight:1.5 }}>
+                    ChainLine Cycle hosts this board as a community service. All sales are between private parties.
+                  </p>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:24 }}>
+            {DEMO_LISTINGS.map((l, i) => (
+              <div key={i} className={"reveal reveal-d-" + (i%3+1)} style={{ padding:28, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:12 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8 }}>
+                  <span className="pill" style={{ color:"var(--gray-500)" }}>{l.cat}</span>
+                  <span className="eyebrow">{l.posted}</span>
+                </div>
+                <div className="display-s" style={{ lineHeight:1.2 }}>{l.title}</div>
+                <p style={{ fontSize:13, color:"var(--gray-500)", lineHeight:1.55, flex:1 }}>{l.desc}</p>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <span style={{ fontFamily:"var(--display)", fontSize:22, fontWeight:500 }}>${l.price.toLocaleString()}</span>
+                  <span className="pill" style={{ color:"var(--gray-400)" }}>{l.cond}</span>
+                </div>
+                <button className="btn btn-outline" data-cursor="link"
+                  onClick={() => window.location.href = `mailto:bikes@chainline.ca?subject=Classifieds Enquiry: ${encodeURIComponent(l.title)}&body=Hi, I'm interested in the listing: ${encodeURIComponent(l.title)} ($${l.price}). Please put me in touch with the seller.`}
+                  style={{ width:"100%", justifyContent:"center" }}>
+                  Enquire <ArrowRight />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop:48, textAlign:"center" }}>
+            <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+              ChainLine Cycle facilitates this board as a community service. All transactions are between private parties.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+// BIKES BY BRAND PAGE
+const BrandPage = () => {
+  const brands = [
+    { name:"Marin", desc:"San Rafael, CA — Trail, Road, Gravel, City, Kids. California ride culture since 1986.", count: SHOP_BIKES.filter(b=>b.brand==="Marin").length },
+    { name:"Transition", desc:"Bellingham, WA — High-performance trail and enduro bikes built by riders, for riders.", count: SHOP_BIKES.filter(b=>b.brand==="Transition").length },
+    { name:"Surly", desc:"Minneapolis, MN — Steel bikes built to go anywhere. Gravel, touring, fatbike, adventure.", count: SHOP_BIKES.filter(b=>b.brand==="Surly").length },
+    { name:"Salsa", desc:"Minneapolis, MN — Adventure bikes for the long haul. Gravel, touring, fatbike.", count: 0 },
+    { name:"Pivot", desc:"Scottsdale, AZ — Carbon trail and enduro bikes with dw-link suspension.", count: SHOP_BIKES.filter(b=>b.brand==="Pivot").length },
+    { name:"Bianchi", desc:"Milan, Italy — The oldest bicycle brand in the world. Road, gravel, and MTB.", count: 0 },
+    { name:"Moots", desc:"Steamboat Springs, CO — Hand-welded titanium bikes. Made in America.", count: 0 },
+  ];
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Shop  /  Brands" title="Our brands." italic="Curated with care." />
+      <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
+        <div className="container-wide">
+          <div style={{ borderTop:"1px solid var(--hairline)" }}>
+            {brands.map((br, i) => (
+              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"240px 1fr 160px 120px", gap:32, padding:"40px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
+                <div className="display-m">{br.name}</div>
+                <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6 }}>{br.desc}</p>
+                <div className="eyebrow">{br.count > 0 ? `${br.count} bikes in stock` : "Coming soon"}</div>
+                {br.count > 0
+                  ? <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("shop", { brand: br.name })} style={{ justifyContent:"center", fontSize:11 }}>Shop {br.name} <ArrowRight /></button>
+                  : <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ justifyContent:"center", fontSize:11 }}>Enquire <ArrowRight /></button>
+                }
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <Newsletter />
+    </div>
+  );
+};
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES });

@@ -138,12 +138,12 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "commuter") return ["shop", { type: "Commuter" }];
     if (l === "kids") return ["shop", { type: "Kids" }];
     // Brand filters in mega
-    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots"].includes(l)) return ["shop", { brand: label }];
+    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots"].includes(l)) return ["brands", null];
     // Parts / accessories — generic shop view
     if (l.includes("gift")) return ["giftcards", null];
-    if (l.includes("classified")) return ["shop", null];
-    if (l.includes("sale")) return ["shop", { type: "Sale" }];
-    if (l.includes("helmet") || l.includes("apparel") || l.includes("component") || l.includes("tool") || l.includes("bag") || l.includes("light")) return ["shop", null];
+    if (l.includes("classified")) return ["classifieds", null];
+    if (l.includes("sale")) return ["shop", null];
+    if (l.includes("helmet") || l.includes("apparel") || l.includes("component") || l.includes("tool") || l.includes("bag") || l.includes("light")) return ["parts", null];
     // Services / book
     if (l.startsWith("book")) return ["book", null];
     if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("warranty") || l.includes("fit") || l.includes("storage") || l.includes("demo")) return ["services", null];
@@ -199,11 +199,14 @@ const MobileNav = ({ open, onClose }) => (
     <div style={{ padding: "40px 24px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
       {[
         { label: "Shop", route: "shop" },
+        { label: "Parts & Accessories", route: "parts" },
+        { label: "Our Brands", route: "brands" },
         { label: "Services", route: "services" },
+        { label: "Book Online", route: "book" },
         { label: "Group Rides", route: "rides" },
         { label: "Trails", route: "trails" },
+        { label: "Classifieds", route: "classifieds" },
         { label: "About", route: "about" },
-        { label: "Book Online", route: "book" },
         { label: "Contact", route: "contact" },
       ].map((l) => (
         <a key={l.label} href="#" className="display-l" style={{ color: "var(--white)", padding: "10px 0", borderBottom: "1px solid var(--hairline-light)", display: "block" }} onClick={(e) => { e.preventDefault(); onClose(); window.cl.go(l.route); }}>{l.label}</a>

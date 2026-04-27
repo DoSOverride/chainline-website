@@ -138,6 +138,9 @@ const App = () => {
         {page === "trails" && <TrailsPage />}
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
+        {page === "parts" && <PartsPage />}
+        {page === "classifieds" && <ClassifiedsPage />}
+        {page === "brands" && <BrandPage />}
       </main>
 
       <Footer />
