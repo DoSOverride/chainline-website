@@ -1,7 +1,7 @@
 // ChainLine Cycle — Shopify Integration (no token required)
 window.CL_SHOP = {
   domain: '4nie4h-ek.myshopify.com',
-  cart: JSON.parse(localStorage.getItem('cl-cart') || '[]'),
+  cart: [], // clears on every page reload by design
 };
 
 // ── Fetch products from public JSON endpoint ──────────────────
@@ -32,7 +32,6 @@ window.shopifyCart = {
   items: window.CL_SHOP.cart,
 
   _save() {
-    localStorage.setItem('cl-cart', JSON.stringify(this.items));
     window.CL_SHOP.cart = this.items;
   },
 

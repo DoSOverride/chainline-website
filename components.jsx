@@ -194,8 +194,16 @@ const MobileNav = ({ open, onClose }) => (
       <button className="nav-utility-btn" onClick={onClose} data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>Close</button>
     </div>
     <div style={{ padding: "40px 24px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-      {["Shop", "Services", "Explore", "About", "Book Online", "Contact"].map((l) => (
-        <a key={l} href="#" className="display-l" style={{ color: "var(--white)", padding: "10px 0", borderBottom: "1px solid var(--hairline-light)" }} onClick={onClose}>{l}</a>
+      {[
+        { label: "Shop", route: "shop" },
+        { label: "Services", route: "services" },
+        { label: "Group Rides", route: "rides" },
+        { label: "Trails", route: "trails" },
+        { label: "About", route: "about" },
+        { label: "Book Online", route: "book" },
+        { label: "Contact", route: "contact" },
+      ].map((l) => (
+        <a key={l.label} href="#" className="display-l" style={{ color: "var(--white)", padding: "10px 0", borderBottom: "1px solid var(--hairline-light)", display: "block" }} onClick={(e) => { e.preventDefault(); onClose(); window.cl.go(l.route); }}>{l.label}</a>
       ))}
     </div>
     <div style={{ padding: "24px", borderTop: "1px solid var(--hairline-light)", display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)" }}>
@@ -216,7 +224,7 @@ const StickyCTA = ({ show }) => (
 
 // Cart drawer
 const CartDrawer = ({ open, onClose, items, onRemove }) => {
-  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const subtotal = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
   return (
     <>
       <div className={"drawer-backdrop " + (open ? "open" : "")} onClick={onClose} />
@@ -226,38 +234,27 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
           <button onClick={onClose} className="link-underline" data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>Close</button>
         </div>
         <div style={{ padding: "24px 28px", flex: 1, overflowY: "auto" }}>
-          {items.length === 0 && <div style={{ color: "var(--gray-500)", fontSize: 14 }}>Your cart is empty.</div>}
+          {items.length === 0 && (
+            <div style={{ textAlign: "center", padding: "60px 0" }}>
+              <div className="display-s" style={{ marginBottom: 12 }}>Cart is empty</div>
+              <p style={{ color: "var(--gray-500)", fontSize: 14, marginBottom: 24 }}>Add a bike to get started.</p>
+              <button className="btn btn-outline" onClick={() => { onClose(); window.cl.go("shop"); }} data-cursor="link">Shop Bikes <ArrowRight /></button>
+            </div>
+          )}
           {items.map((it, idx) => (
             <div key={idx} style={{ display: "grid", gridTemplateColumns: "80px 1fr auto", gap: 16, padding: "16px 0", borderBottom: "1px solid var(--hairline)" }}>
-              <div className="ph" style={{ aspectRatio: "1", height: 100 }}><span className="ph-label">PROD</span></div>
+              {it.image
+                ? <img src={it.image} alt={it.name} style={{ width: 80, height: 80, objectFit: "contain", background: "var(--paper)", padding: 4 }} />
+                : <div className="ph" style={{ width: 80, height: 80 }} />
+              }
               <div>
-                <div className="eyebrow" style={{ fontSize: 10, marginBottom: 6 }}>{it.brand}</div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", marginBottom: 8 }}>{it.name}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".1em" }}>
-                  <span>QTY</span>
-                  <span style={{ display: "inline-flex", border: "1px solid var(--hairline)" }}>
-                    <button style={{ width: 26, height: 26 }}>−</button>
-                    <span style={{ width: 26, height: 26, display: "grid", placeItems: "center" }}>{it.qty}</span>
-                    <button style={{ width: 26, height: 26 }}>+</button>
-                  </span>
-                  <button className="link-underline" onClick={() => onRemove(idx)} style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--gray-500)" }}>Remove</button>
-                </div>
+                <div className="eyebrow" style={{ fontSize: 10, marginBottom: 4 }}>{it.brand}</div>
+                <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", marginBottom: 8, lineHeight: 1.3 }}>{it.name}</div>
+                <button className="link-underline" onClick={() => { window.shopifyCart.remove(it.variantId); onRemove(idx); }} style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--gray-500)", letterSpacing: ".1em", textTransform: "uppercase" }}>Remove</button>
               </div>
-              <div style={{ fontFamily: "var(--display)", fontSize: 16, fontWeight: 500 }}>${it.price.toLocaleString()}</div>
+              <div style={{ fontFamily: "var(--display)", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}>${(it.price || 0).toLocaleString()}</div>
             </div>
           ))}
-          <div style={{ marginTop: 32 }}>
-            <div className="eyebrow" style={{ marginBottom: 12 }}>You might also need</div>
-            {[
-              { name: "Shimano Chain Lube", price: 18 },
-              { name: "Park Tool Multi-Tool", price: 32 },
-            ].map((p) => (
-              <div key={p.name} style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid var(--hairline)" }}>
-                <span style={{ fontSize: 13 }}>{p.name}</span>
-                <button className="link-underline" data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase" }}>Add  ${p.price}</button>
-              </div>
-            ))}
-          </div>
         </div>
         <div style={{ padding: "24px 28px", borderTop: "1px solid var(--hairline)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, fontFamily: "var(--display)", fontSize: 16, textTransform: "uppercase", letterSpacing: "-.01em" }}>

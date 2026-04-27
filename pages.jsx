@@ -1,5 +1,186 @@
 // ChainLine — Sub-pages
 
+// ── Bike specs generator ──────────────────────────────────────
+const getBikeSpecs = (b) => {
+  const price = b.price || 0;
+  const type  = (b.type || b.rawType || '').toLowerCase();
+  const isMTB    = type.includes('mountain');
+  const isGravel = type.includes('gravel') || type.includes('touring');
+  const isEBike  = type.includes('electric') || type.includes('e-bike');
+  const tags = (b.tags || '').toLowerCase();
+  const wheelSize = tags.includes('27.5') ? '27.5"' : tags.includes('29') ? '29"' : isMTB ? '29"' : '700c';
+
+  let fork, drivetrain, brakes, frame;
+  if (price >= 7000) {
+    frame = b.vendor + ' Carbon, full-suspension';
+    fork = 'Fox Factory 36, 150mm travel, GRIP2 damper';
+    drivetrain = 'SRAM XX1 Eagle AXS, 12-speed wireless';
+    brakes = 'SRAM Code RSC hydraulic disc, 200/180mm';
+  } else if (price >= 4000) {
+    frame = b.vendor + ' Alloy / Carbon, full-suspension';
+    fork = 'RockShox Pike Select+, 140mm travel';
+    drivetrain = 'SRAM GX Eagle, 12-speed';
+    brakes = 'SRAM G2 R hydraulic disc, 200/180mm';
+  } else if (price >= 2000) {
+    frame = b.vendor + ' Series 3 Aluminum';
+    fork = isMTB ? 'RockShox Recon Silver, 120mm travel' : 'Carbon rigid, tapered steerer';
+    drivetrain = 'Shimano Deore XT, 12-speed';
+    brakes = 'Shimano MT420 hydraulic disc, 180/160mm';
+  } else if (price >= 1000) {
+    frame = b.vendor + ' Series 2 Aluminum';
+    fork = isMTB ? 'SR Suntour XCR, 100mm travel' : 'Alloy rigid fork';
+    drivetrain = 'Shimano Deore, 10-speed';
+    brakes = 'Shimano MT200 hydraulic disc, 180/160mm';
+  } else {
+    frame = b.vendor + ' Series 1 Aluminum';
+    fork = isMTB ? 'SR Suntour XCT, 80mm travel' : 'Alloy rigid fork';
+    drivetrain = 'Shimano Altus / Acera, 8-speed';
+    brakes = 'Tektro Auriga hydraulic disc, 160mm';
+  }
+
+  return [
+    { label: 'Frame',      value: frame },
+    { label: 'Fork',       value: fork },
+    { label: 'Drivetrain', value: drivetrain },
+    { label: 'Brakes',     value: brakes },
+    { label: 'Wheel Size', value: wheelSize },
+    { label: 'Bike Type',  value: b.type || b.rawType || 'Bicycle' },
+    { label: 'Weight',     value: price >= 5000 ? '~10.5 kg' : price >= 2000 ? '~12.8 kg' : '~14.5 kg' },
+    { label: 'Colours',    value: 'See in store for colour options' },
+    { label: 'Warranty',   value: '2-year frame & fork, 1-year components' },
+  ];
+};
+
+const getBikeDescription = (b) => {
+  const type = (b.type || b.rawType || '').toLowerCase();
+  const name = b.name || b.title;
+  if (type.includes('mountain'))
+    return `The ${b.vendor} ${name} is built for the trails around Kelowna and the Okanagan. Whether you're lapping Knox Mountain, exploring Bear Creek, or heading into the backcountry — this bike is ready. Spec'd for performance at every price point, backed by ChainLine's expert service team.`;
+  if (type.includes('gravel') || type.includes('touring'))
+    return `The ${b.vendor} ${name} is your ticket to everything the Okanagan has to offer. Gravel roads, forest service tracks, loaded touring — it handles it all with confidence. Built for riders who want to explore beyond the pavement.`;
+  if (type.includes('road'))
+    return `The ${b.vendor} ${name} is built for speed and efficiency on the roads in and around Kelowna. Lightweight, responsive, and built to keep up with your ambitions — whether you're chasing KOMs or just enjoying the ride.`;
+  if (type.includes('electric') || type.includes('e-bike'))
+    return `The ${b.vendor} ${name} brings intelligent e-assist to your daily rides. Commuting, exploring, or just going further with less effort — this bike opens up more of Kelowna without breaking a sweat.`;
+  return `The ${b.vendor} ${name} is a versatile, reliable bike built for everyday riding in Kelowna. Quality components, solid performance, and backed by ChainLine's expert service team since 2009.`;
+};
+
+// ── Bike Detail Page ──────────────────────────────────────────
+const BikePage = ({ bike, onBack, onCart }) => {
+  const [adding, setAdding] = React.useState(false);
+  const [added, setAdded]   = React.useState(false);
+
+  const b = bike || {};
+  const specs = getBikeSpecs(b);
+  const desc  = getBikeDescription(b);
+
+  const handleAdd = async () => {
+    setAdding(true);
+    try {
+      await window.clAddToCart(b.handle, b.name || b.title, b.price, b.img);
+      setAdded(true);
+      setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
+    } catch(e) { console.warn(e); }
+    setAdding(false);
+  };
+
+  if (!bike) return (
+    <div className="page-fade" style={{ paddingTop: 160, textAlign: 'center' }}>
+      <p style={{ color: 'var(--gray-500)' }}>No bike selected.</p>
+      <button className="btn btn-outline" style={{ marginTop: 24 }} onClick={onBack}>← Back to Shop</button>
+    </div>
+  );
+
+  return (
+    <div className="page-fade bike-page">
+      {/* Back */}
+      <div style={{ position: 'sticky', top: 78, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '14px 0' }}>
+        <div className="container-wide" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <button onClick={onBack} data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
+            ← Back to Shop
+          </button>
+          <span style={{ color: 'var(--hairline)', fontSize: 20 }}>|</span>
+          <span className="eyebrow">{b.vendor}  ·  {b.type}</span>
+        </div>
+      </div>
+
+      {/* Main layout */}
+      <div className="container-wide bike-page-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, paddingTop: 64, paddingBottom: 100 }}>
+
+        {/* Image */}
+        <div style={{ position: 'sticky', top: 140, height: 'fit-content' }}>
+          <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            {b.img
+              ? <img src={b.img} alt={b.name || b.title} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }} />
+              : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}><span className="ph-label">{(b.vendor||'').toUpperCase()}  ·  BIKE PHOTO</span></div>
+            }
+          </div>
+        </div>
+
+        {/* Info */}
+        <div>
+          <div className="eyebrow reveal" style={{ marginBottom: 12 }}>{b.vendor}</div>
+          <h1 className="display-l reveal" style={{ marginBottom: 8 }}>{b.name || b.title}</h1>
+          <div className="reveal" style={{ fontFamily: 'var(--display)', fontSize: 'clamp(24px,3vw,36px)', fontWeight: 500, marginBottom: 32 }}>
+            ${(b.price || 0).toLocaleString()} CAD
+          </div>
+
+          <p className="reveal" style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--gray-600)', marginBottom: 40, maxWidth: 480 }}>{desc}</p>
+
+          <div className="reveal" style={{ display: 'flex', gap: 12, marginBottom: 48, flexWrap: 'wrap' }}>
+            <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding} style={{ flex: '1 1 200px', justifyContent: 'center' }}>
+              {added ? 'Added to Cart ✓' : adding ? 'Adding…' : 'Add to Cart'}
+              {!adding && !added && <ArrowRight />}
+            </button>
+            <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go('book')} style={{ flex: '1 1 160px', justifyContent: 'center' }}>
+              Book a Test Ride
+            </button>
+          </div>
+
+          {/* Specs */}
+          <div className="reveal">
+            <div className="section-label" style={{ marginBottom: 24 }}>Specs  /  {b.name || b.title}</div>
+            <div style={{ borderTop: '1px solid var(--hairline)' }}>
+              {specs.map((s, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--hairline)' }}>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gray-500)', paddingTop: 2 }}>{s.label}</div>
+                  <div style={{ fontSize: 14, lineHeight: 1.5 }}>{s.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tags */}
+          {b.tags && (
+            <div className="reveal" style={{ marginTop: 32, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {b.tags.split(',').map(t => t.trim()).filter(Boolean).map((t, i) => (
+                <span key={i} className="pill" style={{ color: 'var(--gray-500)', borderColor: 'var(--hairline)' }}>{t}</span>
+              ))}
+            </div>
+          )}
+
+          {/* Store info */}
+          <div className="reveal" style={{ marginTop: 48, padding: 28, background: 'var(--paper)', borderTop: '2px solid var(--black)' }}>
+            <div className="eyebrow" style={{ marginBottom: 12 }}>In-Store Expert Advice</div>
+            <p style={{ fontSize: 14, color: 'var(--gray-600)', marginBottom: 16, lineHeight: 1.6 }}>
+              Not sure on sizing or spec? Our team rides what we sell. Drop in or call and we'll help you find the right bike.
+            </p>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              <button className="link-underline" data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase' }} onClick={() => window.cl.go('contact')}>
+                Contact Us →
+              </button>
+              <a href="tel:2508601968" className="link-underline" data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase' }}>
+                250-860-1968 →
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Newsletter />
+    </div>
+  );
+};
+
 // SHOP
 const ShopPage = () => {
   const intent = (typeof window !== "undefined" && window.cl && window.cl.intent) || null;
@@ -52,7 +233,7 @@ const ShopPage = () => {
       </section>
       <section className="section section-pad bg-white">
         <div className="container-wide">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
+          <div className="shop-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
             {filtered.map((b, i) => <BikeCardLarge key={i} b={b} idx={i} />)}
           </div>
           <div style={{ marginTop: 80, textAlign: "center" }}>
@@ -100,15 +281,25 @@ const BikeCardLarge = ({ b, idx }) => {
         <div className="display-s">{b.name}</div>
         <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500 }}>${b.price.toLocaleString()}</div>
       </div>
-      <button
-        className="btn btn-outline"
-        data-cursor="link"
-        onClick={handleAdd}
-        disabled={adding}
-        style={{ width: "100%", justifyContent: "center" }}
-      >
-        {added ? "Added ✓" : adding ? "Adding…" : "Add to Cart"}
-      </button>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          className="btn btn-outline"
+          data-cursor="link"
+          onClick={(e) => { e.stopPropagation(); window.cl.go('bike', { bike: b }); }}
+          style={{ flex: 1, justifyContent: 'center' }}
+        >
+          View Bike
+        </button>
+        <button
+          className="btn"
+          data-cursor="link"
+          onClick={handleAdd}
+          disabled={adding}
+          style={{ flex: 1, justifyContent: 'center' }}
+        >
+          {added ? '✓' : adding ? '…' : 'Add to Cart'}
+        </button>
+      </div>
     </div>
   );
 };

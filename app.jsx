@@ -32,10 +32,19 @@ const App = () => {
   const [megaOpen, setMegaOpen] = React.useState(null);
   const [mobileNav, setMobileNav] = React.useState(false);
   const [cartOpen, setCartOpen] = React.useState(false);
-  const [cart, setCart] = React.useState([
-    { brand: "Transition", name: "Sentinel V3", price: 6299, qty: 1 },
-    { brand: "Park Tool", name: "PCS-10.3 Repair Stand", price: 425, qty: 1 },
-  ]);
+  const [cart, setCart] = React.useState([]);
+
+  // Sync cart from Shopify events
+  React.useEffect(() => {
+    const onCartUpdate = (e) => {
+      const items = (e.detail?.items || []).map(i => ({
+        brand: i.vendor || '', name: i.name || i.title, price: i.price, qty: i.qty, image: i.image, variantId: i.variantId,
+      }));
+      setCart(items);
+    };
+    window.addEventListener('cart:updated', onCartUpdate);
+    return () => window.removeEventListener('cart:updated', onCartUpdate);
+  }, []);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
 
   // Apply tweaks
@@ -121,6 +130,7 @@ const App = () => {
           </>
         )}
         {page === "shop" && <ShopPage />}
+        {page === "bike" && <BikePage bike={window.cl.intent?.bike} onBack={() => window.cl.go("shop")} onCart={() => setCartOpen(true)} />}
         {page === "services" && <ServicesPage />}
         {page === "book" && <BookPage />}
         {page === "about" && <AboutPage />}

@@ -1087,3 +1087,132 @@ img {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray-400);
 }
+
+/* ============================================================
+   BIKE PAGE
+   ============================================================ */
+.bike-page-layout {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ============================================================
+   MOBILE — comprehensive responsive overrides
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* Nav */
+  .nav { height: 64px; }
+  .nav-links { display: none !important; }
+
+  /* Hero */
+  .hero-ctas { flex-direction: column; }
+  .hero-ctas .btn { width: 100%; justify-content: center; }
+
+  /* Containers */
+  .container, .container-wide, .container-narrow {
+    padding: 0 16px;
+  }
+
+  /* Section padding */
+  .section-pad { padding: 60px 0; }
+  .section-pad-sm { padding: 40px 0; }
+
+  /* Bike detail page */
+  .bike-page-layout {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding-top: 32px !important;
+  }
+  .bike-page-layout > div:first-child {
+    position: static !important;
+    height: auto !important;
+  }
+
+  /* Shop grid — 1 column on small mobile, 2 on tablet */
+  .shop-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Services page — stack on mobile */
+  .services-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .services-row > :nth-child(3),
+  .services-row > :nth-child(4),
+  .services-row > :nth-child(5),
+  .services-row > :nth-child(6) {
+    display: none;
+  }
+  .services-row .service-time { display: none; }
+
+  /* Fitting table — stack */
+  .fitting-row {
+    grid-template-columns: 1fr auto !important;
+  }
+  .fitting-row > :nth-child(2) { display: none; }
+
+  /* Booking — stack type selector */
+  .booking-types {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .booking-service-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  /* Cart drawer */
+  .drawer { width: 100vw !important; }
+
+  /* Buttons full-width on mobile */
+  .btn-mobile-full {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Mega menu hidden on mobile (use hamburger) */
+  .mega { display: none !important; }
+
+  /* Sticky CTA smaller */
+  .sticky-cta { bottom: 16px; right: 16px; }
+  .sticky-cta .btn { padding: 14px 20px; font-size: 11px; }
+
+  /* Horizontal scroll sections — snap */
+  .h-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .h-scroll > * {
+    scroll-snap-align: start;
+  }
+
+  /* Spec table on bike page */
+  .spec-row {
+    grid-template-columns: 100px 1fr !important;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 900px) {
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .display-xxl { font-size: clamp(36px, 12vw, 72px); }
+  .display-xl  { font-size: clamp(32px, 10vw, 64px); }
+  .display-l   { font-size: clamp(26px, 8vw, 48px); }
+
+  .booking-types {
+    grid-template-columns: 1fr !important;
+  }
+}
