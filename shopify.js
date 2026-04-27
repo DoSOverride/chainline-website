@@ -1,187 +1,112 @@
-// ChainLine Cycle — Shopify Storefront API Integration
+// ChainLine Cycle — Shopify Integration (no token required)
 window.CL_SHOP = {
   domain: '4nie4h-ek.myshopify.com',
-  token:  'a4fb17bce30d6a5f66dc779130b48843',
-  api:    '2024-01',
+  cart: JSON.parse(localStorage.getItem('cl-cart') || '[]'),
 };
 
-// Core fetch
-async function shopFetch(query, variables = {}) {
-  const { domain, token, api } = window.CL_SHOP;
-  const res = await fetch(`https://${domain}/api/${api}/graphql.json`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': token,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-  const json = await res.json();
-  if (json.errors) { console.error('Shopify error:', json.errors); throw new Error(json.errors[0].message); }
-  return json.data;
-}
-
-// ── Products ──────────────────────────────────────────────────
-window.shopifyGetProducts = async function({ first = 50, query = '' } = {}) {
-  const data = await shopFetch(`
-    query GetProducts($first: Int!, $query: String) {
-      products(first: $first, query: $query) {
-        edges {
-          node {
-            id title handle vendor tags
-            priceRange { minVariantPrice { amount currencyCode } }
-            compareAtPriceRange { minVariantPrice { amount currencyCode } }
-            images(first: 1) { edges { node { url altText } } }
-            variants(first: 1) {
-              edges { node { id availableForSale } }
-            }
-          }
-        }
-      }
-    }
-  `, { first, query });
-
-  return data.products.edges.map(({ node: p }) => ({
-    id:           p.id,
-    title:        p.title,
-    handle:       p.handle,
-    vendor:       p.vendor,
-    tags:         p.tags,
-    price:        parseFloat(p.priceRange.minVariantPrice.amount),
-    compareAt:    p.compareAtPriceRange?.minVariantPrice?.amount
-                    ? parseFloat(p.compareAtPriceRange.minVariantPrice.amount) : null,
-    currency:     p.priceRange.minVariantPrice.currencyCode,
-    image:        p.images.edges[0]?.node.url || null,
-    variantId:    p.variants.edges[0]?.node.id || null,
-    available:    p.variants.edges[0]?.node.availableForSale || false,
-  }));
+// ── Fetch products from public JSON endpoint ──────────────────
+window.shopifyGetProducts = async function() {
+  try {
+    const res = await fetch(`https://${window.CL_SHOP.domain}/products.json?limit=250`);
+    const json = await res.json();
+    return json.products.map(p => ({
+      id:        p.id,
+      title:     p.title,
+      handle:    p.handle,
+      vendor:    p.vendor,
+      tags:      p.tags,
+      image:     p.images[0]?.src || null,
+      price:     parseFloat(p.variants[0]?.price || 0),
+      compareAt: p.variants[0]?.compare_at_price ? parseFloat(p.variants[0].compare_at_price) : null,
+      variantId: p.variants[0]?.id || null,
+      available: p.variants[0]?.available || false,
+    }));
+  } catch(e) {
+    console.warn('[ChainLine] Could not fetch products:', e.message);
+    return [];
+  }
 };
 
-// ── Cart ──────────────────────────────────────────────────────
+// ── Cart (localStorage) ───────────────────────────────────────
 window.shopifyCart = {
-  _id: localStorage.getItem('cl-cart-id') || null,
-  _url: null,
+  items: window.CL_SHOP.cart,
 
-  _lineFragment: `
-    id checkoutUrl totalQuantity
-    cost { totalAmount { amount currencyCode } }
-    lines(first: 30) {
-      edges { node {
-        id quantity
-        cost { totalAmount { amount currencyCode } }
-        merchandise { ... on ProductVariant {
-          id title
-          product { title vendor }
-          priceV2 { amount currencyCode }
-          image { url altText }
-        }}
-      }}
+  _save() {
+    localStorage.setItem('cl-cart', JSON.stringify(this.items));
+    window.CL_SHOP.cart = this.items;
+  },
+
+  add(variantId, name, price, image, qty = 1) {
+    const existing = this.items.find(i => i.variantId === variantId);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      this.items.push({ variantId, name, price, image, qty });
     }
-  `,
-
-  _normalize(cart) {
-    if (!cart) return null;
-    this._id  = cart.id;
-    this._url = cart.checkoutUrl;
-    localStorage.setItem('cl-cart-id', cart.id);
-    return {
-      id:       cart.id,
-      url:      cart.checkoutUrl,
-      count:    cart.totalQuantity,
-      total:    parseFloat(cart.cost.totalAmount.amount),
-      currency: cart.cost.totalAmount.currencyCode,
-      lines:    cart.lines.edges.map(({ node: l }) => ({
-        lineId:   l.id,
-        qty:      l.quantity,
-        total:    parseFloat(l.cost.totalAmount.amount),
-        variantId: l.merchandise.id,
-        variant:  l.merchandise.title,
-        name:     l.merchandise.product.title,
-        vendor:   l.merchandise.product.vendor,
-        price:    parseFloat(l.merchandise.priceV2.amount),
-        image:    l.merchandise.image?.url || null,
-      })),
-    };
+    this._save();
+    const count = this.items.reduce((s, i) => s + i.qty, 0);
+    window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: this.items, count } }));
+    return this.items;
   },
 
-  async get() {
-    if (!this._id) return null;
-    try {
-      const data = await shopFetch(`query GetCart($id: ID!) { cart(id: $id) { ${this._lineFragment} } }`, { id: this._id });
-      return this._normalize(data.cart);
-    } catch { this._id = null; localStorage.removeItem('cl-cart-id'); return null; }
+  remove(variantId) {
+    this.items = this.items.filter(i => i.variantId !== variantId);
+    this._save();
+    const count = this.items.reduce((s, i) => s + i.qty, 0);
+    window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: this.items, count } }));
   },
 
-  async add(variantId, quantity = 1) {
-    if (!this._id) {
-      const data = await shopFetch(`
-        mutation CartCreate($input: CartInput!) {
-          cartCreate(input: $input) { cart { ${this._lineFragment} } userErrors { field message } }
-        }
-      `, { input: { lines: [{ merchandiseId: variantId, quantity }] } });
-      return this._normalize(data.cartCreate.cart);
-    }
-    const data = await shopFetch(`
-      mutation CartAdd($cartId: ID!, $lines: [CartLineInput!]!) {
-        cartLinesAdd(cartId: $cartId, lines: $lines) { cart { ${this._lineFragment} } userErrors { field message } }
-      }
-    `, { cartId: this._id, lines: [{ merchandiseId: variantId, quantity }] });
-    return this._normalize(data.cartLinesAdd.cart);
+  count() {
+    return this.items.reduce((s, i) => s + i.qty, 0);
   },
 
-  async remove(lineId) {
-    const data = await shopFetch(`
-      mutation CartRemove($cartId: ID!, $lineIds: [ID!]!) {
-        cartLinesRemove(cartId: $cartId, lineIds: $lineIds) { cart { ${this._lineFragment} } }
-      }
-    `, { cartId: this._id, lineIds: [lineId] });
-    return this._normalize(data.cartLinesRemove.cart);
-  },
-
+  // Redirect to Shopify checkout with all cart items
   checkout() {
-    if (this._url) window.location.href = this._url;
+    if (this.items.length === 0) return;
+    const itemStr = this.items.map(i => `${i.variantId}:${i.qty}`).join(',');
+    window.location.href = `https://${window.CL_SHOP.domain}/cart/${itemStr}`;
   },
 };
 
-// ── Init: pre-load Shopify products and merge with existing catalog ──
+// ── Add to cart by handle ─────────────────────────────────────
+window.clAddToCart = async function(handle, name, price, image) {
+  // Look up variantId from fetched products
+  const products = window.CL_SHOP.products || [];
+  const match = products.find(p =>
+    p.handle === handle ||
+    p.title.toLowerCase() === (name || '').toLowerCase()
+  );
+
+  if (!match || !match.variantId) {
+    console.warn('[ChainLine] Product not found in Shopify:', handle || name);
+    // Still add to cart with a placeholder so UX works
+    window.shopifyCart.add('unknown-' + Date.now(), name || handle, price || 0, image);
+    return;
+  }
+
+  window.shopifyCart.add(match.variantId, match.title, match.price, match.image);
+  return match;
+};
+
+// ── Init ──────────────────────────────────────────────────────
 window.shopifyReady = (async () => {
   try {
-    const products = await window.shopifyGetProducts({ first: 100 });
+    const products = await window.shopifyGetProducts();
     window.CL_SHOP.products = products;
 
-    // Build a handle→variantId lookup for "Add to Cart"
-    window.CL_SHOP.variantMap = {};
-    products.forEach(p => {
-      window.CL_SHOP.variantMap[p.handle] = p.variantId;
-      // also match by lowercased title
-      window.CL_SHOP.variantMap[p.title.toLowerCase()] = p.variantId;
-    });
-
-    // Restore existing cart
-    const cart = await window.shopifyCart.get();
-    if (cart) {
-      window.CL_SHOP.cartCount = cart.count;
-      document.querySelectorAll('.cart-count span').forEach(el => { el.textContent = cart.count; });
+    const count = window.shopifyCart.count();
+    if (count > 0) {
+      document.querySelectorAll('.cart-count span').forEach(el => { el.textContent = count; });
     }
 
-    console.log(`[ChainLine] Shopify connected — ${products.length} products loaded.`);
+    if (products.length > 0) {
+      console.log(`[ChainLine] Shopify connected — ${products.length} products loaded.`);
+    } else {
+      console.warn('[ChainLine] No products found — store may be password protected.');
+    }
+
     window.dispatchEvent(new CustomEvent('shopify:ready', { detail: { products } }));
-  } catch (err) {
-    console.warn('[ChainLine] Shopify connection issue:', err.message);
+  } catch(err) {
+    console.warn('[ChainLine] Shopify init error:', err.message);
   }
 })();
-
-// ── Helper: add to cart by handle or variantId ──
-window.clAddToCart = async function(handleOrVariantId) {
-  let variantId = handleOrVariantId;
-  if (!handleOrVariantId.startsWith('gid://')) {
-    variantId = window.CL_SHOP.variantMap?.[handleOrVariantId]
-              || window.CL_SHOP.variantMap?.[handleOrVariantId.toLowerCase()]
-              || null;
-  }
-  if (!variantId) { console.warn('[ChainLine] No variant found for:', handleOrVariantId); return; }
-
-  const cart = await window.shopifyCart.add(variantId);
-  window.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
-  return cart;
-};

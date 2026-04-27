@@ -74,7 +74,7 @@ const BikeCardLarge = ({ b, idx }) => {
     e.stopPropagation();
     setAdding(true);
     try {
-      await window.clAddToCart(b.handle || b.name);
+      await window.clAddToCart(b.handle, b.name, b.price, b.img);
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
     } catch(err) {
