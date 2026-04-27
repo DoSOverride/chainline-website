@@ -1140,61 +1140,140 @@ const GiftCardsPage = () => (
   </div>
 );
 
-// PARTS & ACCESSORIES PAGE
+
+// PARTS & ACCESSORIES PAGE — Live Lightspeed inventory
 const PartsPage = () => {
-  const cats = [
-    { name: "Drivetrain", items: ["Cassettes", "Chains", "Derailleurs", "Cranksets", "Shifters", "Bottom Brackets", "Cable & Housing"] },
-    { name: "Brakes", items: ["Brake Pads", "Brake Levers", "Rotors", "Hydraulic Hose", "Brake Calipers", "Bleed Kits"] },
-    { name: "Wheels & Tyres", items: ["Rims", "Hubs", "Spokes & Nipples", "Tyres", "Inner Tubes", "Tubeless Valves", "Sealant"] },
-    { name: "Cockpit", items: ["Handlebars", "Stems", "Grips", "Bar Tape", "Headsets", "Spacers"] },
-    { name: "Saddle & Seatpost", items: ["Saddles", "Seatposts", "Dropper Posts", "Dropper Levers", "Clamps"] },
-    { name: "Suspension", items: ["Fork Service Kits", "Shock Service Kits", "Seals & Foam Rings", "Suspension Lube"] },
-    { name: "Helmets & Protection", items: ["MTB Helmets", "Road Helmets", "Full-Face Helmets", "Knee Pads", "Elbow Pads", "Back Protectors", "Glasses"] },
-    { name: "Apparel", items: ["Jerseys", "Shorts & Bibs", "Jackets", "Gloves", "Socks", "Base Layers"] },
-    { name: "Tools", items: ["Multi-Tools", "Torque Wrenches", "Hex Keys", "Chain Tools", "Bleed Kits", "Tyre Levers", "Pumps", "CO2"] },
-    { name: "Cleaning & Lube", items: ["Chain Lube", "Bike Wash", "Degreasers", "Bike Polish", "Brushes"] },
-    { name: "Electronics", items: ["Bike Computers", "Lights — Front", "Lights — Rear", "GPS Units", "E-Bike Accessories"] },
-    { name: "Bags & Carrying", items: ["Frame Bags", "Saddle Bags", "Handlebar Bags", "Top Tube Bags", "Hydration Packs", "Racks", "Panniers"] },
-  ];
-  const [active, setActive] = React.useState(null);
+  const [activeDept, setActiveDept] = React.useState(null);
+  const [deptItems,  setDeptItems]  = React.useState([]);
+  const [loading,    setLoading]    = React.useState(false);
+  const [search,     setSearch]     = React.useState('');
+  const [searchRes,  setSearchRes]  = React.useState(null);
+  const [depts,      setDepts]      = React.useState([]);
+
+  React.useEffect(() => {
+    const load = () => {
+      if (window.CL_LS && window.CL_LS.departments && window.CL_LS.departments.length > 0) {
+        const exclude = ['labour','food','shop use','consignments','bikes comfort','bikes road','bikes mountain','bike bmx','bike cruiser','bike cross','bikes fat','bikes junior','bike frame','frames','build kit','group'];
+        const filtered = window.CL_LS.departments
+          .filter(d => !exclude.some(ex => d.name.toLowerCase().includes(ex)))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setDepts(filtered);
+      }
+    };
+    load();
+    window.addEventListener('lightspeed:ready', load);
+    return () => window.removeEventListener('lightspeed:ready', load);
+  }, []);
+
+  const openDept = async (deptName) => {
+    if (activeDept === deptName) { setActiveDept(null); setDeptItems([]); return; }
+    setActiveDept(deptName);
+    setLoading(true);
+    const cached = (window.CL_LS.products || []).filter(p =>
+      (p.department || '').toLowerCase() === deptName.toLowerCase()
+    );
+    if (cached.length > 0) {
+      setDeptItems(cached); setLoading(false);
+    } else {
+      const items = await window.lightspeedGetDept(deptName);
+      setDeptItems(items); setLoading(false);
+    }
+  };
+
+  const doSearch = (q) => {
+    setSearch(q);
+    if (q.length < 2) { setSearchRes(null); return; }
+    const results = (window.lightspeedSearch && window.lightspeedSearch(q)) || [];
+    setSearchRes(results.slice(0, 48));
+  };
+
+  const fallback = ['Brake pads','Cassette','Chains','Tubes','Tires 700C','Tires 29"','Tires 26"','Wheels','Shifters MTB','Derailleur Rear','Derailleur Front','Cranks','Bottom Brackets','Headsets','Handlebar','Stem','Saddles','Seat post','Grips','Bar tape','Forks','Rear Shock','Brake Lever U','Brake parts','Pumps','Lube','Tools','Locks','Lights','Computers','Bags','Packs','Helmet','Gloves','Clothing','Socks','Shoes Mountain','Shoes Road','Spokes','Rims','Hubs','Cables','Fenders','Tire Sealant'].map(n => ({ name: n, count: null }));
+  const displayDepts = depts.length > 0 ? depts : fallback;
+
   return (
     <div className="page-fade">
       <SubHero eyebrow="Parts & Accessories  /  N°02" title="Gear up." italic="Everything you need." />
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          <div className="reveal section-label" style={{ marginBottom: 48 }}>Browse by Category</div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"var(--hairline)" }}>
-            {cats.map((cat, i) => (
-              <div key={i} className="reveal" style={{ background:"var(--white)", padding:32 }}>
-                <button className="display-s" data-cursor="link"
-                  onClick={() => setActive(active === i ? null : i)}
-                  style={{ textAlign:"left", width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: active===i ? 20 : 0 }}>
-                  {cat.name}
-                  <span style={{ fontFamily:"var(--mono)", fontSize:14, color:"var(--gray-400)", transition:"transform .2s", display:"inline-block", transform: active===i ? "rotate(45deg)" : "none" }}>+</span>
-                </button>
-                {active === i && (
-                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                    {cat.items.map((item, j) => (
-                      <button key={j} className="link-underline" data-cursor="link"
-                        style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-600)", textAlign:"left", padding:"4px 0" }}
-                        onClick={() => window.cl.go("contact")}>
-                        {item} →
-                      </button>
-                    ))}
-                    <p style={{ marginTop:8, fontSize:12, color:"var(--gray-400)", lineHeight:1.5 }}>
-                      Contact us or visit in-store for availability and pricing.
-                    </p>
-                  </div>
-                )}
+
+          {/* Search */}
+          <div className="reveal" style={{ marginBottom:48 }}>
+            <div style={{ display:"flex", borderBottom:"2px solid var(--black)", maxWidth:560 }}>
+              <input type="text" placeholder="Search parts — cassettes, brake pads, chains..."
+                value={search} onChange={e => doSearch(e.target.value)}
+                style={{ flex:1, padding:"14px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:16, background:"transparent" }} />
+              {search && <button onClick={() => { setSearch(''); setSearchRes(null); }}
+                style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-400)", letterSpacing:".1em" }}>CLEAR</button>}
+            </div>
+            {searchRes && (
+              <div style={{ marginTop:16 }}>
+                <p className="eyebrow" style={{ marginBottom:16 }}>{searchRes.length} results for &ldquo;{search}&rdquo;</p>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+                  {searchRes.map((item, i) => (
+                    <div key={i} style={{ padding:"14px 16px", border:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
+                      <div>
+                        <div style={{ fontFamily:"var(--display)", fontSize:12, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
+                        <div className="eyebrow" style={{ marginTop:3 }}>{item.department}</div>
+                      </div>
+                      <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600, flexShrink:0 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : 'POA'}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
           </div>
-          <div style={{ marginTop:48, padding:32, background:"var(--paper)", borderTop:"2px solid var(--black)" }}>
-            <div className="eyebrow" style={{ marginBottom:12 }}>Can't find what you need?</div>
-            <p style={{ fontSize:14, color:"var(--gray-600)", marginBottom:16 }}>
-              We stock far more than what's listed here. Call us, email us, or come in — we'll track it down.
-            </p>
-            <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
+
+          {/* Dept accordion */}
+          {!searchRes && (
+            <>
+              <div className="reveal section-label" style={{ marginBottom:24 }}>
+                Browse by Department {depts.length > 0 && <span style={{ opacity:.45 }}>· Live from Lightspeed</span>}
+              </div>
+              <div style={{ borderTop:"1px solid var(--hairline)" }}>
+                {displayDepts.map((dept, i) => (
+                  <div key={i} className="reveal" style={{ borderBottom:"1px solid var(--hairline)" }}>
+                    <button data-cursor="link" onClick={() => openDept(dept.name)}
+                      style={{ width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", padding:"18px 0", cursor:"pointer" }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:16 }}>
+                        <span style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.8vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{dept.name}</span>
+                        {dept.count && <span className="eyebrow">{dept.count} items</span>}
+                      </div>
+                      <span style={{ fontFamily:"var(--mono)", fontSize:18, color:"var(--gray-400)", transform: activeDept===dept.name ? "rotate(45deg)" : "none", transition:"transform .2s", display:"inline-block" }}>+</span>
+                    </button>
+                    {activeDept === dept.name && (
+                      <div style={{ paddingBottom:20 }}>
+                        {loading ? (
+                          <p className="eyebrow" style={{ padding:"12px 0" }}>Loading {dept.name}…</p>
+                        ) : deptItems.length === 0 ? (
+                          <p style={{ fontSize:14, color:"var(--gray-500)" }}>No items currently listed — contact us for stock.</p>
+                        ) : (
+                          <>
+                            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:6 }}>
+                              {deptItems.slice(0,60).map((item, j) => (
+                                <div key={j} style={{ padding:"12px 14px", background:"var(--paper)", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8 }}>
+                                  <div style={{ flex:1 }}>
+                                    <div style={{ fontFamily:"var(--display)", fontSize:11, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
+                                    {item.sku && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", marginTop:2 }}>SKU {item.sku}</div>}
+                                  </div>
+                                  <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, flexShrink:0 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : ''}</div>
+                                </div>
+                              ))}
+                            </div>
+                            {deptItems.length > 60 && <p style={{ marginTop:10, fontSize:11, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".1em", textTransform:"uppercase" }}>Showing 60 of {deptItems.length} — visit or call for full list</p>}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div style={{ marginTop:48, padding:28, background:"var(--paper)", borderTop:"2px solid var(--black)" }}>
+            <div className="eyebrow" style={{ marginBottom:10 }}>Can't find what you need?</div>
+            <p style={{ fontSize:14, color:"var(--gray-600)", marginBottom:14 }}>We stock 7,000+ products. If it's not listed, we can order it.</p>
+            <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
               <a href="tel:2508601968" className="btn btn-outline-dark" data-cursor="link" style={{ fontSize:11 }}>Call (250) 860-1968</a>
               <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ fontSize:11 }}>Contact Us <ArrowRight /></button>
             </div>
