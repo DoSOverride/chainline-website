@@ -9,6 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create Pages project (skips if already exists)
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: "8c3d9e51212aa8c7a1ad6ea8edd23d8b"
+          command: pages project create chainline-website --production-branch=main
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
