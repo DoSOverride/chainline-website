@@ -262,6 +262,7 @@ const ShopPage = () => {
   const [saleOnly, setSale] = React.useState(false);
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
+  const [avail, setAvail]               = React.useState("all");
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
   // Re-render when Shopify images arrive so resolveImage() picks them up
@@ -320,6 +321,9 @@ const ShopPage = () => {
   let filtered = allProducts
     .filter(b => (brand === "All" || (b.brand || b.vendor || "") === brand) && matchType.match(b));
 
+  if (avail === "instock")      filtered = filtered.filter(b => b.inStock !== false);
+  if (avail === "specialorder") filtered = filtered.filter(b => b.inStock === false);
+
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
 
@@ -335,12 +339,22 @@ const ShopPage = () => {
         {/* Row 1 — special + brands */}
         <div className="container-wide" style={{ paddingTop:"18px", paddingBottom:0, display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
           {/* All Bikes */}
-          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "var(--hairline)" }}>
+          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); setAvail("all"); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly&&avail==="all" ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly&&avail==="all" ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly&&avail==="all" ? "var(--black)" : "var(--hairline)" }}>
             All Bikes
           </button>
+          {/* In Stock */}
+          <button onClick={() => { setAvail(avail === "instock" ? "all" : "instock"); setSale(false); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="instock"&&!saleOnly?"var(--black)":"transparent", color:avail==="instock"&&!saleOnly?"var(--white)":"var(--black)", borderColor:avail==="instock"&&!saleOnly?"var(--black)":"var(--hairline)" }}>
+            In Stock
+          </button>
+          {/* Special Order */}
+          <button onClick={() => { setAvail(avail === "specialorder" ? "all" : "specialorder"); setSale(false); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="specialorder"&&!saleOnly?"var(--black)":"transparent", color:avail==="specialorder"&&!saleOnly?"var(--white)":"var(--black)", borderColor:avail==="specialorder"&&!saleOnly?"var(--black)":"var(--hairline)" }}>
+            Special Order
+          </button>
           {/* Sale Bikes */}
-          <button onClick={() => { setSale(true); setBrand("All"); setType("All"); }} data-cursor="link"
+          <button onClick={() => { setSale(true); setBrand("All"); setType("All"); setAvail("all"); }} data-cursor="link"
             style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:saleOnly?"var(--black)":"transparent", color:saleOnly?"var(--white)":"var(--black)", borderColor:saleOnly?"var(--black)":"var(--hairline)" }}>
             Sale Bikes
           </button>
@@ -440,7 +454,7 @@ const BikeCardLarge = ({ b, idx }) => {
 
   return (
     <div className={"reveal reveal-d-" + (idx % 3 + 1)}
-      style={{ cursor:"pointer", opacity: inStock ? 1 : 0.5 }}
+      style={{ cursor:"pointer" }}
       onClick={goToBike}>
       {/* Image */}
       <div style={{ aspectRatio:"4/5", marginBottom:16, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
@@ -454,10 +468,10 @@ const BikeCardLarge = ({ b, idx }) => {
             <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
           </div>
         )}
-        {/* Stock badge */}
+        {/* Special Order badge — replaces old full-screen overlay */}
         {!inStock && (
-          <div style={{ position:"absolute", inset:0, background:"rgba(250,250,250,0.7)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <div style={{ padding:"8px 16px", background:"var(--gray-200)", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase" }}>Out of Stock</div>
+          <div style={{ position:"absolute", top:12, left:12, padding:"4px 10px", background:"var(--white)", color:"var(--gray-600)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid var(--hairline)" }}>
+            Special Order
           </div>
         )}
         {lowStock && (
@@ -465,7 +479,7 @@ const BikeCardLarge = ({ b, idx }) => {
             {qty} left
           </div>
         )}
-        {b.badge && inStock && (
+        {b.badge && (
           <div style={{ position:"absolute", top:12, right:12, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>
         )}
         <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0)", display:"flex", alignItems:"center", justifyContent:"center", transition:"background .3s" }}
@@ -488,8 +502,8 @@ const BikeCardLarge = ({ b, idx }) => {
         </button>
         <button className="btn" data-cursor="link"
           onClick={handleAdd} disabled={adding || !inStock}
-          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11, opacity: inStock ? 1 : 0.4 }}>
-          {!inStock ? "Out of Stock" : added ? "Added ✓" : adding ? "…" : "Add to Cart"}
+          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
+          {!inStock ? "Special Order" : added ? "Added ✓" : adding ? "…" : "Add to Cart"}
         </button>
       </div>
     </div>
