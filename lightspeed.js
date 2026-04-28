@@ -54,21 +54,24 @@ window.lightspeedGetDept = async function(deptName) {
 window.lightspeedGetBikes = function() {
   // Use dedicated bikes endpoint data if available (has real stock)
   if (window.CL_LS.bikes && window.CL_LS.bikes.length > 0) {
-    return window.CL_LS.bikes.map(p => ({
-      id:     p.id,
-      name:   p.name,
-      brand:  (p.name || '').split(' ')[0] || '',
-      vendor: (p.name || '').split(' ')[0] || '',
-      sku:    p.sku,
-      type:   deptToType(p.department),
-      price:  p.price,
-      img:    null,
-      tags:   p.department,
-      handle: p.sku || String(p.id),
-      fromLightspeed: true,
-      qty:     typeof p.qty === 'number' ? p.qty : null,
-      inStock: typeof p.inStock === 'boolean' ? p.inStock : true,
-    }));
+    return window.CL_LS.bikes
+      .filter(p => deptToType(p.department) !== null)  // exclude frames and non-bike items
+      .filter(p => p.inStock)                            // only in-stock bikes
+      .map(p => ({
+        id:     p.id,
+        name:   p.name,
+        brand:  (p.name || '').split(' ')[0] || '',
+        vendor: (p.name || '').split(' ')[0] || '',
+        sku:    p.sku,
+        type:   deptToType(p.department),
+        price:  p.price,
+        img:    null,
+        tags:   p.department,
+        handle: p.sku || String(p.id),
+        fromLightspeed: true,
+        qty:     typeof p.qty === 'number' ? p.qty : null,
+        inStock: true,
+      }));
   }
   // Fallback: filter from general products list
   const bikeKeywords = ['mountain', 'road', 'gravel', 'electric', 'e-bike', 'commut', 'kid', 'junior', 'cruiser', 'comfort', 'hybrid', 'touring', 'fat', 'cross', 'bmx'];
@@ -93,16 +96,16 @@ window.lightspeedGetBikes = function() {
 };
 
 function deptToType(dept) {
-  if (!dept) return 'Other';
+  if (!dept) return null;
   const d = dept.toLowerCase();
-  if (d.includes('mountain') || d.includes('mtb')) return 'Mountain';
-  if (d.includes('road'))    return 'Road';
+  if (d.includes('frame'))   return null;   // frames only — exclude from bike shop
+  if (d.includes('mountain') || d.includes('mtb') || d.includes('fat')) return 'Mountain';
   if (d.includes('gravel'))  return 'Gravel';
   if (d.includes('electric') || d.includes('e-bike')) return 'E-Bike';
   if (d.includes('comfort') || d.includes('cruiser')) return 'Comfort';
   if (d.includes('kid') || d.includes('junior'))      return 'Kids';
-  if (d.includes('commut') || d.includes('hybrid'))   return 'Commuter';
-  if (d.includes('fat'))   return 'Mountain';
+  if (d.includes('commut') || d.includes('hybrid') || d.includes('road') || d.includes('cross')) return 'Commuter';
+  if (d.includes('bmx'))     return 'Kids';
   return 'Other';
 }
 

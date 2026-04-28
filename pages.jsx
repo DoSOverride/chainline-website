@@ -52,7 +52,7 @@ const getBikeSpecs = (b) => {
     return [
       ...rows,
       { label: 'Bike Type', value: b.type || '' },
-      { label: 'Colours',   value: 'See in store for colour options' },
+      
       { label: 'Warranty',  value: '2-year frame & fork, 1-year components' },
     ];
   }
@@ -60,7 +60,7 @@ const getBikeSpecs = (b) => {
     { label: 'Brand',     value: b.brand || b.vendor || '' },
     { label: 'Type',      value: b.type || '' },
     { label: 'Wheel Size',value: ws },
-    { label: 'Colours',   value: 'See in store for colour options' },
+    
     { label: 'Warranty',  value: '2-year frame & fork, 1-year components' },
   ];
 };
@@ -268,7 +268,6 @@ const ShopPage = () => {
   const [saleOnly, setSale] = React.useState(false);
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
-  const [avail, setAvail]               = React.useState("instock");
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
   // Re-render when Shopify images arrive so resolveImage() picks them up
@@ -314,11 +313,11 @@ const ShopPage = () => {
     }
   });
 
-  // Use live Lightspeed data if available, otherwise fall back to static CSV catalog
-  const allProducts = liveProducts || SHOP_BIKES;
+  // Live data already pre-filtered to instock; static fallback filters here
+  const allProducts = (liveProducts || SHOP_BIKES).filter(b => b.inStock !== false);
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
-  const TYPES = [
+  const ALL_TYPES = [
     { label:"All",      match: () => true },
     { label:"Mountain", match: b => b.type === "Mountain" },
     { label:"Gravel",   match: b => b.type === "Gravel" },
@@ -327,14 +326,13 @@ const ShopPage = () => {
     { label:"Comfort",  match: b => b.type === "Comfort" },
     { label:"Kids",     match: b => b.type === "Kids" },
   ];
+  // Only show type tabs that have at least one bike in the current data
+  const TYPES = ALL_TYPES.filter(t => t.label === "All" || allProducts.some(b => t.match(b)));
 
   const matchType = TYPES.find(t => t.label === type) || TYPES[0];
 
   let filtered = allProducts
     .filter(b => (brand === "All" || (b.brand || b.vendor || "") === brand) && matchType.match(b));
-
-  if (avail === "instock")      filtered = filtered.filter(b => b.inStock !== false);
-  if (avail === "specialorder") filtered = filtered.filter(b => b.inStock === false);
 
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
@@ -348,65 +346,51 @@ const ShopPage = () => {
       {/* ── Sticky filter bar ── */}
       <div style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
 
-        {/* Row 1 — special + brands */}
-        <div className="container-wide" style={{ paddingTop:"18px", paddingBottom:0, display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-          {/* All Bikes */}
-          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); setAvail("instock"); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly&&avail==="instock" ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly&&avail==="instock" ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly&&avail==="instock" ? "var(--black)" : "var(--hairline)" }}>
+        {/* Row 1 — All Bikes / Sale + status */}
+        <div className="container-wide" style={{ paddingTop:"14px", paddingBottom:0, display:"flex", alignItems:"center", gap:8 }}>
+          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); }} data-cursor="link"
+            style={{ ...btnBase, padding:"8px 18px", fontSize:12, background: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "var(--hairline)" }}>
             All Bikes
           </button>
-          {/* In Stock */}
-          <button onClick={() => { setAvail("instock"); setSale(false); setBrand("All"); setType("All"); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="instock"&&!saleOnly&&brand==="All"?"var(--black)":"transparent", color:avail==="instock"&&!saleOnly&&brand==="All"?"var(--white)":"var(--black)", borderColor:avail==="instock"&&!saleOnly&&brand==="All"?"var(--black)":"var(--hairline)" }}>
-            In Stock
-          </button>
-          {/* Special Order */}
-          <button onClick={() => { setAvail("specialorder"); setSale(false); setBrand("All"); setType("All"); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="specialorder"&&!saleOnly?"var(--black)":"transparent", color:avail==="specialorder"&&!saleOnly?"var(--white)":"var(--black)", borderColor:avail==="specialorder"&&!saleOnly?"var(--black)":"var(--hairline)" }}>
-            Special Order
-          </button>
-          {/* Sale Bikes */}
-          <button onClick={() => { setSale(true); setBrand("All"); setType("All"); setAvail("all"); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:saleOnly?"var(--black)":"transparent", color:saleOnly?"var(--white)":"var(--black)", borderColor:saleOnly?"var(--black)":"var(--hairline)" }}>
+          <button onClick={() => { setSale(true); setBrand("All"); setType("All"); }} data-cursor="link"
+            style={{ ...btnBase, padding:"8px 18px", fontSize:12, background:saleOnly?"var(--black)":"transparent", color:saleOnly?"var(--white)":"var(--black)", borderColor:saleOnly?"var(--black)":"var(--hairline)" }}>
             Sale Bikes
           </button>
+          <div style={{ marginLeft:"auto", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
+            {liveLoading ? "Loading live inventory…" : liveProducts ? `${filtered.length} bikes · Live` : filtered.length + " bikes"}
+          </div>
+          <select value={sort} onChange={e => setSort(e.target.value)}
+            style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"5px 10px", background:"var(--white)", outline:"none" }}>
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price ↑</option>
+            <option value="price-desc">Price ↓</option>
+          </select>
+        </div>
 
-          <div style={{ width:1, height:28, background:"var(--hairline)", margin:"0 8px" }} />
-
+        {/* Row 2 — type tabs + brand chips (scrollable) */}
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"8px", paddingBottom:"12px", overflowX:"auto", gap:0, scrollbarWidth:"none" }}>
+          {/* Type tabs */}
+          {TYPES.map(t => (
+            <button key={t.label} onClick={() => { setType(t.label); setSale(false); }} data-cursor="link"
+              style={{ padding:"5px 14px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", background:"transparent", border:"none", whiteSpace:"nowrap", color: type===t.label&&!saleOnly ? "var(--black)" : "var(--gray-400)", borderBottom:"2px solid " + (type===t.label&&!saleOnly ? "var(--black)" : "transparent"), transition:"all .2s", flexShrink:0 }}>
+              {t.label}
+            </button>
+          ))}
+          {/* Divider */}
+          <div style={{ width:1, height:20, background:"var(--hairline)", margin:"0 12px", flexShrink:0 }} />
           {/* Brand chips */}
           {ALL_BRANDS.map(br => {
             const active = brand === br && !saleOnly;
             const count  = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
+            if (count === 0) return null;
             return (
-              <button key={br} onClick={() => { setBrand(br); setSale(false); setAvail("all"); }} data-cursor="link"
-                style={{ ...btnBase, padding:"10px 18px", fontSize:13, background:active?"var(--black)":"transparent", color:active?"var(--white)":"var(--black)", borderColor:active?"var(--black)":"var(--hairline)", display:"flex", alignItems:"center", gap:8 }}>
+              <button key={br} onClick={() => { setBrand(br === brand ? "All" : br); setSale(false); }} data-cursor="link"
+                style={{ padding:"5px 12px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", background: active ? "var(--black)" : "transparent", color: active ? "var(--white)" : "var(--gray-500)", border:"none", borderBottom:"2px solid " + (active ? "var(--black)" : "transparent"), whiteSpace:"nowrap", transition:"all .2s", flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
                 {br}
-                {count > 0 && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.6 }}>{count}</span>}
+                <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.5 }}>{count}</span>
               </button>
             );
           })}
-
-          <div style={{ marginLeft:"auto", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", paddingRight:4 }}>
-            {liveLoading ? "Loading live inventory…" : liveProducts ? `${filtered.length} bikes · Live from Lightspeed` : saleOnly ? "Coming soon" : filtered.length + " bikes"}
-          </div>
-        </div>
-
-        {/* Row 2 — types + sort */}
-        <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", paddingTop:"10px", paddingBottom:"14px", flexWrap:"wrap", gap:8 }}>
-          <div style={{ display:"flex", gap:0, flexWrap:"wrap" }}>
-            {TYPES.map(t => (
-              <button key={t.label} onClick={() => { setType(t.label); setSale(false); }} data-cursor="link"
-                style={{ padding:"6px 16px", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", background:"transparent", border:"none", color: type===t.label&&!saleOnly ? "var(--black)" : "var(--gray-400)", borderBottom:"2px solid " + (type===t.label&&!saleOnly ? "var(--black)" : "transparent"), transition:"all .2s" }}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <select value={sort} onChange={e => setSort(e.target.value)}
-            style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"6px 12px", background:"var(--white)", outline:"none" }}>
-            <option value="featured">Featured</option>
-            <option value="price-asc">Price: Low → High</option>
-            <option value="price-desc">Price: High → Low</option>
-          </select>
         </div>
       </div>
 
