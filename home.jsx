@@ -353,20 +353,21 @@ const BookBanner = () => (
 // Bike image scroller — infinite marquee of bike photos
 const BikeScroller = () => {
   const bikes = FEATURED_BIKES.filter(b => b.img);
-  const doubled = [...bikes, ...bikes]; // seamless loop
+  const BikeItem = ({ b }) => (
+    <div onClick={() => window.cl.go("bike", { bike: b })}
+      style={{ flexShrink:0, width:200, height:148, marginRight:20, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
+      <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }} />
+    </div>
+  );
+  const Track = () => (
+    <div className="marquee-track" style={{ display:"flex" }}>
+      {bikes.map((b, i) => <BikeItem key={i} b={b} />)}
+    </div>
+  );
   return (
-    <div style={{ overflow:"hidden", borderTop:"1px solid var(--hairline)", borderBottom:"1px solid var(--hairline)", background:"var(--paper)", padding:"28px 0" }}>
-      <div style={{ display:"flex", animation:"marquee 36s linear infinite", flexShrink:0 }}>
-        {doubled.map((b, i) => (
-          <div key={i} onClick={() => window.cl.go("bike", { bike: b })}
-            style={{ flexShrink:0, width:220, height:160, marginRight:24, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
-            {b.img
-              ? <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"10%", mixBlendMode:"multiply" }} />
-              : <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", textTransform:"uppercase", letterSpacing:".12em" }}>{b.brand}</div>
-            }
-          </div>
-        ))}
-      </div>
+    <div className="marquee" style={{ padding:"20px 0", background:"var(--paper)", borderTop:"1px solid var(--hairline)", borderBottom:"1px solid var(--hairline)" }}>
+      <Track />
+      <Track />
     </div>
   );
 };

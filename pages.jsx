@@ -313,8 +313,21 @@ const ShopPage = () => {
     }
   });
 
-  // Live data already pre-filtered to instock; static fallback filters here
-  const allProducts = (liveProducts || SHOP_BIKES).filter(b => b.inStock !== false);
+  // Merge strategy: SHOP_BIKES is the catalog; live data overlays price + stock status.
+  // Brand views show full catalog (instock + contact-us) so nothing is hidden.
+  const allProducts = React.useMemo(() => {
+    return SHOP_BIKES.map(s => {
+      if (!liveProducts) return s; // loading: use static
+      const sn = _norm(s.name);
+      const br = _norm(s.brand || '');
+      const namePart = br && sn.startsWith(br) ? sn.slice(br.length).trim() : sn;
+      const live = liveProducts.find(l => {
+        const ln = _norm(l.name);
+        return ln.startsWith(namePart) || (br && ln.startsWith(br) && ln.slice(br.length).trim().startsWith(namePart.slice(0, 8)));
+      });
+      return live ? { ...s, price: live.price, inStock: true, qty: live.qty } : { ...s, inStock: false };
+    });
+  }, [liveProducts]);
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
   const ALL_TYPES = [
@@ -331,8 +344,13 @@ const ShopPage = () => {
 
   const matchType = TYPES.find(t => t.label === type) || TYPES[0];
 
-  let filtered = allProducts
-    .filter(b => (brand === "All" || (b.brand || b.vendor || "") === brand) && matchType.match(b));
+  let filtered = allProducts.filter(b => {
+    const matchesBrand = brand === "All" || (b.brand || b.vendor || "") === brand;
+    const matchesType  = matchType.match(b);
+    // Global view: instock only. Brand view: show full catalog.
+    const matchesStock = brand !== "All" || b.inStock !== false;
+    return matchesBrand && matchesType && matchesStock;
+  });
 
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
@@ -344,7 +362,7 @@ const ShopPage = () => {
       <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
 
       {/* ── Sticky filter bar ── */}
-      <div style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
+      <div className="shop-filter-sticky" style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
 
         {/* Row 1 — All Bikes / Sale + status */}
         <div className="container-wide" style={{ paddingTop:"14px", paddingBottom:0, display:"flex", alignItems:"center", gap:8 }}>

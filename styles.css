@@ -1138,10 +1138,19 @@ img {
     height: auto !important;
   }
 
-  /* Shop grid — 1 column on small mobile, 2 on tablet */
+  /* Shop grid — 1 column on small mobile */
   .shop-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
   }
+
+  /* Shop sticky filter: lower top offset on mobile */
+  .shop-filter-sticky {
+    top: 64px !important;
+  }
+
+  /* Mega menu — hide on mobile */
+  .mega { display: none !important; }
 
   /* Services page — stack on mobile */
   .services-row {
@@ -1280,6 +1289,7 @@ img {
 }
 
 @media (max-width: 480px) {
+  .shop-grid { grid-template-columns: 1fr !important; }
   .display-xxl { font-size: clamp(36px, 12vw, 72px); }
   .display-xl  { font-size: clamp(32px, 10vw, 64px); }
   .display-l   { font-size: clamp(26px, 8vw, 48px); }

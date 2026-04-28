@@ -103,16 +103,15 @@ const ArrowRight = ({ size = 12 }) => (
 );
 
 const MegaMenu = ({ open, onOpen, onClose }) => {
+  const BIKE_TYPES  = ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"];
+  const BIKE_BRANDS = ["Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots", "Knolly", "Revel"];
   const data = {
     shop: {
+      topTypes:  BIKE_TYPES,
+      topBrands: BIKE_BRANDS,
       cols: [
-        { h: "Bikes", items: ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Kids", "|", "Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots", "Knolly", "Revel"] },
         { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
-        { h: "More", items: ["Sale", "Gift Cards", "Classifieds"], feature: {
-          label: "FEATURED  /  TRANSITION BIKES",
-          title: "Regulator CX — The eMTB",
-          img: "https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif",
-        }},
+        { h: "More", items: ["Sale", "Gift Cards", "Classifieds"] },
       ],
     },
     services: {
@@ -142,7 +141,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "commuter") return ["shop", { type: "Commuter" }];
     if (l === "kids") return ["shop", { type: "Kids" }];
     // Brand filters → shop page filtered by brand
-    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
+    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
     // Parts / accessories — generic shop view
     if (l.includes("gift")) return ["giftcards", null];
     if (l.includes("classified")) return ["classifieds", null];
@@ -164,35 +163,64 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     window.cl.go(route, intent);
   };
   const d = open && data[open];
+  const linkStyle = { padding:"5px 0", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", textDecoration:"none", transition:"color .2s", whiteSpace:"nowrap" };
   return (
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          <div className="mega-grid">
-            {d.cols.slice(0, 2).map((c, i) => (
-              <div key={i} className="mega-col">
-                <h4>{c.h}</h4>
-                <ul>{c.items.map((it, j) => it === "|"
-                  ? <li key="sep" style={{ borderTop:"1px solid var(--hairline)", margin:"8px 0", listStyle:"none", paddingTop:0 }} />
-                  : <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>
-                )}</ul>
+          {/* Shop panel: full-width type row + brand row, then cols */}
+          {d.topTypes ? (
+            <>
+              <div style={{ display:"flex", alignItems:"center", gap:0, paddingBottom:20, borderBottom:"1px solid var(--hairline)", flexWrap:"wrap" }}>
+                {d.topTypes.map((it, i) => (
+                  <a key={it} href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}
+                    style={{ ...linkStyle, fontFamily:"var(--display)", fontSize:18, fontWeight:500, letterSpacing:"-.01em", textTransform:"uppercase", color:"var(--black)", padding:"4px 20px 4px " + (i===0?"0":"20px"), borderLeft: i===0?"none":"1px solid var(--hairline)" }}>
+                    {it}
+                  </a>
+                ))}
+                <div style={{ width:1, height:20, background:"var(--hairline)", margin:"0 20px" }} />
+                {d.topBrands.map((br, i) => (
+                  <a key={br} href="#" data-cursor="link" onClick={(e) => handleClick(e, br)}
+                    style={{ ...linkStyle, color:"var(--gray-500)", padding:"4px 14px 4px " + (i===0?"0":"14px") }}>
+                    {br}
+                  </a>
+                ))}
               </div>
-            ))}
-            <div className="mega-col">
-              <h4>{d.cols[2].h}</h4>
-              <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map((it) => it === "|" ? <li key="sep" style={{ borderTop:"1px solid var(--hairline)", margin:"8px 0", listStyle:"none" }} /> : <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-              <a href="#" data-cursor="link" onClick={(e) => handleClick(e, d.cols[2].feature.title)} className="mega-feature" style={{ aspectRatio: "16/8", display: "flex", alignItems: "flex-end", padding: 24, textDecoration: "none", position: "relative", overflow: "hidden", background: "var(--gray-100)" }}>
-                {d.cols[2].feature.img && (
-                  <img src={d.cols[2].feature.img} alt={d.cols[2].feature.title} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
-                )}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%)" }} />
-                <div style={{ position: "relative", zIndex: 2, color: "var(--white)" }}>
-                  <div className="eyebrow eyebrow-light" style={{ marginBottom: 8 }}>{d.cols[2].feature.label}</div>
-                  <div className="display-s" style={{ color: "var(--white)" }}>{d.cols[2].feature.title}</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:64, paddingTop:24 }}>
+                {d.cols.map((c, i) => (
+                  <div key={i} className="mega-col">
+                    <h4>{c.h}</h4>
+                    <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            /* Services / Explore: keep existing 3-col layout */
+            <div className="mega-grid">
+              {d.cols.slice(0, 2).map((c, i) => (
+                <div key={i} className="mega-col">
+                  <h4>{c.h}</h4>
+                  <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
                 </div>
-              </a>
+              ))}
+              {d.cols[2] && (
+                <div className="mega-col">
+                  <h4>{d.cols[2].h}</h4>
+                  <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                  {d.cols[2].feature && (
+                    <a href="#" data-cursor="link" onClick={(e) => handleClick(e, d.cols[2].feature.title)} className="mega-feature" style={{ aspectRatio:"16/8", display:"flex", alignItems:"flex-end", padding:24, textDecoration:"none", position:"relative", overflow:"hidden", background:"var(--gray-100)" }}>
+                      <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 60%)" }} />
+                      <div style={{ position:"relative", zIndex:2, color:"var(--white)" }}>
+                        <div className="eyebrow eyebrow-light" style={{ marginBottom:8 }}>{d.cols[2].feature.label}</div>
+                        <div className="display-s" style={{ color:"var(--white)" }}>{d.cols[2].feature.title}</div>
+                      </div>
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>
