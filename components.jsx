@@ -40,7 +40,7 @@ const Announce = () => {
 };
 
 // Header / Nav
-const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen }) => {
+const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch }) => {
   const items = [
     { id: "shop", label: "Shop", panel: "shop" },
     { id: "services", label: "Services", panel: "services" },
@@ -73,7 +73,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen 
             ))}
           </nav>
           <div className="nav-utility">
-            <button className="nav-utility-btn" data-cursor="link"><span className="nav-utility-text">Search</span><SearchIcon/></button>
+            <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
             <button className="nav-utility-btn" data-cursor="link"><span className="nav-utility-text">Account</span></button>
             <button className="nav-utility-btn" data-cursor="link" onClick={onCart}>
               <span className="nav-utility-text">Cart</span>
@@ -286,25 +286,36 @@ const Footer = () => (
           <div className="serif-italic" style={{ fontSize: 22, lineHeight: 1.3, color: "var(--gray-300)", marginBottom: 24, maxWidth: 360 }}>
             Built for Kelowna.<br/>Backed by Canada.<br/>Since 2009.
           </div>
-          <div style={{ display: "flex", gap: 18, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>
-            <a href="#" className="link-underline" data-cursor="link">Instagram</a>
-            <a href="#" className="link-underline" data-cursor="link">Strava</a>
-            <a href="#" className="link-underline" data-cursor="link">Facebook</a>
+          <div style={{ display: "flex", gap: 18, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
+            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Instagram</a>
+            <a href="https://facebook.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Facebook</a>
+            <a href="https://tiktok.com/@ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">TikTok</a>
+            <a href="https://youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">YouTube</a>
+            <a href="https://www.strava.com/clubs/chainlinecycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Strava</a>
           </div>
         </div>
         <div className="footer-col">
           <h4>Shop</h4>
-          <ul>{["Bikes", "Parts & Accessories", "Apparel", "Sale", "Gift Cards", "Classifieds"].map((i) => <li key={i}><a href="#" className="link-underline" data-cursor="link">{i}</a></li>)}</ul>
+          <ul>
+            {[["Bikes","shop"],["Parts & Accessories","parts"],["Gift Cards","giftcards"],["Sale","shop"],["Classifieds","classifieds"],["Our Brands","brands"]].map(([label,route]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
+            ))}
+          </ul>
         </div>
         <div className="footer-col">
           <h4>Services</h4>
-          <ul>{["Book a Service", "Bike Fitting", "Custom Builds", "Storage Program", "Demo Bikes", "Warranty"].map((i) => <li key={i}><a href="#" className="link-underline" data-cursor="link">{i}</a></li>)}</ul>
+          <ul>
+            {[["Book a Service","book"],["Bike Fitting","book"],["Custom Builds","services"],["Storage Program","services"],["Demo Bikes","book"],["Warranty","services"]].map(([label,route]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
+            ))}
+          </ul>
         </div>
         <div className="footer-col">
           <h4>Visit Us</h4>
           <div style={{ fontSize: 14, lineHeight: 1.7, color: "var(--gray-300)" }}>
-            1139 Ellis St.<br/>
-            Kelowna, BC V1Y 1Z5<br/>
+            <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" className="link-underline" data-cursor="link">
+              1139 Ellis St.<br/>Kelowna, BC V1Y 1Z5
+            </a><br/>
             <a href="tel:2508601968" className="link-underline" data-cursor="link">(250) 860-1968</a><br/>
             <a href="mailto:bikes@chainline.ca" className="link-underline" data-cursor="link">bikes@chainline.ca</a>
           </div>
@@ -321,9 +332,9 @@ const Footer = () => (
           <span>VISA</span><span>MC</span><span>AMEX</span><span>APPLE PAY</span><span>SHOP PAY</span>
         </div>
         <div style={{ display: "flex", gap: 18 }}>
-          <a href="#" className="link-underline" data-cursor="link">Privacy</a>
-          <a href="#" className="link-underline" data-cursor="link">Terms</a>
-          <a href="#" className="link-underline" data-cursor="link">Accessibility</a>
+          <a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("privacy");}}>Privacy</a>
+          <a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("terms");}}>Terms</a>
+          <a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("contact");}}>Accessibility</a>
         </div>
       </div>
     </div>
@@ -391,7 +402,7 @@ const Counter = ({ to, suffix = "", prefix = "", duration = 1600 }) => {
 
 // Brand marquee
 const BrandMarquee = ({ fast }) => {
-  const brands = ["MARIN", "TRANSITION", "SURLY", "SALSA", "PIVOT", "BIANCHI", "MOOTS", "SHIMANO", "SRAM", "FOX", "RACEFACE", "ENVE"];
+  const brands = ["MARIN", "TRANSITION", "SURLY", "SALSA", "PIVOT", "BIANCHI", "MOOTS", "KNOLLY", "REVEL"];
   const renderRow = (k) => (
     <div className="marquee-track" key={k}>
       {brands.map((b, i) => (
@@ -410,4 +421,156 @@ const BrandMarquee = ({ fast }) => {
   );
 };
 
-Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, Announce });
+// Chat widget
+const ChatWidget = () => {
+  const [open, setOpen] = React.useState(false);
+  const [msgs, setMsgs] = React.useState([
+    { role: "bot", text: "Hey! I'm the ChainLine assistant. Ask me about bikes, services, hours, or anything shop-related." }
+  ]);
+  const [input, setInput] = React.useState("");
+  const bottomRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [msgs, open]);
+
+  const respond = (q) => {
+    const l = q.toLowerCase();
+    if (/hour|open|clos|when/.test(l)) return "Mon 10–5 · Tue–Fri 9:30–5:30 · Sat 10–4 · Sun closed.";
+    if (/address|where|location|find us|directions/.test(l)) return "We're at 1139 Ellis St, Kelowna, BC V1Y 1Z5 — downtown Kelowna. Click 'Get Directions' on our Contact page.";
+    if (/phone|call/.test(l)) return "Call us at (250) 860-1968 — we answer our own phone!";
+    if (/email/.test(l)) return "Reach us at bikes@chainline.ca. We reply same day.";
+    if (/book|appoint|schedule/.test(l)) return "You can book a service, fitting, demo, or storage online — just head to the Book page! Or call (250) 860-1968.";
+    if (/tune|service|repair|mechanic|overhaul/.test(l)) return "We do everything from basic tune-ups ($89) to full overhauls ($425). Same-day turnaround for most tune-ups. Book online!";
+    if (/fit|fitting|sizing|position/.test(l)) return "We offer professional bike fitting: Position Check $80, Road/Gravel Fit $220, MTB Fit $220, Full Body + Video $380.";
+    if (/demo|test ride/.test(l)) return "We have a 12-bike demo fleet you can take out on the trails. Book a demo ride on the Book page!";
+    if (/storage|winter|store my/.test(l)) return "Our winter storage program runs Oct–spring. Climate-controlled, locked, monthly battery checks for e-bikes. Book it online.";
+    if (/warranty|defect|broken|recall/.test(l)) return "All bikes carry full manufacturer warranties — typically lifetime or 5-year frame, 1–2 year components. Bring it in and we'll handle it.";
+    if (/brand|carry|stock|marin|transition|surly|salsa|pivot|bianchi|moots|knolly|revel/.test(l)) return "We carry Marin, Transition, Surly, Salsa, Pivot, Bianchi, Moots, Knolly, and Revel. Browse the Shop page for current inventory.";
+    if (/price|cost|how much/.test(l)) return "Bikes start around $430 and go up to $13,000+. Services from $55. What are you looking for?";
+    if (/ride|group ride|strava/.test(l)) return "We run group rides every week — MTB, road, gravel, social. Check the Group Rides page for the full schedule!";
+    if (/trail|knox|bear creek|black mountain/.test(l)) return "We've got a trail guide for Knox Mountain, Bear Creek, Black Mountain, Myra Canyon, and more. Hit the Trails page!";
+    if (/gift card|gift/.test(l)) return "Gift cards are available in-store and online — from $50 to $500. No expiry, good on anything we sell.";
+    if (/hi|hey|hello|howdy|sup/.test(l)) return "Hey! What can I help you with today?";
+    if (/thank/.test(l)) return "You're welcome! Anything else I can help with?";
+    return "Great question! For anything I can't answer here, call us at (250) 860-1968 or email bikes@chainline.ca — happy to help.";
+  };
+
+  const send = () => {
+    const text = input.trim();
+    if (!text) return;
+    const reply = respond(text);
+    setMsgs(m => [...m, { role: "user", text }, { role: "bot", text: reply }]);
+    setInput("");
+  };
+
+  return (
+    <>
+      <button onClick={() => setOpen(o => !o)} data-cursor="link"
+        style={{ position: "fixed", left: 32, bottom: 32, zIndex: 80, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
+        {open
+          ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2l12 12M14 2L2 14"/></svg>
+          : <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4h16v10H8l-4 3v-3H2z"/></svg>
+        }
+      </button>
+      {open && (
+        <div style={{ position: "fixed", left: 32, bottom: 96, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
+          <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
+            <div>
+              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine</div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", marginTop: 2 }}>Usually replies instantly</div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e" }} />
+              <span style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>Online</span>
+            </div>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 10 }}>
+            {msgs.map((m, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
+                <div style={{ maxWidth: "82%", padding: "9px 13px", background: m.role === "user" ? "var(--black)" : "var(--paper)", color: m.role === "user" ? "var(--white)" : "var(--black)", fontSize: 13, lineHeight: 1.55, fontFamily: "var(--body)" }}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+            <div ref={bottomRef} />
+          </div>
+          <div style={{ padding: "10px 14px", borderTop: "1px solid var(--hairline)", display: "flex", gap: 8, alignItems: "center" }}>
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
+              placeholder="Ask anything..."
+              style={{ flex: 1, border: "none", outline: "none", fontFamily: "var(--body)", fontSize: 13, background: "transparent", padding: "4px 0" }} />
+            <button onClick={send}
+              style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)", cursor: "pointer", background: "none", border: "none", padding: 0 }}>Send</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+// Search modal
+const SearchModal = ({ onClose }) => {
+  const [q, setQ] = React.useState("");
+  const inputRef = React.useRef(null);
+  React.useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
+
+  const allBikes = (window.SHOP_BIKES || []);
+  const results = q.length < 2 ? [] : allBikes.filter(b => {
+    const s = (b.name + " " + b.brand + " " + (b.vendor||"") + " " + b.type + " " + (b.tags||"")).toLowerCase();
+    return s.includes(q.toLowerCase());
+  }).slice(0, 8);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 500, background: "rgba(10,10,10,0.7)", backdropFilter: "blur(4px)" }}>
+      <div onClick={e => e.stopPropagation()} style={{ position: "absolute", top: 0, left: 0, right: 0, background: "var(--white)", padding: "32px 40px 24px", boxShadow: "0 8px 48px rgba(0,0,0,0.2)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, borderBottom: "2px solid var(--black)", paddingBottom: 16, marginBottom: 24 }}>
+          <SearchIcon />
+          <input ref={inputRef} value={q} onChange={e => setQ(e.target.value)}
+            placeholder="Search bikes, brands, types..."
+            style={{ flex: 1, border: "none", outline: "none", fontSize: 22, fontFamily: "var(--display)", fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.01em", background: "transparent" }} />
+          <button onClick={onClose} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)", cursor: "pointer", background: "none", border: "none" }}>ESC</button>
+        </div>
+        {q.length >= 2 && results.length === 0 && (
+          <div style={{ fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-400)", padding: "16px 0" }}>No results for "{q}"</div>
+        )}
+        {results.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {results.map((b, i) => (
+              <button key={i} onClick={() => { window.cl.go("bike", { bike: b }); onClose(); }} data-cursor="link"
+                style={{ display: "flex", alignItems: "center", gap: 24, padding: "16px 0", borderBottom: "1px solid var(--hairline)", background: "none", border: "none", borderBottom: "1px solid var(--hairline)", cursor: "pointer", textAlign: "left", width: "100%" }}>
+                {b.img && <img src={b.img} alt="" loading="lazy" style={{ width: 64, height: 64, objectFit: "contain", background: "var(--paper)", padding: 4, flexShrink: 0 }} />}
+                <div style={{ flex: 1 }}>
+                  <div className="eyebrow" style={{ marginBottom: 4 }}>{b.brand || b.vendor}  ·  {b.type}</div>
+                  <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.01em" }}>{b.name || b.title}</div>
+                </div>
+                <div style={{ fontFamily: "var(--display)", fontSize: 16, fontWeight: 500, flexShrink: 0 }}>${(b.price||0).toLocaleString()}</div>
+              </button>
+            ))}
+            <button onClick={() => { window.cl.go("shop"); onClose(); }} data-cursor="link"
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 0", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)" }}>
+              View all bikes in Shop <ArrowRight size={10} />
+            </button>
+          </div>
+        )}
+        {q.length < 2 && (
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {["Mountain", "Gravel", "E-Bike", "Commuter", "Marin", "Transition", "Surly", "Knolly"].map(tag => (
+              <button key={tag} onClick={() => setQ(tag)} data-cursor="link"
+                style={{ padding: "8px 16px", border: "1px solid var(--hairline)", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", cursor: "pointer", background: "none" }}>
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, Announce, ChatWidget, SearchModal });

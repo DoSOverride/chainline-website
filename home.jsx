@@ -8,14 +8,14 @@ const Hero = ({ variant }) => {
   ];
   const v = variants[variant % variants.length];
   return (
-    <section className="hero" data-screen-label="01 Hero" style={{ position: "relative", height: "100vh", minHeight: 720, color: "var(--white)", overflow: "hidden", background: "var(--black)" }}>
+    <section className="hero hero-section" data-screen-label="01 Hero" style={{ position: "relative", height: "100vh", minHeight: 720, color: "var(--white)", overflow: "hidden", background: "var(--black)" }}>
       <div className="hero-bg" style={{ position: "absolute", inset: 0 }}>
         <div className="kenburns ph ph-corners" style={{ height: "100%" }}>
           <span className="ph-label" style={{ left: 24, bottom: 24 }}>HERO IMAGE  /  RIDER IN MOTION  /  B&W  /  16:9</span>
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.1) 30%, rgba(10,10,10,0.7) 100%)" }} />
       </div>
-      <div className="container-wide" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: 80, paddingTop: 160 }}>
+      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: 80, paddingTop: 160 }}>
         <div className="eyebrow eyebrow-light" style={{ marginBottom: 32 }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 12 }}>
             <span style={{ width: 24, height: 1, background: "currentColor", display: "inline-block" }}/>
@@ -40,7 +40,7 @@ const Hero = ({ variant }) => {
       </div>
 
       {/* Scroll indicator */}
-      <div style={{ position: "absolute", bottom: 0, right: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+      <div className="hero-scroll-indicator" style={{ position: "absolute", bottom: 0, right: 40, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
         <span style={{ writingMode: "vertical-rl", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--gray-300)" }}>SCROLL</span>
         <div style={{ width: 1, height: 80, background: "var(--gray-300)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -40, left: 0, width: 1, height: 40, background: "var(--white)", animation: "scrollDrip 2.4s ease-in-out infinite" }} />
@@ -182,7 +182,7 @@ const StatsBar = () => (
 
 // Brand logos grid
 const BrandsGrid = () => {
-  const brands = ["MARIN", "TRANSITION", "SURLY", "SALSA", "PIVOT", "BIANCHI", "MOOTS"];
+  const brands = ["MARIN", "TRANSITION", "SURLY", "SALSA", "PIVOT", "BIANCHI", "MOOTS", "KNOLLY", "REVEL"];
   return (
     <section className="section section-pad bg-paper" data-screen-label="04 Brands">
       <div className="container-wide">
@@ -193,7 +193,7 @@ const BrandsGrid = () => {
           </div>
           <div className="eyebrow">Curated, not stocked.</div>
         </div>
-        <div className="reveal home-brands-grid" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
+        <div className="reveal home-brands-grid" style={{ display: "grid", gridTemplateColumns: "repeat(9, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
           {brands.map((b, i) => (
             <a key={i} href="#" data-cursor="link" className="brand-tile" style={{ aspectRatio: "1.1/1", display: "grid", placeItems: "center", borderRight: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", background: "var(--white)", fontFamily: "var(--display)", fontSize: 14, fontWeight: 600, letterSpacing: ".14em", transition: "background .3s, color .3s" }}>
               {b}

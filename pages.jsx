@@ -568,7 +568,7 @@ const BookPage = () => {
       <section className="section section-pad bg-white">
         <div className="container-narrow">
           <div className="eyebrow reveal" style={{ marginBottom: 24 }}>Step 1  ·  Choose your visit</div>
-          <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 80 }}>
+          <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 80 }}>
             {types.map(t => (
               <button key={t.id} onClick={() => { setType(t.id); setStep(1); }} data-cursor="link" style={{ padding: 32, border: "1px solid " + (type === t.id ? "var(--black)" : "var(--hairline)"), background: type === t.id ? "var(--black)" : "var(--white)", color: type === t.id ? "var(--white)" : "var(--black)", textAlign: "left", aspectRatio: "1", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "all .3s" }}>
                 <div style={{ fontSize: 32, fontFamily: "var(--display)" }}>{t.glyph}</div>
@@ -612,12 +612,12 @@ const BookPage = () => {
             <div className="reveal">
               <h2 className="display-l" style={{ marginBottom: 40 }}>Your bike.</h2>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-                <Field label="Brand" placeholder="e.g. Transition" />
-                <Field label="Model" placeholder="e.g. Sentinel" />
-                <Field label="Year" placeholder="2023" />
-                <Field label="Frame size" placeholder="Medium" />
+                <Field label="Brand" placeholder="e.g. Transition" value={data.bikeBrand||""} onChange={v=>update("bikeBrand",v)} />
+                <Field label="Model" placeholder="e.g. Sentinel" value={data.bikeModel||""} onChange={v=>update("bikeModel",v)} />
+                <Field label="Year" placeholder="2023" value={data.bikeYear||""} onChange={v=>update("bikeYear",v)} />
+                <Field label="Frame size" placeholder="Medium" value={data.bikeSize||""} onChange={v=>update("bikeSize",v)} />
               </div>
-              <Field label="What's the issue?" textarea placeholder="Brakes feel spongy, drivetrain skipping in 4th gear..." />
+              <Field label="What's the issue?" textarea placeholder="Brakes feel spongy, drivetrain skipping in 4th gear..." value={data.issue||""} onChange={v=>update("issue",v)} />
               <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
                 <button className="btn" data-cursor="link" onClick={next}>Continue <ArrowRight /></button>
@@ -659,7 +659,7 @@ const BookPage = () => {
                     `Type: ${types.find(t=>t.id===type)?.title || type}\n` +
                     `Service: ${data.service || 'Not specified'}\n` +
                     `Preferred Date: ${data.date || 'Flexible'}\n\n` +
-                    `Bike:\nBrand: ${data.brand||''}\nModel: ${data.model||''}\nYear: ${data.year||''}\nSize: ${data.size||''}\nIssue: ${data.issue||''}\n\n` +
+                    `Bike:\nBrand: ${data.bikeBrand||''}\nModel: ${data.bikeModel||''}\nYear: ${data.bikeYear||''}\nSize: ${data.bikeSize||''}\nIssue: ${data.issue||''}\n\n` +
                     `Customer:\nName: ${data.firstName||''} ${data.lastName||''}\nEmail: ${data.email||''}\nPhone: ${data.phone||''}`
                   );
                   window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
@@ -713,52 +713,59 @@ const BookPage = () => {
   );
 };
 
-const Field = ({ label, placeholder, textarea }) => (
+const Field = ({ label, placeholder, textarea, value, onChange }) => (
   <label style={{ display: "block" }}>
     <div className="eyebrow" style={{ marginBottom: 10 }}>{label}</div>
     {textarea ? (
-      <textarea placeholder={placeholder} rows={4} style={{ width: "100%", padding: "12px 0", border: "none", borderBottom: "1px solid var(--hairline)", outline: "none", fontFamily: "var(--body)", fontSize: 16, resize: "vertical", background: "transparent" }} />
+      <textarea placeholder={placeholder} rows={4} value={value||""} onChange={e => onChange && onChange(e.target.value)}
+        style={{ width: "100%", padding: "12px 0", border: "none", borderBottom: "1px solid var(--hairline)", outline: "none", fontFamily: "var(--body)", fontSize: 16, resize: "vertical", background: "transparent" }} />
     ) : (
-      <input placeholder={placeholder} style={{ width: "100%", padding: "12px 0", border: "none", borderBottom: "1px solid var(--hairline)", outline: "none", fontFamily: "var(--body)", fontSize: 16, background: "transparent" }} />
+      <input placeholder={placeholder} value={value||""} onChange={e => onChange && onChange(e.target.value)}
+        style={{ width: "100%", padding: "12px 0", border: "none", borderBottom: "1px solid var(--hairline)", outline: "none", fontFamily: "var(--body)", fontSize: 16, background: "transparent" }} />
     )}
   </label>
 );
 
 const Calendar = ({ onPick }) => {
-  const days = ["S", "M", "T", "W", "T", "F", "S"];
-  const start = 2;
-  const total = 30;
-  const today = 26;
+  const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const DAYS = ["S","M","T","W","T","F","S"];
+  const now = new Date();
+  const [view, setView] = React.useState(new Date(now.getFullYear(), now.getMonth(), 1));
+  const year = view.getFullYear();
+  const month = view.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const prevMonth = () => setView(new Date(year, month - 1, 1));
+  const nextMonth = () => setView(new Date(year, month + 1, 1));
   return (
-    <div>
+    <div style={{ maxWidth: 480 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-        <button className="link-underline" data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>← Mar</button>
-        <span style={{ fontFamily: "var(--display)", fontSize: 22, textTransform: "uppercase", letterSpacing: "-.01em" }}>April 2026</span>
-        <button className="link-underline" data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>May →</button>
+        <button className="link-underline" data-cursor="link" onClick={prevMonth} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>← {MONTHS[(month - 1 + 12) % 12].slice(0,3)}</button>
+        <span style={{ fontFamily: "var(--display)", fontSize: 22, textTransform: "uppercase", letterSpacing: "-.01em" }}>{MONTHS[month]} {year}</span>
+        <button className="link-underline" data-cursor="link" onClick={nextMonth} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>{MONTHS[(month + 1) % 12].slice(0,3)} →</button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 12 }}>
-        {days.map((d, i) => <div key={i} className="eyebrow" style={{ textAlign: "center" }}>{d}</div>)}
+        {DAYS.map((d, i) => <div key={i} className="eyebrow" style={{ textAlign: "center" }}>{d}</div>)}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
-        {Array.from({ length: start }).map((_, i) => <div key={"e" + i} />)}
-        {Array.from({ length: total }).map((_, i) => {
+        {Array.from({ length: firstDay }).map((_, i) => <div key={"e"+i} />)}
+        {Array.from({ length: daysInMonth }).map((_, i) => {
           const d = i + 1;
-          const past = d < today;
-          const sun = (start + i) % 7 === 0;
-          const closed = sun;
-          const limited = [27, 28, 29].includes(d);
+          const date = new Date(year, month, d);
+          const past = date < today;
+          const sun = date.getDay() === 0;
+          const isToday = date.getTime() === today.getTime();
+          const label = `${MONTHS[month].slice(0,3)} ${d}, ${year}`;
           return (
-            <button key={d} disabled={past || closed} onClick={() => onPick(`Tue, Apr ${d}`)} data-cursor="link" style={{ aspectRatio: "1", border: "1px solid " + (d === today ? "var(--black)" : "var(--hairline)"), background: d === today ? "var(--black)" : "var(--white)", color: past || closed ? "var(--gray-300)" : (d === today ? "var(--white)" : "var(--black)"), fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, position: "relative", cursor: past || closed ? "not-allowed" : "pointer" }}>
+            <button key={d} disabled={past || sun} onClick={() => onPick(label)} data-cursor="link"
+              style={{ aspectRatio: "1", border: "1px solid " + (isToday ? "var(--black)" : "var(--hairline)"), background: isToday ? "var(--black)" : "var(--white)", color: past || sun ? "var(--gray-300)" : isToday ? "var(--white)" : "var(--black)", fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, cursor: past || sun ? "not-allowed" : "pointer" }}>
               {d}
-              {limited && <span style={{ position: "absolute", bottom: 4, left: "50%", transform: "translateX(-50%)", width: 4, height: 4, borderRadius: "50%", background: "var(--gray-500)" }} />}
             </button>
           );
         })}
       </div>
-      <div style={{ marginTop: 16, display: "flex", gap: 24, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)" }}>
-        <span><span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "var(--gray-500)", marginRight: 6, verticalAlign: "middle" }} />Limited slots</span>
-        <span style={{ color: "var(--gray-300)" }}>Sundays  ·  Closed</span>
-      </div>
+      <div style={{ marginTop: 16, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>Sundays · Closed</div>
     </div>
   );
 };
@@ -890,12 +897,12 @@ const RidesPage = () => {
   const [tab, setTab] = React.useState("All");
   const tabs = ["All", "Road", "Gravel", "Mountain", "Social", "E-Bike"];
   const rides = [
-    { date: "MON 28 APR 6:00PM", name: "Knox Mountain Monday", type: "Mountain", meta: "22km · 650m gain", level: "Intermediate", spots: "8 of 12 spots" },
-    { date: "WED 30 APR 12:15PM", name: "Lunch Loop", type: "Road", meta: "35km · Flat", level: "All abilities", spots: "Open" },
-    { date: "THU 01 MAY 6:00PM", name: "Women's Ride", type: "Social", meta: "20km · Easy", level: "Easy", spots: "Open" },
-    { date: "SAT 03 MAY 8:00AM", name: "Gravel Sundays", type: "Gravel", meta: "75km · Backcountry", level: "Advanced", spots: "4 of 10 spots" },
-    { date: "SUN 04 MAY 9:00AM", name: "Social Saturday", type: "Social", meta: "30km · Cafe stop", level: "Easy", spots: "Open" },
-    { date: "MON 05 MAY 6:00PM", name: "Knox Mountain Monday", type: "Mountain", meta: "22km · 650m gain", level: "Intermediate", spots: "Open" },
+    { date: "MON 28 APR 6:00PM", cal: "20260428T180000/20260428T200000", name: "Knox Mountain Monday", type: "Mountain", meta: "22km · 650m gain", level: "Intermediate", spots: "8 of 12 spots", loc: "Knox Mountain Park, Kelowna, BC" },
+    { date: "WED 30 APR 12:15PM", cal: "20260430T121500/20260430T141500", name: "Lunch Loop", type: "Road", meta: "35km · Flat", level: "All abilities", spots: "Open", loc: "Mission Creek Regional Park, Kelowna, BC" },
+    { date: "THU 01 MAY 6:00PM", cal: "20260501T180000/20260501T200000", name: "Women's Ride", type: "Social", meta: "20km · Easy", level: "Easy", spots: "Open", loc: "ChainLine Cycle, 1139 Ellis St, Kelowna" },
+    { date: "SAT 03 MAY 8:00AM", cal: "20260503T080000/20260503T140000", name: "Gravel Sundays", type: "Gravel", meta: "75km · Backcountry", level: "Advanced", spots: "4 of 10 spots", loc: "ChainLine Cycle, 1139 Ellis St, Kelowna" },
+    { date: "SUN 04 MAY 9:00AM", cal: "20260504T090000/20260504T120000", name: "Social Saturday", type: "Social", meta: "30km · Cafe stop", level: "Easy", spots: "Open", loc: "ChainLine Cycle, 1139 Ellis St, Kelowna" },
+    { date: "MON 05 MAY 6:00PM", cal: "20260505T180000/20260505T200000", name: "Knox Mountain Monday", type: "Mountain", meta: "22km · 650m gain", level: "Intermediate", spots: "Open", loc: "Knox Mountain Park, Kelowna, BC" },
   ];
   const filtered = tab === "All" ? rides : rides.filter(r => r.type === tab);
   return (
@@ -921,7 +928,10 @@ const RidesPage = () => {
                   <span className="pill">{r.level}</span>
                   <span className="eyebrow">{r.spots}</span>
                 </div>
-                <button className="btn btn-outline" data-cursor="link" style={{ marginTop: 8 }}>Join Ride <ArrowRight /></button>
+                <button className="btn btn-outline" data-cursor="link" style={{ marginTop: 8 }} onClick={() => {
+                  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("ChainLine Cycle · "+r.name)}&dates=${r.cal}&details=${encodeURIComponent("ChainLine Cycle group ride. "+r.meta+"\n\nQuestions? bikes@chainline.ca · (250) 860-1968")}&location=${encodeURIComponent(r.loc)}`;
+                  window.open(url, "_blank");
+                }}>Add to Calendar <ArrowRight /></button>
               </div>
             ))}
           </div>
@@ -967,14 +977,14 @@ const RidesPage = () => {
 // TRAILS PAGE
 const TrailsPage = () => {
   const trails = [
-    { name: "Knox Mountain Park", dots: 3, km: "18", gain: "520", type: "MTB · Singletrack", season: "Spring–Fall", note: "The best urban trail system in the Okanagan. Don't miss Antenna." },
-    { name: "Bear Creek Provincial Park", dots: 2, km: "14", gain: "380", type: "MTB · Mixed", season: "Year-round", note: "Family-friendly with options to push deeper if you want." },
-    { name: "Okanagan Mountain Park", dots: 5, km: "42", gain: "1,200", type: "MTB · Hike", season: "Summer", note: "Big day. Bring food, bring tools, bring a friend." },
-    { name: "Myra Canyon Trestles", dots: 1, km: "24", gain: "180", type: "Rail Trail", season: "Spring–Fall", note: "Wooden trestles, lake views, easy day." },
-    { name: "McDougall Rim", dots: 3, km: "22", gain: "640", type: "Hike · Gravel", season: "Spring–Fall", note: "Best sunrise loop in the valley." },
-    { name: "Rose Valley", dots: 2, km: "16", gain: "320", type: "MTB", season: "Year-round", note: "A bit of everything. Good for shaking down a new bike." },
-    { name: "Black Mountain", dots: 5, km: "32", gain: "920", type: "MTB · Advanced", season: "Summer–Fall", note: "If you have to ask, it isn't for you." },
-    { name: "Kelowna Bike Park", dots: 4, km: "—", gain: "—", type: "Skills Park", season: "May–Oct", note: "All levels, all features. Free, every day." },
+    { name: "Knox Mountain Park", dots: 3, km: "18", gain: "520", type: "MTB · Singletrack", season: "Spring–Fall", note: "The best urban trail system in the Okanagan. Don't miss Antenna.", tf: "https://www.trailforks.com/region/knox-mountain-park/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "Bear Creek Provincial Park", dots: 2, km: "14", gain: "380", type: "MTB · Mixed", season: "Year-round", note: "Family-friendly with options to push deeper if you want.", tf: "https://www.trailforks.com/region/bear-creek-provincial-park/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "Okanagan Mountain Park", dots: 5, km: "42", gain: "1,200", type: "MTB · Hike", season: "Summer", note: "Big day. Bring food, bring tools, bring a friend.", tf: "https://www.trailforks.com/region/okanagan-mountain-park/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "Myra Canyon Trestles", dots: 1, km: "24", gain: "180", type: "Rail Trail", season: "Spring–Fall", note: "Wooden trestles, lake views, easy day.", tf: "https://www.trailforks.com/region/kelowna/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "McDougall Rim", dots: 3, km: "22", gain: "640", type: "Hike · Gravel", season: "Spring–Fall", note: "Best sunrise loop in the valley.", tf: "https://www.trailforks.com/region/kelowna/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "Rose Valley", dots: 2, km: "16", gain: "320", type: "MTB", season: "Year-round", note: "A bit of everything. Good for shaking down a new bike.", tf: "https://www.trailforks.com/region/rose-valley-regional-park/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "Black Mountain", dots: 5, km: "32", gain: "920", type: "MTB · Advanced", season: "Summer–Fall", note: "If you have to ask, it isn't for you.", tf: "https://www.trailforks.com/region/black-mountain/", komoot: "https://www.komoot.com/guide/3437" },
+    { name: "Kelowna Bike Park", dots: 4, km: "—", gain: "—", type: "Skills Park", season: "May–Oct", note: "All levels, all features. Free, every day.", tf: "https://www.trailforks.com/region/kelowna-bike-park/", komoot: "https://www.komoot.com/guide/3437" },
   ];
   const Dots = ({ n }) => <span className="pill-dots">{[1,2,3,4,5].map(i => <i key={i} className={i <= n ? "on" : ""} />)}</span>;
   return (
@@ -996,7 +1006,11 @@ const TrailsPage = () => {
                 <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)", marginBottom: 12 }}>
                   {t.km} km · {t.gain} m · {t.type} · {t.season}
                 </div>
-                <p className="serif-italic" style={{ fontSize: 16, lineHeight: 1.5, color: "var(--gray-600)", margin: 0 }}>"{t.note}"</p>
+                <p className="serif-italic" style={{ fontSize: 16, lineHeight: 1.5, color: "var(--gray-600)", marginBottom: 16 }}>"{t.note}"</p>
+                <a href={t.tf} target="_blank" rel="noopener" data-cursor="link"
+                  style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  View on Trailforks →
+                </a>
               </div>
             ))}
           </div>
@@ -1034,9 +1048,9 @@ const TrailsPage = () => {
       <section className="section section-pad-sm bg-paper" style={{ padding: "60px 0" }}>
         <div className="container-wide">
           <div className="reveal" style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="btn btn-outline" data-cursor="link">View on Trailforks <ArrowRight /></button>
-            <button className="btn btn-outline" data-cursor="link">View on Komoot <ArrowRight /></button>
-            <button className="btn btn-outline" data-cursor="link">Download GPX <ArrowRight /></button>
+            <a href="https://www.trailforks.com/region/kelowna/" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">View on Trailforks <ArrowRight /></a>
+            <a href="https://www.komoot.com/guide/3437" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">View on Komoot <ArrowRight /></a>
+            <a href="https://www.strava.com/segments/explore#4.32/49.888/-119.496" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">View on Strava <ArrowRight /></a>
           </div>
         </div>
       </section>
@@ -1054,7 +1068,7 @@ const ContactPage = () => (
         <div style={{ position: "absolute", left: 48, right: 48, bottom: 48, color: "var(--white)" }}>
           <h1 className="display-xl" style={{ marginBottom: 32 }}>Come<br/><span className="serif-italic">find us.</span></h1>
           <div style={{ borderTop: "1px solid var(--hairline-light)", paddingTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Address</div>1139 Ellis St<br/>Kelowna, BC V1Y 1Z4</div>
+            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Address</div><a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" style={{ color: "inherit" }}>1139 Ellis St<br/>Kelowna, BC V1Y 1Z5</a></div>
             <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Hours</div>Mon–Sat  10–6<br/>Sun  11–5</div>
             <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Phone</div>(250) 860-1968</div>
             <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Email</div>bikes@chainline.ca</div>
@@ -1426,6 +1440,8 @@ const BrandPage = () => {
     { name:"Pivot", desc:"Scottsdale, AZ — Carbon trail and enduro bikes with dw-link suspension.", count: SHOP_BIKES.filter(b=>b.brand==="Pivot").length },
     { name:"Bianchi", desc:"Milan, Italy — The oldest bicycle brand in the world. Road, gravel, and MTB.", count: 0 },
     { name:"Moots", desc:"Steamboat Springs, CO — Hand-welded titanium bikes. Made in America.", count: 0 },
+    { name:"Knolly", desc:"North Vancouver, BC — No-compromise full-suspension mountain bikes engineered for Pacific Northwest trails.", count: 0 },
+    { name:"Revel", desc:"Carbondale, CO — Obsessively engineered mountain bikes with CBF suspension for unmatched small-bump compliance.", count: 0 },
   ];
   return (
     <div className="page-fade">
@@ -1452,4 +1468,66 @@ const BrandPage = () => {
   );
 };
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES });
+// TERMS OF SERVICE
+const TermsPage = () => (
+  <div className="page-fade">
+    <SubHero eyebrow="Legal  /  Terms" title="Terms of Service." italic="Honest and straightforward." />
+    <section className="section section-pad bg-white">
+      <div className="container-narrow">
+        {[
+          ["1. Overview", "These Terms of Service govern your use of the ChainLine Cycle website and your purchase of products and services from ChainLine Cycle Inc. ('ChainLine', 'we', 'us', 'our'), located at 1139 Ellis St, Kelowna, BC V1Y 1Z5. By using our website or making a purchase, you agree to these terms."],
+          ["2. Products & Pricing", "All prices are in Canadian dollars and include applicable taxes unless otherwise stated. We reserve the right to correct pricing errors and to discontinue products at any time. Product availability is subject to change without notice. We make every effort to display products accurately but cannot guarantee that your screen accurately reflects product colours."],
+          ["3. Orders & Payment", "By placing an order, you warrant that you are legally capable of entering into binding contracts. We accept Visa, Mastercard, American Express, Apple Pay, and Shop Pay. Payment is processed at the time of order. We reserve the right to refuse or cancel any order for any reason, including suspected fraud."],
+          ["4. Shipping & Pickup", "In-store pickup is available at 1139 Ellis St, Kelowna, BC. Shipping rates and timelines are displayed at checkout. Risk of loss and title for items purchased pass to you upon delivery to the carrier. ChainLine is not responsible for delays caused by the carrier."],
+          ["5. Returns & Exchanges", "Unused items in original packaging may be returned within 30 days of purchase with a receipt for a full refund or exchange. Bikes must be returned in as-new condition and may be subject to a restocking fee. Sale items, special orders, and installed parts are final sale. Contact us at bikes@chainline.ca to initiate a return."],
+          ["6. Warranty", "All bikes and components are covered by the respective manufacturer's warranty. ChainLine Cycle acts as an authorized warranty service centre for all brands we carry. Typical coverage: frame/fork 2–5 years (varies by brand), components 1 year. Warranty covers manufacturing defects and does not cover normal wear, crash damage, or modifications. Bring your bike in with proof of purchase and we'll handle the warranty claim on your behalf — no charge for warranty service."],
+          ["7. Service Work", "Service bookings are confirmed via phone or email. We will contact you if the scope or cost of work changes from your original booking. Bikes left uncollected after 30 days of completion may incur storage fees. ChainLine is not responsible for pre-existing damage discovered during service."],
+          ["8. Limitation of Liability", "ChainLine Cycle's liability is limited to the value of the products or services purchased. We are not liable for indirect, incidental, or consequential damages. Some jurisdictions do not allow limitations on implied warranties, so these limitations may not apply to you."],
+          ["9. Governing Law", "These terms are governed by the laws of British Columbia, Canada. Any disputes shall be resolved in the courts of Kelowna, BC."],
+          ["10. Contact", "Questions? Email bikes@chainline.ca or call (250) 860-1968. Mon–Fri 9:30–5:30, Sat 10–4."],
+        ].map(([h, t]) => (
+          <div key={h} style={{ marginBottom: 40 }}>
+            <div className="display-s" style={{ marginBottom: 16 }}>{h}</div>
+            <p style={{ fontSize: 15, lineHeight: 1.75, color: "var(--gray-600)" }}>{t}</p>
+          </div>
+        ))}
+        <div style={{ marginTop: 48, padding: "20px 24px", background: "var(--paper)", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)" }}>
+          Last updated: April 2026  ·  ChainLine Cycle Inc.  ·  1139 Ellis St, Kelowna, BC V1Y 1Z5
+        </div>
+      </div>
+    </section>
+  </div>
+);
+
+// PRIVACY POLICY
+const PrivacyPage = () => (
+  <div className="page-fade">
+    <SubHero eyebrow="Legal  /  Privacy" title="Privacy Policy." italic="We respect your data." />
+    <section className="section section-pad bg-white">
+      <div className="container-narrow">
+        {[
+          ["1. Information We Collect", "When you make a purchase or create an account, we collect your name, email address, phone number, mailing address, and payment information (processed securely by our payment provider — we do not store full card numbers). When you browse our website, we collect standard server logs including IP address, browser type, and pages visited. We may also collect information you provide when booking services or contacting us."],
+          ["2. How We Use Your Information", "We use your information to process and fulfil orders, send order confirmations and shipping updates, respond to your inquiries, send our newsletter (only if you opt in), improve our website and services, and comply with legal obligations. We do not sell, rent, or trade your personal information to third parties."],
+          ["3. Sharing Your Information", "We share your information only with trusted service providers who help us operate our business (payment processors, shipping carriers, email service providers). These parties are contractually obligated to keep your information confidential and use it only for the services they provide to us. We may disclose your information when required by law."],
+          ["4. Cookies", "Our website uses cookies to remember your preferences, keep you signed in, and understand how visitors use our site. You can disable cookies in your browser settings, though some site features may not function properly. We do not use cookies to track you across third-party websites."],
+          ["5. Email Communications", "If you subscribe to our newsletter, you can unsubscribe at any time via the link in any email we send. We do not spam. One email per fortnight, maximum."],
+          ["6. Data Retention", "We retain your personal information for as long as necessary to fulfil the purposes outlined in this policy, or as required by law. You may request deletion of your account and personal data by contacting us at bikes@chainline.ca."],
+          ["7. Security", "We take reasonable precautions to protect your information. All payment data is processed over encrypted SSL connections. No method of internet transmission is 100% secure — we cannot guarantee absolute security."],
+          ["8. Your Rights", "Under PIPEDA (Personal Information Protection and Electronic Documents Act) and BC PIPA, you have the right to access the personal information we hold about you, request corrections, and withdraw consent for certain uses. Contact bikes@chainline.ca to exercise these rights."],
+          ["9. Third-Party Links", "Our website may contain links to third-party websites. We are not responsible for the privacy practices of those sites."],
+          ["10. Contact", "Privacy questions or requests: bikes@chainline.ca · (250) 860-1968 · 1139 Ellis St, Kelowna, BC V1Y 1Z5."],
+        ].map(([h, t]) => (
+          <div key={h} style={{ marginBottom: 40 }}>
+            <div className="display-s" style={{ marginBottom: 16 }}>{h}</div>
+            <p style={{ fontSize: 15, lineHeight: 1.75, color: "var(--gray-600)" }}>{t}</p>
+          </div>
+        ))}
+        <div style={{ marginTop: 48, padding: "20px 24px", background: "var(--paper)", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)" }}>
+          Last updated: April 2026  ·  ChainLine Cycle Inc.  ·  1139 Ellis St, Kelowna, BC V1Y 1Z5
+        </div>
+      </div>
+    </section>
+  </div>
+);
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage });

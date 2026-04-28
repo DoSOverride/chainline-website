@@ -33,6 +33,7 @@ const App = () => {
   const [mobileNav, setMobileNav] = React.useState(false);
   const [cartOpen, setCartOpen] = React.useState(false);
   const [cart, setCart] = React.useState([]);
+  const [searchOpen, setSearchOpen] = React.useState(false);
 
   // Sync cart from Shopify events
   React.useEffect(() => {
@@ -105,7 +106,7 @@ const App = () => {
       <ScrollProgress onDark={dark} />
       <div className="grain" />
 
-      <Header page={page} scrolled={scrolled} cartCount={cart.length} onCart={() => setCartOpen(true)} onMobile={() => setMobileNav(true)} onMega={setMegaOpen} megaOpen={megaOpen} />
+      <Header page={page} scrolled={scrolled} cartCount={cart.length} onCart={() => setCartOpen(true)} onMobile={() => setMobileNav(true)} onMega={setMegaOpen} megaOpen={megaOpen} onSearch={() => setSearchOpen(true)} />
       <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} onRemove={(i) => setCart(cart.filter((_, idx) => idx !== i))} />
       <StickyCTA show={showSticky} />
@@ -141,14 +142,14 @@ const App = () => {
         {page === "parts" && <PartsPage />}
         {page === "classifieds" && <ClassifiedsPage />}
         {page === "brands" && <BrandPage />}
+        {page === "terms" && <TermsPage />}
+        {page === "privacy" && <PrivacyPage />}
       </main>
 
       <Footer />
 
-      {/* Live chat bubble */}
-      <button data-cursor="link" style={{ position: "fixed", left: 32, bottom: 32, zIndex: 80, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)" }}>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4h16v10H8l-4 3v-3H2z"/></svg>
-      </button>
+      <ChatWidget />
+      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
 
       <TweaksPanel open={tweaksOpen} onClose={() => setTweaksOpen(false)}>
         <TweakSection title="Type">

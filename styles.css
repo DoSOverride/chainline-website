@@ -1210,6 +1210,17 @@ img {
     grid-template-columns: 100px 1fr !important;
   }
 
+  /* ── Hero mobile ── */
+  .hero-section {
+    min-height: 100svh !important;
+    height: 100svh !important;
+  }
+  .hero-content {
+    padding-top: 120px !important;
+    padding-bottom: 48px !important;
+  }
+  .hero-scroll-indicator { display: none !important; }
+
   /* ── Home page responsive grids ── */
   .home-featured-grid {
     grid-template-columns: repeat(2, 1fr) !important;
