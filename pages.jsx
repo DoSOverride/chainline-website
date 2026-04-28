@@ -1,5 +1,34 @@
 // ChainLine — Sub-pages
 
+// ── Image resolution: static catalog → Shopify SKU → Shopify title ──
+const _norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+function resolveImage(bike) {
+  if (bike.img || bike.image) return bike.img || bike.image;
+
+  const skuMap   = window.CL_SHOP?.skuImageMap   || {};
+  const titleMap = window.CL_SHOP?.titleImageMap  || {};
+
+  if (bike.sku && skuMap[bike.sku]) return skuMap[bike.sku];
+
+  const normalized = _norm(bike.name);
+  if (titleMap[normalized]) return titleMap[normalized];
+
+  // Strip brand prefix for title map lookup (Lightspeed names include brand)
+  const brand = _norm(bike.brand || '');
+  const nameNoBrand = brand && normalized.startsWith(brand)
+    ? normalized.slice(brand.length).trim()
+    : normalized;
+  if (nameNoBrand !== normalized && titleMap[nameNoBrand]) return titleMap[nameNoBrand];
+
+  // Static SHOP_BIKES catalog fallback by name
+  const staticMatch = SHOP_BIKES.find(s => {
+    const sn = _norm(s.name);
+    return sn === normalized || sn === nameNoBrand;
+  });
+  return staticMatch?.img || null;
+}
+
 // ── Real data helpers (from bike-data.js) ─────────────────────
 const getBikeData = (b) => (window.BIKE_DATA && window.BIKE_DATA[b.handle]) || {};
 
@@ -52,10 +81,11 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const specs = getBikeSpecs(b);
   const desc  = getBikeDescription(b);
   const data  = getBikeData(b);
-  // Collect all images: card image + any extras from CSV
+  // Collect all images: resolved image + any extras from CSV
   const allImgs = (() => {
+    const resolved = resolveImage(b);
     const imgs = [];
-    if (b.img) imgs.push(b.img);
+    if (resolved) imgs.push(resolved);
     (data.images || []).forEach(u => { if (u && !imgs.includes(u)) imgs.push(u); });
     return imgs;
   })();
@@ -64,7 +94,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const handleAdd = async () => {
     setAdding(true);
     try {
-      await window.clAddToCart(b.handle, b.name || b.title, b.price, b.img);
+      await window.clAddToCart(b.handle, b.name || b.title, b.price, resolveImage(b));
       setAdded(true);
       setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
     } catch(e) { console.warn(e); }
@@ -230,6 +260,14 @@ const ShopPage = () => {
   const [saleOnly, setSale] = React.useState(false);
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
+  const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
+  // Re-render when Shopify images arrive so resolveImage() picks them up
+  React.useEffect(() => {
+    const onShopify = () => forceUpdate();
+    window.addEventListener('shopify:ready', onShopify);
+    return () => window.removeEventListener('shopify:ready', onShopify);
+  }, []);
 
   // Load live Lightspeed inventory
   React.useEffect(() => {
@@ -377,7 +415,7 @@ const BikeCardLarge = ({ b, idx }) => {
 
   const name    = b.name  || b.title  || "";
   const brand   = b.brand || b.vendor || "";
-  const img     = b.img   || b.image  || null;
+  const img     = resolveImage(b);
   const price   = b.price || 0;
   // Stock — null means unknown (static data), use true as default
   const inStock = b.inStock !== false;

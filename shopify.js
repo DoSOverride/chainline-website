@@ -19,6 +19,7 @@ window.shopifyGetProducts = async function() {
       price:     parseFloat(p.variants[0]?.price || 0),
       compareAt: p.variants[0]?.compare_at_price ? parseFloat(p.variants[0].compare_at_price) : null,
       variantId: p.variants[0]?.id || null,
+      sku:       p.variants[0]?.sku || '',
       available: p.variants[0]?.available || false,
     }));
   } catch(e) {
@@ -92,6 +93,19 @@ window.shopifyReady = (async () => {
   try {
     const products = await window.shopifyGetProducts();
     window.CL_SHOP.products = products;
+
+    // Build image lookup maps: by SKU and by normalized title
+    const skuMap   = {};
+    const titleMap = {};
+    const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    products.forEach(p => {
+      if (p.image) {
+        if (p.sku)   skuMap[p.sku]       = p.image;
+        if (p.title) titleMap[norm(p.title)] = p.image;
+      }
+    });
+    window.CL_SHOP.skuImageMap   = skuMap;
+    window.CL_SHOP.titleImageMap = titleMap;
 
     const count = window.shopifyCart.count();
     if (count > 0) {
