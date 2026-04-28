@@ -103,12 +103,12 @@ const ArrowRight = ({ size = 12 }) => (
 );
 
 const MegaMenu = ({ open, onOpen, onClose }) => {
-  const BIKE_TYPES  = ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"];
   const BIKE_BRANDS = ["Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots", "Knolly", "Revel"];
+  const BIKE_TYPES  = ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"];
   const data = {
     shop: {
-      topTypes:  BIKE_TYPES,
-      topBrands: BIKE_BRANDS,
+      brandCol: BIKE_BRANDS,
+      typeCol:  BIKE_TYPES,
       cols: [
         { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
         { h: "More", items: ["Sale", "Gift Cards", "Classifieds"] },
@@ -168,33 +168,27 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Shop panel: full-width type row + brand row, then cols */}
-          {d.topTypes ? (
-            <>
-              <div style={{ display:"flex", alignItems:"center", gap:0, paddingBottom:20, borderBottom:"1px solid var(--hairline)", flexWrap:"wrap" }}>
-                {d.topTypes.map((it, i) => (
-                  <a key={it} href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}
-                    style={{ ...linkStyle, fontFamily:"var(--display)", fontSize:18, fontWeight:500, letterSpacing:"-.01em", textTransform:"uppercase", color:"var(--black)", padding:"4px 20px 4px " + (i===0?"0":"20px"), borderLeft: i===0?"none":"1px solid var(--hairline)" }}>
-                    {it}
-                  </a>
-                ))}
-                <div style={{ width:1, height:20, background:"var(--hairline)", margin:"0 20px" }} />
-                {d.topBrands.map((br, i) => (
-                  <a key={br} href="#" data-cursor="link" onClick={(e) => handleClick(e, br)}
-                    style={{ ...linkStyle, color:"var(--gray-500)", padding:"4px 14px 4px " + (i===0?"0":"14px") }}>
-                    {br}
-                  </a>
-                ))}
+          {/* Shop panel: brands | styles | parts | more */}
+          {d.brandCol ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:48 }}>
+              {/* Col 1: By Brand */}
+              <div className="mega-col">
+                <h4>By Brand</h4>
+                <ul>{d.brandCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:64, paddingTop:24 }}>
-                {d.cols.map((c, i) => (
-                  <div key={i} className="mega-col">
-                    <h4>{c.h}</h4>
-                    <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-                  </div>
-                ))}
+              {/* Col 2: By Style */}
+              <div className="mega-col">
+                <h4>By Style</h4>
+                <ul>{d.typeCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
-            </>
+              {/* Cols 3-4: Parts & More */}
+              {d.cols.map((c, i) => (
+                <div key={i} className="mega-col">
+                  <h4>{c.h}</h4>
+                  <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                </div>
+              ))}
+            </div>
           ) : (
             /* Services / Explore: keep existing 3-col layout */
             <div className="mega-grid">

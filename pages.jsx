@@ -38,7 +38,24 @@ function resolveImage(bike) {
 }
 
 // ── Real data helpers (from bike-data.js) ─────────────────────
-const getBikeData = (b) => (window.BIKE_DATA && window.BIKE_DATA[b.handle]) || {};
+const getBikeData = (b) => {
+  if (!window.BIKE_DATA) return {};
+  if (window.BIKE_DATA[b.handle]) return window.BIKE_DATA[b.handle];
+  // Lightspeed bikes have SKU as handle — match by normalized name instead
+  if (b.fromLightspeed && b.name) {
+    const brand   = _norm(b.brand || (b.name || '').split(' ')[0] || '');
+    const fullN   = _norm(b.name);
+    const namePart = brand && fullN.startsWith(brand) ? fullN.slice(brand.length).trim() : fullN;
+    for (const [hdl, data] of Object.entries(window.BIKE_DATA)) {
+      const hdlN = hdl.replace(/-/g, ' ');
+      const hdlPart = brand && hdlN.startsWith(brand) ? hdlN.slice(brand.length).trim() : hdlN;
+      if (namePart.startsWith(hdlPart) || hdlPart.length >= 6 && namePart.startsWith(hdlPart.slice(0, 6))) {
+        return data;
+      }
+    }
+  }
+  return {};
+};
 
 const getBikeSpecs = (b) => {
   const data = getBikeData(b);
@@ -257,6 +274,20 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Bayview Trail",  handle:"marin-bayview-trail",  type:"Kids", tags:"Kids Bike, 24\"", price:600, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BAYVIEW_TRAIL_24_RED_SIDE_b00a2921-5476-4067-9ed7-c48ee7cd06c1.png?v=1755780477&width=500" },
   { brand:"Marin", name:"Donky Jr",       handle:"marin-donky-jr",       type:"Kids", tags:"Kids Bike, 24\"", price:430, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_DONKEY_JR_24_AQUA_BLUE_SIDE_2005a345-ce2b-4b9f-9baf-52f1bb79129a_grande.png?v=1755784888" },
   { brand:"Marin", name:"Rift Zone Jr",   handle:"marin-rift-zone-jr",   type:"Kids", tags:"Kids Bike, Mountain, 24\"", price:2200, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_RIFT_ZONE_JR_24_GREEN_SIDE_grande.png?v=1753783522" },
+  // ── Marin full-suspension & trail hardtails ────────────────────
+  { brand:"Marin", name:"Rift Zone 2",    handle:"marin-rift-zone-2",    type:"Mountain", tags:"Mountain Bike, Full Suspension, 29\"", price:1975, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_RIFT_ZONE_2_GRAY_BLUE_SIDE.png?v=1755774007&width=1000" },
+  { brand:"Marin", name:"San Quentin 1",  handle:"marin-san-quentin-1",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1350, img:"https://marinbikes.com/cdn/shop/files/MARIN_SAN_QUENTIN_1_STUDIO_SIDE_2000PX.png?v=1761745617&width=1000" },
+  { brand:"Marin", name:"San Quentin 2",  handle:"marin-san-quentin-2",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1800, img:"https://marinbikes.com/cdn/shop/files/MARINSANQUENTIN2STUDIOSIDE2000PX.png?v=1761745839&width=1000" },
+  // ── Transition full lineup ─────────────────────────────────────
+  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://www.transitionbikes.com/images/2026-Spur-Gallery-1.avif" },
+  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://www.transitionbikes.com/images/C2_Smug_Carb_XO_AXS.avif" },
+  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://www.transitionbikes.com/WebStoreImages/SB-BR-SC-DiscoFlamingo.avif" },
+  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://www.transitionbikes.com/images/C1-PBJ-Alloy.avif" },
+  // ── Surly full lineup ──────────────────────────────────────────
+  { brand:"Surly", name:"Karate Monkey",    handle:"surly-karate-monkey",    type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",     price:2800, img:"https://surlybikes.com/cdn/shop/files/surly-karate-monkey-front-suspension-bike-blue-BK00263-2000px-sq.jpg?v=1742063134&width=1946" },
+  { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Mountain", tags:"Fat Bike, Snow, Sand",              price:3500, img:"https://surlybikes.com/cdn/shop/files/surly-ice-cream-truck-bike-yellow-BK00596-2000px-sq.jpg?v=1741976875&width=1946" },
+  // ── Knolly ────────────────────────────────────────────────────
+  { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, badge:"PRO", img:"https://knollybikes.com/cdn/shop/files/Shopify_Social_Sharing_Image.jpg?v=1657576224" },
 ];
 
 // SHOP

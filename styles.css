@@ -802,8 +802,8 @@ img {
 
 .mega-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.4fr;
-  gap: 64px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 48px;
 }
 
 .mega-col h4 {
