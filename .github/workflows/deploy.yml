@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Workers
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -14,4 +14,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: "8c3d9e51212aa8c7a1ad6ea8edd23d8b"
-          wranglerVersion: "3.99.0"
+          command: pages deploy . --project-name=chainline-website --branch=main
