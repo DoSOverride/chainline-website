@@ -42,8 +42,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+html {
+  overflow-x: clip;
+}
+
 body {
   overflow-x: hidden;
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: clip;
+  max-width: 100vw;
 }
 
 a {
@@ -1198,6 +1208,57 @@ img {
   /* Spec table on bike page */
   .spec-row {
     grid-template-columns: 100px 1fr !important;
+  }
+
+  /* ── Home page responsive grids ── */
+  .home-featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+  .home-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+  .home-brands-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .home-services-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .home-2col {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .home-rides-row {
+    grid-template-columns: auto 1fr !important;
+    gap: 12px !important;
+  }
+  .home-rides-row .home-rides-pill,
+  .home-rides-row .home-rides-arrow { display: none !important; }
+  .home-trail-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .home-testimonials-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .home-newsletter-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* ── Pages responsive grids ── */
+  .page-svc-row {
+    grid-template-columns: 1fr !important;
+    gap: 4px !important;
+  }
+  .page-svc-row > *:not(:first-child):not(:nth-child(2)) { display: none !important; }
+  .page-wide-row {
+    grid-template-columns: 1fr !important;
+  }
+  .page-wide-row > *:not(:first-child):not(:nth-child(2)) { display: none !important; }
+  .page-contact-grid {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
   }
 }
 

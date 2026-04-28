@@ -146,7 +146,7 @@ const FeaturedBikes = () => (
           Every bike on this list, we've ridden. Every spec, we've justified. Eight rigs we'd put our own riders on this season — and we have.
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
+      <div className="home-featured-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
         {FEATURED_BIKES.map((b, i) => <BikeCard key={i} b={b} idx={i} />)}
       </div>
       <div className="reveal" style={{ marginTop: 80, display: "flex", justifyContent: "center" }}>
@@ -160,7 +160,7 @@ const FeaturedBikes = () => (
 const StatsBar = () => (
   <section className="section section-pad-sm bg-black" data-screen-label="03 Stats" style={{ padding: "120px 0", borderTop: "1px solid var(--hairline-light)", borderBottom: "1px solid var(--hairline-light)" }}>
     <div className="container-wide">
-      <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 40 }}>
+      <div className="reveal home-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 40 }}>
         {[
           { n: 15, suffix: "+", label: "Years in Kelowna" },
           { n: 7, suffix: "", label: "Premium Brands" },
@@ -193,7 +193,7 @@ const BrandsGrid = () => {
           </div>
           <div className="eyebrow">Curated, not stocked.</div>
         </div>
-        <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
+        <div className="reveal home-brands-grid" style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
           {brands.map((b, i) => (
             <a key={i} href="#" data-cursor="link" className="brand-tile" style={{ aspectRatio: "1.1/1", display: "grid", placeItems: "center", borderRight: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", background: "var(--white)", fontFamily: "var(--display)", fontSize: 14, fontWeight: 600, letterSpacing: ".14em", transition: "background .3s, color .3s" }}>
               {b}
@@ -251,7 +251,7 @@ const ServicesPreview = () => (
           Six dedicated mechanics. Seventeen torque wrenches. One unbreakable rule — no bike leaves the stand until it leaves perfect.
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--hairline-light)", borderRight: 0, borderBottom: 0 }}>
+      <div className="home-services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--hairline-light)", borderRight: 0, borderBottom: 0 }}>
         {SERVICES.map((s, i) => (
           <div key={i} style={{ borderRight: "1px solid var(--hairline-light)", borderBottom: "1px solid var(--hairline-light)" }}>
             <ServiceCard s={s} />
@@ -290,7 +290,7 @@ const BookBanner = () => (
 const LocalStory = () => (
   <section className="section section-pad bg-paper" data-screen-label="07 Story">
     <div className="container-wide">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
+      <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
         <div className="reveal ph ph-light ph-corners" style={{ aspectRatio: "4/5", position: "relative" }}>
           <span className="ph-label">SHOP INTERIOR  /  B&W  /  4:5</span>
           <div style={{ position: "absolute", top: 24, left: 24, padding: "8px 14px", background: "var(--black)", color: "var(--white)", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase" }}>EST. 2009</div>
@@ -375,7 +375,7 @@ const GroupRidesTeaser = () => {
   return (
     <section className="section section-pad bg-black" data-screen-label="09 Group Rides">
       <div className="container-wide">
-        <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, alignItems: "center" }}>
+        <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, alignItems: "center" }}>
           <div className="reveal ph ph-corners" style={{ aspectRatio: "5/4" }}>
             <span className="ph-label">GROUP RIDE  /  B&W  /  5:4</span>
           </div>
@@ -387,14 +387,14 @@ const GroupRidesTeaser = () => {
             </p>
             <div style={{ borderTop: "1px solid var(--hairline-light)" }}>
               {rides.map((r, i) => (
-                <a key={i} href="#" data-cursor="link" style={{ display: "grid", gridTemplateColumns: "100px 1fr auto auto", gap: 24, padding: "20px 0", borderBottom: "1px solid var(--hairline-light)", alignItems: "center" }}>
+                <a key={i} href="#" data-cursor="link" className="home-rides-row" style={{ display: "grid", gridTemplateColumns: "100px 1fr auto auto", gap: 24, padding: "20px 0", borderBottom: "1px solid var(--hairline-light)", alignItems: "center" }}>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", color: "var(--gray-300)" }}>{r.date}</div>
                   <div>
                     <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em" }}>{r.name}</div>
                     <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", color: "var(--gray-300)", textTransform: "uppercase", marginTop: 4 }}>{r.meta}</div>
                   </div>
-                  <span className="pill">{r.level}</span>
-                  <ArrowRight />
+                  <span className="pill home-rides-pill">{r.level}</span>
+                  <span className="home-rides-arrow"><ArrowRight /></span>
                 </a>
               ))}
             </div>
@@ -426,7 +426,7 @@ const TrailSpotlight = () => {
           </div>
           <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("trails")}>Explore Kelowna Trails <ArrowRight /></button>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 32 }}>
+        <div className="home-trail-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 32 }}>
           <a href="#" data-cursor="link" className="reveal ph ph-corners" style={{ aspectRatio: "16/10", position: "relative" }}>
             <span className="ph-label">HERO TRAIL  /  KNOX MOUNTAIN  /  16:10</span>
             <div style={{ position: "absolute", left: 32, right: 32, bottom: 32, color: "var(--white)" }}>
@@ -488,7 +488,7 @@ const Testimonials = () => {
     <section className="section section-pad bg-paper" data-screen-label="12 Testimonials">
       <div className="container-wide">
         <div className="reveal section-label">What Riders Say  /  N°09</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
+        <div className="home-testimonials-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
           {t.map((q, i) => (
             <div key={i} className={"reveal reveal-d-" + (i + 1)} style={{ borderTop: "1px solid var(--hairline)", paddingTop: 32 }}>
               <div style={{ display: "flex", gap: 2, marginBottom: 20, color: "var(--gray-600)" }}>
@@ -513,7 +513,7 @@ const Newsletter = () => {
   return (
     <section className="section section-pad bg-black" data-screen-label="13 Newsletter">
       <div className="container-narrow">
-        <div className="reveal" style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 64, alignItems: "center" }}>
+        <div className="reveal home-newsletter-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 64, alignItems: "center" }}>
           <div>
             <div className="section-label" style={{ color: "var(--gray-300)" }}>Field Mail  /  N°10</div>
             <h2 className="display-l">Stay in the<br/><span className="serif-italic">loop.</span></h2>

@@ -99,6 +99,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
           <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={(b.name || b.title) + ' ' + (activeImg+1)}
+                  decoding="async"
                   style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
                   onError={e => { e.target.style.display='none'; }} />
               : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
@@ -111,7 +112,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
               {allImgs.map((img, i) => (
                 <button key={i} onClick={() => setActiveImg(i)} data-cursor="link"
                   style={{ flex: 1, aspectRatio: '1', background: 'var(--paper)', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
-                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
+                  <img src={img} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
                 </button>
               ))}
             </div>
@@ -292,7 +293,7 @@ const ShopPage = () => {
       <div style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
 
         {/* Row 1 — special + brands */}
-        <div className="container-wide" style={{ padding:"18px 0 0", display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+        <div className="container-wide" style={{ paddingTop:"18px", paddingBottom:0, display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
           {/* All Bikes */}
           <button onClick={() => { setBrand("All"); setType("All"); setSale(false); }} data-cursor="link"
             style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "var(--hairline)" }}>
@@ -325,7 +326,7 @@ const ShopPage = () => {
         </div>
 
         {/* Row 2 — types + sort */}
-        <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 0 14px", flexWrap:"wrap", gap:8 }}>
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", paddingTop:"10px", paddingBottom:"14px", flexWrap:"wrap", gap:8 }}>
           <div style={{ display:"flex", gap:0, flexWrap:"wrap" }}>
             {TYPES.map(t => (
               <button key={t.label} onClick={() => { setType(t.label); setSale(false); }} data-cursor="link"
@@ -398,6 +399,7 @@ const BikeCardLarge = ({ b, idx }) => {
       <div style={{ aspectRatio:"4/5", marginBottom:16, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
         {img ? (
           <img src={img} alt={brand + " " + name}
+            loading="lazy" decoding="async"
             style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply", transition:"transform .4s ease" }}
             onError={e => { e.target.style.display='none'; }} />
         ) : (
@@ -472,7 +474,7 @@ const ServicesPage = () => {
           <div className="reveal section-label">Service Menu  /  Pricing</div>
           <div style={{ borderTop: "1px solid var(--hairline)" }}>
             {services.map((s, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i % 3 + 1)} style={{ display: "grid", gridTemplateColumns: "60px 1.6fr 2fr 100px 140px 160px", gap: 32, padding: "32px 0", borderBottom: "1px solid var(--hairline)", alignItems: "center" }}>
+              <div key={i} className={"reveal reveal-d-" + (i % 3 + 1) + " page-svc-row"} style={{ display: "grid", gridTemplateColumns: "60px 1.6fr 2fr 100px 140px 160px", gap: 32, padding: "32px 0", borderBottom: "1px solid var(--hairline)", alignItems: "center" }}>
                 <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".18em", color: "var(--gray-500)" }}>{s.n}</div>
                 <div className="display-s">{s.name}</div>
                 <div style={{ color: "var(--gray-500)", fontSize: 14 }}>{s.desc}</div>
@@ -936,7 +938,7 @@ const RidesPage = () => {
               ["Social Saturday", "Easy pace, cafe stop  ·  Monthly", "Social"],
               ["Women's Ride", "All abilities  ·  Monthly", "Social"],
             ].map(([n, m, t], i) => (
-              <a key={i} href="#" data-cursor="link" className="reveal" style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr 200px 80px", gap: 32, padding: "40px 0", borderBottom: "1px solid var(--hairline-light)", alignItems: "center" }}>
+              <a key={i} href="#" data-cursor="link" className="reveal page-wide-row" style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr 200px 80px", gap: 32, padding: "40px 0", borderBottom: "1px solid var(--hairline-light)", alignItems: "center" }}>
                 <div className="display-m">{n}</div>
                 <div style={{ color: "var(--gray-300)", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>{m}</div>
                 <span className="pill">{t}</span>
@@ -1045,7 +1047,7 @@ const TrailsPage = () => {
 // CONTACT
 const ContactPage = () => (
   <div className="page-fade" data-screen-label="P08 Contact">
-    <section style={{ paddingTop: 120, minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+    <section className="page-contact-grid" style={{ paddingTop: 120, minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr" }}>
       <div className="ph ph-corners" style={{ minHeight: 600, position: "relative" }}>
         <span className="ph-label">STOREFRONT  /  B&W</span>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(10,10,10,0.6))" }} />
@@ -1211,11 +1213,18 @@ const PartsPage = () => {
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
                   {searchRes.map((item, i) => (
                     <div key={i} style={{ padding:"14px 16px", border:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-                      <div>
+                      <div style={{ flex:1 }}>
                         <div style={{ fontFamily:"var(--display)", fontSize:12, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
                         <div className="eyebrow" style={{ marginTop:3 }}>{item.department}</div>
                       </div>
-                      <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600, flexShrink:0 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : 'POA'}</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
+                        <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : 'POA'}</div>
+                        <button data-cursor="link"
+                          onClick={() => window.location.href = `mailto:bikes@chainline.ca?subject=Part Enquiry: ${encodeURIComponent(item.name)}&body=Hi, I'd like to purchase:%0A%0AItem: ${encodeURIComponent(item.name)}%0ASKU: ${encodeURIComponent(item.sku||'N/A')}%0APrice: $${item.price.toFixed(2)}%0A%0APlease confirm availability and payment.%0A%0AThanks`}
+                          style={{ padding:"6px 12px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor:"pointer" }}>
+                          Buy →
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1250,12 +1259,19 @@ const PartsPage = () => {
                           <>
                             <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:6 }}>
                               {deptItems.slice(0,60).map((item, j) => (
-                                <div key={j} style={{ padding:"12px 14px", background:"var(--paper)", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8 }}>
-                                  <div style={{ flex:1 }}>
+                                <div key={j} style={{ padding:"12px 14px", background:"var(--paper)", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, flexWrap:"wrap" }}>
+                                  <div style={{ flex:1, minWidth:0 }}>
                                     <div style={{ fontFamily:"var(--display)", fontSize:11, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
                                     {item.sku && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", marginTop:2 }}>SKU {item.sku}</div>}
                                   </div>
-                                  <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, flexShrink:0 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : ''}</div>
+                                  <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
+                                    <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : ''}</div>
+                                    <button data-cursor="link"
+                                      onClick={() => window.location.href = `mailto:bikes@chainline.ca?subject=Part Enquiry: ${encodeURIComponent(item.name)}&body=Hi, I'd like to purchase the following:%0A%0AItem: ${encodeURIComponent(item.name)}%0ASKU: ${encodeURIComponent(item.sku||'N/A')}%0APrice: $${item.price.toFixed(2)}%0A%0APlease let me know availability and how to pay.%0A%0AThanks`}
+                                      style={{ padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap" }}>
+                                      Buy →
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1418,7 +1434,7 @@ const BrandPage = () => {
         <div className="container-wide">
           <div style={{ borderTop:"1px solid var(--hairline)" }}>
             {brands.map((br, i) => (
-              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"240px 1fr 160px 120px", gap:32, padding:"40px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
+              <div key={i} className="reveal page-wide-row" style={{ display:"grid", gridTemplateColumns:"240px 1fr 160px 120px", gap:32, padding:"40px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
                 <div className="display-m">{br.name}</div>
                 <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6 }}>{br.desc}</p>
                 <div className="eyebrow">{br.count > 0 ? `${br.count} bikes in stock` : "Coming soon"}</div>
