@@ -375,13 +375,18 @@ const BikeCardLarge = ({ b, idx }) => {
   const [adding, setAdding] = React.useState(false);
   const [added,  setAdded]  = React.useState(false);
 
-  const name  = b.name  || b.title  || "";
-  const brand = b.brand || b.vendor || "";
-  const img   = b.img   || b.image  || null;
-  const price = b.price || 0;
+  const name    = b.name  || b.title  || "";
+  const brand   = b.brand || b.vendor || "";
+  const img     = b.img   || b.image  || null;
+  const price   = b.price || 0;
+  // Stock — null means unknown (static data), use true as default
+  const inStock = b.inStock !== false;
+  const qty     = typeof b.qty === 'number' ? b.qty : null;
+  const lowStock = qty !== null && qty > 0 && qty <= 3;
 
   const handleAdd = async (e) => {
     e.preventDefault(); e.stopPropagation();
+    if (!inStock) return;
     setAdding(true);
     try {
       await window.clAddToCart(b.handle, name, price, img);
@@ -394,7 +399,9 @@ const BikeCardLarge = ({ b, idx }) => {
   const goToBike = () => window.cl.go("bike", { bike: b });
 
   return (
-    <div className={"reveal reveal-d-" + (idx % 3 + 1)} style={{ cursor:"pointer" }} onClick={goToBike}>
+    <div className={"reveal reveal-d-" + (idx % 3 + 1)}
+      style={{ cursor:"pointer", opacity: inStock ? 1 : 0.5 }}
+      onClick={goToBike}>
       {/* Image */}
       <div style={{ aspectRatio:"4/5", marginBottom:16, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
         {img ? (
@@ -407,7 +414,18 @@ const BikeCardLarge = ({ b, idx }) => {
             <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
           </div>
         )}
-        {b.badge && (
+        {/* Stock badge */}
+        {!inStock && (
+          <div style={{ position:"absolute", inset:0, background:"rgba(250,250,250,0.7)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <div style={{ padding:"8px 16px", background:"var(--gray-200)", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase" }}>Out of Stock</div>
+          </div>
+        )}
+        {lowStock && (
+          <div style={{ position:"absolute", bottom:12, left:12, padding:"4px 10px", background:"var(--white)", color:"var(--gray-600)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid var(--hairline)" }}>
+            {qty} left
+          </div>
+        )}
+        {b.badge && inStock && (
           <div style={{ position:"absolute", top:12, right:12, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>
         )}
         <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0)", display:"flex", alignItems:"center", justifyContent:"center", transition:"background .3s" }}
@@ -429,9 +447,9 @@ const BikeCardLarge = ({ b, idx }) => {
           View Bike
         </button>
         <button className="btn" data-cursor="link"
-          onClick={handleAdd} disabled={adding}
-          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
-          {added ? "Added ✓" : adding ? "…" : "Add to Cart"}
+          onClick={handleAdd} disabled={adding || !inStock}
+          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11, opacity: inStock ? 1 : 0.4 }}>
+          {!inStock ? "Out of Stock" : added ? "Added ✓" : adding ? "…" : "Add to Cart"}
         </button>
       </div>
     </div>

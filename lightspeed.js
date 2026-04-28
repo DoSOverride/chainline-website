@@ -68,6 +68,8 @@ window.lightspeedGetBikes = function() {
     tags:  p.department,
     handle: p.sku || String(p.id),
     fromLightspeed: true,
+    qty:     typeof p.qty === 'number' ? p.qty : null,
+    inStock: typeof p.inStock === 'boolean' ? p.inStock : true,
   }));
 };
 
