@@ -261,6 +261,9 @@ const ShopPage = () => {
     }
   });
 
+  // Use live Lightspeed data if available, otherwise fall back to static CSV catalog
+  const allProducts = liveProducts || SHOP_BIKES;
+
   // Re-trigger reveal animations after every filter change
   React.useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -268,9 +271,6 @@ const ShopPage = () => {
     });
     return () => cancelAnimationFrame(id);
   }, [brand, type, sort, saleOnly, allProducts]);
-
-  // Use live Lightspeed data if available, otherwise fall back to static CSV catalog
-  const allProducts = liveProducts || SHOP_BIKES;
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
   const TYPES = [
