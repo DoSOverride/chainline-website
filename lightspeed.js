@@ -52,6 +52,25 @@ window.lightspeedGetDept = async function(deptName) {
 
 // ── Filter bikes from inventory ───────────────────────────────
 window.lightspeedGetBikes = function() {
+  // Use dedicated bikes endpoint data if available (has real stock)
+  if (window.CL_LS.bikes && window.CL_LS.bikes.length > 0) {
+    return window.CL_LS.bikes.map(p => ({
+      id:     p.id,
+      name:   p.name,
+      brand:  (p.name || '').split(' ')[0] || '',
+      vendor: (p.name || '').split(' ')[0] || '',
+      sku:    p.sku,
+      type:   deptToType(p.department),
+      price:  p.price,
+      img:    null,
+      tags:   p.department,
+      handle: p.sku || String(p.id),
+      fromLightspeed: true,
+      qty:     typeof p.qty === 'number' ? p.qty : null,
+      inStock: typeof p.inStock === 'boolean' ? p.inStock : true,
+    }));
+  }
+  // Fallback: filter from general products list
   const bikeKeywords = ['mountain', 'road', 'gravel', 'electric', 'e-bike', 'commut', 'kid', 'junior', 'cruiser', 'comfort', 'hybrid', 'touring', 'fat', 'cross', 'bmx'];
   return window.CL_LS.products.filter(p => {
     const cat  = (p.category  || '').toLowerCase();
@@ -60,7 +79,7 @@ window.lightspeedGetBikes = function() {
   }).map(p => ({
     id:    p.id,
     name:  p.name,
-    brand: '',
+    brand: (p.name || '').split(' ')[0] || '',
     sku:   p.sku,
     type:  deptToType(p.department),
     price: p.price,
@@ -109,18 +128,24 @@ window.lightspeedSearch = function(query) {
   );
 };
 
-// ── Init: load first page immediately, rest lazily ────────────
+// ── Init: load bikes directly from /api/bikes ────────────────
 window.lightspeedReady = (async () => {
-  // Just load first page for initial shop display
   try {
+    // Load bikes with stock data first (fast, targeted)
+    const bikeRes = await fetch(`${window.CL_LS.workerUrl}/api/bikes`);
+    const bikeData = await bikeRes.json();
+    if (bikeData.bikes && bikeData.bikes.length > 0) {
+      window.CL_LS.bikes  = bikeData.bikes;
+      window.CL_LS.loaded = true;
+      console.log(`[ChainLine] Lightspeed bikes loaded: ${bikeData.count} bikes with stock data`);
+      window.dispatchEvent(new CustomEvent('lightspeed:ready', { detail: { count: bikeData.count } }));
+    }
+    // Also load first page of all products for parts/search in background
     const first = await window.lightspeedFetch({ limit: 100 });
-    if (first && first.items && first.items.length > 0) {
+    if (first && first.items) {
       window.CL_LS.products    = first.items;
       window.CL_LS.departments = first.departments || [];
-      window.CL_LS.loaded      = true;
       window.CL_LS.total       = first.total;
-      console.log(`[ChainLine] Lightspeed connected — ${first.total} products available`);
-      window.dispatchEvent(new CustomEvent('lightspeed:ready', { detail: { count: first.total } }));
     }
   } catch(err) {
     console.warn('[ChainLine] Lightspeed unavailable:', err.message);
