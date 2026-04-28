@@ -1,0 +1,5 @@
+.git
+install-caveman.sh
+wrangler.toml
+.assetsignore
+.gitignore

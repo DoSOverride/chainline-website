@@ -1,0 +1,6 @@
+name = "chainline-website"
+compatibility_date = "2024-09-23"
+account_id = "8c3d9e51212aa8c7a1ad6ea8edd23d8b"
+
+[assets]
+directory = "./"
