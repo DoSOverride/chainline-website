@@ -287,11 +287,14 @@ const Footer = () => (
             Built for Kelowna.<br/>Backed by Canada.<br/>Since 2009.
           </div>
           <div style={{ display: "flex", gap: 18, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
-            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Instagram</a>
-            <a href="https://facebook.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Facebook</a>
-            <a href="https://tiktok.com/@ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">TikTok</a>
-            <a href="https://youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">YouTube</a>
-            <a href="https://www.strava.com/clubs/chainlinecycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Strava</a>
+            <a href="https://www.instagram.com/ChainLineCycle/" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Instagram</a>
+            <a href="https://www.facebook.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Facebook</a>
+            <a href="https://www.tiktok.com/@ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">TikTok</a>
+            <a href="https://www.youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">YouTube</a>
+            <a href="https://x.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">X</a>
+            <a href="https://www.threads.net/@chainlinecycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Threads</a>
+            <a href="https://bsky.app/profile/chainlinecycle.bsky.social" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Bluesky</a>
+            <a href="https://www.snapchat.com/add/chainlinecycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Snapchat</a>
           </div>
         </div>
         <div className="footer-col">

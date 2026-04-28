@@ -261,6 +261,14 @@ const ShopPage = () => {
     }
   });
 
+  // Re-trigger reveal animations after every filter change
+  React.useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [brand, type, sort, saleOnly, allProducts]);
+
   // Use live Lightspeed data if available, otherwise fall back to static CSV catalog
   const allProducts = liveProducts || SHOP_BIKES;
 
@@ -550,158 +558,213 @@ const ServicesPage = () => {
 // BOOK PAGE
 const BookPage = () => {
   const [type, setType] = React.useState("service");
-  const [step, setStep] = React.useState(1);
   const [data, setData] = React.useState({});
+  const [sent, setSent] = React.useState(false);
+  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
   const types = [
-    { id: "service", glyph: "⊞", title: "Service", desc: "Tune-ups, repairs, overhauls" },
-    { id: "fitting", glyph: "⊟", title: "Fitting", desc: "Bike fit & position analysis" },
-    { id: "demo", glyph: "⊕", title: "Demo", desc: "Test ride any bike in our fleet" },
-    { id: "storage", glyph: "⊠", title: "Storage", desc: "Winter storage program" },
+    { id: "service", glyph: "⊞", title: "Service & Repair", desc: "Tune-ups, repairs, overhauls, custom builds" },
+    { id: "fitting", glyph: "⊟", title: "Bike Fitting", desc: "Professional position & fit analysis" },
+    { id: "demo",    glyph: "⊕", title: "Demo Ride",    desc: "Try any bike in our 12-bike fleet" },
+    { id: "storage", glyph: "⊠", title: "Winter Storage", desc: "Secure, climate-controlled storage" },
   ];
-  const update = (k, v) => setData({ ...data, [k]: v });
-  const next = () => setStep(s => Math.min(s + 1, 5));
-  const back = () => setStep(s => Math.max(s - 1, 1));
+  const selStyle = (active) => ({ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const t = types.find(x => x.id === type);
+    const lines = Object.entries(data).filter(([,v])=>v).map(([k,v])=>`${k.replace(/([A-Z])/g,' $1').toLowerCase()}: ${v}`).join('\n');
+    const subject = encodeURIComponent(`Booking Request — ${t.title}`);
+    const body = encodeURIComponent(`New booking request from chainline.ca\n\nType: ${t.title}\n\n${lines}\n\n---\nWe'll confirm within 24 hours.`);
+    window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
 
   return (
     <div className="page-fade" data-screen-label="P04 Book">
       <SubHero eyebrow="Booking  /  N°01" title="Book your visit." italic="We'll have it ready." />
       <section className="section section-pad bg-white">
         <div className="container-narrow">
-          <div className="eyebrow reveal" style={{ marginBottom: 24 }}>Step 1  ·  Choose your visit</div>
-          <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 80 }}>
-            {types.map(t => (
-              <button key={t.id} onClick={() => { setType(t.id); setStep(1); }} data-cursor="link" style={{ padding: 32, border: "1px solid " + (type === t.id ? "var(--black)" : "var(--hairline)"), background: type === t.id ? "var(--black)" : "var(--white)", color: type === t.id ? "var(--white)" : "var(--black)", textAlign: "left", aspectRatio: "1", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "all .3s" }}>
-                <div style={{ fontSize: 32, fontFamily: "var(--display)" }}>{t.glyph}</div>
-                <div>
-                  <div className="display-s" style={{ marginBottom: 8 }}>{t.title}</div>
-                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", opacity: 0.7 }}>{t.desc}</div>
-                </div>
-              </button>
-            ))}
-          </div>
 
-          {/* Progress */}
-          <div className="reveal" style={{ display: "flex", gap: 8, marginBottom: 48 }}>
-            {[1,2,3,4,5].map(s => (
-              <div key={s} style={{ flex: 1, height: 2, background: s <= step ? "var(--black)" : "var(--hairline)" }} />
-            ))}
-          </div>
-          <div className="eyebrow reveal" style={{ marginBottom: 16 }}>Step {step} of 5</div>
+          {sent ? (
+            <div style={{ textAlign:"center", padding:"80px 0" }}>
+              <div className="display-l" style={{ marginBottom:16 }}>Request Sent ✓</div>
+              <p className="serif-italic" style={{ fontSize:22, color:"var(--gray-500)", marginBottom:32 }}>We'll be in touch within 24 hours to confirm your slot.</p>
+              <div style={{ padding:"24px 28px", background:"var(--paper)", borderLeft:"3px solid var(--black)", textAlign:"left", marginBottom:32 }}>
+                <p style={{ fontSize:14, color:"var(--gray-600)", lineHeight:1.7 }}>
+                  Sent to <strong>bikes@chainline.ca</strong>. We'll confirm by call or email within 24 hrs.<br/><br/>
+                  Questions? Call <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon–Sat.
+                </p>
+              </div>
+              <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+                <button className="btn btn-outline" onClick={() => { setSent(false); setData({}); }}>Book another</button>
+                <button className="btn" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
 
-          {step === 1 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>What service?</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                {["Basic Tune-Up", "Full Overhaul", "Drivetrain", "Brake Service", "Suspension", "Wheel True", "Tubeless Setup", "Custom Build"].map(s => (
-                  <button key={s} onClick={() => { update("service", s); next(); }} data-cursor="link" style={{ padding: 24, border: "1px solid var(--hairline)", textAlign: "left", fontFamily: "var(--display)", fontSize: 18, fontWeight: 500, textTransform: "uppercase", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    {s} <ArrowRight />
+              {/* Type tiles */}
+              <div className="eyebrow reveal" style={{ marginBottom:20 }}>What are you booking?</div>
+              <div className="reveal" style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:12, marginBottom:48 }}>
+                {types.map(t => (
+                  <button key={t.id} type="button" onClick={() => { setType(t.id); setData({}); }} data-cursor="link"
+                    style={{ padding:28, border:"1.5px solid "+(type===t.id?"var(--black)":"var(--hairline)"), background:type===t.id?"var(--black)":"var(--white)", color:type===t.id?"var(--white)":"var(--black)", textAlign:"left", display:"flex", flexDirection:"column", gap:10, transition:"all .25s" }}>
+                    <div style={{ fontSize:26, fontFamily:"var(--display)", lineHeight:1 }}>{t.glyph}</div>
+                    <div className="display-s">{t.title}</div>
+                    <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", opacity:.7 }}>{t.desc}</div>
                   </button>
                 ))}
               </div>
-            </div>
-          )}
 
-          {step === 2 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>Pick a date.</h2>
-              <Calendar onPick={(d) => { update("date", d); next(); }} />
-            </div>
-          )}
+              {/* Service-specific fields */}
+              <div className="reveal" style={{ marginBottom:40 }}>
+                <div className="section-label" style={{ marginBottom:32 }}>
+                  {type==="service"?"Tell us about your bike":type==="fitting"?"Your fitting details":type==="demo"?"Demo details":"Storage details"}
+                </div>
 
-          {step === 3 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>Your bike.</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-                <Field label="Brand" placeholder="e.g. Transition" value={data.bikeBrand||""} onChange={v=>update("bikeBrand",v)} />
-                <Field label="Model" placeholder="e.g. Sentinel" value={data.bikeModel||""} onChange={v=>update("bikeModel",v)} />
-                <Field label="Year" placeholder="2023" value={data.bikeYear||""} onChange={v=>update("bikeYear",v)} />
-                <Field label="Frame size" placeholder="Medium" value={data.bikeSize||""} onChange={v=>update("bikeSize",v)} />
-              </div>
-              <Field label="What's the issue?" textarea placeholder="Brakes feel spongy, drivetrain skipping in 4th gear..." value={data.issue||""} onChange={v=>update("issue",v)} />
-              <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={next}>Continue <ArrowRight /></button>
-              </div>
-            </div>
-          )}
+                {type === "service" && (
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Service type *</div>
+                      <select required value={data.serviceType||""} onChange={e=>upd("serviceType",e.target.value)} style={selStyle()}>
+                        <option value="">Select a service</option>
+                        {["Basic Tune-Up — $89","Drivetrain Service — $145","Full Overhaul — $425","Brake Service (Hydraulic) — $95/wheel","Suspension Service — $220","Wheel True & Tension — $65/wheel","Tubeless Setup — $55/wheel","Pre-Season Inspection — $75","Post-Crash Inspection — $95","Electronic Shifting Setup (Di2/AXS) — $120","Custom Build — quoted on consult","Other — describe below"].map(s=><option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <Field label="Bike brand *" placeholder="e.g. Marin, Transition, Trek" value={data.bikeBrand||""} onChange={v=>upd("bikeBrand",v)} />
+                    <Field label="Bike model" placeholder="e.g. Rift Zone 3" value={data.bikeModel||""} onChange={v=>upd("bikeModel",v)} />
+                    <Field label="Year" placeholder="e.g. 2023" value={data.bikeYear||""} onChange={v=>upd("bikeYear",v)} />
+                    <Field label="Frame size" placeholder="e.g. Medium / 17\"" value={data.bikeSize||""} onChange={v=>upd("bikeSize",v)} />
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <Field label="Issue / what needs attention" textarea placeholder="e.g. brakes feel spongy, drivetrain skipping, rear derailleur hanger might be bent..." value={data.issue||""} onChange={v=>upd("issue",v)} />
+                    </div>
+                  </div>
+                )}
 
-          {step === 4 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>Your details.</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>First name</div>
-                  <input type="text" value={data.firstName||""} onChange={e=>update("firstName",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Last name</div>
-                  <input type="text" value={data.lastName||""} onChange={e=>update("lastName",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Email</div>
-                  <input type="email" value={data.email||""} onChange={e=>update("email",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Phone</div>
-                  <input type="tel" value={data.phone||""} onChange={e=>update("phone",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
+                {type === "fitting" && (
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Fitting type *</div>
+                      <select required value={data.fitType||""} onChange={e=>upd("fitType",e.target.value)} style={selStyle()}>
+                        <option value="">Select a fitting</option>
+                        <option>Position Check — 45 min · $80</option>
+                        <option>Road & Gravel Fit — 2 hrs · $220</option>
+                        <option>Mountain Bike Fit — 2 hrs · $220</option>
+                        <option>Full Body + Video Analysis — 3 hrs · $380</option>
+                      </select>
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Discipline</div>
+                      <select value={data.discipline||""} onChange={e=>upd("discipline",e.target.value)} style={selStyle()}>
+                        <option value="">Select</option>
+                        {["Road","Gravel","Mountain","Commuter / City","Multiple disciplines"].map(d=><option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Experience level</div>
+                      <select value={data.experience||""} onChange={e=>upd("experience",e.target.value)} style={selStyle()}>
+                        <option value="">Select</option>
+                        {["Beginner","Intermediate","Experienced","Racer / Competitive"].map(d=><option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <Field label="Current bike (if applicable)" placeholder="e.g. 2022 Cervélo R5, size 54" value={data.currentBike||""} onChange={v=>upd("currentBike",v)} />
+                    </div>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <Field label="Goals / pain points" textarea placeholder="e.g. knee pain on climbs, want more power transfer, recovering from injury, new bike purchase..." value={data.goals||""} onChange={v=>upd("goals",v)} />
+                    </div>
+                  </div>
+                )}
+
+                {type === "demo" && (
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Bike you'd like to demo</div>
+                      <select value={data.demoBike||""} onChange={e=>upd("demoBike",e.target.value)} style={selStyle()}>
+                        <option value="">Select a bike (or describe below)</option>
+                        {(window.SHOP_BIKES||[]).filter(b=>["Mountain","Gravel","E-Bike"].includes(b.type)).map(b=><option key={b.handle}>{b.brand} {b.name} — ${b.price.toLocaleString()}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Experience level</div>
+                      <select value={data.experience||""} onChange={e=>upd("experience",e.target.value)} style={selStyle()}>
+                        <option value="">Select</option>
+                        {["Beginner","Intermediate","Experienced","Advanced"].map(d=><option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Preferred trail / terrain</div>
+                      <select value={data.terrain||""} onChange={e=>upd("terrain",e.target.value)} style={selStyle()}>
+                        <option value="">Select</option>
+                        {["Knox Mountain — MTB singletrack","Mission Creek — multi-use","Bear Creek — mixed MTB","Myra Canyon / Rail trail","Gravel roads","Road / pavement"].map(d=><option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <Field label="Notes (frame size preference, considering purchasing, etc.)" textarea placeholder="e.g. 6' tall, normally ride medium, seriously considering buying, want to compare two bikes..." value={data.notes||""} onChange={v=>upd("notes",v)} />
+                    </div>
+                  </div>
+                )}
+
+                {type === "storage" && (
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
+                    <Field label="Bike brand *" placeholder="e.g. Marin" value={data.bikeBrand||""} onChange={v=>upd("bikeBrand",v)} />
+                    <Field label="Bike model" placeholder="e.g. Rift Zone 3" value={data.bikeModel||""} onChange={v=>upd("bikeModel",v)} />
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Preferred drop-off timing</div>
+                      <select value={data.dropOff||""} onChange={e=>upd("dropOff",e.target.value)} style={selStyle()}>
+                        <option value="">Select</option>
+                        {["Early October","Mid October","Late October","November","Not sure yet — just want to reserve a spot"].map(d=><option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>E-bike?</div>
+                      <select value={data.ebike||""} onChange={e=>upd("ebike",e.target.value)} style={selStyle()}>
+                        <option value="">Select</option>
+                        <option>Yes — e-bike (battery included)</option>
+                        <option>No — regular bike</option>
+                      </select>
+                    </div>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <Field label="Notes (spring service requested, accessories to store, etc.)" textarea placeholder="e.g. would like a basic tune-up ready for spring, storing helmet and shoes too..." value={data.notes||""} onChange={v=>upd("notes",v)} />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Contact + date */}
+              <div className="reveal" style={{ borderTop:"1px solid var(--hairline)", paddingTop:40, marginBottom:40 }}>
+                <div className="section-label" style={{ marginBottom:32 }}>Your contact details</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
+                  <Field label="First name *" placeholder="Alex" value={data.firstName||""} onChange={v=>upd("firstName",v)} />
+                  <Field label="Last name *" placeholder="Smith" value={data.lastName||""} onChange={v=>upd("lastName",v)} />
+                  <Field label="Email *" placeholder="alex@email.com" value={data.email||""} onChange={v=>upd("email",v)} />
+                  <Field label="Phone" placeholder="(250) 555-0000" value={data.phone||""} onChange={v=>upd("phone",v)} />
+                  <div style={{ gridColumn:"1/-1" }}>
+                    <Field label="Preferred date / timeframe" placeholder="e.g. Any weekday in May, ASAP, Week of May 12, flexible" value={data.preferredDate||""} onChange={v=>upd("preferredDate",v)} />
+                  </div>
                 </div>
               </div>
-              <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={() => {
-                  const subject = encodeURIComponent(`Service Booking Request — ${types.find(t=>t.id===type)?.title || type}`);
-                  const body = encodeURIComponent(
-                    `New service booking request from ChainLine website:\n\n` +
-                    `Type: ${types.find(t=>t.id===type)?.title || type}\n` +
-                    `Service: ${data.service || 'Not specified'}\n` +
-                    `Preferred Date: ${data.date || 'Flexible'}\n\n` +
-                    `Bike:\nBrand: ${data.bikeBrand||''}\nModel: ${data.bikeModel||''}\nYear: ${data.bikeYear||''}\nSize: ${data.bikeSize||''}\nIssue: ${data.issue||''}\n\n` +
-                    `Customer:\nName: ${data.firstName||''} ${data.lastName||''}\nEmail: ${data.email||''}\nPhone: ${data.phone||''}`
-                  );
-                  window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
-                  next();
-                }}>
-                  Submit Booking <ArrowRight />
+
+              <div className="reveal" style={{ display:"flex", gap:12, alignItems:"center", flexWrap:"wrap" }}>
+                <button type="submit" className="btn" data-cursor="link" style={{ minWidth:220, justifyContent:"center" }}>
+                  Send Booking Request <ArrowRight />
                 </button>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+                  We confirm within 24 hrs · bikes@chainline.ca
+                </div>
               </div>
-            </div>
-          )}
-
-          {step === 5 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 16 }}>Request Sent ✓</h2>
-              <p className="serif-italic" style={{ fontSize: 22, color: "var(--gray-500)", marginBottom: 32 }}>We'll be in touch within 24 hours to confirm your slot.</p>
-              <div style={{ padding:"24px 28px", background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:32 }}>
-                <p style={{ fontSize:14, color:"var(--gray-600)", lineHeight:1.7 }}>
-                  Your booking request has been sent to <strong>bikes@chainline.ca</strong>. You'll receive a confirmation call or email to lock in your appointment time.<br/><br/>
-                  Questions? Call us at <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon–Sat 10am–6pm.
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: 12 }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={() => { setStep(1); setData({}); }}>Book another</button>
-                <button className="btn" data-cursor="link" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
-              </div>
-            </div>
+            </form>
           )}
         </div>
       </section>
 
-      <section className="section section-pad-sm bg-paper" style={{ padding: "80px 0" }}>
+      <section className="section section-pad-sm bg-paper" style={{ padding:"80px 0" }}>
         <div className="container-wide">
-          <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, borderTop: "1px solid var(--hairline)" }}>
-            {[
-              { n: "01", t: "Book Online", d: "Pick a service, time, and tell us about your bike." },
-              { n: "02", t: "Drop Off", d: "Stop by the shop. We tag the bike, log the work order." },
-              { n: "03", t: "We Call", d: "When it's ready. Pickup any time the shop is open." },
-            ].map((s, i) => (
-              <div key={i} style={{ padding: "32px 32px 32px 0", borderRight: i < 2 ? "1px solid var(--hairline)" : "none", paddingLeft: i > 0 ? 32 : 0 }}>
-                <div className="eyebrow" style={{ marginBottom: 16 }}>{s.n}</div>
-                <div className="display-m" style={{ marginBottom: 12 }}>{s.t}</div>
-                <p style={{ color: "var(--gray-500)", fontSize: 15, margin: 0 }}>{s.d}</p>
+          <div className="reveal" style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:0, borderTop:"1px solid var(--hairline)" }}>
+            {[["01","Book Online","Fill out the form with your bike and contact details."],["02","We Confirm","You'll hear back within 24 hours to lock in your slot."],["03","Drop Off & Ride","Bring it in. We handle the rest. Pickup when it's ready."]].map(([n,t,d],i)=>(
+              <div key={n} style={{ padding:"32px", borderRight:i<2?"1px solid var(--hairline)":"none", paddingLeft:i>0?32:0 }}>
+                <div className="eyebrow" style={{ marginBottom:16 }}>{n}</div>
+                <div className="display-m" style={{ marginBottom:12 }}>{t}</div>
+                <p style={{ color:"var(--gray-500)", fontSize:15, margin:0 }}>{d}</p>
               </div>
             ))}
           </div>
@@ -1341,19 +1404,44 @@ const ClassifiedsPage = () => {
   return (
     <div className="page-fade">
       <SubHero eyebrow="Community  /  N°02" title="Buy. Sell. Ride." italic="Kelowna's cycling classifieds." />
+
+      {/* PinkBike banner */}
+      <div style={{ background:"var(--black)", color:"var(--white)", padding:"20px 0", borderBottom:"1px solid var(--hairline-light)" }}>
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:16, flexWrap:"wrap" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:16 }}>
+            <span style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, textTransform:"uppercase", letterSpacing:".1em" }}>Also on PinkBike</span>
+            <span style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-300)" }}>ChainLine Cycle dealer listings</span>
+          </div>
+          <a href="https://www.pinkbike.com/buysell/?q=chainline+kelowna" target="_blank" rel="noopener" className="btn btn-outline-light" data-cursor="link" style={{ fontSize:11, padding:"10px 20px" }}>
+            View on PinkBike <ArrowRight />
+          </a>
+        </div>
+      </div>
+
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:48 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:48, flexWrap:"wrap", gap:16 }}>
             <div className="reveal section-label" style={{ marginBottom:0 }}>Current Listings  /  {DEMO_LISTINGS.length}</div>
-            <button className="btn" data-cursor="link" onClick={() => setShowForm(!showForm)}>
-              {showForm ? "Cancel" : "Post a Listing"} {showForm ? "" : <ArrowRight />}
-            </button>
+            <div style={{ display:"flex", gap:12 }}>
+              <a href="https://www.pinkbike.com/buysell/list/" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link" style={{ fontSize:11 }}>
+                Post on PinkBike <ArrowRight />
+              </a>
+              <button className="btn" data-cursor="link" onClick={() => setShowForm(!showForm)}>
+                {showForm ? "Cancel" : "List with ChainLine"} {showForm ? "" : <ArrowRight />}
+              </button>
+            </div>
           </div>
 
           {submitted && (
             <div style={{ padding:24, background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:40 }}>
-              <p style={{ fontFamily:"var(--display)", fontWeight:600, textTransform:"uppercase" }}>Listing submitted!</p>
-              <p style={{ fontSize:14, color:"var(--gray-500)", marginTop:8 }}>We'll review it and get it posted within 24 hours. Email bikes@chainline.ca with any questions.</p>
+              <p style={{ fontFamily:"var(--display)", fontWeight:600, textTransform:"uppercase", marginBottom:8 }}>Listing submitted!</p>
+              <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:16 }}>We'll review it and get it posted within 24 hours. Email bikes@chainline.ca with any questions.</p>
+              <div style={{ display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+                <span style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)" }}>Want more reach?</span>
+                <a href="https://www.pinkbike.com/buysell/list/" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link" style={{ fontSize:11, padding:"10px 20px" }}>
+                  Also post on PinkBike <ArrowRight />
+                </a>
+              </div>
             </div>
           )}
 
