@@ -106,9 +106,13 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
   const data = {
     shop: {
       cols: [
-        { h: "Bikes", items: ["All Bikes", "Mountain", "Road", "Gravel", "E-Bike", "Commuter", "Kids"] },
-        { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
-        { h: "More", items: ["Sale", "Gift Cards", "Classifieds"], feature: { label: "FEATURED  /  THE LINEUP", title: "2026 Marin Rift Zone" } },
+        { h: "Bikes", items: ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Kids"] },
+        { h: "Brands", items: ["Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots"] },
+        { h: "More", items: ["Sale", "Gift Cards", "Classifieds"], feature: {
+          label: "FEATURED  /  TRANSITION BIKES",
+          title: "Regulator CX — The eMTB",
+          img: "https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif",
+        }},
       ],
     },
     services: {
@@ -137,8 +141,8 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "e-bike" || l === "ebike") return ["shop", { type: "E-Bike" }];
     if (l === "commuter") return ["shop", { type: "Commuter" }];
     if (l === "kids") return ["shop", { type: "Kids" }];
-    // Brand filters in mega
-    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots"].includes(l)) return ["brands", null];
+    // Brand filters → shop page filtered by brand
+    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
     // Parts / accessories — generic shop view
     if (l.includes("gift")) return ["giftcards", null];
     if (l.includes("classified")) return ["classifieds", null];
@@ -174,12 +178,15 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
             <div className="mega-col">
               <h4>{d.cols[2].h}</h4>
               <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map((it) => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-              <a href="#" data-cursor="link" onClick={(e) => handleClick(e, d.cols[2].feature.title)} className="mega-feature ph ph-corners" style={{ aspectRatio: "16/8", display: "flex", alignItems: "flex-end", padding: 24, textDecoration: "none" }}>
+              <a href="#" data-cursor="link" onClick={(e) => handleClick(e, d.cols[2].feature.title)} className="mega-feature" style={{ aspectRatio: "16/8", display: "flex", alignItems: "flex-end", padding: 24, textDecoration: "none", position: "relative", overflow: "hidden", background: "var(--gray-100)" }}>
+                {d.cols[2].feature.img && (
+                  <img src={d.cols[2].feature.img} alt={d.cols[2].feature.title} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+                )}
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%)" }} />
                 <div style={{ position: "relative", zIndex: 2, color: "var(--white)" }}>
                   <div className="eyebrow eyebrow-light" style={{ marginBottom: 8 }}>{d.cols[2].feature.label}</div>
                   <div className="display-s" style={{ color: "var(--white)" }}>{d.cols[2].feature.title}</div>
                 </div>
-                <span className="ph-label">PHOTO  /  16x8</span>
               </a>
             </div>
           </div>

@@ -108,7 +108,7 @@ const BIKE_CATALOG = [
 
 const BikeCard = ({ b, idx }) => (
   <a href="#" className={"reveal reveal-d-" + (idx % 4 + 1)} data-cursor="link" style={{ display: "block" }}
-     onClick={(e) => { e.preventDefault(); window.cl.go("shop", { brand: b.brand }); }}>
+     onClick={(e) => { e.preventDefault(); window.cl.go("bike", { bike: b }); }}>
     <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
       {b.img ? (
         <img src={b.img} alt={b.brand + " " + b.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
@@ -134,27 +134,91 @@ const BikeCard = ({ b, idx }) => (
   </a>
 );
 
-const FeaturedBikes = () => (
-  <section className="section section-pad bg-white" data-screen-label="02 Featured">
-    <div className="container-wide">
-      <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 80, gap: 40, flexWrap: "wrap" }}>
-        <div>
-          <div className="section-label" style={{ marginBottom: 20 }}>The Lineup  /  N°01</div>
-          <h2 className="display-xl">2026 Bikes,<br/><span className="serif-italic">hand-picked.</span></h2>
+const FeaturedBikes = () => {
+  const bikes = FEATURED_BIKES;
+  const VISIBLE = 4;
+  const [pos, setPos] = React.useState(0);
+  const [paused, setPaused] = React.useState(false);
+  const max = bikes.length - VISIBLE;
+
+  React.useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setPos(p => p >= max ? 0 : p + 1), 4200);
+    return () => clearInterval(t);
+  }, [paused, max]);
+
+  // Track is (bikes.length / VISIBLE * 100)% wide; each card is (100/bikes.length)% of track
+  const trackW = `${bikes.length / VISIBLE * 100}%`;
+  const cardW  = `${100 / bikes.length}%`;
+  const shift  = `${pos * (100 / bikes.length)}%`;
+
+  const ChevL = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M10 3L5 8l5 5"/>
+    </svg>
+  );
+  const ChevR = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M6 3l5 5-5 5"/>
+    </svg>
+  );
+
+  return (
+    <section className="section section-pad bg-white" data-screen-label="02 Featured">
+      <div className="container-wide">
+        <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, gap: 40, flexWrap: "wrap" }}>
+          <div>
+            <div className="section-label" style={{ marginBottom: 20 }}>The Lineup  /  N°01</div>
+            <h2 className="display-xl">2026 Bikes,<br/><span className="serif-italic">hand-picked.</span></h2>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
+            <div style={{ maxWidth: 320, color: "var(--gray-500)", fontSize: 15, lineHeight: 1.6 }}>
+              Every bike on this list, we've ridden. Eight rigs we'd put our own riders on this season.
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={() => { setPos(p => Math.max(0, p - 1)); setPaused(true); }} data-cursor="link"
+                style={{ width: 40, height: 40, border: "1.5px solid var(--hairline)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <ChevL />
+              </button>
+              <button onClick={() => { setPos(p => p >= max ? 0 : p + 1); setPaused(true); }} data-cursor="link"
+                style={{ width: 40, height: 40, border: "1.5px solid var(--hairline)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <ChevR />
+              </button>
+            </div>
+          </div>
         </div>
-        <div style={{ maxWidth: 360, color: "var(--gray-500)", fontSize: 15, lineHeight: 1.6 }}>
-          Every bike on this list, we've ridden. Every spec, we've justified. Eight rigs we'd put our own riders on this season — and we have.
+
+        {/* Carousel track */}
+        <div style={{ overflow: "hidden" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+          <div style={{
+            display: "flex",
+            width: trackW,
+            transform: `translateX(-${shift})`,
+            transition: "transform 0.7s cubic-bezier(0.25,0.1,0.25,1)",
+          }}>
+            {bikes.map((b, i) => (
+              <div key={b.handle} style={{ width: cardW, paddingRight: i < bikes.length - 1 ? "2.133%" : 0, boxSizing: "border-box" }}>
+                <BikeCard b={b} idx={i} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dots */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 40 }}>
+          {Array.from({ length: max + 1 }, (_, i) => (
+            <button key={i} onClick={() => { setPos(i); setPaused(true); }} data-cursor="link"
+              style={{ width: i === pos ? 24 : 8, height: 8, borderRadius: 4, border: "none", background: i === pos ? "var(--black)" : "var(--gray-200)", cursor: "pointer", transition: "all .3s", padding: 0 }} />
+          ))}
+        </div>
+
+        <div className="reveal" style={{ marginTop: 56, display: "flex", justifyContent: "center" }}>
+          <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("shop")}>View All Bikes <ArrowRight /></button>
         </div>
       </div>
-      <div className="home-featured-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
-        {FEATURED_BIKES.map((b, i) => <BikeCard key={i} b={b} idx={i} />)}
-      </div>
-      <div className="reveal" style={{ marginTop: 80, display: "flex", justifyContent: "center" }}>
-        <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("shop")}>View All Bikes <ArrowRight /></button>
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 // Stats Bar
 const StatsBar = () => (

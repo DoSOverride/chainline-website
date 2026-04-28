@@ -262,7 +262,7 @@ const ShopPage = () => {
   const [saleOnly, setSale] = React.useState(false);
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
-  const [avail, setAvail]               = React.useState("all");
+  const [avail, setAvail]               = React.useState("instock");
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
   // Re-render when Shopify images arrive so resolveImage() picks them up
@@ -274,6 +274,12 @@ const ShopPage = () => {
 
   // Load live Lightspeed inventory
   React.useEffect(() => {
+    // Use cached data immediately if already loaded (handles rapid navigation)
+    if (window.CL_LS?.loaded) {
+      const bikes = window.lightspeedGetBikes();
+      if (bikes?.length > 0) { setLiveProducts(bikes); setLiveLoading(false); return; }
+    }
+
     const load = async () => {
       try {
         await window.lightspeedReady;
@@ -339,8 +345,8 @@ const ShopPage = () => {
         {/* Row 1 — special + brands */}
         <div className="container-wide" style={{ paddingTop:"18px", paddingBottom:0, display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
           {/* All Bikes */}
-          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); setAvail("all"); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly&&avail==="all" ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly&&avail==="all" ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly&&avail==="all" ? "var(--black)" : "var(--hairline)" }}>
+          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); setAvail("instock"); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background: brand==="All"&&type==="All"&&!saleOnly&&avail==="instock" ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly&&avail==="instock" ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly&&avail==="instock" ? "var(--black)" : "var(--hairline)" }}>
             All Bikes
           </button>
           {/* In Stock */}
