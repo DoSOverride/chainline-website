@@ -350,12 +350,12 @@ const ShopPage = () => {
             All Bikes
           </button>
           {/* In Stock */}
-          <button onClick={() => { setAvail(avail === "instock" ? "all" : "instock"); setSale(false); }} data-cursor="link"
-            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="instock"&&!saleOnly?"var(--black)":"transparent", color:avail==="instock"&&!saleOnly?"var(--white)":"var(--black)", borderColor:avail==="instock"&&!saleOnly?"var(--black)":"var(--hairline)" }}>
+          <button onClick={() => { setAvail("instock"); setSale(false); setBrand("All"); setType("All"); }} data-cursor="link"
+            style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="instock"&&!saleOnly&&brand==="All"?"var(--black)":"transparent", color:avail==="instock"&&!saleOnly&&brand==="All"?"var(--white)":"var(--black)", borderColor:avail==="instock"&&!saleOnly&&brand==="All"?"var(--black)":"var(--hairline)" }}>
             In Stock
           </button>
           {/* Special Order */}
-          <button onClick={() => { setAvail(avail === "specialorder" ? "all" : "specialorder"); setSale(false); }} data-cursor="link"
+          <button onClick={() => { setAvail("specialorder"); setSale(false); setBrand("All"); setType("All"); }} data-cursor="link"
             style={{ ...btnBase, padding:"10px 20px", fontSize:13, background:avail==="specialorder"&&!saleOnly?"var(--black)":"transparent", color:avail==="specialorder"&&!saleOnly?"var(--white)":"var(--black)", borderColor:avail==="specialorder"&&!saleOnly?"var(--black)":"var(--hairline)" }}>
             Special Order
           </button>
@@ -372,7 +372,7 @@ const ShopPage = () => {
             const active = brand === br && !saleOnly;
             const count  = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
             return (
-              <button key={br} onClick={() => { setBrand(br); setSale(false); }} data-cursor="link"
+              <button key={br} onClick={() => { setBrand(br); setSale(false); setAvail("all"); }} data-cursor="link"
                 style={{ ...btnBase, padding:"10px 18px", fontSize:13, background:active?"var(--black)":"transparent", color:active?"var(--white)":"var(--black)", borderColor:active?"var(--black)":"var(--hairline)", display:"flex", alignItems:"center", gap:8 }}>
                 {br}
                 {count > 0 && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.6 }}>{count}</span>}
