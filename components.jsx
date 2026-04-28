@@ -106,8 +106,8 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
   const data = {
     shop: {
       cols: [
-        { h: "Bikes", items: ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Kids"] },
-        { h: "Brands", items: ["Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots"] },
+        { h: "Bikes", items: ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Kids", "|", "Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots", "Knolly", "Revel"] },
+        { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
         { h: "More", items: ["Sale", "Gift Cards", "Classifieds"], feature: {
           label: "FEATURED  /  TRANSITION BIKES",
           title: "Regulator CX — The eMTB",
@@ -172,12 +172,15 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
             {d.cols.slice(0, 2).map((c, i) => (
               <div key={i} className="mega-col">
                 <h4>{c.h}</h4>
-                <ul>{c.items.map((it) => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                <ul>{c.items.map((it, j) => it === "|"
+                  ? <li key="sep" style={{ borderTop:"1px solid var(--hairline)", margin:"8px 0", listStyle:"none", paddingTop:0 }} />
+                  : <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>
+                )}</ul>
               </div>
             ))}
             <div className="mega-col">
               <h4>{d.cols[2].h}</h4>
-              <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map((it) => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+              <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map((it) => it === "|" ? <li key="sep" style={{ borderTop:"1px solid var(--hairline)", margin:"8px 0", listStyle:"none" }} /> : <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               <a href="#" data-cursor="link" onClick={(e) => handleClick(e, d.cols[2].feature.title)} className="mega-feature" style={{ aspectRatio: "16/8", display: "flex", alignItems: "flex-end", padding: 24, textDecoration: "none", position: "relative", overflow: "hidden", background: "var(--gray-100)" }}>
                 {d.cols[2].feature.img && (
                   <img src={d.cols[2].feature.img} alt={d.cols[2].feature.title} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />

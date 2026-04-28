@@ -121,6 +121,7 @@ const App = () => {
             <BrandsGrid />
             <ServicesPreview />
             <BookBanner />
+            <BikeScroller />
             <LocalStory />
             <GearHScroll />
             <GroupRidesTeaser />

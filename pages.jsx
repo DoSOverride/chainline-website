@@ -4,6 +4,10 @@
 const _norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
 function resolveImage(bike) {
+  // Curated bike-data.js images take priority over stale static img fields
+  if (bike.handle && window.BIKE_DATA?.[bike.handle]?.images?.[0]) {
+    return window.BIKE_DATA[bike.handle].images[0];
+  }
   if (bike.img || bike.image) return bike.img || bike.image;
 
   const skuMap   = window.CL_SHOP?.skuImageMap   || {};
@@ -28,7 +32,9 @@ function resolveImage(bike) {
     return sn === normalized || sn === nameNoBrand ||
       nameNoBrand.startsWith(sn) || normalized.startsWith(sn);
   });
-  return staticMatch?.img || null;
+  if (!staticMatch) return null;
+  // Prefer the curated bike-data.js image over the potentially stale SHOP_BIKES img
+  return window.BIKE_DATA?.[staticMatch.handle]?.images?.[0] || staticMatch.img || null;
 }
 
 // ── Real data helpers (from bike-data.js) ─────────────────────

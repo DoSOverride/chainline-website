@@ -227,7 +227,7 @@ const StatsBar = () => (
       <div className="reveal home-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 40 }}>
         {[
           { n: 15, suffix: "+", label: "Years in Kelowna" },
-          { n: 7, suffix: "", label: "Premium Brands" },
+          { n: 9, suffix: "", label: "Premium Brands" },
           { n: 500, suffix: "+", label: "Bikes Serviced / Year" },
           { n: 5, suffix: "", label: "Star Rated Shop", isStars: true },
           { n: 1, suffix: "", label: "Kelowna's #1 Shop", isHash: true },
@@ -253,7 +253,7 @@ const BrandsGrid = () => {
         <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 64, gap: 40, flexWrap: "wrap" }}>
           <div>
             <div className="section-label">Our Brands  /  N°02</div>
-            <h2 className="display-l">Seven labels.<br/><span className="serif-italic">Carefully chosen.</span></h2>
+            <h2 className="display-l">Nine labels.<br/><span className="serif-italic">Carefully chosen.</span></h2>
           </div>
           <div className="eyebrow">Curated, not stocked.</div>
         </div>
@@ -349,6 +349,27 @@ const BookBanner = () => (
     </div>
   </section>
 );
+
+// Bike image scroller — infinite marquee of bike photos
+const BikeScroller = () => {
+  const bikes = FEATURED_BIKES.filter(b => b.img);
+  const doubled = [...bikes, ...bikes]; // seamless loop
+  return (
+    <div style={{ overflow:"hidden", borderTop:"1px solid var(--hairline)", borderBottom:"1px solid var(--hairline)", background:"var(--paper)", padding:"28px 0" }}>
+      <div style={{ display:"flex", animation:"marquee 36s linear infinite", flexShrink:0 }}>
+        {doubled.map((b, i) => (
+          <div key={i} onClick={() => window.cl.go("bike", { bike: b })}
+            style={{ flexShrink:0, width:220, height:160, marginRight:24, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
+            {b.img
+              ? <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"10%", mixBlendMode:"multiply" }} />
+              : <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", textTransform:"uppercase", letterSpacing:".12em" }}>{b.brand}</div>
+            }
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // Local Story
 const LocalStory = () => (
@@ -600,4 +621,4 @@ const Newsletter = () => {
   );
 };
 
-Object.assign(window, { Hero, FeaturedBikes, StatsBar, BrandsGrid, ServicesPreview, BookBanner, LocalStory, GearHScroll, GroupRidesTeaser, TrailSpotlight, DemoStrip, Testimonials, Newsletter, FEATURED_BIKES, BIKE_CATALOG, BikeCard, SERVICES });
+Object.assign(window, { Hero, FeaturedBikes, StatsBar, BrandsGrid, ServicesPreview, BookBanner, LocalStory, BikeScroller, GearHScroll, GroupRidesTeaser, TrailSpotlight, DemoStrip, Testimonials, Newsletter, FEATURED_BIKES, BIKE_CATALOG, BikeCard, SERVICES });
