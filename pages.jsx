@@ -21,10 +21,12 @@ function resolveImage(bike) {
     : normalized;
   if (nameNoBrand !== normalized && titleMap[nameNoBrand]) return titleMap[nameNoBrand];
 
-  // Static SHOP_BIKES catalog fallback by name
+  // Static SHOP_BIKES catalog fallback — Lightspeed names include size/color
+  // so use startsWith: "bobcat trail 4 27 5 tan small".startsWith("bobcat trail 4 27 5")
   const staticMatch = SHOP_BIKES.find(s => {
     const sn = _norm(s.name);
-    return sn === normalized || sn === nameNoBrand;
+    return sn === normalized || sn === nameNoBrand ||
+      nameNoBrand.startsWith(sn) || normalized.startsWith(sn);
   });
   return staticMatch?.img || null;
 }
