@@ -106,21 +106,14 @@ const BIKE_CATALOG = [
   {"brand":"Marin","name":"Stinson E ST","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":2100,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_SILVER_SIDE_52da63a1-edc3-401a-a329-2405e10cfb54_grande.png?v=1755715647","handle":"marin-stinson-e-st"}
 ];
 
-const BikeCard = ({ b, idx }) => {
-  const [imgErr, setImgErr] = React.useState(false);
-  return (
+const BikeCard = ({ b, idx }) => (
   <a href="#" className={"reveal reveal-d-" + (idx % 4 + 1)} data-cursor="link" style={{ display: "block" }}
      onClick={(e) => { e.preventDefault(); window.cl.go("shop", { brand: b.brand }); }}>
-    <div style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden", border: "1px solid var(--hairline)" }}>
-      {b.img && !imgErr ? (
-        <img src={b.img} alt={b.brand + " " + b.name} loading="lazy" decoding="async"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }}
-          onError={() => setImgErr(true)} />
+    <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
+      {b.img ? (
+        <img src={b.img} alt={b.brand + " " + b.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
       ) : (
-        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: 16 }}>
-          <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em", textAlign: "center", color: "var(--gray-500)" }}>{b.brand}</div>
-          <div style={{ fontFamily: "var(--display)", fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: ".05em", textAlign: "center", color: "var(--gray-400)", lineHeight: 1.4 }}>{b.name}</div>
-        </div>
+        <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
       )}
       {b.badge && (
         <div style={{ position: "absolute", top: 16, right: 16, padding: "4px 10px", border: "1px solid var(--black)", color: "var(--black)", background: "rgba(255,255,255,0.85)", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", zIndex: 2 }}>{b.badge}</div>
@@ -139,8 +132,7 @@ const BikeCard = ({ b, idx }) => {
     </div>
     <style>{`a:hover .bike-hover { transform: translateY(0); }`}</style>
   </a>
-  );
-};
+);
 
 const FeaturedBikes = () => (
   <section className="section section-pad bg-white" data-screen-label="02 Featured">

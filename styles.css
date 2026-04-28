@@ -1212,18 +1212,14 @@ img {
 
   /* ── Hero mobile ── */
   .hero-section {
-    height: auto !important;
-    min-height: unset !important;
-    padding-bottom: 0 !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
   }
   .hero-content {
-    height: auto !important;
-    justify-content: flex-start !important;
-    padding-top: 130px !important;
-    padding-bottom: 60px !important;
+    padding-top: 120px !important;
+    padding-bottom: 48px !important;
   }
   .hero-scroll-indicator { display: none !important; }
-  .display-xxl { font-size: clamp(28px, 9vw, 64px) !important; line-height: 1.05 !important; }
 
   /* ── Home page responsive grids ── */
   .home-featured-grid {
