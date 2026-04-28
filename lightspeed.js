@@ -65,7 +65,7 @@ window.lightspeedGetBikes = function() {
         sku:    p.sku,
         type:   deptToType(p.department),
         price:  p.price,
-        img:    null,
+        img:    (window.CL_LS.skuImageMap || {})[p.sku] || null,
         tags:   p.department,
         handle: p.sku || String(p.id),
         fromLightspeed: true,
@@ -134,9 +134,17 @@ window.lightspeedSearch = function(query) {
 // ── Init: load bikes directly from /api/bikes ────────────────
 window.lightspeedReady = (async () => {
   try {
-    // Load bikes with stock data first (fast, targeted)
-    const bikeRes = await fetch(`${window.CL_LS.workerUrl}/api/bikes`);
-    const bikeData = await bikeRes.json();
+    const [bikeRes, imgRes] = await Promise.all([
+      fetch(`${window.CL_LS.workerUrl}/api/bikes`),
+      fetch(`${window.CL_LS.workerUrl}/api/shopify-images`),
+    ]);
+    const [bikeData, imgData] = await Promise.all([bikeRes.json(), imgRes.json()]);
+
+    if (imgData && !imgData.error) {
+      window.CL_LS.skuImageMap = imgData;
+      console.log(`[ChainLine] Shopify images loaded: ${Object.keys(imgData).length} SKUs`);
+    }
+
     if (bikeData.bikes && bikeData.bikes.length > 0) {
       window.CL_LS.bikes  = bikeData.bikes;
       window.CL_LS.loaded = true;
