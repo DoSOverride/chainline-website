@@ -1727,14 +1727,19 @@ const ClassifiedsPage = () => {
             )}
 
             {!pbLoading && (!pbListings || pbListings.length === 0) && (
-              <div style={{ padding:"40px", border:"1px solid var(--hairline)", display:"flex", alignItems:"center", justifyContent:"space-between", gap:32, flexWrap:"wrap" }}>
-                <div>
-                  <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>No listings right now</div>
-                  <p style={{ color:"var(--gray-500)", fontSize:14, margin:0 }}>Browse our Pinkbike page for current buy/sell items.</p>
+              <div>
+                <div style={{ padding:"48px 40px", background:"var(--paper)", display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center", gap:20 }}>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)" }}>ChainLine on Pinkbike</div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,3vw,36px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", lineHeight:1.1 }}>
+                    Check our current listings
+                  </div>
+                  <p style={{ color:"var(--gray-500)", fontSize:15, maxWidth:480, margin:0, lineHeight:1.6 }}>
+                    We list demo fleet bikes, consignment gear, and used parts on Pinkbike — Canada's largest cycling buy/sell community.
+                  </p>
+                  <a href={PB_SHOP} target="_blank" rel="noopener" className="btn" data-cursor="link" style={{ marginTop:8 }}>
+                    View All Listings on Pinkbike <ArrowRight />
+                  </a>
                 </div>
-                <a href={PB_SHOP} target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">
-                  View on Pinkbike <ArrowRight />
-                </a>
               </div>
             )}
           </div>
