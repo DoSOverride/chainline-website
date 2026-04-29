@@ -28,7 +28,7 @@ const Hero = ({ variant }) => {
         <h1 className="display-xxl" key={"h-" + variant}>
           <SplitText delay={0.1}>{v.headline}</SplitText>
         </h1>
-        <div className="serif-italic" style={{ fontSize: "clamp(36px, 6vw, 88px)", lineHeight: 1, marginTop: 12, opacity: 0, animation: "splitIn 1s 0.9s forwards cubic-bezier(.2,.8,.2,1)", transform: "translateY(20px)" }} key={"i-" + variant}>
+        <div className="serif-italic hero-italic" style={{ fontSize: "clamp(20px, 5vw, 88px)", lineHeight: 1, marginTop: 12, opacity: 0, animation: "splitIn 1s 0.9s forwards cubic-bezier(.2,.8,.2,1)", transform: "translateY(20px)" }} key={"i-" + variant}>
           {v.italic}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 56, gap: 32, flexWrap: "wrap" }}>
