@@ -230,10 +230,15 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "kids") return ["shop", { type: "Kids" }];
     // Brand filters → shop page filtered by brand
     if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
-    // Components
-    if (["cassette","chains","chainrings","cranks","derailleurs","shifters","bottom brackets","cables","brake pads","brake levers","rims","hubs","spokes","wheelsets","skewers","forks","rear shock","handlebar","stem","grips","bar tape","headsets","seat post","saddles","tires 29\"","tires 700c","tires 27.5\"","tires 26\"","fat bike tires","tubes","tire sealant","tire protection"].includes(l)) return ["parts", { tab: "components" }];
-    // Accessories
-    if (["helmets","armour","sunglasses","bags","packs","hydration","lights","computers","clothing","socks","arm warmers","leg warmers","shoes","cleats","pumps","tools","locks","fenders","bells","kickstands","bike racks","water bottles"].includes(l)) return ["parts", { tab: "accessories" }];
+    // Components → tab IDs matching PART_TABS in pages.jsx
+    if (["cassette","chains","chainrings","cranks","derailleurs","shifters","bottom brackets","cables"].includes(l)) return ["parts", { tab: "drivetrain" }];
+    if (["brake pads","brake levers"].includes(l)) return ["parts", { tab: "brakes" }];
+    if (["rims","hubs","spokes","wheelsets","skewers","tires 29\"","tires 700c","tires 27.5\"","tires 26\"","fat bike tires","tubes","tire sealant","tire protection"].includes(l)) return ["parts", { tab: "wheels" }];
+    if (["handlebar","stem","grips","bar tape","headsets","seat post","saddles"].includes(l)) return ["parts", { tab: "cockpit" }];
+    if (["forks","rear shock"].includes(l)) return ["parts", { tab: "suspension" }];
+    // Accessories → tab IDs matching PART_TABS in pages.jsx
+    if (["helmets","armour","sunglasses","clothing","socks","arm warmers","leg warmers","shoes","cleats"].includes(l)) return ["parts", { tab: "fit" }];
+    if (["bags","packs","hydration","lights","computers","pumps","tools","locks","fenders","bells","kickstands","bike racks","water bottles"].includes(l)) return ["parts", { tab: "tools" }];
     if (l.includes("gift")) return ["giftcards", null];
     if (l.includes("classified") || l.includes("pinkbike")) return ["classifieds", null];
     if (l.includes("sale")) return ["shop", null];
@@ -332,16 +337,15 @@ const MobileNav = ({ open, onClose }) => {
   const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
   const TYPES  = ["All Bikes","Mountain","Gravel","E-Bike","Commuter","Comfort","Kids"];
   const COMP_CATS = [
-    { label:"Drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
-    { label:"Brakes & Wheels", items:["Brake pads","Brake Levers","Rims","Hubs","Spokes","Wheelsets"] },
-    { label:"Suspension & Cockpit", items:["Forks","Rear Shock","Handlebar","Stem","Grips","Headsets","Saddles","Seat post"] },
-    { label:"Tires & Tubes", items:['Tires 29"','Tires 700C','Tires 27.5"','Tires 26"',"Fat Bike Tires","Tubes","Tire Sealant"] },
+    { label:"Drivetrain", tab:"drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
+    { label:"Brakes",     tab:"brakes",     items:["Brake pads","Brake Levers","Brake Parts"] },
+    { label:"Wheels & Tires", tab:"wheels", items:["Rims","Hubs","Spokes","Wheelsets",'Tires 29"','Tires 700C','Tires 26"',"Tubes","Tire Sealant"] },
+    { label:"Cockpit",    tab:"cockpit",    items:["Handlebar","Stem","Grips","Headsets","Saddles","Seat post"] },
+    { label:"Suspension", tab:"suspension", items:["Forks","Rear Shock","Fork Parts"] },
   ];
   const ACC_CATS = [
-    { label:"Protection", items:["Helmets","Armour","Gloves","Sunglasses"] },
-    { label:"Bags & Tech", items:["Bags","Packs","Hydration","Lights","Computers"] },
-    { label:"Apparel", items:["Clothing","Socks","Arm Warmers","Shoes","Cleats"] },
-    { label:"Tools & More", items:["Pumps","Tools","Locks","Fenders","Bells","Bike Racks"] },
+    { label:"Clothing & Helmets", tab:"fit",   items:["Helmets","Armour","Gloves","Sunglasses","Clothing","Socks","Shoes"] },
+    { label:"Tools & Bags",       tab:"tools", items:["Bags","Packs","Lights","Computers","Pumps","Tools","Locks","Fenders"] },
   ];
 
   const ChevR = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 3l5 5-5 5"/></svg>;
@@ -404,12 +408,12 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'components' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"components" })); }}>All Components</a>
+          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"drivetrain" })); }}>All Components</a>
           {COMP_CATS.map(cat => (
             <div key={cat.label}>
               <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 8px" }}>{cat.label}</div>
               {cat.items.map(it => (
-                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"components" })); }}>{it}</a>
+                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab })); }}>{it}</a>
               ))}
             </div>
           ))}
@@ -420,12 +424,12 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"accessories" })); }}>All Accessories</a>
+          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"fit" })); }}>All Accessories</a>
           {ACC_CATS.map(cat => (
             <div key={cat.label}>
               <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 8px" }}>{cat.label}</div>
               {cat.items.map(it => (
-                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"accessories" })); }}>{it}</a>
+                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab })); }}>{it}</a>
               ))}
             </div>
           ))}
