@@ -52,17 +52,18 @@ const Hero = ({ variant }) => {
   return (
     <section className="hero hero-section" data-screen-label="01 Hero" style={{ position: "relative", height: "100vh", minHeight: 720, color: "var(--white)", overflow: "hidden", background: "var(--black)" }}>
       <HeroBg />
-      {/* Fix: padding-top accounts for announce + contactbar + nav on mobile */}
-      <style>{`@media(max-width:768px){.hero-content{padding-top:150px!important}}`}</style>
-      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(100px,18vh,220px)", paddingTop: 80 }}>
+      <style>{`
+        @media(max-width:768px){
+          .hero-content{padding-top:150px!important}
+          .hero-section{height:87svh!important;min-height:560px!important}
+        }
+      `}</style>
+      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(80px,14vh,180px)", paddingTop: 80 }}>
         <div className="eyebrow eyebrow-light hero-edge-label" style={{ marginBottom: 12, opacity: 0.5, fontSize: 10, letterSpacing: ".18em" }}>
           N°01  /  THE LINEUP  ·  2026
         </div>
-        <div className="eyebrow eyebrow-light" style={{ marginBottom: 32 }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 12 }}>
-            <span style={{ width: 24, height: 1, background: "currentColor", display: "inline-block" }}/>
-            KELOWNA, BC  ·  EST. 2009  ·  49.88°N
-          </span>
+        <div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>
+          KELOWNA, BC  ·  EST. 2009  ·  49.88°N
         </div>
         <h1 className="display-xxl" key={"h-" + variant}>
           <SplitText delay={0.1}>{v.headline}</SplitText>
