@@ -2171,47 +2171,6 @@ const ClassifiedsPage = () => {
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
 
-          {/* Hero CTA row */}
-          <div className="reveal" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, marginBottom:64 }}>
-            <a href={PB_SHOP} target="_blank" rel="noopener" data-cursor="link"
-              style={{ display:"flex", flexDirection:"column", justifyContent:"space-between", padding:40, background:"var(--black)", color:"var(--white)", textDecoration:"none", minHeight:200 }}>
-              <div className="eyebrow eyebrow-light" style={{ marginBottom:16 }}>ChainLine on Pinkbike</div>
-              <div>
-                <div className="display-m" style={{ color:"var(--white)", marginBottom:12 }}>Our Listings</div>
-                <p style={{ fontSize:14, color:"var(--gray-300)", marginBottom:24 }}>Shop bikes, parts, and gear we're selling — shop demo fleet, consignment, and staff picks.</p>
-                <span style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)", display:"flex", alignItems:"center", gap:8 }}>
-                  View on Pinkbike <ArrowRight size={10} />
-                </span>
-              </div>
-            </a>
-            <a href={PB_POST} target="_blank" rel="noopener" data-cursor="link"
-              style={{ display:"flex", flexDirection:"column", justifyContent:"space-between", padding:40, border:"1px solid var(--hairline)", textDecoration:"none", minHeight:200 }}>
-              <div className="eyebrow" style={{ marginBottom:16 }}>Sell Your Bike</div>
-              <div>
-                <div className="display-m" style={{ marginBottom:12 }}>Post on Pinkbike</div>
-                <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:24 }}>List your bike, parts, or gear on Pinkbike's marketplace — the largest cycling buy/sell community in the world.</p>
-                <span style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", display:"flex", alignItems:"center", gap:8 }}>
-                  Post a listing <ArrowRight size={10} />
-                </span>
-              </div>
-            </a>
-          </div>
-
-          {/* Info strip */}
-          <div className="reveal" style={{ padding:"32px 0", borderTop:"1px solid var(--hairline)", borderBottom:"1px solid var(--hairline)", display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:32, marginBottom:64 }}>
-            {[
-              { n:"01", title:"Browse Listings", desc:"See bikes, parts, and gear from ChainLine and the local community on Pinkbike." },
-              { n:"02", title:"Post for Free", desc:"Pinkbike listing are free to post. Reach thousands of buyers across BC and Canada." },
-              { n:"03", title:"Questions?", desc:"Call or email us — we're happy to help with consignment or valuing your bike." },
-            ].map((s,i) => (
-              <div key={i}>
-                <div className="eyebrow" style={{ marginBottom:12 }}>{s.n}</div>
-                <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{s.title}</div>
-                <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6 }}>{s.desc}</p>
-              </div>
-            ))}
-          </div>
-
           {/* Live Pinkbike listings */}
           <div className="reveal" style={{ marginBottom:64 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
