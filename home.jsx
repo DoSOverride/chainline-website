@@ -209,7 +209,7 @@ const FeaturedBikes = () => {
   );
 
   return (
-    <section className="section section-pad bg-white" data-screen-label="02 Featured">
+    <section className="section section-pad bg-white" data-screen-label="02 Featured" style={{ paddingBottom: 120 }}>
       <div className="container-wide">
         <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, gap: 40, flexWrap: "wrap" }}>
           <div>
