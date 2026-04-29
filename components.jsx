@@ -117,10 +117,22 @@ const AccountIcon = () => (
   </svg>
 );
 
+const MoonIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+);
+const SunIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="4"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+  </svg>
+);
 const DarkToggle = ({ on, onToggle }) => (
-  <button className={"dark-toggle " + (on ? "dark-on" : "")} onClick={onToggle}
-    data-cursor="link" title={on ? "Switch to light mode" : "Switch to dark mode"} aria-label={on ? "Light mode" : "Dark mode"}>
-    <span className="dark-toggle-knob" />
+  <button className="nav-utility-btn" onClick={onToggle} data-cursor="link"
+    title={on ? "Switch to light mode" : "Switch to dark mode"}
+    style={{ opacity: on ? 1 : 0.7, transition: "opacity .2s" }}>
+    {on ? <SunIcon /> : <MoonIcon />}
   </button>
 );
 
@@ -169,7 +181,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
       typeCol:  BIKE_TYPES,
       cols: [
         { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
-        { h: "More", items: ["Sale", "Gift Cards", "Classifieds"] },
+        { h: "More", items: ["Sale", "Gift Cards", "Pinkbike"] },
       ],
     },
     services: {
@@ -202,7 +214,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
     // Parts / accessories — generic shop view
     if (l.includes("gift")) return ["giftcards", null];
-    if (l.includes("classified")) return ["classifieds", null];
+    if (l.includes("classified") || l.includes("pinkbike")) return ["classifieds", null];
     if (l.includes("sale")) return ["shop", null];
     if (l.includes("helmet") || l.includes("apparel") || l.includes("component") || l.includes("tool") || l.includes("bag") || l.includes("light")) return ["parts", null];
     // Services / book
@@ -321,7 +333,7 @@ const MobileNav = ({ open, onClose }) => {
             { label:"Book Online", route:"book" },
             { label:"Group Rides", route:"rides" },
             { label:"Trails", route:"trails" },
-            { label:"Classifieds", route:"classifieds" },
+            { label:"Pinkbike", route:"classifieds" },
             { label:"About", route:"about" },
             { label:"Contact", route:"contact" },
           ].map(l => (
@@ -435,18 +447,33 @@ const Footer = () => (
           <div className="serif-italic" style={{ fontSize: 22, lineHeight: 1.3, color: "var(--gray-300)", marginBottom: 24, maxWidth: 360 }}>
             Built for Kelowna.<br/>Backed by Canada.<br/>Since 2009.
           </div>
-          <div style={{ display: "flex", gap: 18, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
-            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Instagram</a>
-            <a href="https://facebook.com/ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Facebook</a>
-            <a href="https://tiktok.com/@ChainLineCycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">TikTok</a>
-            <a href="https://youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">YouTube</a>
-            <a href="https://www.strava.com/clubs/chainlinecycle" target="_blank" rel="noopener" className="link-underline" data-cursor="link">Strava</a>
+          <div style={{ display: "flex", gap: 14, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
+            {[
+              ["Instagram","https://instagram.com/ChainLineCycle"],
+              ["TikTok","https://tiktok.com/@ChainLineCycle"],
+              ["Facebook","https://facebook.com/ChainLineCycle"],
+              ["YouTube","https://youtube.com/@ChainLine_Cycle"],
+              ["Pinkbike","https://www.pinkbike.com/u/ChainLineCycle/buysell/"],
+              ["Threads","https://threads.net/@ChainLineCycle"],
+              ["X","https://x.com/ChainLineCycle"],
+              ["Bluesky","https://bsky.app/profile/ChainLineCycle.bsky.social"],
+              ["Snapchat","https://snapchat.com/add/ChainLineCycle"],
+            ].map(([label, href]) => (
+              <a key={label} href={href} target="_blank" rel="noopener" className="link-underline" data-cursor="link">{label}</a>
+            ))}
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <a href="https://www.google.com/maps/search/ChainLine+Cycle+Kelowna" target="_blank" rel="noopener"
+              className="link-underline" data-cursor="link"
+              style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", display:"inline-flex", alignItems:"center", gap:6 }}>
+              ★ Rate us on Google
+            </a>
           </div>
         </div>
         <div className="footer-col">
           <h4>Shop</h4>
           <ul>
-            {[["Bikes","shop"],["Parts & Accessories","parts"],["Gift Cards","giftcards"],["Sale","shop"],["Classifieds","classifieds"],["Our Brands","brands"]].map(([label,route]) => (
+            {[["Bikes","shop"],["Parts & Accessories","parts"],["Gift Cards","giftcards"],["Sale","shop"],["Pinkbike","classifieds"],["Our Brands","brands"]].map(([label,route]) => (
               <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
             ))}
           </ul>
@@ -574,7 +601,7 @@ const BrandMarquee = ({ fast }) => {
 const ChatWidget = () => {
   const [open, setOpen] = React.useState(false);
   const [msgs, setMsgs] = React.useState([
-    { role: "bot", text: "Hey! I'm the ChainLine assistant. Ask me about bikes, services, hours, or anything shop-related." }
+    { role: "bot", text: "Hey, I'm Jake — head mechanic at ChainLine. Ask me anything: bike questions, service stuff, gear advice, or what's in stock. Happy to help." }
   ]);
   const [input, setInput] = React.useState("");
   const bottomRef = React.useRef(null);
@@ -585,24 +612,36 @@ const ChatWidget = () => {
 
   const respond = (q) => {
     const l = q.toLowerCase();
-    if (/hour|open|clos|when/.test(l)) return "Mon 10–5 · Tue–Fri 9:30–5:30 · Sat 10–4 · Sun closed.";
-    if (/address|where|location|find us|directions/.test(l)) return "We're at 1139 Ellis St, Kelowna, BC V1Y 1Z5 — downtown Kelowna. Click 'Get Directions' on our Contact page.";
-    if (/phone|call/.test(l)) return "Call us at (250) 860-1968 — we answer our own phone!";
-    if (/email/.test(l)) return "Reach us at bikes@chainline.ca. We reply same day.";
-    if (/book|appoint|schedule/.test(l)) return "You can book a service, fitting, demo, or storage online — just head to the Book page! Or call (250) 860-1968.";
-    if (/tune|service|repair|mechanic|overhaul/.test(l)) return "We do everything from basic tune-ups ($89) to full overhauls ($425). Same-day turnaround for most tune-ups. Book online!";
-    if (/fit|fitting|sizing|position/.test(l)) return "We offer professional bike fitting: Position Check $80, Road/Gravel Fit $220, MTB Fit $220, Full Body + Video $380.";
-    if (/demo|test ride/.test(l)) return "We have a 12-bike demo fleet you can take out on the trails. Book a demo ride on the Book page!";
-    if (/storage|winter|store my/.test(l)) return "Our winter storage program runs Oct–spring. Climate-controlled, locked, monthly battery checks for e-bikes. Book it online.";
-    if (/warranty|defect|broken|recall/.test(l)) return "All bikes carry full manufacturer warranties — typically lifetime or 5-year frame, 1–2 year components. Bring it in and we'll handle it.";
-    if (/brand|carry|stock|marin|transition|surly|salsa|pivot|bianchi|moots|knolly|revel/.test(l)) return "We carry Marin, Transition, Surly, Salsa, Pivot, Bianchi, Moots, Knolly, and Revel. Browse the Shop page for current inventory.";
-    if (/price|cost|how much/.test(l)) return "Bikes start around $430 and go up to $13,000+. Services from $55. What are you looking for?";
-    if (/ride|group ride|strava/.test(l)) return "We run group rides every week — MTB, road, gravel, social. Check the Group Rides page for the full schedule!";
-    if (/trail|knox|bear creek|black mountain/.test(l)) return "We've got a trail guide for Knox Mountain, Bear Creek, Black Mountain, Myra Canyon, and more. Hit the Trails page!";
-    if (/gift card|gift/.test(l)) return "Gift cards are available in-store and online — from $50 to $500. No expiry, good on anything we sell.";
-    if (/hi|hey|hello|howdy|sup/.test(l)) return "Hey! What can I help you with today?";
-    if (/thank/.test(l)) return "You're welcome! Anything else I can help with?";
-    return "Great question! For anything I can't answer here, call us at (250) 860-1968 or email bikes@chainline.ca — happy to help.";
+    if (/hour|open|clos|when/.test(l)) return "We're open Mon 10–5, Tue–Fri 9:30–5:30, Sat 10–4, closed Sunday. If you're coming in for a drop-off, mornings are usually quietest.";
+    if (/address|where|location|find us|direction/.test(l)) return "We're at 1139 Ellis St in downtown Kelowna — right near the waterfront. Parking is easy out front. Google Maps has us listed if you need directions.";
+    if (/phone|call/.test(l)) return "Best number is (250) 860-1968. We pick up our own phone — no phone tree, just us.";
+    if (/email/.test(l)) return "bikes@chainline.ca — we check it throughout the day and usually reply same day.";
+    if (/book|appoint|schedul/.test(l)) return "Easiest is to use the Book page on here — fill out the form and we'll confirm by phone within 24 hours. Or just call us at (250) 860-1968 and we'll get you sorted.";
+    if (/tune.?up|basic service/.test(l)) return "A standard tune-up runs $120 and covers all adjustments, cable tension, lube, and a safety check. Most are done same-day if you drop off in the morning.";
+    if (/overhaul|full service|complete/.test(l)) return "Full overhaul is $250 — complete teardown, degrease, regrease, rebuild, and full adjustment. Usually 3–5 days. Worth it every couple of seasons.";
+    if (/brake|bleed/.test(l)) return "Hydraulic brake bleeds are $60 per caliper. If your brakes feel spongy or the lever is pulling to the bar, they're overdue. Same-day turnaround.";
+    if (/fork|shock|suspension|sus/.test(l)) return "We do full suspension service in-house — fork lower legs, shock air cans, and factory-level rebuilds for Fox and RockShox. Turnaround is usually 1–2 weeks depending on parts.";
+    if (/dropper|post/.test(l)) return "Dropper service runs $140 for a full rebuild (Fox Transfer). If it's slow to pop up or losing pressure, it's time. We can usually turn it around in a day or two.";
+    if (/tubeless|tyre|tire/.test(l)) return "Tubeless setup is $35 per wheel and includes tape, valves, and sealant. We run Cushcore installs too if you want extra protection. Drop in any time.";
+    if (/fit|fitting|sizing|position/.test(l)) return "We do professional bike fits — a basic position check is $80, full road/MTB fit is $220, and a comprehensive video analysis is $380. Book online or give us a call.";
+    if (/demo|test.?ride/.test(l)) return "We have a 12-bike demo fleet — mostly trail and enduro rigs. Book a demo ride on the Book page and we'll have it set up and ready. Usually a 2-hour slot out on Knox.";
+    if (/storage|winter|store my/.test(l)) return "Winter storage runs October through spring. Climate-controlled, secure, and we do monthly battery checks for e-bikes. Limited spots — book it early.";
+    if (/warranty|defect|broken|recall/.test(l)) return "All bikes carry full manufacturer warranties. Frame warranties are usually lifetime or 5 years, components 1–2 years. Bring it in and we'll handle the claim with the brand directly.";
+    if (/e.?bike|ebike|electric|motor|bosch|shimano.?steps|bafang/.test(l)) return "We service e-bikes — tune-ups, motor checks, firmware updates for Bosch, Shimano Steps, and Bafang systems. We also do rear hub motor wheel swaps if you've had a flat.";
+    if (/marin|stinson|bobcat|hawk hill|alpine trail/.test(l)) return "Marin is our biggest brand — we carry the full lineup from Stinson commuters to Hawk Hill trail bikes to the Alpine Trail. Solid value across the board. Check the Shop page for current stock.";
+    if (/transition|sentinel|spur|spire|smuggler|pbj|bottlerocket/.test(l)) return "Transition makes some of the best riding bikes in the world — the Sentinel and Spur especially are crowd favourites here. Most Transition bikes come in as special order; give us a shout and we'll get you sorted.";
+    if (/surly|karate monkey|krampus|ice cream truck|sorceress/.test(l)) return "We love Surly — bomb-proof steel bikes built for real riding. The Sorceress is a killer gravel rig. Most are available by order; the Sorceress we usually have in stock.";
+    if (/knolly|revel|pivot|salsa|bianchi|moots/.test(l)) return "We carry Knolly, Revel, Pivot, Salsa, Bianchi, and Moots — all special order with great lead times right now. Give us a call and we'll work out the details.";
+    if (/brand|carry|stock/.test(l)) return "Our brands: Marin, Transition, Surly, Salsa, Pivot, Bianchi, Moots, Knolly, and Revel. We ride what we sell. Check the Shop page to see what's in stock right now.";
+    if (/price|cost|how much|cheap|budget/.test(l)) return "Entry-level bikes start around $600 and go up to $13,000+ for the high-end stuff. Services start at $25 for a flat fix and $120 for a full tune-up. What's your budget and what kind of riding?";
+    if (/trail|knox|bear creek|black mountain|myra/.test(l)) return "Knox Mountain is right here in Kelowna — great beginner to intermediate flow trails. Bear Creek and Black Mountain are more technical. We've got trail info on the Trails page.";
+    if (/ride|group ride|strava|club/.test(l)) return "We run group rides most weeks — MTB, gravel, and social spins. Follow us on Strava or Instagram @ChainLineCycle for the schedule. Usually Thursday evenings in summer.";
+    if (/gift.?card|gift/.test(l)) return "Gift cards from $50 to $500. No expiry, good on anything — bikes, service, gear. We can email you a digital one or you can pick one up in-store.";
+    if (/pinkbike|classified|sell|used|second.?hand/.test(l)) return "Check our Pinkbike page for local classifieds — we also have shop demo bikes that come up for sale end of season. Hit the Pinkbike tab in the menu.";
+    if (/hi|hey|hello|howdy|sup|what.?s up/.test(l)) return "Hey! What can I help you with? Bike questions, service stuff, or just figuring out what to ride — I've got you.";
+    if (/thank/.test(l)) return "Anytime! Don't hesitate to drop by the shop too — always happy to talk bikes in person.";
+    if (/awesome|great|perfect|love|nice/.test(l)) return "Glad to help! Anything else you want to know?";
+    return "Good question — for anything specific I'd recommend giving us a call at (250) 860-1968 or swinging by the shop. We're at 1139 Ellis St and the crew is always happy to chat.";
   };
 
   const send = () => {
@@ -626,8 +665,8 @@ const ChatWidget = () => {
         <div style={{ position: "fixed", left: 32, bottom: 96, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
             <div>
-              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine</div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", marginTop: 2 }}>Usually replies instantly</div>
+              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>Jake · Head Mechanic</div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", marginTop: 2 }}>ChainLine Cycle · Ask me anything</div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e" }} />

@@ -798,11 +798,11 @@ const BookPage = () => {
 
           {!submitted && step === 1 && (
             <div>
-              <h2 className="display-l" style={{ marginBottom:12 }}>Your details.</h2>
+              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>Your details.</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>We'll call or text to confirm your appointment.</p>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:24 }}>
                 <div style={{ gridColumn:"1/-1" }}>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Full Name *</div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Name *</div>
                   <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>update("name",e.target.value)} style={inpStyle} />
                 </div>
                 <div>
@@ -820,7 +820,7 @@ const BookPage = () => {
 
           {!submitted && step === 2 && (
             <div>
-              <h2 className="display-l" style={{ marginBottom:12 }}>Your bike.</h2>
+              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>Your bike.</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>Tell us what you're bringing in. Photos welcome — take one on your phone and show us when you drop off.</p>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:24 }}>
                 <div>
@@ -856,7 +856,7 @@ const BookPage = () => {
 
           {!submitted && step === 3 && (
             <div>
-              <h2 className="display-l" style={{ marginBottom:12 }}>What's needed?</h2>
+              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>What's needed?</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Select the service you're after, or choose "Assessment" if you're not sure — we'll diagnose and quote before touching anything.</p>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:24 }}>
                 {SERVICES.map(s => (
@@ -881,7 +881,7 @@ const BookPage = () => {
 
           {!submitted && step === 4 && data.name && (
             <div>
-              <h2 className="display-l" style={{ marginBottom:12 }}>Preferred drop-off date.</h2>
+              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>Preferred drop-off date.</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Pick a day to bring your bike in. We'll confirm by phone or email within 24 hours.</p>
               <Calendar onPick={(d) => update("date", d)} />
               {data.date && <p style={{ marginTop:12, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Selected: {data.date}</p>}
@@ -1551,113 +1551,70 @@ const PartsPage = () => {
 
 // CLASSIFIEDS PAGE
 const ClassifiedsPage = () => {
-  const DEMO_LISTINGS = [
-    { title:"2022 Transition Sentinel – Large", price:4200, cond:"Excellent", cat:"Full Suspension MTB", posted:"2 days ago", desc:"One season of riding, immaculate condition. Fox suspension freshly serviced. Comes with extra rotor." },
-    { title:"Shimano XT Groupset 12-Speed", price:550, cond:"Good", cat:"Drivetrain", posted:"5 days ago", desc:"Complete XT group, used one season. Minor cable wear, everything shifts perfectly." },
-    { title:"Fox 36 Factory 160mm Fork", price:750, cond:"Good", cat:"Suspension", posted:"1 week ago", desc:"Fox Factory 36, 160mm travel, 15x110mm. Freshly serviced. Fits 2020–2023 standards." },
-    { title:"Marin San Quentin 3 – Medium", price:1800, cond:"Like New", cat:"Hardtail MTB", posted:"1 week ago", desc:"Barely ridden, upgraded to full-sus. All original components, no damage." },
-    { title:"Maxxis Assegai / DHR2 Set", price:120, cond:"Good", cat:"Tyres", posted:"2 weeks ago", desc:"One season, still 60% tread. Tubeless ready. 29x2.5 WT." },
-    { title:"100% Forecast Helmet – Large", price:85, cond:"Excellent", cat:"Helmets", posted:"2 weeks ago", desc:"Worn 3 times, no damage. MIPS certified, 2023 model." },
-  ];
-  const [showForm, setShowForm] = React.useState(false);
-  const [form, setForm] = React.useState({ title:'', price:'', cat:'', cond:'', desc:'', name:'', email:'', phone:'' });
-  const [submitted, setSubmitted] = React.useState(false);
-  const upd = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const submit = (e) => {
-    e.preventDefault();
-    window.location.href = `mailto:bikes@chainline.ca?subject=Classifieds Listing: ${encodeURIComponent(form.title)}&body=${encodeURIComponent(
-      `New classified listing submission:\n\nTitle: ${form.title}\nPrice: $${form.price}\nCategory: ${form.cat}\nCondition: ${form.cond}\n\nDescription:\n${form.desc}\n\nContact:\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}`
-    )}`;
-    setSubmitted(true);
-    setShowForm(false);
-  };
-  const cats = ["Full Suspension MTB","Hardtail MTB","Gravel Bike","Road Bike","E-Bike","Kids Bike","Drivetrain","Brakes","Suspension","Wheels","Tyres","Helmets","Apparel","Tools","Other"];
+  const PB_SHOP = "https://www.pinkbike.com/u/ChainLineCycle/buysell/";
+  const PB_POST = "https://www.pinkbike.com/buysell/post/";
   return (
     <div className="page-fade">
-      <SubHero eyebrow="Community  /  N°02" title="Buy. Sell. Ride." italic="Kelowna's cycling classifieds." />
+      <SubHero eyebrow="Pinkbike  /  N°01" title="Buy. Sell. Ride." italic="Find your next bike." />
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:48 }}>
-            <div className="reveal section-label" style={{ marginBottom:0 }}>Current Listings  /  {DEMO_LISTINGS.length}</div>
-            <button className="btn" data-cursor="link" onClick={() => setShowForm(!showForm)}>
-              {showForm ? "Cancel" : "Post a Listing"} {showForm ? "" : <ArrowRight />}
-            </button>
+
+          {/* Hero CTA row */}
+          <div className="reveal" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, marginBottom:64 }}>
+            <a href={PB_SHOP} target="_blank" rel="noopener" data-cursor="link"
+              style={{ display:"flex", flexDirection:"column", justifyContent:"space-between", padding:40, background:"var(--black)", color:"var(--white)", textDecoration:"none", minHeight:200 }}>
+              <div className="eyebrow eyebrow-light" style={{ marginBottom:16 }}>ChainLine on Pinkbike</div>
+              <div>
+                <div className="display-m" style={{ color:"var(--white)", marginBottom:12 }}>Our Listings</div>
+                <p style={{ fontSize:14, color:"var(--gray-300)", marginBottom:24 }}>Shop bikes, parts, and gear we're selling — shop demo fleet, consignment, and staff picks.</p>
+                <span style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)", display:"flex", alignItems:"center", gap:8 }}>
+                  View on Pinkbike <ArrowRight size={10} />
+                </span>
+              </div>
+            </a>
+            <a href={PB_POST} target="_blank" rel="noopener" data-cursor="link"
+              style={{ display:"flex", flexDirection:"column", justifyContent:"space-between", padding:40, border:"1px solid var(--hairline)", textDecoration:"none", minHeight:200 }}>
+              <div className="eyebrow" style={{ marginBottom:16 }}>Sell Your Bike</div>
+              <div>
+                <div className="display-m" style={{ marginBottom:12 }}>Post on Pinkbike</div>
+                <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:24 }}>List your bike, parts, or gear on Pinkbike's marketplace — the largest cycling buy/sell community in the world.</p>
+                <span style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", display:"flex", alignItems:"center", gap:8 }}>
+                  Post a listing <ArrowRight size={10} />
+                </span>
+              </div>
+            </a>
           </div>
 
-          {submitted && (
-            <div style={{ padding:24, background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:40 }}>
-              <p style={{ fontFamily:"var(--display)", fontWeight:600, textTransform:"uppercase" }}>Listing submitted!</p>
-              <p style={{ fontSize:14, color:"var(--gray-500)", marginTop:8 }}>We'll review it and get it posted within 24 hours. Email bikes@chainline.ca with any questions.</p>
-            </div>
-          )}
-
-          {showForm && (
-            <div className="reveal" style={{ padding:40, background:"var(--paper)", marginBottom:48, borderTop:"2px solid var(--black)" }}>
-              <h3 className="display-m" style={{ marginBottom:32 }}>Post a Listing</h3>
-              <form onSubmit={submit} style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
-                {[["title","Listing Title (e.g. '2022 Trek Fuel EX 8')","col-span-2"],["price","Price (CAD)",""],["cat","Category","select"],["cond","Condition","select-cond"],["desc","Description — include size, year, condition, what's included","col-span-2 textarea"],["name","Your Name",""],["email","Email",""],["phone","Phone (optional)",""],].map(([k, label, cls]) => (
-                  <div key={k} style={{ gridColumn: cls && cls.includes("col-span-2") ? "1/-1" : "auto" }}>
-                    <div className="eyebrow" style={{ marginBottom:8 }}>{label}</div>
-                    {cls === "select" ? (
-                      <select value={form[k]} onChange={e => upd(k, e.target.value)} required
-                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" }}>
-                        <option value="">Select category</option>
-                        {cats.map(c => <option key={c}>{c}</option>)}
-                      </select>
-                    ) : cls === "select-cond" ? (
-                      <select value={form[k]} onChange={e => upd(k, e.target.value)} required
-                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" }}>
-                        <option value="">Select condition</option>
-                        {["Like New","Excellent","Good","Fair"].map(c => <option key={c}>{c}</option>)}
-                      </select>
-                    ) : cls === "col-span-2 textarea" ? (
-                      <textarea value={form[k]} onChange={e => upd(k, e.target.value)} required rows={4}
-                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none", resize:"vertical" }} />
-                    ) : (
-                      <input type={k === "email" ? "email" : k === "price" ? "number" : "text"}
-                        value={form[k]} onChange={e => upd(k, e.target.value)}
-                        required={k !== "phone"}
-                        style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--body)", fontSize:16, background:"transparent", outline:"none" }} />
-                    )}
-                  </div>
-                ))}
-                <div style={{ gridColumn:"1/-1", display:"flex", gap:16, alignItems:"center", marginTop:8 }}>
-                  <button type="submit" className="btn" data-cursor="link">Submit Listing <ArrowRight /></button>
-                  <p style={{ fontSize:12, color:"var(--gray-400)", lineHeight:1.5 }}>
-                    ChainLine Cycle hosts this board as a community service. All sales are between private parties.
-                  </p>
-                </div>
-              </form>
-            </div>
-          )}
-
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:24 }}>
-            {DEMO_LISTINGS.map((l, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i%3+1)} style={{ padding:28, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:12 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8 }}>
-                  <span className="pill" style={{ color:"var(--gray-500)" }}>{l.cat}</span>
-                  <span className="eyebrow">{l.posted}</span>
-                </div>
-                <div className="display-s" style={{ lineHeight:1.2 }}>{l.title}</div>
-                <p style={{ fontSize:13, color:"var(--gray-500)", lineHeight:1.55, flex:1 }}>{l.desc}</p>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <span style={{ fontFamily:"var(--display)", fontSize:22, fontWeight:500 }}>${l.price.toLocaleString()}</span>
-                  <span className="pill" style={{ color:"var(--gray-400)" }}>{l.cond}</span>
-                </div>
-                <button className="btn btn-outline" data-cursor="link"
-                  onClick={() => window.location.href = `mailto:bikes@chainline.ca?subject=Classifieds Enquiry: ${encodeURIComponent(l.title)}&body=Hi, I'm interested in the listing: ${encodeURIComponent(l.title)} ($${l.price}). Please put me in touch with the seller.`}
-                  style={{ width:"100%", justifyContent:"center" }}>
-                  Enquire <ArrowRight />
-                </button>
+          {/* Info strip */}
+          <div className="reveal" style={{ padding:"32px 0", borderTop:"1px solid var(--hairline)", borderBottom:"1px solid var(--hairline)", display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:32, marginBottom:64 }}>
+            {[
+              { n:"01", title:"Browse Listings", desc:"See bikes, parts, and gear from ChainLine and the local community on Pinkbike." },
+              { n:"02", title:"Post for Free", desc:"Pinkbike listing are free to post. Reach thousands of buyers across BC and Canada." },
+              { n:"03", title:"Questions?", desc:"Call or email us — we're happy to help with consignment or valuing your bike." },
+            ].map((s,i) => (
+              <div key={i}>
+                <div className="eyebrow" style={{ marginBottom:12 }}>{s.n}</div>
+                <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{s.title}</div>
+                <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6 }}>{s.desc}</p>
               </div>
             ))}
           </div>
 
-          <div style={{ marginTop:48, textAlign:"center" }}>
-            <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>
-              ChainLine Cycle facilitates this board as a community service. All transactions are between private parties.
+          {/* CTA */}
+          <div className="reveal" style={{ textAlign:"center" }}>
+            <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:24 }}>
+              Looking to consign your bike through the shop? Email us.
             </p>
+            <div style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
+              <a href={PB_SHOP} target="_blank" rel="noopener" className="btn" data-cursor="link">
+                Our Pinkbike Listings <ArrowRight />
+              </a>
+              <a href="mailto:bikes@chainline.ca?subject=Consignment Enquiry" className="btn btn-outline" data-cursor="link">
+                Consign with Us <ArrowRight />
+              </a>
+            </div>
           </div>
+
         </div>
       </section>
     </div>

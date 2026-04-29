@@ -96,34 +96,6 @@
   mix-blend-mode: normal;
 }
 
-/* ── Dark mode toggle (Apple-style pill) ── */
-.dark-toggle {
-  display: inline-flex;
-  align-items: center;
-  width: 36px;
-  height: 20px;
-  border-radius: 10px;
-  background: #c4c3c0;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  position: relative;
-  flex-shrink: 0;
-  transition: background .3s;
-}
-.dark-toggle.dark-on { background: #0a0a0a; }
-.dark-toggle-knob {
-  position: absolute;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-  transition: transform .25s cubic-bezier(.2,.8,.2,1);
-  pointer-events: none;
-}
-.dark-toggle.dark-on .dark-toggle-knob { transform: translateX(16px); }
 
 /* ── Blinking stock indicator ── */
 @keyframes stockPulse {
@@ -1036,13 +1008,13 @@ img {
   inset: 0;
   display: flex;
   flex-direction: column;
-  transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
-  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1), opacity 0.3s ease;
+  will-change: transform, opacity;
 }
 
-.mob-panel-active { transform: translateX(0); }
-.mob-panel-left   { transform: translateX(-30%); }
-.mob-panel-right  { transform: translateX(100%); }
+.mob-panel-active { transform: translateX(0); opacity: 1; pointer-events: all; }
+.mob-panel-left   { transform: translateX(-30%); opacity: 0; pointer-events: none; }
+.mob-panel-right  { transform: translateX(100%); opacity: 0; pointer-events: none; }
 
 @media (max-width: 1024px) {
   .nav-links {
@@ -1053,6 +1025,10 @@ img {
   }
   .nav-utility .nav-utility-text {
     display: none;
+  }
+  /* Tighter nav utility gap so hamburger stays visible */
+  .nav-utility {
+    gap: 14px;
   }
 }
 
@@ -1274,9 +1250,11 @@ img {
   .hero-ctas .btn { width: 100%; justify-content: center; }
   .hero-scroll-indicator { display: none !important; }
   /* "Built for Kelowna" — smaller on mobile */
-  .built-for-kelowna { font-size: 20px !important; line-height: 1.4 !important; }
+  .built-for-kelowna { font-size: 16px !important; line-height: 1.45 !important; }
   /* Section label top overlay in hero */
   .hero-edge-label { display: none !important; }
+  /* Book page step headings — smaller on mobile */
+  .book-step-h { font-size: clamp(20px, 5vw, 28px) !important; }
 
   /* ── Shop ── */
   .shop-filter-sticky { top: 64px !important; }
