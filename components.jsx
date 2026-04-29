@@ -17,12 +17,9 @@ const Wordmark = () => (
 const ANNOUNCE_ITEMS = [
   {
     msg: "Free shipping on orders over $250",
-    cta: "Shop now →",
-    onClick: () => window.cl.go("shop"),
   },
   {
     msg: "Tune-ups booking 1–2 weeks out · Flat fixes anytime if we can fit you in",
-    cta: "Book service →",
     form: { title: "Book a Service", subject: "Service Booking",
       fields: [
         { key:"name",    label:"Your Name",     type:"text",     placeholder:"Jane Smith",             required:true  },
@@ -34,7 +31,6 @@ const ANNOUNCE_ITEMS = [
   },
   {
     msg: "Bike storage — drop off anytime, pick up when you're ready",
-    cta: "Enquire →",
     form: { title: "Bike Storage Enquiry", subject: "Bike Storage",
       fields: [
         { key:"name",  label:"Your Name",  type:"text",     placeholder:"Jane Smith",                              required:true  },
