@@ -54,8 +54,8 @@ const Hero = ({ variant }) => {
       <HeroBg />
       <style>{`
         @media(max-width:768px){
-          .hero-content{padding-top:150px!important}
-          .hero-section{height:87svh!important;min-height:560px!important}
+          .hero-content{padding-top:190px!important;padding-bottom:60px!important;justify-content:flex-start!important}
+          .hero-section{height:100svh!important;min-height:600px!important}
         }
       `}</style>
       <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(80px,14vh,180px)", paddingTop: 80 }}>

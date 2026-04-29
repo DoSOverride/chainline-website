@@ -1297,7 +1297,7 @@ img {
   /* ── Hero ── */
   .hero-section { min-height: 100svh !important; height: 100svh !important; }
   /* Push content to TOP on mobile — removes the gap between nav and headline */
-  .hero-content { justify-content: flex-start !important; padding-top: 110px !important; padding-bottom: 40px !important; }
+  .hero-content { justify-content: flex-start !important; padding-top: 190px !important; padding-bottom: 60px !important; }
   .hero-ctas { flex-direction: column; gap: 12px !important; }
   .hero-ctas .btn { width: 100%; justify-content: center; }
   .hero-scroll-indicator { display: none !important; }
