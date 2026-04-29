@@ -279,10 +279,10 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"San Quentin 1",  handle:"marin-san-quentin-1",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1350, img:"https://marinbikes.com/cdn/shop/files/MARIN_SAN_QUENTIN_1_STUDIO_SIDE_2000PX.png?v=1761745617&width=1000" },
   { brand:"Marin", name:"San Quentin 2",  handle:"marin-san-quentin-2",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1800, img:"https://marinbikes.com/cdn/shop/files/MARINSANQUENTIN2STUDIOSIDE2000PX.png?v=1761745839&width=1000" },
   // ── Transition full lineup ─────────────────────────────────────
-  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://www.transitionbikes.com/images/2026-Spur-Gallery-1.avif" },
-  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://www.transitionbikes.com/images/C2_Smug_Carb_XO_AXS.avif" },
-  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://www.transitionbikes.com/WebStoreImages/SB-BR-SC-DiscoFlamingo.avif" },
-  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://www.transitionbikes.com/images/C1-PBJ-Alloy.avif" },
+  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://www.transitionbikes.com/images/FC_Spur.jpg" },
+  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://www.transitionbikes.com/images/FC_Smug.jpg" },
+  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://www.transitionbikes.com/images/M2-BR.jpg" },
+  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://www.transitionbikes.com/images/FC-PBJ.jpg" },
   // ── Surly full lineup ──────────────────────────────────────────
   { brand:"Surly", name:"Karate Monkey",    handle:"surly-karate-monkey",    type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",     price:2800, img:"https://surlybikes.com/cdn/shop/files/surly-karate-monkey-front-suspension-bike-blue-BK00263-2000px-sq.jpg?v=1742063134&width=1946" },
   { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Mountain", tags:"Fat Bike, Snow, Sand",              price:3500, img:"https://surlybikes.com/cdn/shop/files/surly-ice-cream-truck-bike-yellow-BK00596-2000px-sq.jpg?v=1741976875&width=1946" },
@@ -294,17 +294,17 @@ const SHOP_BIKES = [
 const ShopPage = () => {
   const intent = window.cl?.intent || null;
   const [brand, setBrand]       = React.useState(intent?.brand || "All");
+  const [type,  setType]        = React.useState("All");
   const [sort, setSort]         = React.useState("featured");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
-  // Apply intent from nav links (brand filter)
+  // Apply intent from nav links (brand / type filter)
   React.useEffect(() => {
-    if (window.cl?.intent?.brand) {
-      setBrand(window.cl.intent.brand);
-      window.cl.intent = null;
-    }
+    if (window.cl?.intent?.brand) { setBrand(window.cl.intent.brand); setType("All"); }
+    if (window.cl?.intent?.type)  { setType(window.cl.intent.type);   setBrand("All"); }
+    if (window.cl?.intent) window.cl.intent = null;
   });
 
   // Re-render when Shopify images arrive so resolveImage() picks them up
@@ -358,50 +358,105 @@ const ShopPage = () => {
     });
   }, [liveProducts]);
 
-  // Brand filter: when brand selected show full catalog for that brand (in-stock + orderable).
-  // No brand: show only in-stock bikes.
+  const ALL_BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
+  const SPECIAL_ORDER_ONLY = ["Knolly","Revel"]; // no bikes currently in stock for these brands
+  const TYPE_TABS = ["All","Mountain","Gravel","E-Bike","Commuter","Comfort","Kids"];
+
+  // Brand filter: show full catalog for selected brand (instock + orderable).
+  // No brand filter: show only in-stock bikes.
   let filtered = brand !== "All"
-    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand)
+    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand && b.type !== undefined)
     : allProducts.filter(b => b.inStock !== false);
+
+  // Type filter
+  if (type !== "All") filtered = filtered.filter(b => b.type === type);
 
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
+
+  const tabStyle = (active) => ({
+    padding:"5px 14px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em",
+    textTransform:"uppercase", background:"transparent", border:"none", cursor:"pointer",
+    whiteSpace:"nowrap", flexShrink:0, color: active ? "var(--black)" : "var(--gray-400)",
+    borderBottom:"2px solid " + (active ? "var(--black)" : "transparent"), transition:"all .2s"
+  });
+
+  const isSpecialOrderBrand = SPECIAL_ORDER_ONLY.includes(brand);
 
   return (
     <div className="page-fade">
       <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
 
-      {/* ── Sort bar ── */}
-      <div className="shop-filter-sticky" style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
-        <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:"12px", display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+      {/* ── Loading bar ── */}
+      {liveLoading && (
+        <div style={{ position:"sticky", top:78, zIndex:51, height:3, background:"var(--paper)", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:0, left:"-60%", width:"60%", height:"100%", background:"var(--black)", animation:"shopLoadBar 1.4s ease-in-out infinite" }} />
+        </div>
+      )}
+
+      {/* ── Filter + sort bar ── */}
+      <div className="shop-filter-sticky" style={{ position:"sticky", top: liveLoading ? 81 : 78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
+
+        {/* Row 1: count + active brand pill + sort */}
+        <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:0, display:"flex", alignItems:"center", gap:10 }}>
           <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
-            {liveLoading ? "Loading live inventory…" : `${filtered.length} bikes${liveProducts ? " · Live" : ""}`}
+            {liveLoading ? "Loading…" : `${filtered.length} bikes${liveProducts ? " · Live" : ""}`}
           </div>
           {brand !== "All" && (
-            <div style={{ display:"flex", alignItems:"center", gap:8, padding:"4px 12px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"3px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
               {brand}
-              <button onClick={() => setBrand("All")} data-cursor="link"
-                style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", fontFamily:"var(--mono)", fontSize:12, lineHeight:1, padding:0, opacity:.7 }}>×</button>
+              <button onClick={() => { setBrand("All"); setType("All"); }} data-cursor="link"
+                style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", fontSize:12, lineHeight:1, padding:0, opacity:.7 }}>×</button>
             </div>
           )}
           <div style={{ marginLeft:"auto" }}>
             <select value={sort} onChange={e => setSort(e.target.value)}
-              style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"6px 12px", background:"var(--white)", outline:"none" }}>
+              style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"5px 10px", background:"var(--white)", outline:"none" }}>
               <option value="featured">Sort: Featured</option>
               <option value="price-asc">Price: Low → High</option>
               <option value="price-desc">Price: High → Low</option>
             </select>
           </div>
         </div>
+
+        {/* Row 2: type tabs + brand chips */}
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"6px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
+          {TYPE_TABS.map(t => (
+            <button key={t} data-cursor="link" onClick={() => setType(t)} style={tabStyle(type === t)}>{t}</button>
+          ))}
+          <div style={{ width:1, height:16, background:"var(--hairline)", margin:"0 10px", flexShrink:0 }} />
+          {ALL_BRANDS.map(br => {
+            const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
+            if (cnt === 0) return null;
+            const active = brand === br;
+            return (
+              <button key={br} data-cursor="link"
+                onClick={() => { setBrand(active ? "All" : br); setType("All"); }}
+                style={{ ...tabStyle(active), color: active ? "var(--black)" : "var(--gray-500)", display:"flex", alignItems:"center", gap:5 }}>
+                {br}
+                <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.5 }}>{cnt}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── Grid ── */}
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          {filtered.length === 0 ? (
+          {isSpecialOrderBrand ? (
             <div style={{ textAlign:"center", padding:"80px 0" }}>
-              <div className="display-m" style={{ marginBottom:16 }}>Loading bikes…</div>
-              <p style={{ color:"var(--gray-500)" }}>Check back in a moment or contact us directly.</p>
+              <div className="display-m" style={{ marginBottom:16 }}>{brand} · Special Order</div>
+              <p style={{ color:"var(--gray-500)", maxWidth:480, margin:"0 auto 32px", lineHeight:1.65 }}>
+                We carry {brand} bikes by special order. Contact us to discuss models, pricing, and lead times — we'll find the right build for you.
+              </p>
+              <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Contact Us <ArrowRight /></button>
+            </div>
+          ) : filtered.length === 0 && !liveLoading ? (
+            <div style={{ textAlign:"center", padding:"80px 0" }}>
+              <div className="display-m" style={{ marginBottom:16 }}>No bikes found.</div>
+              <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Try a different filter or check back when we get new stock in.</p>
+              <button className="btn btn-outline" data-cursor="link" onClick={() => { setBrand("All"); setType("All"); }}>Show All Bikes <ArrowRight /></button>
             </div>
           ) : (
             <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>

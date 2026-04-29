@@ -524,6 +524,11 @@ img {
   gap: 0;
 }
 
+@keyframes shopLoadBar {
+  0%   { left: -60%; }
+  100% { left: 160%; }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
