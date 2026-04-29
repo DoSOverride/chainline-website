@@ -1027,9 +1027,13 @@ img {
     display: none;
   }
   /* Tighter nav utility gap so hamburger stays visible */
-  .nav-utility {
-    gap: 14px;
-  }
+  .nav-utility { gap: 12px; }
+  /* Pull hamburger slightly left so it's visually balanced with the logo */
+  .menu-toggle { margin-right: -4px; }
+  /* SubHero headline smaller on mobile so it fits */
+  .sub-hero-title { font-size: clamp(36px, 9vw, 56px) !important; line-height: 0.96 !important; }
+  /* Book step headings smaller */
+  .book-step-h { font-size: clamp(18px, 5.5vw, 26px) !important; }
 }
 
 /* Sticky CTA */
@@ -1245,7 +1249,8 @@ img {
 
   /* ── Hero ── */
   .hero-section { min-height: 100svh !important; height: 100svh !important; }
-  .hero-content { padding-top: 120px !important; padding-bottom: 40px !important; }
+  /* Push content to TOP on mobile — removes the gap between nav and headline */
+  .hero-content { justify-content: flex-start !important; padding-top: 110px !important; padding-bottom: 40px !important; }
   .hero-ctas { flex-direction: column; gap: 12px !important; }
   .hero-ctas .btn { width: 100%; justify-content: center; }
   .hero-scroll-indicator { display: none !important; }

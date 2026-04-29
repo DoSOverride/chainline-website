@@ -626,7 +626,7 @@ const SubHero = ({ eyebrow, title, italic }) => (
     <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.6), rgba(10,10,10,0.95))" }} />
     <div className="container-wide" style={{ position: "relative" }}>
       <div className="eyebrow eyebrow-light" style={{ marginBottom: 32 }}>{eyebrow}</div>
-      <h1 className="display-xxl"><SplitText delay={0.1}>{title}</SplitText></h1>
+      <h1 className="display-xxl sub-hero-title"><SplitText delay={0.1}>{title}</SplitText></h1>
       {italic && <div className="serif-italic" style={{ fontSize: "clamp(28px, 4.5vw, 56px)", marginTop: 12, color: "var(--gray-300)" }}>{italic}</div>}
     </div>
   </section>
@@ -794,21 +794,38 @@ const BookPage = () => {
     "Cable Package","Wheel Build","Tubeless Set Up","Flat Fix","Other / Not Sure",
   ];
 
+  const FORMSPREE_ID = "xpwrvdnj"; // bikes@chainline.ca endpoint
   const inpStyle = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+  const [submitting, setSubmitting] = React.useState(false);
 
-  const submit = () => {
-    const subject = encodeURIComponent(`Bike Assessment / Service Request`);
-    const body = encodeURIComponent(
-      `ChainLine — Service Booking Request\n\n` +
-      `Customer:\nName: ${data.name||''}\nPhone: ${data.phone||''}\nEmail: ${data.email||''}\n\n` +
-      `Bike:\nBrand: ${data.bikeBrand||''}\nModel: ${data.bikeModel||''}\nYear: ${data.bikeYear||''}\n\n` +
-      `Service requested: ${data.service||'Assessment / Not specified'}\n` +
-      `Preferred drop-off date: ${data.date||'Flexible'}\n\n` +
-      `Issue / notes:\n${data.issue||'(none provided)'}\n\n` +
-      `[Photo upload is not available by email — please bring photos on your phone or drop-in for the assessment]`
-    );
-    window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("name",    data.name || '');
+      fd.append("phone",   data.phone || '');
+      fd.append("email",   data.email || '');
+      fd.append("bike",    `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim());
+      fd.append("service", data.service || 'Assessment / Not sure');
+      fd.append("date",    data.date || 'Flexible');
+      fd.append("issue",   data.issue || '');
+      fd.append("_subject", `Service Booking — ${data.name || 'Customer'}`);
+      if (data.photoFile) fd.append("photo", data.photoFile);
+
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: "POST", headers: { Accept: "application/json" }, body: fd,
+      });
+      if (res.ok) setSubmitted(true);
+      else throw new Error("Submit failed");
+    } catch {
+      // Fallback to mailto if Formspree fails
+      const body = encodeURIComponent(
+        `ChainLine — Service Booking\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email||'-'}\nBike: ${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}\nService: ${data.service||'Assessment'}\nDate: ${data.date||'Flexible'}\nNotes: ${data.issue||'-'}`
+      );
+      window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Service Booking — ' + (data.name||'Customer'))}&body=${body}`;
+      setSubmitted(true);
+    }
+    setSubmitting(false);
   };
 
   return (
@@ -876,7 +893,7 @@ const BookPage = () => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
                   {data.photoName || "Upload a photo or take one now"}
                   <input type="file" accept="image/*" capture="environment" style={{ display:"none" }}
-                    onChange={e => { const f = e.target.files[0]; if(f) update("photoName", f.name); }} />
+                    onChange={e => { const f = e.target.files[0]; if(f) { update("photoName", f.name); update("photoFile", f); } }} />
                 </label>
                 {data.photoName && <p style={{ marginTop:8, fontSize:13, color:"var(--gray-500)" }}>✓ {data.photoName} — bring this photo with you or email it separately.</p>}
               </div>
@@ -920,8 +937,8 @@ const BookPage = () => {
               {data.date && <p style={{ marginTop:12, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Selected: {data.date}</p>}
               <div style={{ marginTop:32, display:"flex", gap:12, flexWrap:"wrap" }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={submit}>
-                  Send Booking Request <ArrowRight />
+                <button className="btn" data-cursor="link" onClick={submit} disabled={submitting}>
+                  {submitting ? "Sending…" : "Send Booking Request"} {!submitting && <ArrowRight />}
                 </button>
               </div>
               <p style={{ marginTop:16, fontSize:13, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".1em" }}>
