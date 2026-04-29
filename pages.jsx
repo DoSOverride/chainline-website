@@ -794,6 +794,34 @@ const SubHero = ({ eyebrow, title, italic }) => (
 const ServicesPage = () => {
   const [activeTab, setActiveTab] = React.useState("all");
   const tabs = ["all", "mountain", "road", "suspension"];
+  const [lsPrices, setLsPrices] = React.useState({});
+
+  // Fetch Labour dept from Lightspeed for live prices
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const items = await window.lightspeedGetDept('Labour');
+        const map = {};
+        (items || []).forEach(it => {
+          if (it.name && it.price > 0) map[it.name.toLowerCase().trim()] = it.price;
+        });
+        setLsPrices(map);
+      } catch(e) {}
+    };
+    load();
+  }, []);
+
+  const lsPrice = (name) => {
+    const key = name.toLowerCase().trim();
+    if (lsPrices[key]) return lsPrices[key];
+    // fuzzy: find closest key
+    const fuzzy = window.fuzzyMatch;
+    if (fuzzy) {
+      const match = Object.keys(lsPrices).find(k => fuzzy(name, k) || fuzzy(k, name));
+      if (match) return lsPrices[match];
+    }
+    return null;
+  };
 
   const ALL_SERVICES = [
     // ── All Bikes ──
@@ -832,17 +860,14 @@ const ServicesPage = () => {
     { cat:"road", n:"06", name:"Internal Full Cable Package",       price:60,  desc:"Full internal cable replacement including housing.",        time:"1–2 DAYS" },
     { cat:"road", n:"07", name:"Internal Half Cable Package",       price:35,  desc:"Partial internal cable replacement.",                       time:"1 DAY"    },
     { cat:"road", n:"08", name:"Bar Wrap",                          price:30,  desc:"Professional bar tape wrap. Tape not included.",            time:"SAME DAY" },
-    // ── Suspension Factory Service ──
-    { cat:"suspension", n:"01", name:"Fox Fork 125hr Factory",      price:230, desc:"Full Fox factory fork service at 125-hour interval.",       time:"1 WEEK"   },
-    { cat:"suspension", n:"02", name:"Fox Shock Factory Full",      price:210, desc:"Full Fox shock factory rebuild and service.",               time:"1 WEEK"   },
-    { cat:"suspension", n:"03", name:"Fox Transfer Dropper",        price:140, desc:"Full Fox Transfer dropper post factory service.",           time:"1 WEEK"   },
-    { cat:"suspension", n:"04", name:"RockShox Fork FS Level 1",    price:140, desc:"Lower leg and open bath fork service.",                     time:"1 WEEK"   },
-    { cat:"suspension", n:"05", name:"RockShox Fork FS Level 2",    price:170, desc:"Full charger damper + lower leg service.",                  time:"1 WEEK"   },
-    { cat:"suspension", n:"06", name:"RockShox Shock RS Level 1",   price:150, desc:"Inline shock full service.",                               time:"1 WEEK"   },
-    { cat:"suspension", n:"07", name:"RockShox Shock RS Level 2",   price:160, desc:"Full shock factory service.",                              time:"1 WEEK"   },
-    { cat:"suspension", n:"08", name:"RockShox Vivid / Reaktiv",    price:180, desc:"High-end shock full factory service.",                     time:"1 WEEK"   },
-    { cat:"suspension", n:"09", name:"RockShox Reverb Dropper",     price:160, desc:"Reverb dropper post factory service.",                     time:"1 WEEK"   },
-    { cat:"suspension", n:"10", name:"Rockshox Fork 200hr",         price:230, desc:"Major 200-hour fork factory service interval.",            time:"1 WEEK"   },
+    // ── 50hr Suspension Service (regular maintenance) ──
+    { cat:"suspension", n:"01", name:"Fork Air Can Service",        price:65,  desc:"Air can off, new seals, fresh oil. Keeps your air spring consistent.", time:"1 DAY"   },
+    { cat:"suspension", n:"02", name:"Fork Lower Leg Service",      price:65,  desc:"Lower legs off, clean, new foam rings, new seals, fresh bath oil.",     time:"1 DAY"   },
+    { cat:"suspension", n:"03", name:"Fork 50hr Full Service",      price:120, desc:"Air can + lower leg done together. Recommended every 50 riding hours.", time:"1–2 DAYS"},
+    { cat:"suspension", n:"04", name:"Shock Air Can Service",       price:45,  desc:"Air can off, clean, new seals, fresh oil. Restores consistent feel.",   time:"1 DAY"   },
+    { cat:"suspension", n:"05", name:"50hr Fork + Shock",           price:155, desc:"Full 50hr: fork lower leg + shock air can. Best done together.",        time:"2 DAYS"  },
+    { cat:"suspension", n:"06", name:"Dropper Post Service",        price:140, desc:"Full dropper rebuild — seals, oil, bleed. Fox Transfer, Reverb, etc.", time:"1–2 DAYS"},
+    { cat:"suspension", n:"07", name:"Suspension Setup",            price:50,  desc:"Sag, rebound, compression dialled for your weight and style.",          time:"30 MIN"  },
   ];
 
   const services = activeTab === "all" ? ALL_SERVICES.filter(s => s.cat === "all") : ALL_SERVICES.filter(s => s.cat === activeTab);
@@ -864,13 +889,24 @@ const ServicesPage = () => {
           </div>
           <div style={{ borderTop: "1px solid var(--hairline)" }}>
             {services.map((s, i) => (
-              <div key={i} className="page-svc-row" style={{ display: "grid", gridTemplateColumns: "60px 1.6fr 2fr 100px 120px 140px", gap: 24, padding: "28px 0", borderBottom: "1px solid var(--hairline)", alignItems: "center" }}>
-                <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".18em", color: "var(--gray-500)" }}>{s.n}</div>
-                <div className="display-s" style={{ fontSize:"clamp(15px,1.4vw,20px)" }}>{s.name}</div>
-                <div style={{ color: "var(--gray-500)", fontSize: 14, lineHeight:1.5 }}>{s.desc}</div>
-                <div className="eyebrow">{s.time}</div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 20, fontWeight: 500 }}>${s.price}</div>
-                <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
+              <div key={i} className="page-svc-row reveal" style={{ padding: "20px 0", borderBottom: "1px solid var(--hairline)" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:4 }}>
+                      <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", color:"var(--gray-500)" }}>{s.n}</span>
+                      <span className="eyebrow" style={{ color:"var(--gray-400)" }}>{s.time}</span>
+                    </div>
+                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.6vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:4 }}>{s.name}</div>
+                    <div style={{ color:"var(--gray-500)", fontSize:13, lineHeight:1.55 }}>{s.desc}</div>
+                  </div>
+                  <div style={{ display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
+                    <div style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500 }}>
+                      ${lsPrice(s.name) || s.price}
+                      {lsPrice(s.name) && lsPrice(s.name) !== s.price && <span style={{ fontFamily:"var(--mono)", fontSize:8, color:"var(--gray-400)", marginLeft:4, verticalAlign:"super", letterSpacing:".1em" }}>LIVE</span>}
+                    </div>
+                    <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
