@@ -344,17 +344,19 @@ const ShopPage = () => {
     }
   });
 
-  // Merge strategy: SHOP_BIKES is the catalog; live data overlays price + stock status.
-  // Brand views show full catalog (instock + contact-us) so nothing is hidden.
+  // Merge: SHOP_BIKES is the catalog; Lightspeed overlays live price + inStock status.
+  // Match by: same brand prefix AND all 4+ char keywords from shop-bike name appear in live name.
+  // This avoids the 8-char prefix bug where "stinson " matched every Stinson variant.
   const allProducts = React.useMemo(() => {
+    if (!liveProducts) return SHOP_BIKES;
     return SHOP_BIKES.map(s => {
-      if (!liveProducts) return s; // loading: use static
-      const sn = _norm(s.name);
-      const br = _norm(s.brand || '');
-      const namePart = br && sn.startsWith(br) ? sn.slice(br.length).trim() : sn;
+      const sb  = _norm(s.brand || '');
+      const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4); // keyword set
       const live = liveProducts.find(l => {
+        const lb = _norm((l.name || '').split(' ')[0]);
+        if (lb !== sb) return false;                  // brands must match exactly
         const ln = _norm(l.name);
-        return ln.startsWith(namePart) || (br && ln.startsWith(br) && ln.slice(br.length).trim().startsWith(namePart.slice(0, 8)));
+        return sKw.length === 0 || sKw.every(w => ln.includes(w)); // all keywords present
       });
       return live ? { ...s, price: live.price, inStock: true, qty: live.qty } : { ...s, inStock: false };
     });
