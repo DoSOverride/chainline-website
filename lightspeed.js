@@ -121,13 +121,38 @@ window.lightspeedGetDepartments = function() {
     .sort((a, b) => b.count - a.count);
 };
 
-// ── Search products ───────────────────────────────────────────
+// ── Fuzzy match — tolerates typos up to ~20% of word length ──
+window.fuzzyMatch = function(needle, haystack) {
+  if (!needle || !haystack) return false;
+  needle  = needle.toLowerCase().trim();
+  haystack = haystack.toLowerCase();
+  if (haystack.includes(needle)) return true;
+
+  function lev(a, b) {
+    if (Math.abs(a.length - b.length) > 4) return 99;
+    const d = [];
+    for (let i = 0; i <= a.length; i++) d[i] = [i];
+    for (let j = 0; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++)
+      for (let j = 1; j <= b.length; j++)
+        d[i][j] = a[i-1] === b[j-1] ? d[i-1][j-1] : 1 + Math.min(d[i-1][j], d[i][j-1], d[i-1][j-1]);
+    return d[a.length][b.length];
+  }
+
+  const tokens   = needle.split(/\s+/).filter(t => t.length >= 3);
+  if (!tokens.length) return false;
+  const hWords   = haystack.split(/[\s\-\/,.()+]+/);
+  return tokens.every(t =>
+    haystack.includes(t) ||
+    hWords.some(w => lev(t, w) <= (t.length <= 4 ? 1 : t.length <= 7 ? 2 : 3))
+  );
+};
+
+// ── Search products (fuzzy) ───────────────────────────────────
 window.lightspeedSearch = function(query) {
-  const q = query.toLowerCase();
-  return window.CL_LS.products.filter(p =>
-    (p.name || '').toLowerCase().includes(q) ||
-    (p.sku  || '').toLowerCase().includes(q) ||
-    (p.department || '').toLowerCase().includes(q)
+  if (!query || query.length < 2) return [];
+  return (window.CL_LS.products || []).filter(p =>
+    window.fuzzyMatch(query, (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || ''))
   );
 };
 

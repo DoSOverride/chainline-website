@@ -1572,29 +1572,34 @@ const PartCartBtn = ({ item }) => {
   );
 };
 
-const PARTS_GROUPS = {
-  components: [
-    'Aerobar','Axle','Bar tape','Bearings','Bottom Brackets',
-    'Brake','Brake adapter disc','Brake Lever U','Brake Lever V','Brake pads','Brake parts',
-    'Cables','Cassette','Chain Retention','Chainrings','Chains','Cranks',
-    'Deraileur Hangers','Derailleur Front','Derailleur Rear',
-    'Fork Oil','Fork Parts','Forks','Free Hub Body','Freewheel',
-    'Grips','Handlebar','Headsets','Hub Parts','Hubs',
-    'Lube','Rear Shock','Rims','Saddles','Seals','Seat post',
-    'Shifters - Road','Shifters MTB','Skewers QR','Spacers','Spokes','Stem',
-    'Tire Protection','Tire Sealant',
-    'Tires 12, 16, 20','Tires 24"','Tires 26"','Tires 27" & 26x1&1/4 etc...','Tires 29"','Tires 700C','Tires Fatbike','Tires Tubular',
-    'Tubes','Wheels','Wheelset (FR+RR)',
-  ],
-  accessories: [
-    'Arm Warmers','Armour','Bags','Basket','Bells','Bike Racks','Car Racks',
-    'Cleats','Clothing','Computers','Fenders','Gloves','Helmet',
-    'Hydration ','Kickstands','Leg Warmers','Lights','Locks','Mirrors',
-    'Misc. Accessories','Packs','Pant Clips','Pumps',
-    'Shoes Mountain','Shoes Road','Socks','Sunglasses',
-    'Tools','Trainers','Water Bottle','Water Bottle cage',
-  ],
-};
+const PART_TABS = [
+  { id:'drivetrain', label:'Drivetrain', popular:['Cassette','Chain','Chainrings','Cranks','Derailleur Rear','Bottom Brackets','Shifters MTB','Cables'], depts:[
+    'Cassette','Chains','Chainrings','Chain Retention','Cranks','Bottom Brackets',
+    'Derailleur Front','Derailleur Rear','Deraileur Hangers',
+    'Free Hub Body','Freewheel','Shifters MTB','Shifters - Road','Cables',
+  ]},
+  { id:'brakes', label:'Brakes', popular:['Brake pads','Brake Lever U','Brake parts','Brake adapter disc'], depts:[
+    'Brake','Brake pads','Brake parts','Brake Lever U','Brake Lever V','Brake adapter disc',
+  ]},
+  { id:'wheels', label:'Wheels & Tires', popular:['Tires 29"','Tires 700C','Tires 26"','Tubes','Rims','Tire Sealant','Hubs','Spokes'], depts:[
+    'Wheels','Wheelset (FR+RR)','Rims','Hubs','Hub Parts','Spokes','Skewers QR','Axle',
+    'Tires 29"','Tires 700C','Tires 26"','Tires 27" & 26x1&1/4 etc...','Tires 24"','Tires 12, 16, 20','Tires Fatbike','Tires Tubular',
+    'Tubes','Tire Sealant','Tire Protection',
+  ]},
+  { id:'cockpit', label:'Cockpit', popular:['Handlebar','Stem','Grips','Saddles','Seat post','Bar tape','Headsets'], depts:[
+    'Handlebar','Stem','Grips','Bar tape','Aerobar','Saddles','Seat post','Headsets','Spacers','Bearings',
+  ]},
+  { id:'suspension', label:'Suspension', popular:['Forks','Rear Shock','Fork Oil','Fork Parts','Seals'], depts:[
+    'Forks','Fork Parts','Fork Oil','Rear Shock','Seals',
+  ]},
+  { id:'fit', label:'Clothing & Helmets', popular:['Helmet','Gloves','Shoes Mountain','Shoes Road','Socks','Sunglasses','Clothing'], depts:[
+    'Helmet','Gloves','Shoes Mountain','Shoes Road','Cleats','Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips','Sunglasses','Armour',
+  ]},
+  { id:'tools', label:'Tools & Bags', popular:['Pumps','Lights','Locks','Bags','Tools','Lube','Computers','Fenders'], depts:[
+    'Tools','Pumps','Lube','Lights','Locks','Computers','Bags','Packs','Car Racks','Bike Racks',
+    'Fenders','Kickstands','Water Bottle','Water Bottle cage','Hydration ','Bells','Mirrors','Misc. Accessories','Trainers','Basket',
+  ]},
+];
 
 const DeptAccordion = ({ depts }) => {
   const [activeDept, setActiveDept] = React.useState(null);
@@ -1652,41 +1657,49 @@ const DeptAccordion = ({ depts }) => {
 };
 
 const PartsPage = () => {
-  const [tab,       setTab]       = React.useState(window.cl?.intent?.tab || 'components');
+  const [tabId,     setTabId]     = React.useState(window.cl?.intent?.tab || 'drivetrain');
   const [search,    setSearch]    = React.useState('');
   const [searchRes, setSearchRes] = React.useState(null);
   const [allDepts,  setAllDepts]  = React.useState([]);
 
-  const EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
+  const BIKE_DEPTS = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
 
   React.useEffect(() => {
-    const load = () => {
-      if (window.CL_LS?.departments?.length > 0) setAllDepts(window.CL_LS.departments);
-    };
+    const load = () => { if (window.CL_LS?.departments?.length > 0) setAllDepts(window.CL_LS.departments); };
     load();
     window.addEventListener('lightspeed:ready', load);
     return () => window.removeEventListener('lightspeed:ready', load);
   }, []);
 
-  const getDepts = (groupNames) => {
-    if (allDepts.length === 0) return groupNames.map(n => ({ name: n }));
-    return groupNames
-      .map(name => allDepts.find(d => d.name.trim() === name.trim()))
+  const activeTab = PART_TABS.find(t => t.id === tabId) || PART_TABS[0];
+
+  const tabDepts = React.useMemo(() => {
+    if (allDepts.length === 0) return activeTab.depts.map(n => ({ name: n }));
+    return activeTab.depts
+      .map(name => allDepts.find(d => d.name.trim() === name.trim()) || { name })
       .filter(Boolean);
-  };
+  }, [allDepts, tabId]);
 
   const doSearch = (q) => {
     setSearch(q);
     if (q.length < 2) { setSearchRes(null); return; }
-    const results = (window.lightspeedSearch && window.lightspeedSearch(q)) || [];
-    setSearchRes(results.filter(r => r.qty > 0 && !EXCLUDE.some(ex => (r.department||'').toLowerCase().includes(ex))).slice(0, 60));
+    const fuzzy = window.fuzzyMatch || ((n, h) => h.toLowerCase().includes(n.toLowerCase()));
+    const pool  = window.CL_LS?.products || [];
+    const res   = pool.filter(p =>
+      !BIKE_DEPTS.some(x => (p.department||'').toLowerCase().includes(x)) &&
+      fuzzy(q, (p.name||'') + ' ' + (p.department||''))
+    );
+    setSearchRes(res.slice(0, 80));
   };
 
-  const POPULAR_PARTS = ['Tires 29"','Tires 700C','Brake pads','Chains','Cassette','Tubes','Shifters MTB','Handlebar'];
-  const POPULAR_ACC   = ['Helmets','Lights','Locks','Bags','Pumps','Gloves','Computers'];
-
-  const compDepts = getDepts(PARTS_GROUPS.components);
-  const accDepts  = getDepts(PARTS_GROUPS.accessories);
+  const tabBtnStyle = (active) => ({
+    padding:"12px 20px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase",
+    border:"none", cursor:"pointer", background:"none", whiteSpace:"nowrap",
+    borderBottom: active ? "2px solid var(--black)" : "2px solid transparent",
+    marginBottom: -2,
+    color: active ? "var(--black)" : "var(--gray-500)",
+    fontWeight: active ? 600 : 400,
+  });
 
   return (
     <div className="page-fade">
@@ -1695,69 +1708,68 @@ const PartsPage = () => {
         <div className="container-wide">
 
           {/* Search */}
-          <div className="reveal" style={{ marginBottom:48 }}>
+          <div className="reveal" style={{ marginBottom:40 }}>
             <div style={{ display:"flex", borderBottom:"2px solid var(--black)", maxWidth:600 }}>
-              <input type="text" placeholder="Search — cassettes, brake pads, Maxxis tires…"
+              <input type="text" placeholder="Search — cassette, brake pads, Maxxis tires…"
                 value={search} onChange={e => doSearch(e.target.value)}
-                style={{ flex:1, padding:"16px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:17, background:"transparent" }} />
+                style={{ flex:1, padding:"16px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:17, background:"transparent", color:"var(--black)" }} />
               {search
                 ? <button onClick={() => { setSearch(''); setSearchRes(null); }} style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", letterSpacing:".12em", background:"none", border:"none", cursor:"pointer" }}>CLEAR</button>
-                : <span style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-400)", letterSpacing:".1em", alignSelf:"center" }}>⌕</span>
+                : <span style={{ fontFamily:"var(--mono)", fontSize:14, color:"var(--gray-400)", alignSelf:"center" }}>⌕</span>
               }
             </div>
-            {!search && (
-              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginTop:14 }}>
-                {[...POPULAR_PARTS, ...POPULAR_ACC].map(p => (
-                  <button key={p} data-cursor="link" onClick={() => { doSearch(p); setSearch(p); }}
-                    style={{ padding:"5px 12px", border:"1px solid var(--hairline)", background:"none", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", cursor:"pointer", color:"var(--gray-600)" }}>
-                    {p}
-                  </button>
-                ))}
-              </div>
-            )}
+
             {searchRes && (
               <div style={{ marginTop:24 }}>
-                <p className="eyebrow" style={{ marginBottom:16 }}>{searchRes.length} results for &ldquo;{search}&rdquo;</p>
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:8 }}>
-                  {searchRes.map((item, i) => (
-                    <div key={i} style={{ padding:"14px 16px", border:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:12 }}>
-                      <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontFamily:"var(--display)", fontSize:12, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
-                        <div className="eyebrow" style={{ marginTop:3, color:"var(--gray-500)" }}>{item.department}</div>
-                      </div>
-                      <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
-                        {item.price > 0 && <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600 }}>${item.price.toFixed(2)}</div>}
-                        <PartCartBtn item={item} />
-                      </div>
+                {searchRes.length === 0 ? (
+                  <p className="eyebrow" style={{ color:"var(--gray-400)", padding:"8px 0" }}>No results — try a different spelling or browse by category below</p>
+                ) : (
+                  <>
+                    <p className="eyebrow" style={{ marginBottom:16 }}>{searchRes.length} result{searchRes.length !== 1 ? 's' : ''} for &ldquo;{search}&rdquo;</p>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:8 }}>
+                      {searchRes.map((item, i) => (
+                        <div key={i} style={{ padding:"14px 16px", border:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:12 }}>
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontFamily:"var(--display)", fontSize:12, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
+                            <div className="eyebrow" style={{ marginTop:3, color:"var(--gray-500)" }}>{item.department}</div>
+                          </div>
+                          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+                            {item.price > 0 && <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600 }}>${item.price.toFixed(2)}</div>}
+                            <PartCartBtn item={item} />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </>
+                )}
               </div>
             )}
           </div>
 
-          {/* Tabs + accordion */}
-          {!searchRes && (
-            <>
-              {/* Tab bar */}
-              <div className="reveal" style={{ display:"flex", gap:0, marginBottom:32, borderBottom:"2px solid var(--black)" }}>
-                {[['components','Components'], ['accessories','Accessories']].map(([id, label]) => (
-                  <button key={id} data-cursor="link" onClick={() => setTab(id)}
-                    style={{ padding:"14px 28px", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", border:"none", cursor:"pointer", background:"none",
-                      borderBottom: tab===id ? "2px solid var(--black)" : "2px solid transparent",
-                      marginBottom: -2,
-                      color: tab===id ? "var(--black)" : "var(--gray-500)",
-                      fontWeight: tab===id ? 600 : 400,
-                    }}>
-                    {label}
-                  </button>
-                ))}
-                <span className="eyebrow" style={{ marginLeft:"auto", alignSelf:"center", opacity:.45 }}>Live · Lightspeed</span>
-              </div>
+          {/* Category tabs */}
+          <div className="reveal" style={{ overflowX:"auto", borderBottom:"2px solid var(--black)", marginBottom:32, display:"flex" }}>
+            {PART_TABS.map(t => (
+              <button key={t.id} data-cursor="link" onClick={() => { setTabId(t.id); setSearch(''); setSearchRes(null); }} style={tabBtnStyle(tabId === t.id)}>
+                {t.label}
+              </button>
+            ))}
+            <span className="eyebrow" style={{ marginLeft:"auto", alignSelf:"center", opacity:.4, whiteSpace:"nowrap", paddingLeft:16 }}>Live · Lightspeed</span>
+          </div>
 
-              <DeptAccordion depts={tab === 'components' ? compDepts : accDepts} />
-            </>
+          {/* Popular quick-links for active tab */}
+          {!searchRes && (
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:32 }}>
+              {activeTab.popular.map(p => (
+                <button key={p} data-cursor="link" onClick={() => { doSearch(p); setSearch(p); }}
+                  style={{ padding:"5px 12px", border:"1px solid var(--hairline)", background:"none", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", cursor:"pointer", color:"var(--gray-600)" }}>
+                  {p}
+                </button>
+              ))}
+            </div>
           )}
+
+          {/* Department accordion */}
+          {!searchRes && <DeptAccordion depts={tabDepts} />}
 
           <div style={{ marginTop:48, padding:28, background:"var(--paper)", borderTop:"2px solid var(--black)" }}>
             <div className="eyebrow" style={{ marginBottom:10 }}>Can't find what you need?</div>

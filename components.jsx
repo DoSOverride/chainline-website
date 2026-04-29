@@ -757,60 +757,97 @@ const SearchModal = ({ onClose }) => {
   const inputRef = React.useRef(null);
   React.useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
 
-  const allBikes = (window.SHOP_BIKES || []);
-  const results = q.length < 2 ? [] : allBikes.filter(b => {
-    const s = (b.name + " " + b.brand + " " + (b.vendor||"") + " " + b.type + " " + (b.tags||"")).toLowerCase();
-    return s.includes(q.toLowerCase());
-  }).slice(0, 8);
-
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const fuzzy = window.fuzzyMatch || ((n, h) => h.toLowerCase().includes(n.toLowerCase()));
+
+  const bikeResults = q.length < 2 ? [] : (window.SHOP_BIKES || []).filter(b =>
+    fuzzy(q, (b.name||'') + ' ' + (b.brand||'') + ' ' + (b.type||'') + ' ' + (b.tags||''))
+  ).slice(0, 5);
+
+  const partResults = q.length < 2 ? [] : (window.lightspeedSearch ? window.lightspeedSearch(q) : [])
+    .filter(p => !['labour','food','shop use','bikes'].some(x => (p.department||'').toLowerCase().includes(x)))
+    .slice(0, 5);
+
+  const hasResults = bikeResults.length > 0 || partResults.length > 0;
+
+  const rowStyle = { display:"flex", alignItems:"center", gap:16, padding:"14px 0", borderBottom:"1px solid var(--hairline)", background:"none", border:"none", borderBottom:"1px solid var(--hairline)", cursor:"pointer", textAlign:"left", width:"100%" };
+
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 500, background: "rgba(10,10,10,0.7)", backdropFilter: "blur(4px)" }}>
-      <div onClick={e => e.stopPropagation()} style={{ position: "absolute", top: 0, left: 0, right: 0, background: "var(--white)", padding: "32px 40px 24px", boxShadow: "0 8px 48px rgba(0,0,0,0.2)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16, borderBottom: "2px solid var(--black)", paddingBottom: 16, marginBottom: 24 }}>
+    <div onClick={onClose} style={{ position:"fixed", inset:0, zIndex:500, background:"rgba(10,10,10,0.7)", backdropFilter:"blur(4px)" }}>
+      <div onClick={e => e.stopPropagation()} style={{ position:"absolute", top:0, left:0, right:0, background:"var(--white)", padding:"32px 40px 24px", boxShadow:"0 8px 48px rgba(0,0,0,0.2)", maxHeight:"90vh", overflowY:"auto" }}>
+
+        <div style={{ display:"flex", alignItems:"center", gap:16, borderBottom:"2px solid var(--black)", paddingBottom:16, marginBottom:24 }}>
           <SearchIcon />
           <input ref={inputRef} value={q} onChange={e => setQ(e.target.value)}
-            placeholder="Search bikes, brands, types..."
-            style={{ flex: 1, border: "none", outline: "none", fontSize: 22, fontFamily: "var(--display)", fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.01em", background: "transparent" }} />
-          <button onClick={onClose} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)", cursor: "pointer", background: "none", border: "none" }}>ESC</button>
+            placeholder="Search bikes, parts, brands…"
+            style={{ flex:1, border:"none", outline:"none", fontSize:22, fontFamily:"var(--display)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", background:"transparent" }} />
+          <button onClick={onClose} style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", cursor:"pointer", background:"none", border:"none" }}>ESC</button>
         </div>
-        {q.length >= 2 && results.length === 0 && (
-          <div style={{ fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-400)", padding: "16px 0" }}>No results for "{q}"</div>
+
+        {q.length >= 2 && !hasResults && (
+          <div style={{ fontFamily:"var(--mono)", fontSize:12, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", padding:"16px 0" }}>
+            No results — try a different spelling
+          </div>
         )}
-        {results.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {results.map((b, i) => (
-              <button key={i} onClick={() => { window.cl.go("bike", { bike: b }); onClose(); }} data-cursor="link"
-                style={{ display: "flex", alignItems: "center", gap: 24, padding: "16px 0", borderBottom: "1px solid var(--hairline)", background: "none", border: "none", borderBottom: "1px solid var(--hairline)", cursor: "pointer", textAlign: "left", width: "100%" }}>
-                {b.img && <img src={b.img} alt="" loading="lazy" style={{ width: 64, height: 64, objectFit: "contain", background: "var(--paper)", padding: 4, flexShrink: 0 }} />}
-                <div style={{ flex: 1 }}>
-                  <div className="eyebrow" style={{ marginBottom: 4 }}>{b.brand || b.vendor}  ·  {b.type}</div>
-                  <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.01em" }}>{b.name || b.title}</div>
+
+        {bikeResults.length > 0 && (
+          <div style={{ marginBottom:24 }}>
+            <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Bikes</div>
+            {bikeResults.map((b, i) => (
+              <button key={i} onClick={() => { window.cl.go("bike", { bike: b }); onClose(); }} data-cursor="link" style={rowStyle}>
+                {b.img && <img src={b.img} alt="" loading="lazy" style={{ width:56, height:56, objectFit:"contain", background:"var(--paper)", padding:4, flexShrink:0 }} />}
+                <div style={{ flex:1 }}>
+                  <div className="eyebrow" style={{ marginBottom:3 }}>{b.brand}  ·  {b.type}</div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:17, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{b.name}</div>
                 </div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 16, fontWeight: 500, flexShrink: 0 }}>${(b.price||0).toLocaleString()}</div>
+                <div style={{ fontFamily:"var(--display)", fontSize:15, fontWeight:500, flexShrink:0 }}>${(b.price||0).toLocaleString()}</div>
               </button>
             ))}
             <button onClick={() => { window.cl.go("shop"); onClose(); }} data-cursor="link"
-              style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 0", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)" }}>
-              View all bikes in Shop <ArrowRight size={10} />
+              style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 0", background:"none", border:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+              All bikes in Shop <ArrowRight size={10} />
             </button>
           </div>
         )}
-        {q.length < 2 && (
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {["Mountain", "Gravel", "E-Bike", "Commuter", "Marin", "Transition", "Surly", "Knolly"].map(tag => (
-              <button key={tag} onClick={() => setQ(tag)} data-cursor="link"
-                style={{ padding: "8px 16px", border: "1px solid var(--hairline)", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", cursor: "pointer", background: "none" }}>
-                {tag}
+
+        {partResults.length > 0 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Parts &amp; Accessories</div>
+            {partResults.map((p, i) => (
+              <button key={i} onClick={() => { window.cl.go("parts"); onClose(); }} data-cursor="link" style={rowStyle}>
+                <div style={{ flex:1 }}>
+                  <div className="eyebrow" style={{ marginBottom:3 }}>{p.department}</div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{p.name}</div>
+                </div>
+                {p.price > 0 && <div style={{ fontFamily:"var(--display)", fontSize:15, fontWeight:500, flexShrink:0 }}>${p.price.toFixed(2)}</div>}
               </button>
             ))}
+            <button onClick={() => { window.cl.go("parts"); onClose(); }} data-cursor="link"
+              style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 0", background:"none", border:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+              Browse all parts <ArrowRight size={10} />
+            </button>
           </div>
         )}
+
+        {q.length < 2 && (
+          <div>
+            <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Quick search</div>
+            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+              {["Mountain","Gravel","E-Bike","Marin","Transition","Surly","Cassette","Chain","Brake pads","Tires","Helmet","Pedals"].map(tag => (
+                <button key={tag} onClick={() => setQ(tag)} data-cursor="link"
+                  style={{ padding:"7px 14px", border:"1px solid var(--hairline)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", cursor:"pointer", background:"none" }}>
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
