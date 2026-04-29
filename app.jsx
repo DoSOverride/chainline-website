@@ -68,7 +68,13 @@ const App = () => {
     "grain": 0.04
   }/*EDITMODE-END*/;
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [page, setPage] = React.useState("home");
+  const [page, setPage] = React.useState(() => {
+    const { page: p, intent } = pathToRoute(window.location.pathname);
+    window.cl = window.cl || {};
+    window.cl.intent = intent;
+    window.cl.currentPage = p;
+    return p;
+  });
   const [scrolled, setScrolled] = React.useState(false);
   const [showSticky, setShowSticky] = React.useState(false);
   const [megaOpen, setMegaOpen] = React.useState(null);
@@ -150,16 +156,6 @@ const App = () => {
       window.scrollTo({ top: 0, behavior: "auto" });
     };
     window.addEventListener('popstate', onPopState);
-
-    // Load initial route from pathname on first render
-    const initial = pathToRoute(window.location.pathname);
-    if (initial.page !== 'home') {
-      window.cl.currentPage = initial.page;
-      window.cl.intent = initial.intent;
-      setPage(initial.page);
-    } else {
-      window.cl.currentPage = 'home';
-    }
 
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
