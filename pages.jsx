@@ -471,11 +471,13 @@ const ShopPage = () => {
     return SHOP_BIKES.map(s => {
       const sb  = _norm(s.brand || '');
       const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
+      const sNorm = _norm(s.name);
       const matches = liveProducts.filter(l => {
         const lb = _norm((l.name || '').split(' ')[0]);
         if (lb !== sb) return false;
         const ln = _norm(l.name);
-        return sKw.length === 0 || sKw.every(w => ln.includes(w));
+        // If no 4+ char keywords, fall back to full name substring to prevent short names matching everything
+        return sKw.length > 0 ? sKw.every(w => ln.includes(w)) : ln.includes(sNorm);
       });
       if (matches.length === 0) return { ...s, inStock: false };
       const inStockMatches = matches.filter(m => m.inStock);

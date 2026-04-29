@@ -55,15 +55,22 @@ window.lightspeedGetBikes = function() {
   // Use dedicated bikes endpoint data if available (has real stock)
   if (window.CL_LS.bikes && window.CL_LS.bikes.length > 0) {
     return window.CL_LS.bikes
-      .filter(p => deptToType(p.department) !== null)  // exclude frames and non-bike items
-      .filter(p => p.inStock)                            // only in-stock bikes
+      .filter(p => {
+        // Exclude frames; include bikes with known dept OR known e-bike/mountain model names
+        const type = deptToType(p.department);
+        if (type !== null) return true;
+        // Some bikes have blank department in Lightspeed — rescue by name
+        const n = (p.name || '').toLowerCase();
+        return ['regulator','shuttle am','patrol','emtb'].some(k => n.includes(k));
+      })
+      .filter(p => p.inStock)
       .map(p => ({
         id:     p.id,
         name:   p.name,
         brand:  (p.name || '').split(' ')[0] || '',
         vendor: (p.name || '').split(' ')[0] || '',
         sku:    p.sku,
-        type:   deptToType(p.department),
+        type:   deptToType(p.department) || nameToType(p.name),
         price:  p.price,
         img:    (window.CL_LS.skuImageMap || {})[p.sku] || null,
         tags:   p.department,
@@ -98,7 +105,7 @@ window.lightspeedGetBikes = function() {
 function deptToType(dept) {
   if (!dept) return null;
   const d = dept.toLowerCase();
-  if (d.includes('frame'))   return null;   // frames only — exclude from bike shop
+  if (d.includes('frame'))   return null;
   if (d.includes('mountain') || d.includes('mtb') || d.includes('fat')) return 'Mountain';
   if (d.includes('gravel'))  return 'Gravel';
   if (d.includes('electric') || d.includes('e-bike')) return 'E-Bike';
@@ -107,6 +114,12 @@ function deptToType(dept) {
   if (d.includes('commut') || d.includes('hybrid') || d.includes('road') || d.includes('cross')) return 'Commuter';
   if (d.includes('bmx'))     return 'Kids';
   return 'Other';
+}
+
+function nameToType(name) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('regulator') || n.includes('shuttle') || n.includes('e-bike') || n.includes('ebike')) return 'E-Bike';
+  return 'Mountain';
 }
 
 // ── Get all departments with item counts ──────────────────────
