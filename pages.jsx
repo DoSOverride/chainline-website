@@ -825,15 +825,15 @@ const ServicesPage = () => {
 
   const T = ["Washed and re-lubed","Adjusted gears and brakes","Trued and tensioned wheels","Checked BB, hubs and headset","Checked stem and bar bolts"];
   const ALL_SERVICES = [
-    // ── All Bikes: tune-ups first, then flat fix, then misc ──
+    // ── All Bikes: tune-ups, flat fix, overhaul, then misc ──
     { cat:"all", n:"01", name:"Basic Tune Up",            price:60,  time:"SAME DAY",
       includes:["Adjusted gears and brakes","Checked stem and bar bolts","Safety inspection"] },
     { cat:"all", n:"02", name:"Tune Up",                  price:120, time:"SAME DAY",
       includes:[...T] },
-    { cat:"all", n:"03", name:"Complete Overhaul",        price:250, time:"3–5 DAYS",
-      includes:["Full teardown and degrease","Regreased all bearings","Rebuilt and adjusted all systems","New cables and housing","Safety inspection and road test"] },
-    { cat:"all", n:"04", name:"Flat Fix",                 price:25,  time:"SAME DAY",
+    { cat:"all", n:"03", name:"Flat Fix",                 price:25,  time:"SAME DAY",
       desc:"Tube replacement including labour. Parts extra." },
+    { cat:"all", n:"04", name:"Complete Overhaul",        price:250, time:"3–5 DAYS",
+      includes:["Full teardown and degrease","Regreased all bearings","Rebuilt and adjusted all systems","New cables and housing","Safety inspection and road test"] },
     { cat:"all", n:"05", name:"Flat Fix — E-Bike Rear",   price:80,  time:"SAME DAY",
       desc:"Rear hub motor wheel removal and tube or tire replacement. Labour only — parts extra." },
     { cat:"all", n:"06", name:"Brake Bleed",              price:60,  time:"SAME DAY",
@@ -859,7 +859,7 @@ const ServicesPage = () => {
     // ── Mountain ──
     { cat:"mountain", n:"01", name:"Tune Up",             price:120, time:"SAME DAY",
       includes:[...T] },
-    { cat:"mountain", n:"02", name:"FS Tune Up",          price:220, time:"1–2 DAYS",
+    { cat:"mountain", n:"02", name:"FS Tune Up",          price:155, time:"1–2 DAYS",
       includes:[...T,"Removed shock, checked pivot and bushing condition","Torqued all pivot bolts to spec"] },
     { cat:"mountain", n:"03", name:"E-Bike Tune Up",      price:120, time:"1–2 DAYS",
       includes:[...T,"Motor and battery system check","Firmware update if available"] },
@@ -873,8 +873,12 @@ const ServicesPage = () => {
       desc:"Cleaned and regreased Shimano clutch. Restores crisp, quiet shifting." },
     { cat:"mountain", n:"08", name:"E-Bike Firmware & Scan", price:25, time:"SAME DAY",
       desc:"Bosch, Shimano Steps and Bafang firmware update plus system scan." },
-    { cat:"mountain", n:"09", name:"Cable Package — Internal", price:60, time:"1–2 DAYS",
+    { cat:"mountain", n:"09", name:"Cable Package — Full",      price:60,  time:"1–2 DAYS",
+      desc:"Complete cable and housing replacement on all cables." },
+    { cat:"mountain", n:"10", name:"Cable Package — Internal",  price:60,  time:"1–2 DAYS",
       desc:"Full internal cable and housing replacement, all cables routed." },
+    { cat:"mountain", n:"11", name:"Cable Package — Half",      price:35,  time:"1 DAY",
+      desc:"Partial cable and housing refresh." },
     // ── Road ──
     { cat:"road", n:"01", name:"Road Tune Up",            price:120, time:"SAME DAY",
       includes:[...T] },
@@ -903,8 +907,14 @@ const ServicesPage = () => {
       includes:["Fork lower leg service","Shock air can service","Best value — done together"] },
     { cat:"suspension", n:"06", name:"Dropper Post Service",   price:140, time:"1–2 DAYS",
       desc:"Full dropper rebuild — seals, oil, bleed. Fox Transfer, Reverb, PNW, OneUp and more." },
-    { cat:"suspension", n:"07", name:"Suspension Setup",       price:50,  time:"30 MIN",
+    { cat:"suspension", n:"07", name:"Suspension Setup",        price:50,  time:"30 MIN",
       includes:["Sag set for your weight","Rebound dialled in","Compression tuned to your riding style"] },
+    { cat:"suspension", n:"08", name:"Cable Package — Full",    price:60,  time:"1–2 DAYS",
+      desc:"Complete cable and housing replacement on all cables." },
+    { cat:"suspension", n:"09", name:"Cable Package — Internal", price:60, time:"1–2 DAYS",
+      desc:"Full internal cable and housing replacement, all cables routed." },
+    { cat:"suspension", n:"10", name:"Cable Package — Half",    price:35,  time:"1 DAY",
+      desc:"Partial cable and housing refresh." },
   ];
 
   const services = activeTab === "all" ? ALL_SERVICES.filter(s => s.cat === "all") : ALL_SERVICES.filter(s => s.cat === activeTab);
@@ -938,7 +948,6 @@ const ServicesPage = () => {
                       <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{s.name}</div>
                       <div style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, color:"var(--black)" }}>
                         ${lsPrice(s.name) || s.price}
-                        {lsPrice(s.name) && lsPrice(s.name) !== s.price && <sup style={{ fontFamily:"var(--mono)", fontSize:8, color:"var(--gray-400)", marginLeft:3, letterSpacing:".1em" }}>LIVE</sup>}
                       </div>
                     </div>
                     {s.includes && (
