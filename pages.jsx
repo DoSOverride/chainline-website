@@ -823,51 +823,88 @@ const ServicesPage = () => {
     return null;
   };
 
+  const T = ["Washed and re-lubed","Adjusted gears and brakes","Trued and tensioned wheels","Checked BB, hubs and headset","Checked stem and bar bolts"];
   const ALL_SERVICES = [
-    // ── All Bikes ──
-    { cat:"all", n:"01", name:"Tune-Up",                price:120,  desc:"Full adjustment, lube, safety check on all systems.",                time:"SAME DAY" },
-    { cat:"all", n:"02", name:"Complete Overhaul",       price:250,  desc:"Full teardown, degrease, regrease, rebuild. Includes adjustment.", time:"3–5 DAYS" },
-    { cat:"all", n:"03", name:"Bike Assessment",         price:30,   desc:"Thorough inspection with written report. Cost applied to repair.", time:"30 MIN"   },
-    { cat:"all", n:"04", name:"Safety Check",            price:40,   desc:"Pre-ride safety inspection. Brakes, gears, headset, wheels.",      time:"30 MIN"   },
-    { cat:"all", n:"05", name:"Flat Fix",                price:25,   desc:"Tube replacement including labour. Parts extra.",                  time:"SAME DAY" },
-    { cat:"all", n:"06", name:"Flat Fix — E-Bike Rear",  price:80,   desc:"Rear hub motor wheel removal and tube/tire replacement.",         time:"SAME DAY" },
-    { cat:"all", n:"07", name:"Wheel True",              price:25,   desc:"Hand-trued and tensioned per wheel.",                             time:"SAME DAY" },
-    { cat:"all", n:"08", name:"Tubeless Set Up",         price:35,   desc:"Per wheel. Includes tape, valve, and sealant setup.",             time:"SAME DAY" },
-    { cat:"all", n:"09", name:"Dropper Post Install",    price:50,   desc:"Full internal or external dropper post installation.",            time:"SAME DAY" },
-    { cat:"all", n:"10", name:"Bar Wrap",                price:30,   desc:"Professional bar tape wrap. Tape not included.",                  time:"SAME DAY" },
-    { cat:"all", n:"11", name:"CushCore Install",        price:50,   desc:"Per wheel. CushCore insert installation.",                        time:"1 DAY"    },
-    { cat:"all", n:"12", name:"Accessory Install",       price:30,   desc:"Racks, fenders, lights, mirrors, computers, etc.",               time:"SAME DAY" },
-    { cat:"all", n:"13", name:"Cable & Housing Full",    price:60,   desc:"Complete cable and housing replacement, all cables.",             time:"1–2 DAYS" },
-    { cat:"all", n:"14", name:"Cable & Housing Half",    price:35,   desc:"Partial cable and housing refresh.",                              time:"1 DAY"    },
-    // ── Mountain Bike ──
-    { cat:"mountain", n:"01", name:"Tune-Up",                       price:120, desc:"Full mountain tune: drivetrain, brakes, suspension check.", time:"SAME DAY" },
-    { cat:"mountain", n:"02", name:"Full Suspension Tune-Up",        price:220, desc:"Tune + suspension inspection and basic setup adjustment.",  time:"1–2 DAYS" },
-    { cat:"mountain", n:"03", name:"E-Bike Tune-Up",                 price:120, desc:"Mountain e-bike tune including motor and battery check.",   time:"1–2 DAYS" },
-    { cat:"mountain", n:"04", name:"Fork Seal Service",              price:65,  desc:"Lower leg removal, clean, new seals and foam rings.",       time:"1–2 DAYS" },
-    { cat:"mountain", n:"05", name:"Shock Air Can Service",          price:45,  desc:"Air can removal, clean, new seals and oil.",                time:"1 DAY"    },
-    { cat:"mountain", n:"06", name:"Dropper Post Service",           price:140, desc:"Full dropper post rebuild (Fox Transfer).",                 time:"1–2 DAYS" },
-    { cat:"mountain", n:"07", name:"Shimano Clutch Service",         price:25,  desc:"Clean and re-grease Shimano clutch mechanism.",            time:"SAME DAY" },
-    { cat:"mountain", n:"08", name:"E-Bike System Check & Firmware", price:25,  desc:"Bosch / Shimano Steps / Bafang firmware update + scan.",    time:"SAME DAY" },
-    { cat:"mountain", n:"09", name:"50-Hour Suspension Service",     price:220, desc:"Recommended every 50hrs: full lower leg + shock service.", time:"2–3 DAYS" },
-    { cat:"mountain", n:"10", name:"Cable Package — Internal Full",   price:60,  desc:"Full internal cable and housing replacement.",              time:"1–2 DAYS" },
-    { cat:"mountain", n:"11", name:"Cable Package — Half",           price:35,  desc:"Partial cable refresh, internal routing.",                  time:"1 DAY"    },
-    // ── Road Bike ──
-    { cat:"road", n:"01", name:"Road Tune-Up",                      price:120, desc:"Road-specific adjustment: brakes, gears, headset, wheels.", time:"SAME DAY" },
-    { cat:"road", n:"02", name:"Brake Bleed",                       price:60,  desc:"Hydraulic brake bleed per caliper. Parts extra.",           time:"SAME DAY" },
-    { cat:"road", n:"03", name:"Wheel True",                        price:25,  desc:"Hand-trued and tensioned per wheel.",                       time:"SAME DAY" },
-    { cat:"road", n:"04", name:"Full Cable Package",                price:60,  desc:"Complete shifter and brake cable + housing replacement.",   time:"1–2 DAYS" },
-    { cat:"road", n:"05", name:"Half Cable Package",                price:35,  desc:"Partial cable and housing replacement.",                    time:"1 DAY"    },
-    { cat:"road", n:"06", name:"Internal Full Cable Package",       price:60,  desc:"Full internal cable replacement including housing.",        time:"1–2 DAYS" },
-    { cat:"road", n:"07", name:"Internal Half Cable Package",       price:35,  desc:"Partial internal cable replacement.",                       time:"1 DAY"    },
-    { cat:"road", n:"08", name:"Bar Wrap",                          price:30,  desc:"Professional bar tape wrap. Tape not included.",            time:"SAME DAY" },
-    // ── 50hr Suspension Service (regular maintenance) ──
-    { cat:"suspension", n:"01", name:"Fork Air Can Service",        price:65,  desc:"Air can off, new seals, fresh oil. Keeps your air spring consistent.", time:"1 DAY"   },
-    { cat:"suspension", n:"02", name:"Fork Lower Leg Service",      price:65,  desc:"Lower legs off, clean, new foam rings, new seals, fresh bath oil.",     time:"1 DAY"   },
-    { cat:"suspension", n:"03", name:"Fork 50hr Full Service",      price:120, desc:"Air can + lower leg done together. Recommended every 50 riding hours.", time:"1–2 DAYS"},
-    { cat:"suspension", n:"04", name:"Shock Air Can Service",       price:45,  desc:"Air can off, clean, new seals, fresh oil. Restores consistent feel.",   time:"1 DAY"   },
-    { cat:"suspension", n:"05", name:"50hr Fork + Shock",           price:155, desc:"Full 50hr: fork lower leg + shock air can. Best done together.",        time:"2 DAYS"  },
-    { cat:"suspension", n:"06", name:"Dropper Post Service",        price:140, desc:"Full dropper rebuild — seals, oil, bleed. Fox Transfer, Reverb, etc.", time:"1–2 DAYS"},
-    { cat:"suspension", n:"07", name:"Suspension Setup",            price:50,  desc:"Sag, rebound, compression dialled for your weight and style.",          time:"30 MIN"  },
+    // ── All Bikes: tune-ups first, then flat fix, then misc ──
+    { cat:"all", n:"01", name:"Basic Tune Up",            price:60,  time:"SAME DAY",
+      includes:["Adjusted gears and brakes","Checked stem and bar bolts","Safety inspection"] },
+    { cat:"all", n:"02", name:"Tune Up",                  price:120, time:"SAME DAY",
+      includes:[...T] },
+    { cat:"all", n:"03", name:"Complete Overhaul",        price:250, time:"3–5 DAYS",
+      includes:["Full teardown and degrease","Regreased all bearings","Rebuilt and adjusted all systems","New cables and housing","Safety inspection and road test"] },
+    { cat:"all", n:"04", name:"Flat Fix",                 price:25,  time:"SAME DAY",
+      desc:"Tube replacement including labour. Parts extra." },
+    { cat:"all", n:"05", name:"Flat Fix — E-Bike Rear",   price:80,  time:"SAME DAY",
+      desc:"Rear hub motor wheel removal and tube or tire replacement. Labour only — parts extra." },
+    { cat:"all", n:"06", name:"Brake Bleed",              price:60,  time:"SAME DAY",
+      desc:"Hydraulic brake bleed per caliper. Parts extra." },
+    { cat:"all", n:"07", name:"Wheel True",               price:25,  time:"SAME DAY",
+      desc:"Hand-trued and tensioned. Per wheel." },
+    { cat:"all", n:"08", name:"Tubeless Set Up",          price:35,  time:"SAME DAY",
+      desc:"Per wheel — tape, valve stem, sealant installed." },
+    { cat:"all", n:"09", name:"Cable & Housing Full",     price:60,  time:"1–2 DAYS",
+      desc:"Complete cable and housing replacement on all cables." },
+    { cat:"all", n:"10", name:"Cable & Housing Half",     price:35,  time:"1 DAY",
+      desc:"Partial cable and housing refresh." },
+    { cat:"all", n:"11", name:"Bar Wrap",                 price:30,  time:"SAME DAY",
+      desc:"Professional bar tape wrap. Tape not included." },
+    { cat:"all", n:"12", name:"Dropper Post Install",     price:50,  time:"SAME DAY",
+      desc:"Internal or external dropper post installation — full routing included." },
+    { cat:"all", n:"13", name:"CushCore Install",         price:50,  time:"1 DAY",
+      desc:"CushCore insert installation. Per wheel." },
+    { cat:"all", n:"14", name:"Accessory Install",        price:30,  time:"SAME DAY",
+      desc:"Racks, fenders, lights, mirrors, computers and more." },
+    { cat:"all", n:"15", name:"Bike Assessment",          price:30,  time:"30 MIN",
+      desc:"Thorough inspection with written report. Cost applied toward any repair." },
+    // ── Mountain ──
+    { cat:"mountain", n:"01", name:"Tune Up",             price:120, time:"SAME DAY",
+      includes:[...T] },
+    { cat:"mountain", n:"02", name:"FS Tune Up",          price:220, time:"1–2 DAYS",
+      includes:[...T,"Removed shock, checked pivot and bushing condition","Torqued all pivot bolts to spec"] },
+    { cat:"mountain", n:"03", name:"E-Bike Tune Up",      price:120, time:"1–2 DAYS",
+      includes:[...T,"Motor and battery system check","Firmware update if available"] },
+    { cat:"mountain", n:"04", name:"Fork Seal Service",   price:65,  time:"1–2 DAYS",
+      includes:["Lower legs removed","Cleaned and inspected internals","New seals and foam rings","Fresh bath oil"] },
+    { cat:"mountain", n:"05", name:"Shock Air Can Service", price:45, time:"1 DAY",
+      includes:["Air can removed","Cleaned and inspected","New air seals installed","Fresh oil"] },
+    { cat:"mountain", n:"06", name:"Dropper Post Service", price:140, time:"1–2 DAYS",
+      desc:"Full dropper rebuild — seals, oil, bleed. Fox Transfer, Reverb, PNW, OneUp and more." },
+    { cat:"mountain", n:"07", name:"Shimano Clutch Service", price:25, time:"SAME DAY",
+      desc:"Cleaned and regreased Shimano clutch. Restores crisp, quiet shifting." },
+    { cat:"mountain", n:"08", name:"E-Bike Firmware & Scan", price:25, time:"SAME DAY",
+      desc:"Bosch, Shimano Steps and Bafang firmware update plus system scan." },
+    { cat:"mountain", n:"09", name:"Cable Package — Internal", price:60, time:"1–2 DAYS",
+      desc:"Full internal cable and housing replacement, all cables routed." },
+    // ── Road ──
+    { cat:"road", n:"01", name:"Road Tune Up",            price:120, time:"SAME DAY",
+      includes:[...T] },
+    { cat:"road", n:"02", name:"Brake Bleed",             price:60,  time:"SAME DAY",
+      desc:"Hydraulic brake bleed per caliper. Parts extra." },
+    { cat:"road", n:"03", name:"Full Cable Package",      price:60,  time:"1–2 DAYS",
+      desc:"Complete shifter and brake cable and housing replacement." },
+    { cat:"road", n:"04", name:"Half Cable Package",      price:35,  time:"1 DAY",
+      desc:"Partial cable and housing replacement." },
+    { cat:"road", n:"05", name:"Internal Full Cable",     price:60,  time:"1–2 DAYS",
+      desc:"Full internal cable routing replacement including housing." },
+    { cat:"road", n:"06", name:"Bar Wrap",                price:30,  time:"SAME DAY",
+      desc:"Professional bar tape wrap. Tape not included." },
+    { cat:"road", n:"07", name:"Wheel True",              price:25,  time:"SAME DAY",
+      desc:"Hand-trued and tensioned. Per wheel." },
+    // ── Suspension 50hr maintenance ──
+    { cat:"suspension", n:"01", name:"Fork Air Can Service",   price:65,  time:"1 DAY",
+      includes:["Air can removed","New air seals installed","Fresh oil bath","Air spring serviced"] },
+    { cat:"suspension", n:"02", name:"Fork Lower Leg Service", price:65,  time:"1 DAY",
+      includes:["Lower legs removed","Cleaned and inspected","New foam rings and seals","Fresh bath oil"] },
+    { cat:"suspension", n:"03", name:"Fork 50hr Full Service", price:120, time:"1–2 DAYS",
+      includes:["Air can service (seals + oil)","Lower leg service (seals + foam rings + oil)","Recommended every 50 riding hours"] },
+    { cat:"suspension", n:"04", name:"Shock Air Can Service",  price:45,  time:"1 DAY",
+      includes:["Air can removed","New seals installed","Fresh oil","Consistent feel restored"] },
+    { cat:"suspension", n:"05", name:"50hr Fork + Shock",      price:155, time:"2 DAYS",
+      includes:["Fork lower leg service","Shock air can service","Best value — done together"] },
+    { cat:"suspension", n:"06", name:"Dropper Post Service",   price:140, time:"1–2 DAYS",
+      desc:"Full dropper rebuild — seals, oil, bleed. Fox Transfer, Reverb, PNW, OneUp and more." },
+    { cat:"suspension", n:"07", name:"Suspension Setup",       price:50,  time:"30 MIN",
+      includes:["Sag set for your weight","Rebound dialled in","Compression tuned to your riding style"] },
   ];
 
   const services = activeTab === "all" ? ALL_SERVICES.filter(s => s.cat === "all") : ALL_SERVICES.filter(s => s.cat === activeTab);
@@ -889,22 +926,34 @@ const ServicesPage = () => {
           </div>
           <div style={{ borderTop: "1px solid var(--hairline)" }}>
             {services.map((s, i) => (
-              <div key={i} className="page-svc-row reveal" style={{ padding: "20px 0", borderBottom: "1px solid var(--hairline)" }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:4 }}>
-                      <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", color:"var(--gray-500)" }}>{s.n}</span>
-                      <span className="eyebrow" style={{ color:"var(--gray-400)" }}>{s.time}</span>
+              <div key={i} className="page-svc-row reveal" style={{ padding:"24px 0", borderBottom:"1px solid var(--hairline)" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:24, flexWrap:"wrap" }}>
+                  {/* Left: number + name + what's included */}
+                  <div style={{ flex:1, minWidth:200 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6 }}>
+                      <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", color:"var(--gray-500)" }}>{s.n}</span>
+                      <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{s.time}</span>
                     </div>
-                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.6vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:4 }}>{s.name}</div>
-                    <div style={{ color:"var(--gray-500)", fontSize:13, lineHeight:1.55 }}>{s.desc}</div>
+                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom: s.includes||s.desc ? 10 : 0 }}>{s.name}</div>
+                    {s.includes && (
+                      <ul style={{ listStyle:"none", padding:0, margin:0, display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:"3px 24px" }}>
+                        {s.includes.map((item, j) => (
+                          <li key={j} style={{ display:"flex", alignItems:"flex-start", gap:7, fontSize:13, color:"var(--gray-600)", lineHeight:1.5 }}>
+                            <span style={{ marginTop:6, width:3, height:3, borderRadius:"50%", background:"var(--gray-400)", flexShrink:0, display:"inline-block" }}/>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {s.desc && <div style={{ color:"var(--gray-500)", fontSize:13, lineHeight:1.6 }}>{s.desc}</div>}
                   </div>
-                  <div style={{ display:"flex", alignItems:"center", gap:16, flexShrink:0 }}>
-                    <div style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500 }}>
+                  {/* Right: price + book */}
+                  <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:10, flexShrink:0 }}>
+                    <div style={{ fontFamily:"var(--display)", fontSize:22, fontWeight:500, lineHeight:1 }}>
                       ${lsPrice(s.name) || s.price}
-                      {lsPrice(s.name) && lsPrice(s.name) !== s.price && <span style={{ fontFamily:"var(--mono)", fontSize:8, color:"var(--gray-400)", marginLeft:4, verticalAlign:"super", letterSpacing:".1em" }}>LIVE</span>}
+                      {lsPrice(s.name) && lsPrice(s.name) !== s.price && <sup style={{ fontFamily:"var(--mono)", fontSize:8, color:"var(--gray-400)", marginLeft:3, letterSpacing:".1em" }}>LIVE</sup>}
                     </div>
-                    <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
+                    <button className="btn btn-outline" data-cursor="link" style={{ fontSize:11, whiteSpace:"nowrap" }} onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
                   </div>
                 </div>
               </div>
