@@ -1112,7 +1112,7 @@ const BookPage = () => {
               <div style={{ padding:"24px 28px", background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:32 }}>
                 <p style={{ fontSize:14, color:"var(--gray-600)", lineHeight:1.7 }}>
                   Your booking request has been sent to <strong>bikes@chainline.ca</strong>. You'll receive a confirmation call or email to lock in your appointment time.<br/><br/>
-                  Questions? Call us at <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon–Sat 10am–6pm.
+                  Questions? Call us at <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon 10–5, Tue–Fri 9:30–5:30, Sat 10–4.
                 </p>
               </div>
               <div style={{ display: "flex", gap: 12 }}>
