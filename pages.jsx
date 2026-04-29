@@ -1439,79 +1439,64 @@ const AboutPage = () => (
 
 // GROUP RIDES PAGE
 const RidesPage = () => {
-  const [tab, setTab] = React.useState("All");
-  const tabs = ["All", "Road", "Gravel", "Mountain", "Social", "E-Bike"];
   const rides = [
-    { date: "MON 28 APR 6:00PM", cal: "20260428T180000/20260428T200000", name: "Knox Mountain Monday", type: "Mountain", meta: "22km · 650m gain", level: "Intermediate", spots: "8 of 12 spots", loc: "Knox Mountain Park, Kelowna, BC" },
-    { date: "WED 30 APR 12:15PM", cal: "20260430T121500/20260430T141500", name: "Lunch Loop", type: "Road", meta: "35km · Flat", level: "All abilities", spots: "Open", loc: "Mission Creek Regional Park, Kelowna, BC" },
-    { date: "THU 01 MAY 6:00PM", cal: "20260501T180000/20260501T200000", name: "Women's Ride", type: "Social", meta: "20km · Easy", level: "Easy", spots: "Open", loc: "ChainLine Cycle, 1139 Ellis St, Kelowna" },
-    { date: "SAT 03 MAY 8:00AM", cal: "20260503T080000/20260503T140000", name: "Gravel Sundays", type: "Gravel", meta: "75km · Backcountry", level: "Advanced", spots: "4 of 10 spots", loc: "ChainLine Cycle, 1139 Ellis St, Kelowna" },
-    { date: "SUN 04 MAY 9:00AM", cal: "20260504T090000/20260504T120000", name: "Social Saturday", type: "Social", meta: "30km · Cafe stop", level: "Easy", spots: "Open", loc: "ChainLine Cycle, 1139 Ellis St, Kelowna" },
-    { date: "MON 05 MAY 6:00PM", cal: "20260505T180000/20260505T200000", name: "Knox Mountain Monday", type: "Mountain", meta: "22km · 650m gain", level: "Intermediate", spots: "Open", loc: "Knox Mountain Park, Kelowna, BC" },
+    {
+      day: "Thursday",
+      name: "Thursday Night Shuttle / Pedal",
+      time: "6:00 PM Sharp",
+      meet: "ChainLine Cycle — 1139 Ellis St",
+      desc: "Meet at the shop and we'll pick where to go. Shuttle or pedal, decided on the night. All levels welcome.",
+      type: "MTB",
+      calDay: "THU",
+      loc: "ChainLine Cycle, 1139 Ellis St, Kelowna, BC",
+    },
+    {
+      day: "Friday",
+      name: "Friday Night Pedal Ride",
+      time: "6:00 PM Sharp",
+      meet: "Crawford Power Lines",
+      desc: "Weekly pedal night at Crawford. Meet at the power lines and we roll from there. Good vibes, all paces.",
+      type: "MTB",
+      calDay: "FRI",
+      loc: "Crawford Power Lines, Kelowna, BC",
+    },
   ];
-  const filtered = tab === "All" ? rides : rides.filter(r => r.type === tab);
+
   return (
     <div className="page-fade" data-screen-label="P06 Rides">
-      <SubHero eyebrow="Community  /  N°01" title="Ride together." italic="All levels, all disciplines." />
+      <SubHero eyebrow="Community  /  N°01" title="Ride with us." italic="Every week, all year." />
       <section className="section section-pad bg-white">
         <div className="container-wide">
-          <div className="reveal" style={{ display: "flex", gap: 4, marginBottom: 48, flexWrap: "wrap" }}>
-            {tabs.map(t => (
-              <button key={t} onClick={() => setTab(t)} data-cursor="link" style={{ padding: "10px 18px", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", border: "1px solid " + (tab === t ? "var(--black)" : "var(--hairline)"), background: tab === t ? "var(--black)" : "transparent", color: tab === t ? "var(--white)" : "var(--black)" }}>{t}</button>
-            ))}
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-            {filtered.map((r, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i % 3 + 1)} style={{ padding: 32, border: "1px solid var(--hairline)", display: "flex", flexDirection: "column", gap: 16, minHeight: 280 }}>
-                <div className="eyebrow">{r.date}</div>
-                <div className="display-m">{r.name}</div>
-                <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)" }}>
-                  {r.type} · {r.meta}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:32 }}>
+            {rides.map((r, i) => (
+              <div key={i} className={"reveal reveal-d-" + (i + 1)} style={{ padding:48, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:20 }}>
+                <div className="eyebrow">{r.day}  ·  Weekly  ·  {r.type}</div>
+                <div style={{ fontFamily:"var(--display)", fontSize:"clamp(24px,3vw,36px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1 }}>{r.name}</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2.5 2.5"/></svg>
+                    {r.time}
+                  </div>
+                  <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+                    {r.meet}
+                  </div>
                 </div>
-                <div style={{ flex: 1 }} />
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span className="pill">{r.level}</span>
-                  <span className="eyebrow">{r.spots}</span>
-                </div>
-                <button className="btn btn-outline" data-cursor="link" style={{ marginTop: 8 }} onClick={() => {
-                  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("ChainLine Cycle · "+r.name)}&dates=${r.cal}&details=${encodeURIComponent("ChainLine Cycle group ride. "+r.meta+"\n\nQuestions? bikes@chainline.ca · (250) 860-1968")}&location=${encodeURIComponent(r.loc)}`;
+                <p style={{ fontSize:15, lineHeight:1.7, color:"var(--gray-600)", margin:0 }}>{r.desc}</p>
+                <div style={{ flex:1 }} />
+                <button className="btn btn-outline" data-cursor="link" onClick={() => {
+                  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("ChainLine · "+r.name)}&recur=RRULE:FREQ%3DWEEKLY&details=${encodeURIComponent(r.desc+"\n\nQuestions? bikes@chainline.ca · (250) 860-1968")}&location=${encodeURIComponent(r.loc)}`;
                   window.open(url, "_blank");
                 }}>Add to Calendar <ArrowRight /></button>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-      <section className="section section-pad bg-black">
-        <div className="container-wide">
-          <div className="reveal section-label" style={{ color: "var(--gray-300)" }}>Ride Series</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 0, borderTop: "1px solid var(--hairline-light)" }}>
-            {[
-              ["Monday Night Shred", "Knox Mountain  ·  Weekly", "MTB"],
-              ["Gravel Sundays", "Okanagan backcountry  ·  Bi-weekly", "Gravel"],
-              ["Lunch Loop", "Mission Creek loop  ·  Fridays 12:15", "Road"],
-              ["Social Saturday", "Easy pace, cafe stop  ·  Monthly", "Social"],
-              ["Women's Ride", "All abilities  ·  Monthly", "Social"],
-            ].map(([n, m, t], i) => (
-              <a key={i} href="#" data-cursor="link" className="reveal page-wide-row" style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr 200px 80px", gap: 32, padding: "40px 0", borderBottom: "1px solid var(--hairline-light)", alignItems: "center" }}>
-                <div className="display-m">{n}</div>
-                <div style={{ color: "var(--gray-300)", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>{m}</div>
-                <span className="pill">{t}</span>
-                <ArrowRight />
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="section section-pad bg-paper">
-        <div className="container-wide">
-          <div className="reveal section-label">Ride Photos</div>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gridTemplateRows: "200px 200px", gap: 16 }}>
-            <div className="reveal ph ph-corners" style={{ gridRow: "span 2" }}><span className="ph-label">PHOTO 01  /  HERO</span></div>
-            <div className="reveal reveal-d-2 ph ph-corners"><span className="ph-label">PHOTO 02</span></div>
-            <div className="reveal reveal-d-3 ph ph-corners"><span className="ph-label">PHOTO 03</span></div>
-            <div className="reveal reveal-d-2 ph ph-corners"><span className="ph-label">PHOTO 04</span></div>
-            <div className="reveal reveal-d-3 ph ph-corners"><span className="ph-label">PHOTO 05</span></div>
+          <div className="reveal" style={{ marginTop:64, padding:32, background:"var(--paper)", borderTop:"2px solid var(--black)", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:24 }}>
+            <div>
+              <div className="eyebrow" style={{ marginBottom:8 }}>Questions about the rides?</div>
+              <p style={{ fontSize:14, color:"var(--gray-600)", margin:0 }}>Just come out — no signup needed. Or call us if you want to know more.</p>
+            </div>
+            <a href="tel:2508601968" className="btn" data-cursor="link">(250) 860-1968 <ArrowRight /></a>
           </div>
         </div>
       </section>
