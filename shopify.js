@@ -85,6 +85,10 @@ window.shopifyCart = {
 
 // ── Add to cart by handle ─────────────────────────────────────
 window.clAddToCart = async function(handle, name, price, image, sku, variant) {
+  // Wait for Shopify data if not loaded yet (skuVariantMap populated by shopifyReady)
+  if (!window.CL_SHOP.skuVariantMap || Object.keys(window.CL_SHOP.skuVariantMap).length === 0) {
+    await window.shopifyReady;
+  }
   const products    = window.CL_SHOP.products    || [];
   const variantMap  = window.CL_SHOP.skuVariantMap || {};
 
