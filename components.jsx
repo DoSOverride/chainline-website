@@ -230,15 +230,13 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "kids") return ["shop", { type: "Kids" }];
     // Brand filters → shop page filtered by brand
     if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
-    // Components → tab IDs matching PART_TABS in pages.jsx
-    if (["cassette","chains","chainrings","cranks","derailleurs","shifters","bottom brackets","cables"].includes(l)) return ["parts", { tab: "drivetrain" }];
-    if (["brake pads","brake levers"].includes(l)) return ["parts", { tab: "brakes" }];
-    if (["rims","hubs","spokes","wheelsets","skewers","tires 29\"","tires 700c","tires 27.5\"","tires 26\"","fat bike tires","tubes","tire sealant","tire protection"].includes(l)) return ["parts", { tab: "wheels" }];
-    if (["handlebar","stem","grips","bar tape","headsets","seat post","saddles"].includes(l)) return ["parts", { tab: "cockpit" }];
-    if (["forks","rear shock"].includes(l)) return ["parts", { tab: "suspension" }];
-    // Accessories → tab IDs matching PART_TABS in pages.jsx
-    if (["helmets","armour","sunglasses","clothing","socks","arm warmers","leg warmers","shoes","cleats"].includes(l)) return ["parts", { tab: "fit" }];
-    if (["bags","packs","hydration","lights","computers","pumps","tools","locks","fenders","bells","kickstands","bike racks","water bottles"].includes(l)) return ["parts", { tab: "tools" }];
+    // Parts — pass exact dept + tab so DeptAccordion auto-opens on landing
+    const PM={"cassette":{dept:"Cassette",tab:"drivetrain"},"chains":{dept:"Chains",tab:"drivetrain"},"chainrings":{dept:"Chainrings",tab:"drivetrain"},"cranks":{dept:"Cranks",tab:"drivetrain"},"derailleurs":{dept:"Derailleur Rear",tab:"drivetrain"},"shifters":{dept:"Shifters MTB",tab:"drivetrain"},"bottom brackets":{dept:"Bottom Brackets",tab:"drivetrain"},"cables":{dept:"Cables",tab:"drivetrain"},"brake pads":{dept:"Brake pads",tab:"brakes"},"brake levers":{dept:"Brake Lever U",tab:"brakes"},"rims":{dept:"Rims",tab:"wheels"},"hubs":{dept:"Hubs",tab:"wheels"},"spokes":{dept:"Spokes",tab:"wheels"},"wheelsets":{dept:"Wheelset (FR+RR)",tab:"wheels"},"skewers":{dept:"Skewers QR",tab:"wheels"}};
+    const PM2={'tires 29"':{dept:'Tires 29"',tab:"wheels"},"tires 700c":{dept:"Tires 700C",tab:"wheels"},'tires 27.5"':{dept:'Tires 27" & 26x1&1/4 etc...',tab:"wheels"},'tires 26"':{dept:'Tires 26"',tab:"wheels"},"fat bike tires":{dept:"Tires Fatbike",tab:"wheels"},"tubes":{dept:"Tubes",tab:"wheels"},"tire sealant":{dept:"Tire Sealant",tab:"wheels"},"tire protection":{dept:"Tire Protection",tab:"wheels"},"forks":{dept:"Forks",tab:"suspension"},"rear shock":{dept:"Rear Shock",tab:"suspension"},"handlebar":{dept:"Handlebar",tab:"cockpit"},"stem":{dept:"Stem",tab:"cockpit"},"grips":{dept:"Grips",tab:"cockpit"},"bar tape":{dept:"Bar tape",tab:"cockpit"},"headsets":{dept:"Headsets",tab:"cockpit"},"seat post":{dept:"Seat post",tab:"cockpit"},"saddles":{dept:"Saddles",tab:"cockpit"},"helmets":{dept:"Helmet",tab:"fit"},"armour":{dept:"Armour",tab:"fit"},"gloves":{dept:"Gloves",tab:"fit"},"sunglasses":{dept:"Sunglasses",tab:"fit"},"clothing":{dept:"Clothing",tab:"fit"},"socks":{dept:"Socks",tab:"fit"},"arm warmers":{dept:"Arm Warmers",tab:"fit"},"leg warmers":{dept:"Leg Warmers",tab:"fit"},"shoes":{dept:"Shoes Mountain",tab:"fit"},"cleats":{dept:"Cleats",tab:"fit"},"bags":{dept:"Bags",tab:"tools"},"packs":{dept:"Packs",tab:"tools"},"hydration":{dept:"Hydration ",tab:"tools"},"lights":{dept:"Lights",tab:"tools"},"computers":{dept:"Computers",tab:"tools"},"pumps":{dept:"Pumps",tab:"tools"},"tools":{dept:"Tools",tab:"tools"},"locks":{dept:"Locks",tab:"tools"},"fenders":{dept:"Fenders",tab:"tools"},"bells":{dept:"Bells",tab:"tools"},"kickstands":{dept:"Kickstands",tab:"tools"},"bike racks":{dept:"Bike Racks",tab:"tools"},"water bottles":{dept:"Water Bottle",tab:"tools"}};
+    const pMatch = PM[l] || PM2[l];
+    if (pMatch) return ["parts", pMatch];
+    if (l.includes("component")) return ["parts",{tab:"drivetrain"}];
+    if (l.includes("accessor")) return ["parts",{tab:"fit"}];
     if (l.includes("gift")) return ["giftcards", null];
     if (l.includes("classified") || l.includes("pinkbike")) return ["classifieds", null];
     if (l.includes("sale")) return ["shop", null];
@@ -709,8 +707,8 @@ const ChatWidget = () => {
         <div style={{ position: "fixed", left: 32, bottom: 96, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
             <div>
-              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>Jake · Head Mechanic</div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", marginTop: 2 }}>ChainLine Cycle · Ask me anything</div>
+              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine Cycle Support</div>
+              <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", marginTop: 2 }}>Ask us anything · Usually instant</div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e" }} />
@@ -818,7 +816,7 @@ const SearchModal = ({ onClose }) => {
           <div>
             <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Parts &amp; Accessories</div>
             {partResults.map((p, i) => (
-              <button key={i} onClick={() => { window.cl.go("parts"); onClose(); }} data-cursor="link" style={rowStyle}>
+              <button key={i} onClick={() => { const tab = (window.PART_TABS||[]).find(t=>t.depts.some(d=>d===(p.department||"")));  window.cl.go("parts",{dept:p.department,tab:tab?.id}); onClose(); }} data-cursor="link" style={rowStyle}>
                 <div style={{ flex:1 }}>
                   <div className="eyebrow" style={{ marginBottom:3 }}>{p.department}</div>
                   <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{p.name}</div>
