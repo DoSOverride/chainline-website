@@ -1586,15 +1586,13 @@ const PartsPage = () => {
 const ClassifiedsPage = () => {
   const PB_SHOP = "https://www.pinkbike.com/u/ChainLineCycle/buysell/";
   const PB_POST = "https://www.pinkbike.com/buysell/post/";
-  const WORKER  = "https://still-term-f1ec.taocaruso77.workers.dev";
-
   const [pbListings, setPbListings] = React.useState(null);
   const [pbLoading,  setPbLoading]  = React.useState(true);
 
   React.useEffect(() => {
-    fetch(`${WORKER}/api/pinkbike`)
+    fetch('/pinkbike.json')
       .then(r => r.json())
-      .then(d => { setPbListings(d.listings || []); setPbLoading(false); })
+      .then(d => { setPbListings(Array.isArray(d) ? d : []); setPbLoading(false); })
       .catch(() => { setPbListings([]); setPbLoading(false); });
   }, []);
   return (
@@ -1687,10 +1685,13 @@ const ClassifiedsPage = () => {
             )}
 
             {!pbLoading && (!pbListings || pbListings.length === 0) && (
-              <div style={{ textAlign:"center", padding:"40px 0", border:"1px solid var(--hairline)" }}>
-                <p style={{ color:"var(--gray-500)", fontSize:14, marginBottom:16 }}>No live listings right now.</p>
+              <div style={{ padding:"40px", border:"1px solid var(--hairline)", display:"flex", alignItems:"center", justifyContent:"space-between", gap:32, flexWrap:"wrap" }}>
+                <div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>No listings right now</div>
+                  <p style={{ color:"var(--gray-500)", fontSize:14, margin:0 }}>Browse our Pinkbike page for current buy/sell items.</p>
+                </div>
                 <a href={PB_SHOP} target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">
-                  Check Pinkbike directly <ArrowRight />
+                  View on Pinkbike <ArrowRight />
                 </a>
               </div>
             )}
