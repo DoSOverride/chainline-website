@@ -164,9 +164,9 @@ const BikePage = ({ bike, onBack, onCart }) => {
   );
 
   return (
-    <div className="page-fade bike-page">
+    <div className="page-fade bike-page" style={{ paddingTop: 114 }}>
       {/* Back */}
-      <div style={{ position: 'sticky', top: 64, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '12px 0' }}>
+      <div className="bike-back-bar" style={{ position: 'sticky', top: 114, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '12px 0' }}>
         <div className="container-wide" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={goBack} data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8, background:'none', border:'none', cursor:'pointer' }}>
             ← Back

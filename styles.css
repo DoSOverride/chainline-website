@@ -1261,6 +1261,10 @@ img {
   /* Book page step headings — smaller on mobile */
   .book-step-h { font-size: clamp(20px, 5vw, 28px) !important; }
 
+  /* Bike detail back bar — mobile header is 36px announce + 64px nav = 100px */
+  .bike-back-bar { top: 100px !important; }
+  .bike-page { padding-top: 100px !important; }
+
   /* ── Shop ── */
   .shop-filter-sticky { top: 64px !important; }
   .shop-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
