@@ -147,10 +147,22 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const handleAdd = async () => {
     setAdding(true);
     try {
+      // If no SKU (e.g. featured bikes without Lightspeed data), find from live bikes by name
+      let sku = selSku;
+      if (!sku) {
+        const liveBike = (window.CL_LS?.bikes || []).find(l => {
+          const ln = (l.name || '').toLowerCase();
+          const bn = (b.name || b.title || '').toLowerCase();
+          return bn.split(' ').filter(w => w.length >= 4).every(w => ln.includes(w));
+        });
+        sku = liveBike?.sku || null;
+      }
       const variantDesc = [selected?.wheel, selected?.color, selected?.size].filter(Boolean).join(' · ');
-      await window.clAddToCart(selSku, b.name || b.title, selPrice, allImgs[0], selSku, variantDesc || null);
-      setAdded(true);
-      setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
+      const result = await window.clAddToCart(sku, b.name || b.title, selPrice, allImgs[0], sku, variantDesc || null);
+      if (result) {
+        setAdded(true);
+        setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
+      }
     } catch(e) { console.warn(e); }
     setAdding(false);
   };
@@ -701,9 +713,8 @@ const BikeCardLarge = ({ b, idx }) => {
     setAdding(true);
     try {
       const variantDesc = [selected.wheel, selected.color, selected.size].filter(Boolean).join(' · ');
-      await window.clAddToCart(selected.sku, name, price, img, selected.sku, variantDesc || null);
-      setAdded(true);
-      setTimeout(() => setAdded(false), 2000);
+      const result = await window.clAddToCart(selected.sku, name, price, img, selected.sku, variantDesc || null);
+      if (result) { setAdded(true); setTimeout(() => setAdded(false), 2000); }
     } catch(err) { console.warn(err); }
     setAdding(false);
   };
