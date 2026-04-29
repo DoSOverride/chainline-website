@@ -1029,7 +1029,7 @@ img {
   /* Tighter nav utility gap so hamburger stays visible */
   .nav-utility { gap: 12px; }
   /* Pull hamburger slightly left so it's visually balanced with the logo */
-  .menu-toggle { margin-right: -4px; }
+  .menu-toggle { margin-right: 8px; }
   /* SubHero headline smaller on mobile so it fits */
   .sub-hero-title { font-size: clamp(36px, 9vw, 56px) !important; line-height: 0.96 !important; }
   /* Book step headings smaller */
