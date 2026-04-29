@@ -37,7 +37,7 @@ const HeroBg = () => {
           animation: i === cur ? "kenburns 8s ease-in-out forwards" : "none",
         }} />
       ))}
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.05) 35%, rgba(10,10,10,0.75) 100%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.2) 40%, rgba(10,10,10,0.85) 100%)" }} />
     </div>
   );
 };
@@ -62,13 +62,13 @@ const Hero = ({ variant }) => {
         <div className="eyebrow eyebrow-light hero-edge-label" style={{ marginBottom: 12, opacity: 0.5, fontSize: 10, letterSpacing: ".18em" }}>
           N°01  /  THE LINEUP  ·  2026
         </div>
-        <div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>
+        <div className="eyebrow eyebrow-light" style={{ marginBottom: 6, textShadow: "0 1px 8px rgba(0,0,0,0.8)" }}>
           KELOWNA, BC  ·  EST. 2009  ·  49.88°N
         </div>
-        <h1 className="display-xxl" key={"h-" + variant}>
+        <h1 className="display-xxl" style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6)" }} key={"h-" + variant}>
           <SplitText delay={0.1}>{v.headline}</SplitText>
         </h1>
-        <div className="serif-italic hero-italic" style={{ fontSize: "clamp(20px, 5vw, 88px)", lineHeight: 1, marginTop: 12, opacity: 0, animation: "splitIn 1s 0.9s forwards cubic-bezier(.2,.8,.2,1)", transform: "translateY(20px)" }} key={"i-" + variant}>
+        <div className="serif-italic hero-italic" style={{ fontSize: "clamp(20px, 5vw, 88px)", lineHeight: 1, marginTop: 12, opacity: 0, animation: "splitIn 1s 0.9s forwards cubic-bezier(.2,.8,.2,1)", transform: "translateY(20px)", textShadow: "0 2px 16px rgba(0,0,0,0.6)" }} key={"i-" + variant}>
           {v.italic}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 56, gap: 32, flexWrap: "wrap" }}>

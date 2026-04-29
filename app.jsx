@@ -201,12 +201,12 @@ const App = () => {
           <>
             <Hero variant={tweaks.heroVariant || 0} />
             <BrandMarquee />
+            <BikeScroller />
             <FeaturedBikes />
             <StatsBar />
             <BrandsGrid />
             <ServicesPreview />
             <BookBanner />
-            <BikeScroller />
             <LocalStory />
             <GearHScroll />
             <GroupRidesTeaser />
