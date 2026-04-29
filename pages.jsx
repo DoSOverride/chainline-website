@@ -1761,14 +1761,14 @@ const GiftCardsPage = () => {
 
   const inp = { width:'100%', padding:'12px 0', border:'none', borderBottom:'1px solid var(--hairline)', fontSize:15, fontFamily:'var(--body)', background:'transparent', outline:'none', color:'var(--black)', marginBottom:20 };
 
-  const addToCart = async () => {
+  const sendRequest = () => {
     const isCustom = selected === 'custom';
     const amount   = isCustom ? parseFloat(customAmt) : selected?.price;
     const varId    = isCustom ? null : selected?.variantId;
     if (!amount || amount < 10 || !form.recipientEmail) return;
-    setAdding(true);
-    try {
-      if (varId && window.shopifyCart) {
+
+    if (varId && window.shopifyCart) {
+      try {
         const props = {
           'Recipient Email': form.recipientEmail,
           'Recipient Name':  form.recipientName  || '',
@@ -1779,14 +1779,27 @@ const GiftCardsPage = () => {
         window.shopifyCart.add(varId, `Gift Card $${amount}`, amount * 100, null, qty, props);
         window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: window.shopifyCart.items || [] } }));
         setAdded(true); setTimeout(() => setAdded(false), 3000);
-      } else {
-        window.open('https://4nie4h-ek.myshopify.com/products/gift-card', '_blank');
-      }
-    } catch(e) { window.open('https://4nie4h-ek.myshopify.com/products/gift-card', '_blank'); }
-    setAdding(false);
+        return;
+      } catch(e) {}
+    }
+
+    // No Shopify gift card product set up yet — email request to process manually
+    const subject = encodeURIComponent(`Gift Card Request — $${amount} CAD`);
+    const body = encodeURIComponent(
+      `Gift Card Order Request\n\n` +
+      `Amount: $${amount} CAD\n` +
+      `Quantity: ${qty}\n\n` +
+      `Recipient Name: ${form.recipientName || '–'}\n` +
+      `Recipient Email: ${form.recipientEmail}\n` +
+      `Sender Name: ${form.senderName || '–'}\n` +
+      `Message: ${form.message || '–'}\n\n` +
+      `Please process this gift card and email the code to the recipient.`
+    );
+    window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
+    setAdded(true); setTimeout(() => setAdded(false), 4000);
   };
 
-  const canAdd = selected && form.recipientEmail && (selected !== 'custom' || parseFloat(customAmt) >= 10);
+  const canSend = selected && form.recipientEmail && (selected !== 'custom' || parseFloat(customAmt) >= 10);
   const s = { padding:"20px 12px", cursor:"pointer", transition:"all .15s", fontFamily:"var(--display)", fontSize:26, fontWeight:500 };
 
   return (
@@ -1851,9 +1864,9 @@ const GiftCardsPage = () => {
               <span style={{ width:36,textAlign:"center",fontFamily:"var(--display)",fontSize:16,fontWeight:500 }}>{qty}</span>
               <button onClick={()=>setQty(q=>q+1)} style={{ width:40,height:44,border:"none",background:"none",cursor:"pointer",fontSize:18,fontFamily:"var(--display)" }}>+</button>
             </div>
-            <button className="btn" data-cursor="link" disabled={!canAdd||adding} onClick={addToCart}
+            <button className="btn" data-cursor="link" disabled={!canSend||adding} onClick={sendRequest}
               style={{ flex:1, justifyContent:"center", minWidth:180, opacity: canAdd?1:0.4 }}>
-              {added?"Added to Cart ✓":adding?"Adding…":"Add to Cart"} {!adding&&!added&&<ArrowRight/>}
+              {added?"Request Sent ✓":adding?"Sending…":"Order Gift Card"} {!adding&&!added&&<ArrowRight/>}
             </button>
           </div>
           {selected && !form.recipientEmail && (
@@ -1864,7 +1877,7 @@ const GiftCardsPage = () => {
 
           <div style={{ marginTop:32, padding:"18px 24px", background:"var(--paper)", borderLeft:"3px solid var(--hairline)" }}>
             <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", margin:0 }}>
-              No expiry · Valid in-store and online · Custom amounts — call (250) 860-1968
+              No expiry · Valid in-store and online · We'll email the gift card code within a few hours · Custom amounts — call (250) 860-1968
             </p>
           </div>
         </div>
