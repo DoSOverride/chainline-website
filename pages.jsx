@@ -440,7 +440,8 @@ const ShopPage = () => {
     if (!liveProducts) return SHOP_BIKES;
 
     const FRAME_RE = /\b(Extra\s+Small|Extra\s+Large|Small|Medium|Large|X-Small|X-Large|XS|XL|XXL|\d+cm)\s*$/i;
-    const WHEEL_RE = /(\d+(?:\.\d+)?)"?\s*/;
+    // Only match real bicycle wheel sizes — prevents model-level numbers (1,2,3,4,5) being shown as wheel sizes
+    const VALID_WHEELS = /^(700[cC]?|650[bB]?|27\.5|29|26|24|20|16)\s*"?\s*/;
 
     function parseVariantLabel(label) {
       let s = label.trim();
@@ -448,10 +449,12 @@ const ShopPage = () => {
       const fmatch = s.match(FRAME_RE);
       const size = fmatch ? fmatch[1] : null;
       if (size) s = s.slice(0, s.lastIndexOf(fmatch[1])).trim();
-      // Wheel size at start
-      const wmatch = s.match(/^(\d+(?:\.\d+)?)"?\s*/);
-      const wheel = wmatch ? wmatch[1] + '"' : null;
+      // Wheel size — whitelist only valid bicycle sizes so model numbers (4,5,3 etc) don't match
+      const wmatch = s.match(VALID_WHEELS);
+      const wheel = wmatch ? wmatch[1].replace(/c$/i,'C').replace(/b$/i,'B') + '"' : null;
       if (wheel) s = s.slice(wmatch[0].length).trim();
+      // Strip any stray leading model-level single digit left over from name parsing
+      s = s.replace(/^\d\s+/, '').trim();
       // Color is what remains
       const color = s.replace(/^[-–\s]+/, '').trim() || null;
       return { wheel, color, size };
