@@ -697,10 +697,17 @@ const ChatWidget = () => {
   const [input, setInput] = React.useState("");
   const [thinking, setThinking] = React.useState(false);
   const bottomRef = React.useRef(null);
+  const [btnBottom, setBtnBottom] = React.useState(window.innerWidth <= 768 ? 16 : 32);
 
   React.useEffect(() => {
     if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [msgs, open, thinking]);
+
+  React.useEffect(() => {
+    const onResize = () => setBtnBottom(window.innerWidth <= 768 ? 16 : 32);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const send = async () => {
     const text = input.trim();
@@ -730,14 +737,14 @@ const ChatWidget = () => {
   return (
     <>
       <button onClick={() => setOpen(o => !o)} data-cursor="link"
-        style={{ position: "fixed", left: 32, bottom: 32, zIndex: 80, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
+        style={{ position: "fixed", left: btnBottom, bottom: btnBottom, zIndex: 80, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
         {open
           ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2l12 12M14 2L2 14"/></svg>
           : <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4h16v10H8l-4 3v-3H2z"/></svg>
         }
       </button>
       {open && (
-        <div style={{ position: "fixed", left: 32, bottom: 96, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
+        <div style={{ position: "fixed", left: btnBottom, bottom: btnBottom + 64, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
             <div>
               <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine Cycle Support</div>
