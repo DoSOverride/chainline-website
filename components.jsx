@@ -13,29 +13,161 @@ const Wordmark = () => (
   </a>
 );
 
-// Announcement bar (rotating)
-const Announce = () => {
-  const messages = [
-    "Free shipping over $150",
-    "Book a service online — same-week slots open",
-    "Now taking demo bookings for spring 2026",
-    "Winter storage program — sign up before Nov 15",
-  ];
-  const [i, setI] = React.useState(0);
+// ── Announcement bar — clickable, each opens a quick inquiry form ──
+const ANNOUNCE_ITEMS = [
+  {
+    msg: "Free shipping on orders over $150",
+    cta: "Shop now →",
+    onClick: () => window.cl.go("shop"),
+  },
+  {
+    msg: "Book a service — same-week slots available",
+    cta: "Book now →",
+    form: { title: "Book a Service", subject: "Service Booking",
+      fields: [
+        { key:"name",    label:"Your Name",    type:"text",  placeholder:"Jane Smith",        required:true  },
+        { key:"phone",   label:"Phone",         type:"tel",   placeholder:"(250) 555-0100",    required:true  },
+        { key:"service", label:"Service needed",type:"text",  placeholder:"Tune-up, brake bleed…", required:false },
+        { key:"notes",   label:"Any details",   type:"textarea", placeholder:"Bike brand, issue, preferred day…", required:false },
+      ],
+    },
+  },
+  {
+    msg: "Bike storage — drop off anytime, pick up when you're ready",
+    cta: "Enquire →",
+    form: { title: "Bike Storage Enquiry", subject: "Bike Storage",
+      fields: [
+        { key:"name",  label:"Your Name",   type:"text",     placeholder:"Jane Smith",     required:true  },
+        { key:"phone", label:"Phone",        type:"tel",      placeholder:"(250) 555-0100", required:true  },
+        { key:"email", label:"Email",        type:"email",    placeholder:"jane@email.com", required:false },
+        { key:"bikes", label:"Bike(s)",      type:"text",     placeholder:"e.g. Trek Marlin 7, Transition Sentinel", required:false },
+        { key:"notes", label:"Notes",        type:"textarea", placeholder:"Drop-off date, duration, any questions…", required:false },
+      ],
+    },
+  },
+  {
+    msg: "Book a bike fit — motion-capture studio, all levels welcome",
+    cta: "Book →",
+    form: { title: "Book a Bike Fit", subject: "Bike Fit Booking",
+      fields: [
+        { key:"name",     label:"Your Name",  type:"text",     placeholder:"Jane Smith",           required:true  },
+        { key:"phone",    label:"Phone",       type:"tel",      placeholder:"(250) 555-0100",       required:true  },
+        { key:"email",    label:"Email",       type:"email",    placeholder:"jane@email.com",       required:false },
+        { key:"bikeType", label:"Bike type",   type:"text",     placeholder:"Road, MTB, gravel…",   required:false },
+        { key:"notes",    label:"Notes",       type:"textarea", placeholder:"Goals, pain points, flexibility issues…", required:false },
+      ],
+    },
+  },
+  {
+    msg: "Demo rides available — try before you buy",
+    cta: "Book a demo →",
+    form: { title: "Book a Demo Ride", subject: "Demo Ride Booking",
+      fields: [
+        { key:"name",  label:"Your Name",   type:"text",     placeholder:"Jane Smith",                    required:true  },
+        { key:"phone", label:"Phone",        type:"tel",      placeholder:"(250) 555-0100",                required:true  },
+        { key:"email", label:"Email",        type:"email",    placeholder:"jane@email.com",                required:false },
+        { key:"bike",  label:"Bike to demo", type:"text",     placeholder:"e.g. Transition Sentinel",      required:false },
+        { key:"date",  label:"Preferred date",type:"text",    placeholder:"e.g. this Saturday afternoon",  required:false },
+      ],
+    },
+  },
+];
+
+const AnnounceFormModal = ({ item, onClose }) => {
+  const [data, setData] = React.useState({});
+  const [sent, setSent] = React.useState(false);
+  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
+  const inp = { width:"100%", padding:"10px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:14, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", marginBottom:16 };
+
+  const submit = () => {
+    const lines = item.form.fields.map(f => `${f.label}: ${data[f.key]||'–'}`).join('\n');
+    const body = encodeURIComponent(`ChainLine — ${item.form.subject}\n\n${lines}`);
+    window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent(item.form.subject + ' — ' + (data.name||'Customer'))}&body=${body}`;
+    setSent(true);
+  };
+
   React.useEffect(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % messages.length), 4200);
-    return () => clearInterval(t);
+    const onKey = e => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
+
   return (
-    <div className="announce">
-      <div className="container" style={{ position: "relative", height: "100%" }}>
-        {messages.map((m, idx) => (
-          <div key={idx} className={"announce-msg " + (idx === i ? "on" : "")}>
-            <span className="dot" />{m}<span className="dot" />
-          </div>
-        ))}
+    <div onClick={onClose} style={{ position:"fixed", inset:0, zIndex:600, background:"rgba(10,10,10,0.5)", backdropFilter:"blur(4px)", display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}>
+      <div onClick={e => e.stopPropagation()} style={{ background:"var(--white)", width:"100%", maxWidth:440, padding:36, boxShadow:"0 12px 60px rgba(0,0,0,0.2)" }}>
+        {sent ? (
+          <>
+            <div className="display-m" style={{ marginBottom:12 }}>Request sent ✓</div>
+            <p style={{ color:"var(--gray-500)", fontSize:14, marginBottom:24 }}>We'll be in touch within 24 hours.</p>
+            <button className="btn" onClick={onClose}>Close</button>
+          </>
+        ) : (
+          <>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
+              <div className="display-s">{item.form.title}</div>
+              <button onClick={onClose} style={{ background:"none", border:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>ESC</button>
+            </div>
+            {item.form.fields.map(f => (
+              <div key={f.key}>
+                <div className="eyebrow" style={{ marginBottom:4, fontSize:9 }}>{f.label}{f.required ? " *" : ""}</div>
+                {f.type === "textarea"
+                  ? <textarea rows={3} placeholder={f.placeholder} value={data[f.key]||""} onChange={e=>upd(f.key,e.target.value)} style={{ ...inp, resize:"vertical", borderBottom:"none", border:"1px solid var(--hairline)", padding:10 }} />
+                  : <input type={f.type} placeholder={f.placeholder} value={data[f.key]||""} onChange={e=>upd(f.key,e.target.value)} style={inp} />
+                }
+              </div>
+            ))}
+            <button className="btn" style={{ width:"100%", justifyContent:"center", marginTop:8 }}
+              disabled={!item.form.fields.filter(f=>f.required).every(f=>data[f.key])}
+              onClick={submit}>
+              Send Request <ArrowRight />
+            </button>
+            <p style={{ marginTop:12, fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)", textAlign:"center" }}>Opens your email app · bikes@chainline.ca</p>
+          </>
+        )}
       </div>
     </div>
+  );
+};
+
+const Announce = () => {
+  const [i, setI] = React.useState(0);
+  const [formItem, setFormItem] = React.useState(null);
+  const [paused, setPaused] = React.useState(false);
+
+  React.useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setI(x => (x + 1) % ANNOUNCE_ITEMS.length), 4800);
+    return () => clearInterval(t);
+  }, [paused]);
+
+  const current = ANNOUNCE_ITEMS[i];
+
+  const handleCta = (e, item) => {
+    e.stopPropagation();
+    if (item.onClick) item.onClick();
+    else if (item.form) { setPaused(true); setFormItem(item); }
+  };
+
+  return (
+    <>
+      <div className="announce" style={{ cursor:"default" }}>
+        <div className="container" style={{ position:"relative", height:"100%", display:"flex", alignItems:"center", justifyContent:"center", gap:16 }}>
+          {ANNOUNCE_ITEMS.map((item, idx) => (
+            <div key={idx} className={"announce-msg " + (idx === i ? "on" : "")} style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <span className="dot" />
+              <span>{item.msg}</span>
+              {item.cta && (
+                <button onClick={e => handleCta(e, item)} style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--white)", opacity:0.75, background:"none", border:"1px solid rgba(255,255,255,0.35)", borderRadius:2, padding:"2px 8px", cursor:"pointer" }}>
+                  {item.cta}
+                </button>
+              )}
+              <span className="dot" />
+            </div>
+          ))}
+        </div>
+      </div>
+      {formItem && <AnnounceFormModal item={formItem} onClose={() => { setFormItem(null); setPaused(false); }} />}
+    </>
   );
 };
 
