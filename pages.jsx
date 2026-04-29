@@ -1455,6 +1455,9 @@ const PartCartBtn = ({ item }) => {
       setTimeout(() => setState('idle'), 3000);
     }
   };
+  if (!item.inStock && item.qty === 0) {
+    return <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)" }}>Out of Stock</span>;
+  }
   const label = { idle: 'Add to Cart', adding: '…', added: 'Added ✓', unavailable: 'Contact Us' }[state];
   const bg    = { idle: 'var(--black)', adding: 'var(--gray-600)', added: '#1a6e3c', unavailable: 'var(--gray-500)' }[state];
   return (
