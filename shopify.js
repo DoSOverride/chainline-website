@@ -113,26 +113,29 @@ window.clAddToCart = async function(handle, name, price, image, sku) {
 // ── Init ──────────────────────────────────────────────────────
 window.shopifyReady = (async () => {
   try {
-    const products = await window.shopifyGetProducts();
+    const workerUrl = 'https://still-term-f1ec.taocaruso77.workers.dev';
+
+    // Fetch public products (images/titles) + full variant map from worker in parallel
+    const [products, variantMap] = await Promise.all([
+      window.shopifyGetProducts(),
+      fetch(`${workerUrl}/api/shopify-variants`).then(r => r.json()).catch(() => ({})),
+    ]);
     window.CL_SHOP.products = products;
 
-    // Build lookup maps: image by SKU/title, variantId by SKU
-    const skuMap     = {};
-    const titleMap   = {};
-    const variantMap = {};
+    // Build image lookup maps from public products
+    const skuMap   = {};
+    const titleMap = {};
     const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     products.forEach(p => {
       if (p.title) titleMap[norm(p.title)] = p.image;
       (p.variants || []).forEach(v => {
-        if (v.sku) {
-          variantMap[v.sku] = v.id;
-          if (p.image && !skuMap[v.sku]) skuMap[v.sku] = p.image;
-        }
+        if (v.sku && p.image && !skuMap[v.sku]) skuMap[v.sku] = p.image;
       });
     });
     window.CL_SHOP.skuImageMap   = skuMap;
     window.CL_SHOP.titleImageMap = titleMap;
     window.CL_SHOP.skuVariantMap = variantMap;
+    console.log(`[ChainLine] Variant map loaded: ${Object.keys(variantMap).length} SKUs`);
 
     const count = window.shopifyCart.count();
     if (count > 0) {
