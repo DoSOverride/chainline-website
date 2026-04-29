@@ -63,7 +63,7 @@ const ContactBar = () => (
       <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" data-cursor="link"
         style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
-        1139 Ellis St, Kelowna
+        1139 Ellis St · Downtown
       </a>
     </div>
   </div>
