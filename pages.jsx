@@ -1679,36 +1679,145 @@ const ContactPage = () => (
 );
 
 // GIFT CARDS
-const GiftCardsPage = () => (
-  <div className="page-fade">
-    <SubHero eyebrow="Gift Cards  /  N°01" title="The perfect gift." italic="For every rider." />
-    <section className="section section-pad bg-white">
-      <div className="container-narrow" style={{ textAlign:"center" }}>
-        <p style={{ fontSize:16, color:"var(--gray-500)", lineHeight:1.75, marginBottom:56, maxWidth:560, margin:"0 auto 56px" }}>
-          Not sure what to get the rider in your life? A ChainLine gift card works on bikes, parts, accessories, and services. Good for anything in the store.
-        </p>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16, marginBottom:56 }}>
-          {[50,100,150,200,300,500].map(v => (
-            <button key={v} className="btn btn-outline" data-cursor="link"
-              style={{ flexDirection:"column", alignItems:"flex-start", padding:32, gap:8, height:"auto" }}
-              onClick={() => window.open("https://4nie4h-ek.myshopify.com/products/gift-card")}>
-              <span style={{ fontFamily:"var(--display)", fontSize:32, fontWeight:500 }}>${v}</span>
-              <span className="eyebrow">Gift Card</span>
+const GiftCardsPage = () => {
+  const WORKER = 'https://still-term-f1ec.taocaruso77.workers.dev';
+  const FALLBACK = [
+    { price:50, variantId:null }, { price:75, variantId:null },
+    { price:100, variantId:null }, { price:150, variantId:null },
+  ];
+  const [variants,  setVariants]  = React.useState(FALLBACK);
+  const [selected,  setSelected]  = React.useState(null);
+  const [customAmt, setCustomAmt] = React.useState('');
+  const [form, setForm]           = React.useState({ recipientEmail:'', recipientName:'', message:'', senderName:'' });
+  const [qty,       setQty]       = React.useState(1);
+  const [adding,    setAdding]    = React.useState(false);
+  const [added,     setAdded]     = React.useState(false);
+  const upd = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  React.useEffect(() => {
+    fetch(`${WORKER}/api/gift-card-product`)
+      .then(r => r.json())
+      .then(d => {
+        const prod = d.products?.[0];
+        if (prod?.variants?.length) setVariants(prod.variants.map(v => ({ price: v.price, variantId: v.id })));
+      })
+      .catch(() => {});
+  }, []);
+
+  const inp = { width:'100%', padding:'12px 0', border:'none', borderBottom:'1px solid var(--hairline)', fontSize:15, fontFamily:'var(--body)', background:'transparent', outline:'none', color:'var(--black)', marginBottom:20 };
+
+  const addToCart = async () => {
+    const isCustom = selected === 'custom';
+    const amount   = isCustom ? parseFloat(customAmt) : selected?.price;
+    const varId    = isCustom ? null : selected?.variantId;
+    if (!amount || amount < 10 || !form.recipientEmail) return;
+    setAdding(true);
+    try {
+      if (varId && window.shopifyCart) {
+        const props = {
+          'Recipient Email': form.recipientEmail,
+          'Recipient Name':  form.recipientName  || '',
+          'Message':         form.message        || '',
+          'Sender Name':     form.senderName     || '',
+          '__shopify_send_gift_card_to_recipient': '1',
+        };
+        window.shopifyCart.add(varId, `Gift Card $${amount}`, amount * 100, null, qty, props);
+        window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: window.shopifyCart.items || [] } }));
+        setAdded(true); setTimeout(() => setAdded(false), 3000);
+      } else {
+        window.open('https://4nie4h-ek.myshopify.com/products/gift-card', '_blank');
+      }
+    } catch(e) { window.open('https://4nie4h-ek.myshopify.com/products/gift-card', '_blank'); }
+    setAdding(false);
+  };
+
+  const canAdd = selected && form.recipientEmail && (selected !== 'custom' || parseFloat(customAmt) >= 10);
+  const s = { padding:"20px 12px", cursor:"pointer", transition:"all .15s", fontFamily:"var(--display)", fontSize:26, fontWeight:500 };
+
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Gift Cards  /  N°01" title="The perfect gift." italic="For every rider." />
+      <section className="section section-pad bg-white">
+        <div className="container-narrow">
+          <p style={{ fontSize:16, color:"var(--gray-500)", lineHeight:1.75, marginBottom:48, maxWidth:520 }}>
+            Good for bikes, parts, accessories, and services. Redeemable in-store and online. No expiry.
+          </p>
+
+          <div className="eyebrow" style={{ marginBottom:14 }}>Choose the gift card amount</div>
+          <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
+            {variants.map((v, i) => (
+              <button key={i} data-cursor="link" onClick={() => { setSelected(v); setCustomAmt(''); }}
+                style={{ ...s, border:"2px solid " + (selected === v ? "var(--black)" : "var(--hairline)"), background: selected===v?"var(--black)":"transparent", color: selected===v?"var(--white)":"var(--black)", minWidth:100 }}>
+                ${v.price}
+              </button>
+            ))}
+            <button data-cursor="link" onClick={() => setSelected('custom')}
+              style={{ ...s, border:"2px solid " + (selected==='custom'?"var(--black)":"var(--hairline)"), background:selected==='custom'?"var(--black)":"transparent", color:selected==='custom'?"var(--white)":"var(--black)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", minWidth:100 }}>
+              Your Amount
             </button>
-          ))}
+          </div>
+
+          {selected === 'custom' && (
+            <div style={{ marginBottom:24, maxWidth:200 }}>
+              <div className="eyebrow" style={{ marginBottom:8 }}>Amount (CAD)</div>
+              <div style={{ display:"flex", alignItems:"center", borderBottom:"2px solid var(--black)" }}>
+                <span style={{ fontFamily:"var(--display)", fontSize:24, fontWeight:500, paddingBottom:8 }}>$</span>
+                <input type="number" min="10" step="5" placeholder="0" value={customAmt} onChange={e=>setCustomAmt(e.target.value)}
+                  style={{ flex:1, border:"none", outline:"none", fontFamily:"var(--display)", fontSize:24, fontWeight:500, background:"transparent", paddingBottom:8, color:"var(--black)" }} />
+              </div>
+            </div>
+          )}
+
+          <div style={{ marginTop:40, paddingTop:32, borderTop:"1px solid var(--hairline)" }}>
+            <div className="eyebrow" style={{ marginBottom:24 }}>Send to someone special</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 32px" }}>
+              <div>
+                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Recipient email address *</div>
+                <input type="email" placeholder="john@email.com" value={form.recipientEmail} onChange={e=>upd('recipientEmail',e.target.value)} style={inp} />
+              </div>
+              <div>
+                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Recipient name</div>
+                <input type="text" placeholder="John" value={form.recipientName} onChange={e=>upd('recipientName',e.target.value)} style={inp} />
+              </div>
+              <div>
+                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Sender name</div>
+                <input type="text" placeholder="Jane" value={form.senderName} onChange={e=>upd('senderName',e.target.value)} style={inp} />
+              </div>
+              <div>
+                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Personal message</div>
+                <input type="text" placeholder={'"Enjoy the gift!"'} value={form.message} onChange={e=>upd('message',e.target.value)} style={inp} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display:"flex", alignItems:"center", gap:20, marginTop:28, flexWrap:"wrap" }}>
+            <div style={{ display:"flex", alignItems:"center", border:"1px solid var(--hairline)" }}>
+              <button onClick={()=>setQty(q=>Math.max(1,q-1))} style={{ width:40,height:44,border:"none",background:"none",cursor:"pointer",fontSize:18,fontFamily:"var(--display)" }}>−</button>
+              <span style={{ width:36,textAlign:"center",fontFamily:"var(--display)",fontSize:16,fontWeight:500 }}>{qty}</span>
+              <button onClick={()=>setQty(q=>q+1)} style={{ width:40,height:44,border:"none",background:"none",cursor:"pointer",fontSize:18,fontFamily:"var(--display)" }}>+</button>
+            </div>
+            <button className="btn" data-cursor="link" disabled={!canAdd||adding} onClick={addToCart}
+              style={{ flex:1, justifyContent:"center", minWidth:180, opacity: canAdd?1:0.4 }}>
+              {added?"Added to Cart ✓":adding?"Adding…":"Add to Cart"} {!adding&&!added&&<ArrowRight/>}
+            </button>
+          </div>
+          {selected && !form.recipientEmail && (
+            <p style={{ marginTop:10, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+              Recipient email required
+            </p>
+          )}
+
+          <div style={{ marginTop:32, padding:"18px 24px", background:"var(--paper)", borderLeft:"3px solid var(--hairline)" }}>
+            <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", margin:0 }}>
+              No expiry · Valid in-store and online · Custom amounts — call (250) 860-1968
+            </p>
+          </div>
         </div>
-        <button className="btn" data-cursor="link"
-          onClick={() => window.open("https://4nie4h-ek.myshopify.com/products/gift-card")}>
-          Buy a Gift Card <ArrowRight />
-        </button>
-        <p style={{ marginTop:24, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>
-          Custom amounts available in-store  ·  No expiry  ·  bikes@chainline.ca
-        </p>
-      </div>
-    </section>
-    <Newsletter />
-  </div>
-);
+      </section>
+      <Newsletter />
+    </div>
+  );
+};
 
 
 // PARTS & ACCESSORIES PAGE — Live Lightspeed inventory
