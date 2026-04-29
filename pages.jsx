@@ -1046,17 +1046,32 @@ const BookPage = () => {
   const submit = async () => {
     setSubmitting(true);
     try {
+      const bikeStr = `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim();
       const fd = new FormData();
       fd.append("name",    data.name    || '');
       fd.append("phone",   data.phone   || '');
       fd.append("email",   data.email   || '');
-      fd.append("bike",    `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim());
+      fd.append("bike",    bikeStr);
       fd.append("service", data.service || 'Assessment / Not sure');
       fd.append("date",    data.date    || 'Flexible');
       fd.append("issue",   data.issue   || '');
       if (data.photoFile) fd.append("photo", data.photoFile);
 
-      const res  = await fetch(`${WORKER}/api/book`, { method: "POST", body: fd });
+      // Build a separate FormData for work-order (no photo needed)
+      const woFd = new FormData();
+      woFd.append("name",    data.name    || '');
+      woFd.append("phone",   data.phone   || '');
+      woFd.append("email",   data.email   || '');
+      woFd.append("bike",    bikeStr);
+      woFd.append("service", data.service || 'Assessment / Not sure');
+      woFd.append("date",    data.date    || 'Flexible');
+      woFd.append("issue",   data.issue   || '');
+
+      // Fire both in parallel — email is primary, work-order is best-effort
+      const [res] = await Promise.all([
+        fetch(`${WORKER}/api/book`, { method: "POST", body: fd }),
+        fetch(`${WORKER}/api/work-order`, { method: "POST", body: woFd }).catch(() => {}),
+      ]);
       const json = await res.json();
       if (json.ok) { setSubmitted(true); return; }
       throw new Error("Worker error");
