@@ -607,37 +607,8 @@ const DemoStrip = () => (
   </section>
 );
 
-// Testimonials — Google Maps embed
-const Testimonials = () => (
-  <section className="section section-pad bg-paper" data-screen-label="12 Testimonials">
-    <div className="container-wide">
-      <div className="reveal section-label">What Riders Say  /  N°09</div>
-      <div className="reveal" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:24 }}>
-        <div style={{ width:"100%", maxWidth:900, borderRadius:4, overflow:"hidden", boxShadow:"0 4px 32px rgba(0,0,0,0.10)", border:"1px solid var(--hairline)" }}>
-          <iframe
-            title="ChainLine Cycle Google Reviews"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2569.6801!2d-119.49879!3d49.88764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x537df5b0d3baf315%3A0x8dc4a97a72d41a9e!2sChainLine%20Cycle!5e0!3m2!1sen!2sca!4v1714000000000!5m2!1sen!2sca"
-            width="100%"
-            height="480"
-            style={{ border:0, display:"block" }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
-        <a
-          href="https://www.google.com/maps/place/ChainLine+Cycle/@49.88764,-119.49879,17z"
-          target="_blank"
-          rel="noopener"
-          className="btn btn-outline"
-          data-cursor="link"
-        >
-          Read All Reviews on Google <ArrowRight />
-        </a>
-      </div>
-    </div>
-  </section>
-);
+// Testimonials — placeholder until real reviews added
+const Testimonials = () => null;
 
 // Newsletter
 const Newsletter = () => {
