@@ -1498,15 +1498,15 @@ const PartsPage = () => {
     const cached = (window.CL_LS.products || []).filter(p =>
       (p.department || '').toLowerCase() === deptName.toLowerCase()
     );
-    if (cached.length > 0) { setDeptItems(cached); setLoading(false); }
-    else { const items = await window.lightspeedGetDept(deptName); setDeptItems(items); setLoading(false); }
+    if (cached.length > 0) { setDeptItems(cached.filter(i => i.qty > 0)); setLoading(false); }
+    else { const items = await window.lightspeedGetDept(deptName); setDeptItems(items.filter(i => i.qty > 0)); setLoading(false); }
   };
 
   const doSearch = (q) => {
     setSearch(q);
     if (q.length < 2) { setSearchRes(null); return; }
     const results = (window.lightspeedSearch && window.lightspeedSearch(q)) || [];
-    setSearchRes(results.filter(r => !EXCLUDE.some(ex => (r.department||'').toLowerCase().includes(ex))).slice(0, 48));
+    setSearchRes(results.filter(r => r.qty > 0 && !EXCLUDE.some(ex => (r.department||'').toLowerCase().includes(ex))).slice(0, 48));
   };
 
   const POPULAR = ['Tires 29"','Tires 700C','Tires 26"','Brake pads','Chains','Cassette','Tubes','Helmets','Lights','Locks','Bags','Pumps'];
