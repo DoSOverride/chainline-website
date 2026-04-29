@@ -1648,12 +1648,12 @@ const PART_TABS = [
   ]},
 ];
 
-const DeptAccordion = ({ depts }) => {
+const DeptAccordion = ({ depts, autoOpen }) => {
   const [activeDept, setActiveDept] = React.useState(null);
   const [deptItems,  setDeptItems]  = React.useState([]);
   const [loading,    setLoading]    = React.useState(false);
 
-  const openDept = async (deptName) => {
+  const openDept = React.useCallback(async (deptName) => {
     if (activeDept === deptName) { setActiveDept(null); setDeptItems([]); return; }
     setActiveDept(deptName);
     setLoading(true);
@@ -1662,12 +1662,27 @@ const DeptAccordion = ({ depts }) => {
     );
     if (cached.length > 0) { setDeptItems(cached); setLoading(false); }
     else { const items = await window.lightspeedGetDept(deptName); setDeptItems(items.filter(i => i.qty > 0)); setLoading(false); }
-  };
+  }, [activeDept]);
+
+  // Auto-open when routed from nav/search
+  React.useEffect(() => {
+    if (!autoOpen) return;
+    const match = depts.find(d => d.name.toLowerCase() === autoOpen.toLowerCase());
+    if (match) openDept(match.name);
+  }, [autoOpen, depts.length]);
+
+  // Scroll active dept into view
+  const activeRef = React.useRef(null);
+  React.useEffect(() => {
+    if (activeDept && activeRef.current) {
+      setTimeout(() => activeRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+    }
+  }, [activeDept]);
 
   return (
     <div>
       {depts.map((dept, i) => (
-        <div key={i} className="reveal" style={{ borderBottom:"1px solid var(--hairline)" }}>
+        <div key={i} ref={activeDept === dept.name ? activeRef : null} className="reveal" style={{ borderBottom:"1px solid var(--hairline)" }}>
           <button data-cursor="link" onClick={() => openDept(dept.name)}
             style={{ width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", padding:"20px 0", cursor:"pointer", background:"none", border:"none", textAlign:"left" }}>
             <span style={{ fontFamily:"var(--display)", fontSize:"clamp(14px,1.7vw,19px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{dept.name}</span>
@@ -1704,12 +1719,28 @@ const DeptAccordion = ({ depts }) => {
 };
 
 const PartsPage = () => {
-  const [tabId,     setTabId]     = React.useState(window.cl?.intent?.tab || 'drivetrain');
-  const [search,    setSearch]    = React.useState('');
-  const [searchRes, setSearchRes] = React.useState(null);
-  const [allDepts,  setAllDepts]  = React.useState([]);
+  const [tabId,        setTabId]        = React.useState('drivetrain');
+  const [autoOpenDept, setAutoOpenDept] = React.useState(null);
+  const [search,       setSearch]       = React.useState('');
+  const [searchRes,    setSearchRes]    = React.useState(null);
+  const [allDepts,     setAllDepts]     = React.useState([]);
 
   const BIKE_DEPTS = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
+
+  // Read routing intent (from nav mega-menu, mobile nav, or search modal)
+  React.useEffect(() => {
+    const intent = window.cl?.intent;
+    if (!intent) return;
+    if (intent.tab) setTabId(intent.tab);
+    if (intent.dept) {
+      // Fuzzy-match against all known depts in case label doesn't exactly match Lightspeed name
+      const allKnown = PART_TABS.flatMap(t => t.depts);
+      const exact    = allKnown.find(d => d.toLowerCase() === intent.dept.toLowerCase());
+      const fuzzy    = !exact && window.fuzzyMatch && allKnown.find(d => window.fuzzyMatch(intent.dept, d));
+      setAutoOpenDept(exact || fuzzy || intent.dept);
+    }
+    window.cl.intent = null;
+  }, []);
 
   React.useEffect(() => {
     const load = () => { if (window.CL_LS?.departments?.length > 0) setAllDepts(window.CL_LS.departments); };
@@ -1807,7 +1838,12 @@ const PartsPage = () => {
           {!searchRes && (
             <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:32 }}>
               {activeTab.popular.map(p => (
-                <button key={p} data-cursor="link" onClick={() => { doSearch(p); setSearch(p); }}
+                <button key={p} data-cursor="link" onClick={() => {
+                  // Open the exact dept accordion directly — no search needed
+                  const deptName = tabDepts.find(d => d.name.toLowerCase() === p.toLowerCase())?.name || p;
+                  setAutoOpenDept(deptName);
+                  setSearch(''); setSearchRes(null);
+                }}
                   style={{ padding:"5px 12px", border:"1px solid var(--hairline)", background:"none", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", cursor:"pointer", color:"var(--gray-600)" }}>
                   {p}
                 </button>
@@ -1815,8 +1851,8 @@ const PartsPage = () => {
             </div>
           )}
 
-          {/* Department accordion */}
-          {!searchRes && <DeptAccordion depts={tabDepts} />}
+          {/* Department accordion — autoOpen scrolls to and opens the target dept */}
+          {!searchRes && <DeptAccordion depts={tabDepts} autoOpen={autoOpenDept} />}
 
           <div style={{ marginTop:48, padding:28, background:"var(--paper)", borderTop:"2px solid var(--black)" }}>
             <div className="eyebrow" style={{ marginBottom:10 }}>Can't find what you need?</div>
@@ -2074,4 +2110,4 @@ const PrivacyPage = () => (
   </div>
 );
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage });
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS });

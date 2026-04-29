@@ -411,7 +411,7 @@ const MobileNav = ({ open, onClose }) => {
             <div key={cat.label}>
               <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 8px" }}>{cat.label}</div>
               {cat.items.map(it => (
-                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab })); }}>{it}</a>
+                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
               ))}
             </div>
           ))}
@@ -427,7 +427,7 @@ const MobileNav = ({ open, onClose }) => {
             <div key={cat.label}>
               <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 8px" }}>{cat.label}</div>
               {cat.items.map(it => (
-                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab })); }}>{it}</a>
+                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
               ))}
             </div>
           ))}
