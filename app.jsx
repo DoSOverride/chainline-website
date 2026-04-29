@@ -93,7 +93,7 @@ const App = () => {
   React.useEffect(() => {
     const onCartUpdate = (e) => {
       const items = (e.detail?.items || []).map(i => ({
-        brand: i.vendor || '', name: i.name || i.title, price: i.price, qty: i.qty, image: i.image, variantId: i.variantId,
+        brand: i.vendor || '', name: i.name || i.title, price: i.price, qty: i.qty, image: i.image, variantId: i.variantId, variant: i.variant || null,
       }));
       setCart(items);
     };

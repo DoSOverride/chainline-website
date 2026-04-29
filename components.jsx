@@ -721,7 +721,8 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
               }
               <div>
                 <div className="eyebrow" style={{ fontSize: 10, marginBottom: 4 }}>{it.brand}</div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", marginBottom: 8, lineHeight: 1.3 }}>{it.name}</div>
+                <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", marginBottom: it.variant ? 3 : 8, lineHeight: 1.3 }}>{it.name}</div>
+                {it.variant && <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:8 }}>{it.variant}</div>}
                 <button className="link-underline" onClick={() => { window.shopifyCart.remove(it.variantId); onRemove(idx); }} style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--gray-500)", letterSpacing: ".1em", textTransform: "uppercase" }}>Remove</button>
               </div>
               <div style={{ fontFamily: "var(--display)", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}>${(it.price || 0).toLocaleString()}</div>

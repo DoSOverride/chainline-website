@@ -51,12 +51,12 @@ window.shopifyCart = {
     window.CL_SHOP.cart = this.items;
   },
 
-  add(variantId, name, price, image, qty = 1) {
+  add(variantId, name, price, image, qty = 1, variant = null) {
     const existing = this.items.find(i => i.variantId === variantId);
     if (existing) {
       existing.qty += qty;
     } else {
-      this.items.push({ variantId, name, price, image, qty });
+      this.items.push({ variantId, name, price, image, qty, variant });
     }
     this._save();
     const count = this.items.reduce((s, i) => s + i.qty, 0);
@@ -84,14 +84,14 @@ window.shopifyCart = {
 };
 
 // ── Add to cart by handle ─────────────────────────────────────
-window.clAddToCart = async function(handle, name, price, image, sku) {
+window.clAddToCart = async function(handle, name, price, image, sku, variant) {
   const products    = window.CL_SHOP.products    || [];
   const variantMap  = window.CL_SHOP.skuVariantMap || {};
 
   // 1. SKU direct lookup (most reliable for Lightspeed bikes)
   if (sku && variantMap[sku]) {
     const variantId = variantMap[sku];
-    window.shopifyCart.add(variantId, name, price, image);
+    window.shopifyCart.add(variantId, name, price, image, 1, variant || null);
     return { variantId, name, price, image };
   }
 
@@ -101,7 +101,7 @@ window.clAddToCart = async function(handle, name, price, image, sku) {
     p.title.toLowerCase() === (name || '').toLowerCase()
   );
   if (match?.variantId) {
-    window.shopifyCart.add(match.variantId, match.title, match.price, match.image);
+    window.shopifyCart.add(match.variantId, match.title, match.price, match.image, 1, variant || null);
     return match;
   }
 

@@ -147,7 +147,8 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const handleAdd = async () => {
     setAdding(true);
     try {
-      await window.clAddToCart(selSku, b.name || b.title, selPrice, allImgs[0], selSku);
+      const variantDesc = [selected?.wheel, selected?.color, selected?.size].filter(Boolean).join(' · ');
+      await window.clAddToCart(selSku, b.name || b.title, selPrice, allImgs[0], selSku, variantDesc || null);
       setAdded(true);
       setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
     } catch(e) { console.warn(e); }
@@ -699,7 +700,8 @@ const BikeCardLarge = ({ b, idx }) => {
     if (!inStock || !selected) return;
     setAdding(true);
     try {
-      await window.clAddToCart(selected.sku, name, price, img, selected.sku);
+      const variantDesc = [selected.wheel, selected.color, selected.size].filter(Boolean).join(' · ');
+      await window.clAddToCart(selected.sku, name, price, img, selected.sku, variantDesc || null);
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
     } catch(err) { console.warn(err); }
