@@ -654,57 +654,42 @@ const BrandMarquee = ({ fast }) => {
 
 // Chat widget
 const ChatWidget = () => {
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
   const [open, setOpen] = React.useState(false);
   const [msgs, setMsgs] = React.useState([
-    { role: "bot", text: "Hey, I'm Jake — head mechanic at ChainLine. Ask me anything: bike questions, service stuff, gear advice, or what's in stock. Happy to help." }
+    { role: "bot", text: "Hey, I'm Jake — head mechanic at ChainLine. Ask me anything about bikes, service, or what we've got in stock." }
   ]);
   const [input, setInput] = React.useState("");
+  const [thinking, setThinking] = React.useState(false);
   const bottomRef = React.useRef(null);
 
   React.useEffect(() => {
     if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [msgs, open]);
+  }, [msgs, open, thinking]);
 
-  const respond = (q) => {
-    const l = q.toLowerCase();
-    if (/hour|open|clos|when/.test(l)) return "We're open Mon 10–5, Tue–Fri 9:30–5:30, Sat 10–4, closed Sunday. If you're coming in for a drop-off, mornings are usually quietest.";
-    if (/address|where|location|find us|direction/.test(l)) return "We're at 1139 Ellis St in downtown Kelowna — right near the waterfront. Parking is easy out front. Google Maps has us listed if you need directions.";
-    if (/phone|call/.test(l)) return "Best number is (250) 860-1968. We pick up our own phone — no phone tree, just us.";
-    if (/email/.test(l)) return "bikes@chainline.ca — we check it throughout the day and usually reply same day.";
-    if (/book|appoint|schedul/.test(l)) return "Easiest is to use the Book page on here — fill out the form and we'll confirm by phone within 24 hours. Or just call us at (250) 860-1968 and we'll get you sorted.";
-    if (/tune.?up|basic service/.test(l)) return "A standard tune-up runs $120 and covers all adjustments, cable tension, lube, and a safety check. Most are done same-day if you drop off in the morning.";
-    if (/overhaul|full service|complete/.test(l)) return "Full overhaul is $250 — complete teardown, degrease, regrease, rebuild, and full adjustment. Usually 3–5 days. Worth it every couple of seasons.";
-    if (/brake|bleed/.test(l)) return "Hydraulic brake bleeds are $60 per caliper. If your brakes feel spongy or the lever is pulling to the bar, they're overdue. Same-day turnaround.";
-    if (/fork|shock|suspension|sus/.test(l)) return "We do full suspension service in-house — fork lower legs, shock air cans, and factory-level rebuilds for Fox and RockShox. Turnaround is usually 1–2 weeks depending on parts.";
-    if (/dropper|post/.test(l)) return "Dropper service runs $140 for a full rebuild (Fox Transfer). If it's slow to pop up or losing pressure, it's time. We can usually turn it around in a day or two.";
-    if (/tubeless|tyre|tire/.test(l)) return "Tubeless setup is $35 per wheel and includes tape, valves, and sealant. We run Cushcore installs too if you want extra protection. Drop in any time.";
-    if (/fit|fitting|sizing|position/.test(l)) return "We do professional bike fits — a basic position check is $80, full road/MTB fit is $220, and a comprehensive video analysis is $380. Book online or give us a call.";
-    if (/demo|test.?ride/.test(l)) return "We have a 12-bike demo fleet — mostly trail and enduro rigs. Book a demo ride on the Book page and we'll have it set up and ready. Usually a 2-hour slot out on Knox.";
-    if (/storage|winter|store my/.test(l)) return "Winter storage runs October through spring. Climate-controlled, secure, and we do monthly battery checks for e-bikes. Limited spots — book it early.";
-    if (/warranty|defect|broken|recall/.test(l)) return "All bikes carry full manufacturer warranties. Frame warranties are usually lifetime or 5 years, components 1–2 years. Bring it in and we'll handle the claim with the brand directly.";
-    if (/e.?bike|ebike|electric|motor|bosch|shimano.?steps|bafang/.test(l)) return "We service e-bikes — tune-ups, motor checks, firmware updates for Bosch, Shimano Steps, and Bafang systems. We also do rear hub motor wheel swaps if you've had a flat.";
-    if (/marin|stinson|bobcat|hawk hill|alpine trail/.test(l)) return "Marin is our biggest brand — we carry the full lineup from Stinson commuters to Hawk Hill trail bikes to the Alpine Trail. Solid value across the board. Check the Shop page for current stock.";
-    if (/transition|sentinel|spur|spire|smuggler|pbj|bottlerocket/.test(l)) return "Transition makes some of the best riding bikes in the world — the Sentinel and Spur especially are crowd favourites here. Most Transition bikes come in as special order; give us a shout and we'll get you sorted.";
-    if (/surly|karate monkey|krampus|ice cream truck|sorceress/.test(l)) return "We love Surly — bomb-proof steel bikes built for real riding. The Sorceress is a killer gravel rig. Most are available by order; the Sorceress we usually have in stock.";
-    if (/knolly|revel|pivot|salsa|bianchi|moots/.test(l)) return "We carry Knolly, Revel, Pivot, Salsa, Bianchi, and Moots — all special order with great lead times right now. Give us a call and we'll work out the details.";
-    if (/brand|carry|stock/.test(l)) return "Our brands: Marin, Transition, Surly, Salsa, Pivot, Bianchi, Moots, Knolly, and Revel. We ride what we sell. Check the Shop page to see what's in stock right now.";
-    if (/price|cost|how much|cheap|budget/.test(l)) return "Entry-level bikes start around $600 and go up to $13,000+ for the high-end stuff. Services start at $25 for a flat fix and $120 for a full tune-up. What's your budget and what kind of riding?";
-    if (/trail|knox|bear creek|black mountain|myra/.test(l)) return "Knox Mountain is right here in Kelowna — great beginner to intermediate flow trails. Bear Creek and Black Mountain are more technical. We've got trail info on the Trails page.";
-    if (/ride|group ride|strava|club/.test(l)) return "We run group rides most weeks — MTB, gravel, and social spins. Follow us on Strava or Instagram @ChainLineCycle for the schedule. Usually Thursday evenings in summer.";
-    if (/gift.?card|gift/.test(l)) return "Gift cards from $50 to $500. No expiry, good on anything — bikes, service, gear. We can email you a digital one or you can pick one up in-store.";
-    if (/pinkbike|classified|sell|used|second.?hand/.test(l)) return "Check our Pinkbike page for local classifieds — we also have shop demo bikes that come up for sale end of season. Hit the Pinkbike tab in the menu.";
-    if (/hi|hey|hello|howdy|sup|what.?s up/.test(l)) return "Hey! What can I help you with? Bike questions, service stuff, or just figuring out what to ride — I've got you.";
-    if (/thank/.test(l)) return "Anytime! Don't hesitate to drop by the shop too — always happy to talk bikes in person.";
-    if (/awesome|great|perfect|love|nice/.test(l)) return "Glad to help! Anything else you want to know?";
-    return "Good question — for anything specific I'd recommend giving us a call at (250) 860-1968 or swinging by the shop. We're at 1139 Ellis St and the crew is always happy to chat.";
-  };
-
-  const send = () => {
+  const send = async () => {
     const text = input.trim();
-    if (!text) return;
-    const reply = respond(text);
-    setMsgs(m => [...m, { role: "user", text }, { role: "bot", text: reply }]);
+    if (!text || thinking) return;
     setInput("");
+    const history = [...msgs, { role: "user", text }];
+    setMsgs(history);
+    setThinking(true);
+    try {
+      const res = await fetch(`${WORKER}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: history
+            .filter(m => m.role !== "bot" || m !== msgs[0])
+            .map(m => ({ role: m.role === "bot" ? "assistant" : "user", content: m.text }))
+        }),
+      });
+      const { reply } = await res.json();
+      setMsgs(m => [...m, { role: "bot", text: reply || "Give us a call at (250) 860-1968 — happy to help." }]);
+    } catch {
+      setMsgs(m => [...m, { role: "bot", text: "Sorry, having trouble connecting. Call us at (250) 860-1968." }]);
+    }
+    setThinking(false);
   };
 
   return (
@@ -736,7 +721,17 @@ const ChatWidget = () => {
                 </div>
               </div>
             ))}
+            {thinking && (
+              <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                <div style={{ padding: "9px 13px", background: "var(--paper)", display: "flex", gap: 4, alignItems: "center" }}>
+                  {[0,1,2].map(i => (
+                    <span key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gray-400)", display: "inline-block", animation: "chatDot .9s ease-in-out infinite", animationDelay: `${i * 0.18}s` }} />
+                  ))}
+                </div>
+              </div>
+            )}
             <div ref={bottomRef} />
+            <style>{`@keyframes chatDot { 0%,80%,100%{transform:scale(0.6);opacity:.4} 40%{transform:scale(1);opacity:1} }`}</style>
           </div>
           <div style={{ padding: "10px 14px", borderTop: "1px solid var(--hairline)", display: "flex", gap: 8, alignItems: "center" }}>
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
