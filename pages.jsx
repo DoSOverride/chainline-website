@@ -681,12 +681,12 @@ const BikeCardLarge = ({ b, idx }) => {
             <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
           </div>
         )}
-        <div style={{ position:"absolute", top:10, left:10, display:"flex", alignItems:"center", gap:6, padding:"4px 9px", background:"rgba(255,255,255,0.92)", border:"1px solid rgba(22,163,74,0.3)", borderRadius:2 }}>
+        <div style={{ position:"absolute", top:10, left:10, display:"flex", alignItems:"center", gap:6, padding:"4px 9px", background:"rgba(0,0,0,0.72)", borderRadius:2, backdropFilter:"blur(4px)" }}>
           <span className="stock-dot" />
-          <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#16a34a" }}>In Stock</span>
+          <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#ffffff" }}>In Stock</span>
         </div>
         {lowStock && (
-          <div style={{ position:"absolute", bottom:10, left:10, padding:"4px 9px", background:"rgba(255,255,255,0.92)", color:"#b45309", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid rgba(180,83,9,0.3)" }}>
+          <div style={{ position:"absolute", bottom:10, left:10, padding:"4px 9px", background:"rgba(0,0,0,0.72)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#ffffff", backdropFilter:"blur(4px)", borderRadius:2 }}>
             Only {qty} left
           </div>
         )}
