@@ -470,29 +470,55 @@ const ShopPage = () => {
       return rest.trim().replace(/\s+/g,' ');
     }
 
-    return SHOP_BIKES.map(s => {
-      const sb  = _norm(s.brand || '');
-      const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
-      const sNorm = _norm(s.name);
-      const matches = liveProducts.filter(l => {
-        const lb = _norm((l.name || '').split(' ')[0]);
-        if (lb !== sb) return false;
-        const ln = _norm(l.name);
-        // If no 4+ char keywords, fall back to full name substring to prevent short names matching everything
-        return sKw.length > 0 ? sKw.every(w => ln.includes(w)) : ln.includes(sNorm);
-      });
-      if (matches.length === 0) return { ...s, inStock: false };
-      const inStockMatches = matches.filter(m => m.inStock);
-      const best = inStockMatches[0] || matches[0];
-      if (matches.length === 1) return { ...s, price: best.price || s.price, inStock: best.inStock, qty: best.qty, sku: best.sku };
+    // Strip trailing wheel size from model name to get base model for grouping
+    // e.g. "Bobcat Trail 4 27.5" → "Bobcat Trail 4", "Gestalt 2" → "Gestalt 2" (unchanged)
+    const WHEEL_SUFFIXES = ['27.5','29','26','24','20','16','700','650'];
+    function baseModel(name) {
+      for (const w of WHEEL_SUFFIXES) {
+        if (name.endsWith(' ' + w)) return name.slice(0, -(w.length + 1)).trim();
+      }
+      return name;
+    }
 
-      const variants = matches.map(m => {
-        const label = extractLabel(m.name, s.brand || '', s.name);
+    // Group SHOP_BIKES entries by (brand, baseModel) so e.g. Bobcat Trail 4 27.5 + 29 → one card
+    const groups = {};
+    SHOP_BIKES.forEach(s => {
+      const base = baseModel(s.name);
+      const key = `${s.brand}||${base}`;
+      if (!groups[key]) groups[key] = { ...s, name: base, _entries: [] };
+      groups[key]._entries.push(s);
+    });
+
+    return Object.values(groups).map(group => {
+      const sb = _norm(group.brand || '');
+      // Collect Lightspeed matches for ALL sub-entries (deduped by sku)
+      const seen = new Set();
+      const allMatches = [];
+      group._entries.forEach(s => {
+        const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
+        const sNorm = _norm(s.name);
+        liveProducts.filter(l => {
+          const lb = _norm((l.name || '').split(' ')[0]);
+          if (lb !== sb) return false;
+          const ln = _norm(l.name);
+          return sKw.length > 0 ? sKw.every(w => ln.includes(w)) : ln.includes(sNorm);
+        }).forEach(m => { if (!seen.has(m.sku)) { seen.add(m.sku); allMatches.push(m); } });
+      });
+
+      if (allMatches.length === 0) return { ...group, inStock: false };
+      const inStockMatches = allMatches.filter(m => m.inStock);
+      const best = inStockMatches[0] || allMatches[0];
+      if (allMatches.length === 1) return { ...group, price: best.price || group.price, inStock: best.inStock, qty: best.qty, sku: best.sku };
+
+      // Use the base model name for label extraction so wheel sizes stay in the variant
+      const baseName = baseModel(group._entries[0].name);
+      const variants = allMatches.map(m => {
+        const label = extractLabel(m.name, group.brand || '', baseName);
         const parsed = parseVariantLabel(label);
         return { ...parsed, label, inStock: m.inStock, qty: m.qty, price: m.price, sku: m.sku };
       }).filter(v => v.sku);
 
-      return { ...s, price: best.price || s.price, inStock: inStockMatches.length > 0, qty: best.qty, sku: best.sku, variants };
+      return { ...group, price: best.price || group.price, inStock: inStockMatches.length > 0, qty: best.qty, sku: best.sku, variants };
     });
   }, [liveProducts]);
 
