@@ -645,13 +645,26 @@ const BikeCardLarge = ({ b, idx }) => {
   const hasColors = colors.length > 1;
   const hasSizes  = sizes.length > 1;
 
-  // Default selection: first in-stock variant's values
-  const defV = inStockV[0] || variants[0];
+  // Smart default: prefer 29" + Medium, fall back gracefully
+  const pickDefault = (vs) => {
+    const ins = vs.filter(v => v.inStock);
+    return ins.find(v => v.wheel === '29"' && v.size === 'Medium')
+      || ins.find(v => v.wheel === '29"')
+      || ins.find(v => v.size === 'Medium')
+      || ins[0] || vs[0];
+  };
+  const defV = pickDefault(variants);
   const [selWheel, setWheel] = React.useState(defV?.wheel || null);
   const [selColor, setColor] = React.useState(defV?.color || null);
   const [selSize,  setSize]  = React.useState(defV?.size  || null);
   const [adding,   setAdding] = React.useState(false);
   const [added,    setAdded]  = React.useState(false);
+
+  // Re-apply defaults when variants load asynchronously after mount
+  React.useEffect(() => {
+    const d = pickDefault(b.variants || []);
+    if (d) { setWheel(d.wheel || null); setColor(d.color || null); setSize(d.size || null); }
+  }, [b.handle, (b.variants || []).length]);
 
   // Find the selected variant
   const selected = variants.find(v =>
