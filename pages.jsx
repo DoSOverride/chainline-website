@@ -928,13 +928,19 @@ const ServicesPage = () => {
             {services.map((s, i) => (
               <div key={i} className="page-svc-row reveal" style={{ padding:"24px 0", borderBottom:"1px solid var(--hairline)" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:24, flexWrap:"wrap" }}>
-                  {/* Left: number + name + what's included */}
-                  <div style={{ flex:1, minWidth:200 }}>
+                  {/* Left: number + name + price on mobile + what's included */}
+                  <div style={{ flex:1, minWidth:220 }}>
                     <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:6 }}>
                       <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", color:"var(--gray-500)" }}>{s.n}</span>
                       <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{s.time}</span>
                     </div>
-                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom: s.includes||s.desc ? 10 : 0 }}>{s.name}</div>
+                    <div style={{ display:"flex", alignItems:"baseline", gap:16, flexWrap:"wrap", marginBottom: s.includes||s.desc ? 10 : 0 }}>
+                      <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{s.name}</div>
+                      <div style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, color:"var(--black)" }}>
+                        ${lsPrice(s.name) || s.price}
+                        {lsPrice(s.name) && lsPrice(s.name) !== s.price && <sup style={{ fontFamily:"var(--mono)", fontSize:8, color:"var(--gray-400)", marginLeft:3, letterSpacing:".1em" }}>LIVE</sup>}
+                      </div>
+                    </div>
                     {s.includes && (
                       <ul style={{ listStyle:"none", padding:0, margin:0, display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:"3px 24px" }}>
                         {s.includes.map((item, j) => (
@@ -947,12 +953,8 @@ const ServicesPage = () => {
                     )}
                     {s.desc && <div style={{ color:"var(--gray-500)", fontSize:13, lineHeight:1.6 }}>{s.desc}</div>}
                   </div>
-                  {/* Right: price + book */}
-                  <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:10, flexShrink:0 }}>
-                    <div style={{ fontFamily:"var(--display)", fontSize:22, fontWeight:500, lineHeight:1 }}>
-                      ${lsPrice(s.name) || s.price}
-                      {lsPrice(s.name) && lsPrice(s.name) !== s.price && <sup style={{ fontFamily:"var(--mono)", fontSize:8, color:"var(--gray-400)", marginLeft:3, letterSpacing:".1em" }}>LIVE</sup>}
-                    </div>
+                  {/* Right: book button */}
+                  <div style={{ display:"flex", alignItems:"flex-start", flexShrink:0, paddingTop:2 }}>
                     <button className="btn btn-outline" data-cursor="link" style={{ fontSize:11, whiteSpace:"nowrap" }} onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
                   </div>
                 </div>

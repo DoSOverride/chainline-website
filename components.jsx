@@ -176,7 +176,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
     { id: "accessories", label: "Accessories",  panel: "accessories" },
     { id: "services",    label: "Services",     panel: "services" },
     { id: "explore",     label: "Explore",      panel: "explore" },
-    { id: "about",       label: "About",        panel: null, route: "about" },
+    { id: "more",        label: "More",         panel: "more" },
   ];
 
   const closeTimer = React.useRef(null);
@@ -401,14 +401,21 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
       cols: [
         { h: "Book", items: ["Book a Service", "Book a Fitting", "Book a Demo", "Book Storage"] },
         { h: "Service Menu", items: ["Tune-Ups", "Drivetrain", "Suspension", "Wheels & Tubeless", "Custom Builds"] },
-        { h: "Programs", items: ["Bike Fitting", "Storage", "Demo Fleet", "Warranty"], feature: { label: "AVAILABILITY  /  THIS WEEK", title: "12 service slots open" } },
+        { h: "Programs", items: ["Bike Fitting", "Storage", "Demo Fleet", "Warranty"] },
       ],
     },
     explore: {
       cols: [
         { h: "Community", items: ["Group Rides", "Strava Club", "Skill Clinics", "Events"] },
         { h: "Trails", items: ["Knox Mountain", "Bear Creek", "Myra Canyon", "Kelowna Bike Park"] },
-        { h: "Stories", items: ["Journal", "Trail Conditions", "Classifieds"], feature: { label: "FIELD NOTES  /  APRIL 2026", title: "First Light on Knox" } },
+        { h: "Stories", items: ["Journal", "Trail Conditions", "Classifieds"] },
+      ],
+    },
+    more: {
+      cols: [
+        { h: "Info", items: ["About", "Contact", "Our Brands"] },
+        { h: "Shop", items: ["Gift Cards", "Classifieds", "Sale"] },
+        { h: "Rides & Trails", items: ["Group Rides", "Trails", "Pinkbike"] },
       ],
     },
   };
@@ -442,6 +449,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("ride") || l.includes("strava") || l.includes("clinic") || l.includes("event")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
     if (l.includes("journal") || l.includes("stories") || l.includes("note")) return ["home", null];
+    if (l === "about") return ["about", null];
+    if (l === "contact") return ["contact", null];
+    if (l.includes("brand")) return ["brands", null];
     return ["home", null];
   };
   const handleClick = (e, label) => {
