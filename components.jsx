@@ -221,35 +221,93 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
   );
 };
 
-// Mobile nav
-const MobileNav = ({ open, onClose }) => (
-  <div className={"mobile-nav " + (open ? "open" : "")}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px 24px", borderBottom: "1px solid var(--hairline-light)" }}>
-      <div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" /></div>
-      <button className="nav-utility-btn" onClick={onClose} data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>Close</button>
+// Mobile nav — two-panel: Main → Shop (brands + styles)
+const MobileNav = ({ open, onClose }) => {
+  const [panel, setPanel] = React.useState('main');
+
+  // Reset to main panel when nav closes
+  React.useEffect(() => { if (!open) setTimeout(() => setPanel('main'), 500); }, [open]);
+
+  const dismiss = (fn) => { onClose(); fn && fn(); };
+
+  const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
+  const TYPES  = ["All Bikes","Mountain","Gravel","E-Bike","Commuter","Comfort","Kids"];
+
+  const ChevR = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 3l5 5-5 5"/></svg>;
+  const ChevL = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10 3L5 8l5 5"/></svg>;
+
+  const hdr = (content) => (
+    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"20px 24px", borderBottom:"1px solid var(--hairline-light)", flexShrink:0 }}>
+      {content}
+      <button onClick={() => dismiss()} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}>Close</button>
     </div>
-    <div style={{ padding: "40px 24px", display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
-      {[
-        { label: "Shop", route: "shop" },
-        { label: "Parts & Accessories", route: "parts" },
-        { label: "Our Brands", route: "brands" },
-        { label: "Services", route: "services" },
-        { label: "Book Online", route: "book" },
-        { label: "Group Rides", route: "rides" },
-        { label: "Trails", route: "trails" },
-        { label: "Classifieds", route: "classifieds" },
-        { label: "About", route: "about" },
-        { label: "Contact", route: "contact" },
-      ].map((l) => (
-        <a key={l.label} href="#" className="display-l" style={{ color: "var(--white)", padding: "10px 0", borderBottom: "1px solid var(--hairline-light)", display: "block" }} onClick={(e) => { e.preventDefault(); onClose(); window.cl.go(l.route); }}>{l.label}</a>
-      ))}
+  );
+
+  const linkA = { color:"var(--white)", padding:"13px 0", borderBottom:"1px solid rgba(255,255,255,0.08)", display:"flex", justifyContent:"space-between", alignItems:"center", textDecoration:"none", fontFamily:"var(--display)", fontSize:26, fontWeight:500, letterSpacing:"-.01em", textTransform:"uppercase", cursor:"pointer" };
+  const subA  = { color:"var(--white)", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.06)", display:"block", textDecoration:"none", fontFamily:"var(--display)", fontSize:20, fontWeight:500, letterSpacing:"-.01em", textTransform:"uppercase", cursor:"pointer" };
+
+  return (
+    <div className={"mobile-nav " + (open ? "open" : "")} style={{ overflow:"hidden" }}>
+      {/* ── Panel 1: Main ── */}
+      <div className={"mob-panel " + (panel === 'main' ? "mob-panel-active" : "mob-panel-left")}>
+        {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
+        <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
+          {/* Shop — opens sub-panel */}
+          <div style={{ ...linkA }} onClick={() => setPanel('shop')}>
+            Shop <ChevR />
+          </div>
+          {[
+            { label:"Parts & Accessories", route:"parts" },
+            { label:"Services", route:"services" },
+            { label:"Book Online", route:"book" },
+            { label:"Group Rides", route:"rides" },
+            { label:"Trails", route:"trails" },
+            { label:"Classifieds", route:"classifieds" },
+            { label:"About", route:"about" },
+            { label:"Contact", route:"contact" },
+          ].map(l => (
+            <a key={l.label} href="#" style={linkA}
+              onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(l.route)); }}>
+              {l.label}
+            </a>
+          ))}
+        </div>
+        <div style={{ padding:"20px 24px", borderTop:"1px solid var(--hairline-light)", display:"flex", justifyContent:"space-between", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", flexShrink:0 }}>
+          <span>MON–SAT  10–6</span>
+          <span>IG · STRAVA · FB</span>
+        </div>
+      </div>
+
+      {/* ── Panel 2: Shop ── */}
+      <div className={"mob-panel " + (panel === 'shop' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(
+          <button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}>
+            <ChevL /> Back
+          </button>
+        )}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
+
+          <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 10px" }}>By Brand</div>
+          {BRANDS.map(br => (
+            <a key={br} href="#" style={subA}
+              onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>
+              {br}
+            </a>
+          ))}
+
+          <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 10px" }}>By Style</div>
+          {TYPES.map(t => (
+            <a key={t} href="#" style={subA}
+              onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>
+              {t}
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
-    <div style={{ padding: "24px", borderTop: "1px solid var(--hairline-light)", display: "flex", justifyContent: "space-between", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-      <span>MON–SAT  10–6</span>
-      <span>IG · STRAVA · FB</span>
-    </div>
-  </div>
-);
+  );
+};
 
 // Sticky Book button (after hero)
 const StickyCTA = ({ show }) => (
