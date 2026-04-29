@@ -83,9 +83,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           </nav>
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
-            <button className="nav-utility-btn" data-cursor="link" onClick={onToggleDark} title={darkMode ? "Light mode" : "Dark mode"} style={{ fontSize:16, padding:"0 8px" }}>
-              {darkMode ? "☀" : "☾"}
-            </button>
+            <DarkToggle on={darkMode} onToggle={onToggleDark} />
             <div ref={accountRef} style={{ position: "relative" }}>
               <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
                 <span className="nav-utility-text">Account</span><AccountIcon/>
@@ -117,6 +115,13 @@ const AccountIcon = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
     <circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/>
   </svg>
+);
+
+const DarkToggle = ({ on, onToggle }) => (
+  <button className={"dark-toggle " + (on ? "dark-on" : "")} onClick={onToggle}
+    data-cursor="link" title={on ? "Switch to light mode" : "Switch to dark mode"} aria-label={on ? "Light mode" : "Dark mode"}>
+    <span className="dark-toggle-knob" />
+  </button>
 );
 
 const SHOPIFY_STORE = "https://4nie4h-ek.myshopify.com";
@@ -717,4 +722,4 @@ const SearchModal = ({ onClose }) => {
   );
 };
 
-Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, Announce, ChatWidget, SearchModal });
+Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ChatWidget, SearchModal });

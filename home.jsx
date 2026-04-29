@@ -110,7 +110,7 @@ const BikeCard = ({ b, idx }) => (
      onClick={(e) => { e.preventDefault(); window.cl.go("bike", { bike: b }); }}>
     <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
       {b.img ? (
-        <img src={b.img} alt={b.brand + " " + b.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
+        <img src={b.img} alt={b.brand + " " + b.name} className="bike-img" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
       ) : (
         <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
       )}

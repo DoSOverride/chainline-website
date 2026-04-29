@@ -154,7 +154,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
           <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={(b.name || b.title) + ' ' + (activeImg+1)}
-                  decoding="async"
+                  className="bike-img" decoding="async"
                   style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
                   onError={e => { e.target.style.display='none'; }} />
               : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
@@ -167,7 +167,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
               {allImgs.map((img, i) => (
                 <button key={i} onClick={() => setActiveImg(i)} data-cursor="link"
                   style={{ flex: 1, aspectRatio: '1', background: 'var(--paper)', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
-                  <img src={img} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
+                  <img src={img} alt="" className="bike-img" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
                 </button>
               ))}
             </div>
@@ -533,7 +533,7 @@ const BikeCardLarge = ({ b, idx }) => {
       {/* Image */}
       <div style={{ aspectRatio:"4/5", marginBottom:14, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
         {img ? (
-          <img src={img} alt={brand + " " + name}
+          <img src={img} alt={brand + " " + name} className="bike-img"
             loading="lazy" decoding="async"
             style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply", transition:"transform .4s ease" }}
             onError={e => { e.target.style.display='none'; }} />
@@ -750,6 +750,7 @@ const ServicesPage = () => {
 const BookPage = () => {
   const [step, setStep] = React.useState(1);
   const [data, setData] = React.useState({});
+  const [submitted, setSubmitted] = React.useState(false);
   const update = (k, v) => setData(d => ({ ...d, [k]: v }));
   const next = () => setStep(s => Math.min(s + 1, 4));
   const back = () => setStep(s => Math.max(s - 1, 1));
@@ -774,7 +775,7 @@ const BookPage = () => {
       `[Photo upload is not available by email — please bring photos on your phone or drop-in for the assessment]`
     );
     window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
-    next();
+    setSubmitted(true);
   };
 
   return (
@@ -783,15 +784,19 @@ const BookPage = () => {
       <section className="section section-pad bg-white">
         <div className="container-narrow">
 
-          {/* Progress bar */}
-          <div style={{ display:"flex", gap:6, marginBottom:40 }}>
-            {[1,2,3,4].map(s => (
-              <div key={s} style={{ flex:1, height:2, background: s <= step ? "var(--black)" : "var(--hairline)", transition:"background .3s" }} />
-            ))}
-          </div>
-          <div className="eyebrow" style={{ marginBottom:24 }}>Step {step} of 4</div>
+          {/* Progress bar — hidden after submit */}
+          {!submitted && (
+            <>
+              <div style={{ display:"flex", gap:6, marginBottom:40 }}>
+                {[1,2,3,4].map(s => (
+                  <div key={s} style={{ flex:1, height:2, background: s <= step ? "var(--black)" : "var(--hairline)", transition:"background .3s" }} />
+                ))}
+              </div>
+              <div className="eyebrow" style={{ marginBottom:24 }}>Step {step} of 4</div>
+            </>
+          )}
 
-          {step === 1 && (
+          {!submitted && step === 1 && (
             <div>
               <h2 className="display-l" style={{ marginBottom:12 }}>Your details.</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>We'll call or text to confirm your appointment.</p>
@@ -813,7 +818,7 @@ const BookPage = () => {
             </div>
           )}
 
-          {step === 2 && (
+          {!submitted && step === 2 && (
             <div>
               <h2 className="display-l" style={{ marginBottom:12 }}>Your bike.</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>Tell us what you're bringing in. Photos welcome — take one on your phone and show us when you drop off.</p>
@@ -849,7 +854,7 @@ const BookPage = () => {
             </div>
           )}
 
-          {step === 3 && (
+          {!submitted && step === 3 && (
             <div>
               <h2 className="display-l" style={{ marginBottom:12 }}>What's needed?</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Select the service you're after, or choose "Assessment" if you're not sure — we'll diagnose and quote before touching anything.</p>
@@ -874,7 +879,7 @@ const BookPage = () => {
             </div>
           )}
 
-          {step === 4 && data.name && (
+          {!submitted && step === 4 && data.name && (
             <div>
               <h2 className="display-l" style={{ marginBottom:12 }}>Preferred drop-off date.</h2>
               <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Pick a day to bring your bike in. We'll confirm by phone or email within 24 hours.</p>
@@ -892,7 +897,7 @@ const BookPage = () => {
             </div>
           )}
 
-          {step === 4 && !data.name && (
+          {!submitted && step === 4 && !data.name && (
             <div style={{ textAlign:"center", padding:"40px 0" }}>
               <p style={{ color:"var(--gray-500)", marginBottom:24 }}>Please go back and fill in your name and phone number.</p>
               <button className="btn btn-outline" onClick={() => setStep(1)}>Start Over</button>
@@ -900,7 +905,7 @@ const BookPage = () => {
           )}
 
           {/* Confirmation after submit */}
-          {false && (
+          {submitted && (
             <div>
               <h2 className="display-l" style={{ marginBottom: 16 }}>Request Sent ✓</h2>
               <p className="serif-italic" style={{ fontSize: 22, color: "var(--gray-500)", marginBottom: 32 }}>We'll be in touch within 24 hours to confirm your slot.</p>

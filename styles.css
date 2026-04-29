@@ -32,37 +32,98 @@
 /* ── Dark mode ── */
 [data-theme="dark"] {
   color-scheme: dark;
-  --black: #f0f0ee;
-  --near-black: #e0e0de;
-  --soft-black: #ccccca;
-  --white: #111111;
-  --paper: #1a1a1a;
-  --gray-100: #252525;
-  --gray-200: #2f2f2f;
-  --gray-300: #555552;
-  --gray-400: #777774;
-  --gray-500: #999996;
-  --gray-600: #b8b8b5;
-  --hairline: rgba(255,255,255,0.1);
-  --hairline-light: rgba(255,255,255,0.08);
+  --black: #f2f2f0;
+  --near-black: #e2e2e0;
+  --soft-black: #c8c8c6;
+  --white: #0d0d0d;
+  --paper: #161616;
+  --gray-100: #202020;
+  --gray-200: #2a2a2a;
+  --gray-300: #484846;
+  --gray-400: #6a6a68;
+  --gray-500: #909090;
+  --gray-600: #b2b2b0;
+  --hairline: rgba(255,255,255,0.08);
+  --hairline-light: rgba(255,255,255,0.06);
   --stock-green: #22c55e;
 }
-[data-theme="dark"] .bg-black  { background: var(--gray-100) !important; }
-[data-theme="dark"] .bg-paper  { background: var(--paper) !important; }
-[data-theme="dark"] .bg-white  { background: var(--white) !important; }
-[data-theme="dark"] .header    { background: rgba(17,17,17,0.97) !important; }
+
+/* bg- sections — keep correct contrast in dark mode */
+[data-theme="dark"] .bg-black { background: #181818 !important; color: #f2f2f0 !important; }
+[data-theme="dark"] .bg-paper { background: var(--paper) !important; }
+[data-theme="dark"] .bg-white { background: var(--white) !important; }
+
+/* Header — pinned dark with explicit light text */
+[data-theme="dark"] .header,
 [data-theme="dark"] .header.solid,
-[data-theme="dark"] .header.light { background: rgba(17,17,17,0.97) !important; }
-[data-theme="dark"] .announce  { background: #1a1a1a !important; border-bottom-color: rgba(255,255,255,0.08) !important; }
-[data-theme="dark"] .mobile-nav { background: #111 !important; }
+[data-theme="dark"] .header.light {
+  background: rgba(10,10,10,0.97) !important;
+  color: #f2f2f0 !important;
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+
+/* Announce bar */
+[data-theme="dark"] .announce { background: #0a0a0a !important; color: #f2f2f0 !important; border-bottom-color: rgba(255,255,255,0.06) !important; }
+
+/* Mobile nav */
+[data-theme="dark"] .mobile-nav { background: #080808 !important; }
+
+/* Mega menu */
+[data-theme="dark"] .mega { background: rgba(10,10,10,0.99) !important; border-color: rgba(255,255,255,0.08) !important; }
+
+/* Cart drawer */
+[data-theme="dark"] .drawer { background: #161616 !important; }
+
+/* Footer — pinned true dark */
+[data-theme="dark"] .footer { background: #080808 !important; color: #f2f2f0 !important; }
+[data-theme="dark"] .footer-massive { color: #f2f2f0 !important; }
+[data-theme="dark"] .footer-col h4 { color: var(--gray-500) !important; }
+[data-theme="dark"] .hr-light { border-top-color: rgba(255,255,255,0.1) !important; }
+
+/* Logo */
 [data-theme="dark"] img[src*="logo-dark"] { filter: invert(1); }
-[data-theme="dark"] .drawer     { background: var(--white) !important; }
-[data-theme="dark"] .mega       { background: rgba(17,17,17,0.99) !important; }
+
+/* Forms */
 [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
   background: var(--gray-100) !important;
   color: var(--black) !important;
   border-color: var(--gray-200) !important;
 }
+
+/* Bike product images — smart invert: white bg → dark, colors roughly preserved */
+[data-theme="dark"] img.bike-img {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: normal;
+}
+
+/* ── Dark mode toggle (Apple-style pill) ── */
+.dark-toggle {
+  display: inline-flex;
+  align-items: center;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: #c4c3c0;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  flex-shrink: 0;
+  transition: background .3s;
+}
+.dark-toggle.dark-on { background: #0a0a0a; }
+.dark-toggle-knob {
+  position: absolute;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1);
+  pointer-events: none;
+}
+.dark-toggle.dark-on .dark-toggle-knob { transform: translateX(16px); }
 
 /* ── Blinking stock indicator ── */
 @keyframes stockPulse {
@@ -657,15 +718,15 @@ img {
   left: 0;
   right: 0;
   z-index: 100;
-  background: #ffffff;
+  background: var(--white);
   color: var(--black);
   border-bottom: 1px solid var(--hairline);
 }
 
-/* legacy classes — kept for back-compat, all map to white */
+/* legacy classes — kept for back-compat */
 .header.solid,
 .header.light {
-  background: #ffffff;
+  background: var(--white);
   color: var(--black);
   border-bottom-color: var(--hairline);
 }
