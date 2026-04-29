@@ -52,6 +52,15 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
   const openMega = (p) => { if (closeTimer.current) clearTimeout(closeTimer.current); onMega(p); };
   const scheduleClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => onMega(null), 180); };
 
+  const [accountOpen, setAccountOpen] = React.useState(false);
+  const accountRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!accountOpen) return;
+    const handler = (e) => { if (accountRef.current && !accountRef.current.contains(e.target)) setAccountOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [accountOpen]);
+
   return (
     <header className={"header " + (scrolled ? (page === "home" ? "solid" : "light") : "")} data-screen-label="00 Header">
       <Announce />
@@ -74,7 +83,12 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           </nav>
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
-            <button className="nav-utility-btn" data-cursor="link"><span className="nav-utility-text">Account</span></button>
+            <div ref={accountRef} style={{ position: "relative" }}>
+              <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
+                <span className="nav-utility-text">Account</span><AccountIcon/>
+              </button>
+              {accountOpen && <AccountDropdown onClose={() => setAccountOpen(false)} />}
+            </div>
             <button className="nav-utility-btn" data-cursor="link" onClick={onCart}>
               <span className="nav-utility-text">Cart</span>
               <span className="cart-count"><span>{cartCount}</span></span>
@@ -95,6 +109,42 @@ const SearchIcon = () => (
     <circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/>
   </svg>
 );
+
+const AccountIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+    <circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/>
+  </svg>
+);
+
+const SHOPIFY_STORE = "https://4nie4h-ek.myshopify.com";
+
+const AccountDropdown = ({ onClose }) => {
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const rowStyle = { display: "block", padding: "13px 24px", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--black)", textDecoration: "none", transition: "background .15s" };
+  const divider = <div style={{ height: 1, background: "var(--hairline)", margin: "0 24px" }} />;
+
+  return (
+    <div style={{ position: "absolute", top: "calc(100% + 16px)", right: 0, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.12)", minWidth: 220, zIndex: 200, padding: "8px 0" }}
+      onMouseLeave={onClose}>
+      <a href={`${SHOPIFY_STORE}/account/login`} target="_blank" rel="noopener" style={rowStyle} onClick={onClose}
+        onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
+        onMouseLeave={e => e.currentTarget.style.background=""}>Sign In</a>
+      {divider}
+      <a href={`${SHOPIFY_STORE}/account/register`} target="_blank" rel="noopener" style={rowStyle} onClick={onClose}
+        onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
+        onMouseLeave={e => e.currentTarget.style.background=""}>Create Account</a>
+      {divider}
+      <a href={`${SHOPIFY_STORE}/account`} target="_blank" rel="noopener" style={{ ...rowStyle, color: "var(--gray-500)" }} onClick={onClose}
+        onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
+        onMouseLeave={e => e.currentTarget.style.background=""}>My Orders</a>
+    </div>
+  );
+};
 
 const ArrowRight = ({ size = 12 }) => (
   <svg className="arrow" width={size} height={size} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -663,4 +713,4 @@ const SearchModal = ({ onClose }) => {
   );
 };
 
-Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, Announce, ChatWidget, SearchModal });
+Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, Announce, ChatWidget, SearchModal });
