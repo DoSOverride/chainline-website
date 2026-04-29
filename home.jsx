@@ -1,13 +1,13 @@
 // ChainLine — Homepage sections
 
 // ── Hero image carousel ───────────────────────────────────────────────────────
-// Replace these URLs with your own photos — drag images into the chat to share them
 const HERO_SLIDES = [
-  "https://www.transitionbikes.com/images/C10-Senti-Myles-1.avif",
-  "https://www.transitionbikes.com/images/Hannah-BR-HP-Mobile-Low.jpg",
-  "https://www.transitionbikes.com/images/PhotoFeature-2026-Regulator-CX.jpg",
-  "https://www.transitionbikes.com/images/Smuggler_Janina_25.jpg",
-  "https://cdn.shopify.com/s/files/1/0714/3611/files/157_Trail.jpg?v=1718738593",
+  "/hero/okanagan-panorama.png",  // Rider on gravel road — Okanagan lake panorama
+  "/hero/above-clouds.png",       // Silhouette above the clouds
+  "/hero/trail-lake.png",         // Technical singletrack with lake below
+  "/hero/misty-forest.png",       // Moody forest trail
+  "/hero/rocky-viewpoint.png",    // Bike on rocky ridge overlooking lake
+  "/hero/golden-hour.png",        // Golden hour jump in the pines
 ];
 
 const HeroBg = () => {
