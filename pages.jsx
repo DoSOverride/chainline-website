@@ -292,10 +292,20 @@ const SHOP_BIKES = [
 
 // SHOP
 const ShopPage = () => {
+  const intent = window.cl?.intent || null;
+  const [brand, setBrand]       = React.useState(intent?.brand || "All");
   const [sort, setSort]         = React.useState("featured");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
+  // Apply intent from nav links (brand filter)
+  React.useEffect(() => {
+    if (window.cl?.intent?.brand) {
+      setBrand(window.cl.intent.brand);
+      window.cl.intent = null;
+    }
+  });
 
   // Re-render when Shopify images arrive so resolveImage() picks them up
   React.useEffect(() => {
@@ -332,9 +342,9 @@ const ShopPage = () => {
     return () => window.removeEventListener('lightspeed:ready', onReady);
   }, []);
 
-  // All in-stock bikes from the catalog
+  // Catalog: SHOP_BIKES merged with live Lightspeed stock data
   const allProducts = React.useMemo(() => {
-    if (!liveProducts) return SHOP_BIKES.filter(b => b.inStock !== false);
+    if (!liveProducts) return SHOP_BIKES;
     return SHOP_BIKES.map(s => {
       const sb  = _norm(s.brand || '');
       const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
@@ -345,23 +355,35 @@ const ShopPage = () => {
         return sKw.length === 0 || sKw.every(w => ln.includes(w));
       });
       return live ? { ...s, price: live.price, inStock: true, qty: live.qty } : { ...s, inStock: false };
-    }).filter(b => b.inStock !== false);
+    });
   }, [liveProducts]);
 
-  let filtered = [...allProducts];
-  if (sort === "price-asc")  filtered = filtered.sort((a,b) => a.price - b.price);
-  if (sort === "price-desc") filtered = filtered.sort((a,b) => b.price - a.price);
+  // Brand filter: when brand selected show full catalog for that brand (in-stock + orderable).
+  // No brand: show only in-stock bikes.
+  let filtered = brand !== "All"
+    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand)
+    : allProducts.filter(b => b.inStock !== false);
+
+  if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
+  if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
 
   return (
     <div className="page-fade">
       <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
 
-      {/* ── Slim sort bar ── */}
+      {/* ── Sort bar ── */}
       <div className="shop-filter-sticky" style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
-        <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:"12px", display:"flex", alignItems:"center", gap:12 }}>
+        <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:"12px", display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
           <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
             {liveLoading ? "Loading live inventory…" : `${filtered.length} bikes${liveProducts ? " · Live" : ""}`}
           </div>
+          {brand !== "All" && (
+            <div style={{ display:"flex", alignItems:"center", gap:8, padding:"4px 12px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
+              {brand}
+              <button onClick={() => setBrand("All")} data-cursor="link"
+                style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", fontFamily:"var(--mono)", fontSize:12, lineHeight:1, padding:0, opacity:.7 }}>×</button>
+            </div>
+          )}
           <div style={{ marginLeft:"auto" }}>
             <select value={sort} onChange={e => setSort(e.target.value)}
               style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"6px 12px", background:"var(--white)", outline:"none" }}>
