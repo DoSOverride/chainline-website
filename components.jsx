@@ -43,11 +43,22 @@ const Announce = () => {
 const ContactBar = () => (
   <div style={{ background:"var(--paper)", borderBottom:"1px solid var(--hairline)", padding:"7px 0" }}>
     <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"clamp(16px,3vw,48px)", flexWrap:"wrap" }}>
-      <a href="tel:2508601968" data-cursor="link"
-        style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2.5A1.5 1.5 0 013.5 1h1.376a1 1 0 01.984.821l.53 2.646a1 1 0 01-.29.98L4.97 6.568a11.04 11.04 0 005.46 5.46l1.12-1.13a1 1 0 01.981-.291l2.646.53A1 1 0 0115 12.124V13.5A1.5 1.5 0 0113.5 15C6.596 15 1 9.404 1 2.5z"/></svg>
-        (250) 860-1968
-      </a>
+      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+        <a href="tel:2508601968" data-cursor="link"
+          style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2.5A1.5 1.5 0 013.5 1h1.376a1 1 0 01.984.821l.53 2.646a1 1 0 01-.29.98L4.97 6.568a11.04 11.04 0 005.46 5.46l1.12-1.13a1 1 0 01.981-.291l2.646.53A1 1 0 0115 12.124V13.5A1.5 1.5 0 0113.5 15C6.596 15 1 9.404 1 2.5z"/></svg>
+          (250) 860-1968
+        </a>
+        <a href="sms:2508601968" data-cursor="link" title="Text us"
+          style={{ display:"flex", alignItems:"center", color:"var(--gray-500)", textDecoration:"none", lineHeight:1 }}>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H2a1 1 0 00-1 1v8a1 1 0 001 1h3l2 2.5L9 12h5a1 1 0 001-1V3a1 1 0 00-1-1z"/>
+            <circle cx="5" cy="7" r=".6" fill="currentColor" stroke="none"/>
+            <circle cx="8" cy="7" r=".6" fill="currentColor" stroke="none"/>
+            <circle cx="11" cy="7" r=".6" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+      </div>
       <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" data-cursor="link"
         style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
