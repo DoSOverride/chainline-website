@@ -1,5 +1,47 @@
 // ChainLine — App shell
 
+// ── URL hash routing ──────────────────────────────────────────
+const _BRANDS    = ["marin","transition","surly","pivot","salsa","bianchi","moots","knolly","revel"];
+const _TYPES     = ["mountain","gravel","e-bike","commuter","comfort","kids"];
+const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools"];
+const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy"];
+
+function hashToRoute(hash) {
+  const h = (hash || '').replace(/^#\/?/, '').trim();
+  if (!h || h === 'home') return { page: 'home', intent: null };
+  const [seg1, seg2] = h.split('/');
+  const s1 = seg1.toLowerCase(), s2 = (seg2 || '').toLowerCase();
+
+  if (s1 === 'bikes' || s1 === 'shop') {
+    if (!s2) return { page: 'shop', intent: null };
+    if (_TYPES.includes(s2)) return { page: 'shop', intent: { type: s2 === 'e-bike' ? 'E-Bike' : s2.charAt(0).toUpperCase() + s2.slice(1) } };
+    if (_BRANDS.includes(s2)) return { page: 'shop', intent: { brand: s2.charAt(0).toUpperCase() + s2.slice(1) } };
+    return { page: 'shop', intent: null };
+  }
+  if (s1 === 'bike' && s2) {
+    const bike = (window.SHOP_BIKES || []).find(b => b.handle === s2);
+    return bike ? { page: 'bike', intent: { bike } } : { page: 'shop', intent: null };
+  }
+  if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
+  if (_PAGES.includes(s1)) return { page: s1, intent: null };
+  return { page: 'home', intent: null };
+}
+
+function routeToHash(page, intent) {
+  if (!page || page === 'home') return '#';
+  if (page === 'shop') {
+    if (intent?.type) return `#bikes/${intent.type.toLowerCase().replace('-', '-')}`;
+    if (intent?.brand) return `#bikes/${intent.brand.toLowerCase()}`;
+    return '#bikes';
+  }
+  if (page === 'bike') {
+    const h = intent?.bike?.handle;
+    return h ? `#bike/${h}` : '#bikes';
+  }
+  if (page === 'parts') return intent?.tab ? `#parts/${intent.tab}` : '#parts';
+  return `#${page}`;
+}
+
 const ScrollProgress = ({ onDark }) => {
   const ref = React.useRef(null);
   React.useEffect(() => {
@@ -71,24 +113,53 @@ const App = () => {
     }
   }, [tweaks]);
 
-  // Routing — supports optional filter intent: cl.go("shop", { type: "Mountain" })
+  // Routing — hash-based, supports optional filter intent
   React.useEffect(() => {
     window.cl = window.cl || {};
     window.cl.history = window.cl.history || [];
+    let _fromCode = false;
+
     window.cl.go = (p, intent) => {
       const cur = window.cl.currentPage;
       if (cur && cur !== p) window.cl.history.push({ page: cur, intent: window.cl.intent });
       if (window.cl.history.length > 20) window.cl.history.shift();
       window.cl.currentPage = p;
       window.cl.intent = intent || null;
+      _fromCode = true;
+      window.location.hash = routeToHash(p, intent);
+      setTimeout(() => { _fromCode = false; }, 50);
       setPage(p);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
+
     window.cl.back = () => {
       const prev = window.cl.history.pop();
       if (prev) window.cl.go(prev.page, prev.intent);
       else window.cl.go("shop");
     };
+
+    // Browser back/forward
+    const onHashChange = () => {
+      if (_fromCode) return;
+      const { page: p, intent } = hashToRoute(window.location.hash);
+      window.cl.currentPage = p;
+      window.cl.intent = intent;
+      setPage(p);
+      window.scrollTo({ top: 0, behavior: "auto" });
+    };
+    window.addEventListener('hashchange', onHashChange);
+
+    // Load initial route from hash on first render
+    const initial = hashToRoute(window.location.hash);
+    if (initial.page !== 'home') {
+      window.cl.currentPage = initial.page;
+      window.cl.intent = initial.intent;
+      setPage(initial.page);
+    } else {
+      window.cl.currentPage = 'home';
+    }
+
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
   // Scroll
