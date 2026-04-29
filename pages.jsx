@@ -709,11 +709,12 @@ const BikeCardLarge = ({ b, idx }) => {
 
   const handleAdd = async (e) => {
     e.preventDefault(); e.stopPropagation();
-    if (!inStock || !selected) return;
+    const sku = selected?.sku || b.sku;
+    if (!inStock || !sku) return;
     setAdding(true);
     try {
-      const variantDesc = [selected.wheel, selected.color, selected.size].filter(Boolean).join(' · ');
-      const result = await window.clAddToCart(selected.sku, name, price, img, selected.sku, variantDesc || null);
+      const variantDesc = selected ? [selected.wheel, selected.color, selected.size].filter(Boolean).join(' · ') : null;
+      const result = await window.clAddToCart(sku, name, price, img, sku, variantDesc || null);
       if (result) { setAdded(true); setTimeout(() => setAdded(false), 2000); }
     } catch(err) { console.warn(err); }
     setAdding(false);
