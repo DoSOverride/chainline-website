@@ -398,7 +398,7 @@ const LocalStory = () => (
             Every brand we carry, we've ridden. Every mechanic on the floor races, commutes, or both. We're not a chain — we're a team, and we live where you ride.
           </p>
           <hr className="hr" style={{ marginBottom: 40 }} />
-          <div className="serif-italic built-for-kelowna" style={{ fontSize: 28, lineHeight: 1.3, marginBottom: 32 }}>
+          <div className="serif-italic built-for-kelowna" style={{ fontSize: 18, lineHeight: 1.3, marginBottom: 32 }}>
             Built for Kelowna. Backed by Canada.
           </div>
           <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("about")}>Our Story <ArrowRight /></button>
