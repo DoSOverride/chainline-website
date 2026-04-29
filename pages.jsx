@@ -1442,6 +1442,30 @@ const GiftCardsPage = () => (
 
 
 // PARTS & ACCESSORIES PAGE — Live Lightspeed inventory
+const PartCartBtn = ({ item }) => {
+  const [state, setState] = React.useState('idle'); // idle | adding | added | unavailable
+  const add = async () => {
+    if (state !== 'idle') return;
+    setState('adding');
+    const result = await window.clAddToCart(item.sku, item.name, item.price, null, item.sku);
+    if (result) {
+      setState('added');
+      setTimeout(() => setState('idle'), 2000);
+    } else {
+      setState('unavailable');
+      setTimeout(() => setState('idle'), 3000);
+    }
+  };
+  const label = { idle: 'Add to Cart', adding: '…', added: 'Added ✓', unavailable: 'Contact Us' }[state];
+  const bg    = { idle: 'var(--black)', adding: 'var(--gray-600)', added: '#1a6e3c', unavailable: 'var(--gray-500)' }[state];
+  return (
+    <button data-cursor="link" onClick={add}
+      style={{ padding:"5px 11px", background:bg, color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap", transition:"background .2s" }}>
+      {label}
+    </button>
+  );
+};
+
 const PartsPage = () => {
   const [activeDept, setActiveDept] = React.useState(null);
   const [deptItems,  setDeptItems]  = React.useState([]);
@@ -1450,14 +1474,14 @@ const PartsPage = () => {
   const [searchRes,  setSearchRes]  = React.useState(null);
   const [depts,      setDepts]      = React.useState([]);
 
+  const EXCLUDE = ['labour','food','shop use','consignments','bikes comfort','bikes road','bikes mountain','bike bmx','bike cruiser','bike cross','bikes fat','bikes junior','bike frame','frames','build kit','group'];
+
   React.useEffect(() => {
     const load = () => {
-      if (window.CL_LS && window.CL_LS.departments && window.CL_LS.departments.length > 0) {
-        const exclude = ['labour','food','shop use','consignments','bikes comfort','bikes road','bikes mountain','bike bmx','bike cruiser','bike cross','bikes fat','bikes junior','bike frame','frames','build kit','group'];
-        const filtered = window.CL_LS.departments
-          .filter(d => !exclude.some(ex => d.name.toLowerCase().includes(ex)))
-          .sort((a, b) => a.name.localeCompare(b.name));
-        setDepts(filtered);
+      if (window.CL_LS?.departments?.length > 0) {
+        setDepts(window.CL_LS.departments
+          .filter(d => !EXCLUDE.some(ex => d.name.toLowerCase().includes(ex)))
+          .sort((a, b) => a.name.localeCompare(b.name)));
       }
     };
     load();
@@ -1472,22 +1496,19 @@ const PartsPage = () => {
     const cached = (window.CL_LS.products || []).filter(p =>
       (p.department || '').toLowerCase() === deptName.toLowerCase()
     );
-    if (cached.length > 0) {
-      setDeptItems(cached); setLoading(false);
-    } else {
-      const items = await window.lightspeedGetDept(deptName);
-      setDeptItems(items); setLoading(false);
-    }
+    if (cached.length > 0) { setDeptItems(cached); setLoading(false); }
+    else { const items = await window.lightspeedGetDept(deptName); setDeptItems(items); setLoading(false); }
   };
 
   const doSearch = (q) => {
     setSearch(q);
     if (q.length < 2) { setSearchRes(null); return; }
     const results = (window.lightspeedSearch && window.lightspeedSearch(q)) || [];
-    setSearchRes(results.slice(0, 48));
+    setSearchRes(results.filter(r => !EXCLUDE.some(ex => (r.department||'').toLowerCase().includes(ex))).slice(0, 48));
   };
 
-  const fallback = ['Brake pads','Cassette','Chains','Tubes','Tires 700C','Tires 29"','Tires 26"','Wheels','Shifters MTB','Derailleur Rear','Derailleur Front','Cranks','Bottom Brackets','Headsets','Handlebar','Stem','Saddles','Seat post','Grips','Bar tape','Forks','Rear Shock','Brake Lever U','Brake parts','Pumps','Lube','Tools','Locks','Lights','Computers','Bags','Packs','Helmet','Gloves','Clothing','Socks','Shoes Mountain','Shoes Road','Spokes','Rims','Hubs','Cables','Fenders','Tire Sealant'].map(n => ({ name: n, count: null }));
+  const POPULAR = ['Tires 29"','Tires 700C','Tires 26"','Brake pads','Chains','Cassette','Tubes','Helmets','Lights','Locks','Bags','Pumps'];
+  const fallback = ['Brake pads','Cassette','Chains','Tubes','Tires 700C','Tires 29"','Tires 26"','Wheels','Shifters MTB','Derailleur Rear','Derailleur Front','Cranks','Bottom Brackets','Headsets','Handlebar','Stem','Saddles','Seat post','Grips','Bar tape','Forks','Rear Shock','Pumps','Lube','Tools','Locks','Lights','Computers','Bags','Packs','Helmets','Gloves','Clothing','Socks','Shoes Mountain','Shoes Road','Spokes','Rims','Hubs','Cables','Fenders','Tire Sealant'].map(n => ({ name: n }));
   const displayDepts = depts.length > 0 ? depts : fallback;
 
   return (
@@ -1497,31 +1518,42 @@ const PartsPage = () => {
         <div className="container-wide">
 
           {/* Search */}
-          <div className="reveal" style={{ marginBottom:48 }}>
-            <div style={{ display:"flex", borderBottom:"2px solid var(--black)", maxWidth:560 }}>
-              <input type="text" placeholder="Search parts — cassettes, brake pads, chains..."
+          <div className="reveal" style={{ marginBottom:56 }}>
+            <div style={{ display:"flex", borderBottom:"2px solid var(--black)", maxWidth:600 }}>
+              <input type="text" placeholder="Search — cassettes, brake pads, Maxxis tires…"
                 value={search} onChange={e => doSearch(e.target.value)}
-                style={{ flex:1, padding:"14px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:16, background:"transparent" }} />
-              {search && <button onClick={() => { setSearch(''); setSearchRes(null); }}
-                style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-400)", letterSpacing:".1em" }}>CLEAR</button>}
+                style={{ flex:1, padding:"16px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:17, background:"transparent" }} />
+              {search
+                ? <button onClick={() => { setSearch(''); setSearchRes(null); }} style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", letterSpacing:".12em", background:"none", border:"none", cursor:"pointer" }}>CLEAR</button>
+                : <span style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-400)", letterSpacing:".1em", alignSelf:"center" }}>⌕</span>
+              }
             </div>
+
+            {/* Popular quick links */}
+            {!search && (
+              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginTop:16 }}>
+                {POPULAR.map(p => (
+                  <button key={p} data-cursor="link" onClick={() => { doSearch(p); setSearch(p); }}
+                    style={{ padding:"5px 12px", border:"1px solid var(--hairline)", background:"none", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", cursor:"pointer", color:"var(--gray-600)" }}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {searchRes && (
-              <div style={{ marginTop:16 }}>
+              <div style={{ marginTop:24 }}>
                 <p className="eyebrow" style={{ marginBottom:16 }}>{searchRes.length} results for &ldquo;{search}&rdquo;</p>
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:8 }}>
                   {searchRes.map((item, i) => (
-                    <div key={i} style={{ padding:"14px 16px", border:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-                      <div style={{ flex:1 }}>
+                    <div key={i} style={{ padding:"14px 16px", border:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:12 }}>
+                      <div style={{ flex:1, minWidth:0 }}>
                         <div style={{ fontFamily:"var(--display)", fontSize:12, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
-                        <div className="eyebrow" style={{ marginTop:3 }}>{item.department}</div>
+                        <div className="eyebrow" style={{ marginTop:3, color:"var(--gray-500)" }}>{item.department}</div>
                       </div>
-                      <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
-                        <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : 'POA'}</div>
-                        <button data-cursor="link"
-                          onClick={() => window.location.href = `mailto:bikes@chainline.ca?subject=Part Enquiry: ${encodeURIComponent(item.name)}&body=Hi, I'd like to purchase:%0A%0AItem: ${encodeURIComponent(item.name)}%0ASKU: ${encodeURIComponent(item.sku||'N/A')}%0APrice: $${item.price.toFixed(2)}%0A%0APlease confirm availability and payment.%0A%0AThanks`}
-                          style={{ padding:"6px 12px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor:"pointer" }}>
-                          Buy →
-                        </button>
+                      <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+                        {item.price > 0 && <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600 }}>${item.price.toFixed(2)}</div>}
+                        <PartCartBtn item={item} />
                       </div>
                     </div>
                   ))}
@@ -1533,47 +1565,41 @@ const PartsPage = () => {
           {/* Dept accordion */}
           {!searchRes && (
             <>
-              <div className="reveal section-label" style={{ marginBottom:24 }}>
-                Browse by Department {depts.length > 0 && <span style={{ opacity:.45 }}>· Live from Lightspeed</span>}
+              <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:24, borderBottom:"1px solid var(--hairline)", paddingBottom:12 }}>
+                <span className="section-label">Browse by Department</span>
+                {depts.length > 0 && <span className="eyebrow" style={{ opacity:.5 }}>Live · Lightspeed</span>}
               </div>
-              <div style={{ borderTop:"1px solid var(--hairline)" }}>
+              <div>
                 {displayDepts.map((dept, i) => (
                   <div key={i} className="reveal" style={{ borderBottom:"1px solid var(--hairline)" }}>
                     <button data-cursor="link" onClick={() => openDept(dept.name)}
-                      style={{ width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", padding:"18px 0", cursor:"pointer" }}>
-                      <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-                        <span style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.8vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{dept.name}</span>
-                        {dept.count && <span className="eyebrow">{dept.count} items</span>}
-                      </div>
-                      <span style={{ fontFamily:"var(--mono)", fontSize:18, color:"var(--gray-400)", transform: activeDept===dept.name ? "rotate(45deg)" : "none", transition:"transform .2s", display:"inline-block" }}>+</span>
+                      style={{ width:"100%", display:"flex", justifyContent:"space-between", alignItems:"center", padding:"20px 0", cursor:"pointer", background:"none", border:"none", textAlign:"left" }}>
+                      <span style={{ fontFamily:"var(--display)", fontSize:"clamp(14px,1.7vw,19px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{dept.name}</span>
+                      <span style={{ fontFamily:"var(--mono)", fontSize:20, color:"var(--gray-400)", transform: activeDept===dept.name ? "rotate(45deg)" : "none", transition:"transform .25s", display:"inline-block", lineHeight:1 }}>+</span>
                     </button>
                     {activeDept === dept.name && (
-                      <div style={{ paddingBottom:20 }}>
+                      <div style={{ paddingBottom:24 }}>
                         {loading ? (
-                          <p className="eyebrow" style={{ padding:"12px 0" }}>Loading {dept.name}…</p>
+                          <p className="eyebrow" style={{ padding:"16px 0", color:"var(--gray-500)" }}>Loading…</p>
                         ) : deptItems.length === 0 ? (
-                          <p style={{ fontSize:14, color:"var(--gray-500)" }}>No items currently listed — contact us for stock.</p>
+                          <p style={{ fontSize:14, color:"var(--gray-500)", padding:"8px 0" }}>No items currently listed — contact us for stock.</p>
                         ) : (
                           <>
-                            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:6 }}>
-                              {deptItems.slice(0,60).map((item, j) => (
-                                <div key={j} style={{ padding:"12px 14px", background:"var(--paper)", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, flexWrap:"wrap" }}>
+                            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:6 }}>
+                              {deptItems.slice(0,80).map((item, j) => (
+                                <div key={j} style={{ padding:"13px 15px", background:"var(--paper)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:10 }}>
                                   <div style={{ flex:1, minWidth:0 }}>
-                                    <div style={{ fontFamily:"var(--display)", fontSize:11, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.3 }}>{item.name}</div>
+                                    <div style={{ fontFamily:"var(--display)", fontSize:11, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", lineHeight:1.35 }}>{item.name}</div>
                                     {item.sku && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", marginTop:2 }}>SKU {item.sku}</div>}
                                   </div>
-                                  <div style={{ display:"flex", alignItems:"center", gap:8, flexShrink:0 }}>
-                                    <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600 }}>{item.price > 0 ? `$${item.price.toFixed(2)}` : ''}</div>
-                                    <button data-cursor="link"
-                                      onClick={() => window.location.href = `mailto:bikes@chainline.ca?subject=Part Enquiry: ${encodeURIComponent(item.name)}&body=Hi, I'd like to purchase the following:%0A%0AItem: ${encodeURIComponent(item.name)}%0ASKU: ${encodeURIComponent(item.sku||'N/A')}%0APrice: $${item.price.toFixed(2)}%0A%0APlease let me know availability and how to pay.%0A%0AThanks`}
-                                      style={{ padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap" }}>
-                                      Buy →
-                                    </button>
+                                  <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+                                    {item.price > 0 && <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600 }}>${item.price.toFixed(2)}</div>}
+                                    <PartCartBtn item={item} />
                                   </div>
                                 </div>
                               ))}
                             </div>
-                            {deptItems.length > 60 && <p style={{ marginTop:10, fontSize:11, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".1em", textTransform:"uppercase" }}>Showing 60 of {deptItems.length} — visit or call for full list</p>}
+                            {deptItems.length > 80 && <p style={{ marginTop:10, fontSize:11, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".1em", textTransform:"uppercase" }}>Showing 80 of {deptItems.length} — visit or call for full list</p>}
                           </>
                         )}
                       </div>
