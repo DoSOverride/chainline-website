@@ -97,14 +97,10 @@ const Hero = ({ variant }) => {
 
 // Featured bikes — sourced from real ChainLine inventory
 const FEATURED_BIKES = [
-  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"badge":"PRO","img":"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg","handle":"transition-sentinel"},
-  {"brand":"Pivot","name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"badge":"PRO","img":"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
-  {"brand":"Surly","name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"badge":null,"img":"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946","handle":"surly-bridge-club"},
-  {"brand":"Marin","name":"Gestalt 2","type":"Gravel","rawType":"Gravel Bike","price":2000,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_GESTALT_2_BLACK_SIDE_grande.png?v=1753870775","handle":"marin-gestalt-2"},
-  {"brand":"Marin","name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
-  {"brand":"Marin","name":"Stinson E","type":"E-Bike","rawType":"Electric Bike","price":2100,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_BLACK_SIDE_1_grande.png?v=1753862906","handle":"marin-stinson-e"},
-  {"brand":"Marin","name":"Four Corners 1","type":"Touring","rawType":"Touring Bike","price":1600,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_FOUR_CORNERS_1_BLACK_SIDE_grande.png?v=1753786228","handle":"marin-four-corners-1"},
-  {"brand":"Transition","name":"Spire Carbon Eagle 90","type":"Mountain","rawType":"Mountain Bike","price":9700,"badge":"PRO","img":"https://www.transitionbikes.com/images/MainLandingImage_Spire2020_V2.jpg","handle":"transition-spire-carbon-eagle-90"}
+  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-Senti-Carbon-GlacierWhite.avif","handle":"transition-sentinel"},
+  {"brand":"Pivot",     "name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"badge":"PRO","img":"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/switchblade-v6-bitw-nz-pivotcycles-030_3158889ca","handle":"pivot-switchblade-ride-eagle-70-90"},
+  {"brand":"Transition","name":"Regulator CX Eagle 90","type":"E-Bike","rawType":"Electric Bike","price":13000,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif","handle":"transition-regulator-cx-eagle-90"},
+  {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
 ];
 
 // Full catalog — used by Shop page
