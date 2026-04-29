@@ -74,10 +74,20 @@ const App = () => {
   // Routing — supports optional filter intent: cl.go("shop", { type: "Mountain" })
   React.useEffect(() => {
     window.cl = window.cl || {};
+    window.cl.history = window.cl.history || [];
     window.cl.go = (p, intent) => {
+      const cur = window.cl.currentPage;
+      if (cur && cur !== p) window.cl.history.push({ page: cur, intent: window.cl.intent });
+      if (window.cl.history.length > 20) window.cl.history.shift();
+      window.cl.currentPage = p;
       window.cl.intent = intent || null;
       setPage(p);
       window.scrollTo({ top: 0, behavior: "auto" });
+    };
+    window.cl.back = () => {
+      const prev = window.cl.history.pop();
+      if (prev) window.cl.go(prev.page, prev.intent);
+      else window.cl.go("shop");
     };
   }, []);
 

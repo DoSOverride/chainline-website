@@ -99,37 +99,62 @@ const getBikeDescription = (b) => {
 
 // ── Bike Detail Page ──────────────────────────────────────────
 const BikePage = ({ bike, onBack, onCart }) => {
-  const [selectedSize, setSelectedSize] = React.useState(null);
+  const variants   = bike?.variants || [];
+  const inStockV   = variants.filter(v => v.inStock);
+  const hasWheels  = [...new Set(variants.map(v=>v.wheel).filter(Boolean))].length > 1;
+  const hasColors  = [...new Set(variants.map(v=>v.color).filter(Boolean))].length > 1;
+  const hasSizes   = [...new Set(variants.map(v=>v.size).filter(Boolean))].length > 1;
+  const defV = inStockV[0] || variants[0];
+
+  const [selWheel, setWheel] = React.useState(defV?.wheel || null);
+  const [selColor, setColor] = React.useState(defV?.color || null);
+  const [selSize,  setSize]  = React.useState(defV?.size  || null);
+  const [adding, setAdding]  = React.useState(false);
+  const [added,  setAdded]   = React.useState(false);
+
   React.useEffect(() => {
-    if (bike?.sizes) setSelectedSize(bike.sizes.find(sz=>sz.inStock) || bike.sizes[0] || null);
-    else setSelectedSize(null);
+    const d = (bike?.variants||[]).filter(v=>v.inStock)[0] || (bike?.variants||[])[0];
+    setWheel(d?.wheel||null); setColor(d?.color||null); setSize(d?.size||null);
   }, [bike?.handle]);
-  const [adding, setAdding] = React.useState(false);
-  const [added, setAdded]   = React.useState(false);
 
   const b = bike || {};
   const specs = getBikeSpecs(b);
   const desc  = getBikeDescription(b);
   const data  = getBikeData(b);
-  // Collect all images: resolved image + any extras from CSV
+
+  const selected = variants.find(v =>
+    (!hasWheels || v.wheel === selWheel) &&
+    (!hasColors || v.color === selColor) &&
+    (!hasSizes  || v.size  === selSize)
+  ) || defV;
+
+  const availColors = (w) => [...new Set(variants.filter(v => !hasWheels||v.wheel===w).map(v=>v.color).filter(Boolean))];
+  const availSizes  = (w,c) => [...new Set(variants.filter(v=>(!hasWheels||v.wheel===w)&&(!hasColors||v.color===c)).map(v=>v.size).filter(Boolean))];
+  const wheels = [...new Set(variants.map(v=>v.wheel).filter(Boolean))];
   const allImgs = (() => {
-    const resolved = resolveImage(b);
-    const imgs = [];
-    if (resolved) imgs.push(resolved);
+    const resolved = resolveImage(selected ? {...b, sku: selected.sku} : b) || resolveImage(b);
+    const imgs = resolved ? [resolved] : [];
     (data.images || []).forEach(u => { if (u && !imgs.includes(u)) imgs.push(u); });
     return imgs;
   })();
   const [activeImg, setActiveImg] = React.useState(0);
+  React.useEffect(() => setActiveImg(0), [selected?.sku]);
+
+  const selInStock = selected ? selected.inStock : b.inStock !== false;
+  const selPrice   = selected?.price || b.price || 0;
+  const selSku     = selected?.sku || b.sku;
 
   const handleAdd = async () => {
     setAdding(true);
     try {
-      await window.clAddToCart(b.handle, b.name || b.title, b.price, resolveImage(b), b.sku);
+      await window.clAddToCart(selSku, b.name || b.title, selPrice, allImgs[0], selSku);
       setAdded(true);
       setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
     } catch(e) { console.warn(e); }
     setAdding(false);
   };
+
+  const goBack = () => { if (window.cl?.back) window.cl.back(); else if (onBack) onBack(); };
 
   if (!bike) return (
     <div className="page-fade" style={{ paddingTop: 160, textAlign: 'center' }}>
@@ -141,10 +166,10 @@ const BikePage = ({ bike, onBack, onCart }) => {
   return (
     <div className="page-fade bike-page">
       {/* Back */}
-      <div style={{ position: 'sticky', top: 78, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '14px 0' }}>
+      <div style={{ position: 'sticky', top: 64, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '12px 0' }}>
         <div className="container-wide" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button onClick={onBack} data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
-            ← Back to Shop
+          <button onClick={goBack} data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8, background:'none', border:'none', cursor:'pointer' }}>
+            ← Back
           </button>
           <span style={{ color: 'var(--hairline)', fontSize: 20 }}>|</span>
           <span className="eyebrow">{b.brand || b.vendor}  ·  {b.type}</span>
@@ -184,45 +209,67 @@ const BikePage = ({ bike, onBack, onCart }) => {
           <div className="eyebrow reveal" style={{ marginBottom: 12 }}>{b.brand || b.vendor}</div>
           <h1 className="display-l reveal" style={{ marginBottom: 8 }}>{b.name || b.title}</h1>
           <div className="reveal" style={{ fontFamily: 'var(--display)', fontSize: 'clamp(24px,3vw,36px)', fontWeight: 500, marginBottom: 16 }}>
-            ${(b.price || 0).toLocaleString()} CAD
+            ${selPrice.toLocaleString()} CAD
           </div>
 
           {/* Live stock status */}
-          <div className="reveal" style={{ display:'flex', alignItems:'center', gap:10, marginBottom:28, padding:'10px 16px', background: b.inStock !== false ? 'rgba(22,163,74,0.06)' : 'var(--gray-100)', border:'1px solid ' + (b.inStock !== false ? 'rgba(22,163,74,0.25)' : 'var(--hairline)'), borderRadius:2 }}>
-            {b.inStock !== false ? (
-              <>
-                <span className="stock-dot stock-dot-lg" />
-                <span style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'#16a34a', fontWeight:500 }}>In Stock — Ready to ride</span>
-              </>
+          <div className="reveal" style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20, padding:'10px 16px', background: selInStock ? 'rgba(22,163,74,0.06)' : 'var(--gray-100)', border:'1px solid ' + (selInStock ? 'rgba(22,163,74,0.25)' : 'var(--hairline)'), borderRadius:2 }}>
+            {selInStock ? (
+              <><span className="stock-dot stock-dot-lg" /><span style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'#16a34a', fontWeight:500 }}>In Stock — Ready to ride</span></>
             ) : (
-              <>
-                <span style={{ width:10, height:10, borderRadius:'50%', background:'var(--gray-400)', display:'inline-block', flexShrink:0 }} />
-                <span style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-500)' }}>Available by Special Order — contact us</span>
-              </>
+              <><span style={{ width:10, height:10, borderRadius:'50%', background:'var(--gray-400)', display:'inline-block', flexShrink:0 }} /><span style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-500)' }}>Special Order — contact us</span></>
             )}
           </div>
 
-          {/* Size selector */}
-          {b.sizes && b.sizes.length > 0 && (
-            <div className="reveal" style={{ marginBottom:28 }}>
-              <div className="eyebrow" style={{ marginBottom:12 }}>Choose Size</div>
-              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-                {b.sizes.map((sz, i) => (
-                  <button key={i} onClick={() => setSelectedSize(sz)} data-cursor="link"
-                    style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase',
-                      border:'1.5px solid ' + (selectedSize?.variant === sz.variant ? 'var(--black)' : sz.inStock ? 'rgba(22,163,74,0.4)' : 'var(--hairline)'),
-                      background: selectedSize?.variant === sz.variant ? 'var(--black)' : 'transparent',
-                      color: selectedSize?.variant === sz.variant ? 'var(--white)' : sz.inStock ? '#16a34a' : 'var(--gray-400)',
-                      cursor:'pointer', transition:'all .2s' }}>
-                    {sz.variant}
-                  </button>
-                ))}
-              </div>
-              {selectedSize && (
-                <div style={{ marginTop:10, display:'flex', alignItems:'center', gap:8 }}>
-                  {selectedSize.inStock
-                    ? <><span className="stock-dot" /><span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', color:'#16a34a' }}>{selectedSize.variant} · In Stock</span></>
-                    : <span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--gray-500)' }}>{selectedSize.variant} · Contact us to order</span>}
+          {/* Variant selectors */}
+          {variants.length > 1 && (
+            <div className="reveal" style={{ marginBottom:24 }}>
+              {hasWheels && (
+                <div style={{ marginBottom:14 }}>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Wheel Size</div>
+                  <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                    {wheels.map(w => {
+                      const active = selWheel===w;
+                      const avail = variants.some(v=>v.wheel===w&&v.inStock);
+                      return <button key={w} onClick={() => { setWheel(w); const nc=availColors(w)[0]||null; setColor(nc); setSize(availSizes(w,nc)[0]||null); }} data-cursor="link"
+                        style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase', cursor:'pointer', transition:'all .2s',
+                          border:'1.5px solid '+(active?'var(--black)':avail?'rgba(22,163,74,0.4)':'var(--hairline)'),
+                          background:active?'var(--black)':'transparent',
+                          color:active?'var(--white)':avail?'#16a34a':'var(--gray-400)', opacity:avail?1:0.5 }}>{w}</button>;
+                    })}
+                  </div>
+                </div>
+              )}
+              {hasColors && (
+                <div style={{ marginBottom:14 }}>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Colour</div>
+                  <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                    {availColors(selWheel).map(c => {
+                      const active = selColor===c;
+                      const avail = variants.some(v=>(!hasWheels||v.wheel===selWheel)&&v.color===c&&v.inStock);
+                      return <button key={c} onClick={() => { setColor(c); setSize(availSizes(selWheel,c)[0]||null); }} data-cursor="link"
+                        style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase', cursor:'pointer', transition:'all .2s',
+                          border:'1.5px solid '+(active?'var(--black)':avail?'rgba(22,163,74,0.4)':'var(--hairline)'),
+                          background:active?'var(--black)':'transparent',
+                          color:active?'var(--white)':avail?'#16a34a':'var(--gray-400)', opacity:avail?1:0.5 }}>{c}</button>;
+                    })}
+                  </div>
+                </div>
+              )}
+              {hasSizes && (
+                <div style={{ marginBottom:14 }}>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Frame Size</div>
+                  <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                    {availSizes(selWheel,selColor).map(sz => {
+                      const active = selSize===sz;
+                      const avail = variants.some(v=>(!hasWheels||v.wheel===selWheel)&&(!hasColors||v.color===selColor)&&v.size===sz&&v.inStock);
+                      return <button key={sz} onClick={() => setSize(sz)} data-cursor="link"
+                        style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase', cursor:'pointer', transition:'all .2s',
+                          border:'1.5px solid '+(active?'var(--black)':avail?'rgba(22,163,74,0.4)':'var(--hairline)'),
+                          background:active?'var(--black)':'transparent',
+                          color:active?'var(--white)':avail?'#16a34a':'var(--gray-400)', opacity:avail?1:0.5 }}>{sz}</button>;
+                    })}
+                  </div>
                 </div>
               )}
             </div>
