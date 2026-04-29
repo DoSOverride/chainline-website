@@ -126,7 +126,8 @@
 
 /* Bike images — keep as-is (white bg bikes look fine on dark paper background) */
 [data-theme="dark"] img.bike-img {
-  mix-blend-mode: normal;
+  mix-blend-mode: normal !important;
+  filter: none !important;
 }
 
 /* Buttons on light-bg sections in dark mode */
