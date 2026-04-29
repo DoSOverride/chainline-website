@@ -97,7 +97,7 @@ const Hero = ({ variant }) => {
 
 // Featured bikes — sourced from real ChainLine inventory
 const FEATURED_BIKES = [
-  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-Senti-Carbon-GlacierWhite.avif","handle":"transition-sentinel"},
+  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-Senti-XT-DersertDusk-Side.avif","handle":"transition-sentinel"},
   {"brand":"Pivot",     "name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"badge":"PRO","img":"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/switchblade-v6-bitw-nz-pivotcycles-030_3158889ca","handle":"pivot-switchblade-ride-eagle-70-90"},
   {"brand":"Transition","name":"Regulator CX Eagle 90","type":"E-Bike","rawType":"Electric Bike","price":13000,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif","handle":"transition-regulator-cx-eagle-90"},
   {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
