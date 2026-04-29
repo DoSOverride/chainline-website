@@ -1293,7 +1293,9 @@ img {
 
   /* ── Home grids ── */
   .home-featured-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
-  .home-stats-grid    { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+  .home-stats-grid    { grid-template-columns: repeat(3, 1fr) !important; gap: 16px !important; }
+  .home-stats-grid > *:nth-child(4) { grid-column: 1; }
+  .home-stats-grid > *:nth-child(5) { grid-column: 2; }
   .home-brands-grid   { grid-template-columns: repeat(3, 1fr) !important; }
   .home-services-grid { grid-template-columns: 1fr !important; }
   .home-2col          { grid-template-columns: 1fr !important; gap: 40px !important; }
@@ -1328,7 +1330,7 @@ img {
   .container, .container-wide, .container-narrow { padding: 0 14px; }
 
   /* Stats bar: stack to single column on phones */
-  .home-stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .home-stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
 
   /* Brands grid: 3 across still looks OK, tighten text */
   .brand-tile { font-size: 11px !important; }
