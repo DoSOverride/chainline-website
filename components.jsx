@@ -94,9 +94,9 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
             </div>
             <button className="nav-utility-btn" data-cursor="link" onClick={onCart}>
               <span className="nav-utility-text">Cart</span>
-              <span className="cart-count"><span>{cartCount}</span></span>
+              <CartIcon count={cartCount} />
             </button>
-            <button className="menu-toggle" data-cursor="link" onClick={onMobile}>
+            <button className="menu-toggle" data-cursor="link" onClick={onMobile} style={{ marginRight: 20 }}>
               <span/><span/><span/>
             </button>
           </div>
@@ -117,6 +117,21 @@ const AccountIcon = () => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
     <circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/>
   </svg>
+);
+
+const CartIcon = ({ count }) => (
+  <div style={{ position:"relative", display:"inline-flex", alignItems:"center" }}>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+    {count > 0 && (
+      <span style={{ position:"absolute", top:-5, right:-6, background:"var(--black)", color:"var(--white)", width:13, height:13, borderRadius:"50%", fontSize:7, fontFamily:"var(--mono)", fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", lineHeight:1 }}>
+        {count}
+      </span>
+    )}
+  </div>
 );
 
 const MoonIcon = () => (
