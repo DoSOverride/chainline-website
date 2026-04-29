@@ -29,72 +29,119 @@
   --grain-opacity: 0.04;
 }
 
-/* ── Dark mode ── */
+/* ── Dark mode root variables ── */
 [data-theme="dark"] {
   color-scheme: dark;
-  --black: #f2f2f0;
-  --near-black: #e2e2e0;
-  --soft-black: #c8c8c6;
-  --white: #0d0d0d;
-  --paper: #161616;
-  --gray-100: #202020;
-  --gray-200: #2a2a2a;
-  --gray-300: #484846;
-  --gray-400: #6a6a68;
-  --gray-500: #909090;
-  --gray-600: #b2b2b0;
-  --hairline: rgba(255,255,255,0.08);
-  --hairline-light: rgba(255,255,255,0.06);
-  --stock-green: #22c55e;
+  --black:        #f0f0ee;
+  --near-black:   #e0e0de;
+  --soft-black:   #c4c4c2;
+  --white:        #111111;
+  --paper:        #191919;
+  --gray-100:     #242424;
+  --gray-200:     #2e2e2e;
+  --gray-300:     #484846;
+  --gray-400:     #6a6a68;
+  --gray-500:     #949490;
+  --gray-600:     #b8b8b4;
+  --hairline:     rgba(255,255,255,0.09);
+  --hairline-light: rgba(255,255,255,0.07);
+  --stock-green:  #22c55e;
 }
 
-/* bg- sections — keep correct contrast in dark mode */
-[data-theme="dark"] .bg-black { background: #181818 !important; color: #f2f2f0 !important; }
-[data-theme="dark"] .bg-paper { background: var(--paper) !important; }
-[data-theme="dark"] .bg-white { background: var(--white) !important; }
+/* ── Always-dark sections: lock to light-mode palette ──
+   These sections (hero, bg-black, sub-hero) always have dark backgrounds.
+   We override their local variables so var(--white) stays #fafafa
+   and text/buttons render correctly regardless of the root theme. */
+.hero-section,
+.bg-black,
+.mobile-nav {
+  --black:        #0a0a0a;
+  --near-black:   #141414;
+  --white:        #fafafa;
+  --paper:        #f4f3f0;
+  --gray-100:     #ececea;
+  --gray-200:     #d8d6d2;
+  --gray-300:     #b8b5b0;
+  --gray-400:     #8a8782;
+  --gray-500:     #5c5a55;
+  --gray-600:     #3a3835;
+  --hairline:     rgba(10,10,10,0.14);
+  --hairline-light: rgba(250,250,250,0.18);
+  --stock-green:  #16a34a;
+}
 
-/* Header — pinned dark with explicit light text */
+/* ── Dark mode component overrides ── */
+
+/* Header */
 [data-theme="dark"] .header,
 [data-theme="dark"] .header.solid,
 [data-theme="dark"] .header.light {
-  background: rgba(10,10,10,0.97) !important;
-  color: #f2f2f0 !important;
+  background: rgba(14,14,14,0.97) !important;
   border-bottom-color: rgba(255,255,255,0.08) !important;
 }
 
-/* Announce bar */
-[data-theme="dark"] .announce { background: #0a0a0a !important; color: #f2f2f0 !important; border-bottom-color: rgba(255,255,255,0.06) !important; }
-
-/* Mobile nav */
-[data-theme="dark"] .mobile-nav { background: #080808 !important; }
+/* Announce + contact bar */
+[data-theme="dark"] .announce {
+  background: #0a0a0a !important;
+  color: #f0f0ee !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
+}
 
 /* Mega menu */
-[data-theme="dark"] .mega { background: rgba(10,10,10,0.99) !important; border-color: rgba(255,255,255,0.08) !important; }
+[data-theme="dark"] .mega {
+  background: rgba(12,12,12,0.99) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+}
+[data-theme="dark"] .mega h4 { color: rgba(255,255,255,0.4) !important; }
+[data-theme="dark"] .mega a  { color: rgba(255,255,255,0.75) !important; }
+[data-theme="dark"] .mega a:hover { color: #ffffff !important; }
 
 /* Cart drawer */
-[data-theme="dark"] .drawer { background: #161616 !important; }
+[data-theme="dark"] .drawer { background: #181818 !important; }
 
-/* Footer — pinned true dark */
-[data-theme="dark"] .footer { background: #080808 !important; color: #f2f2f0 !important; }
-[data-theme="dark"] .footer-massive { color: #f2f2f0 !important; }
-[data-theme="dark"] .footer-col h4 { color: var(--gray-500) !important; }
-[data-theme="dark"] .hr-light { border-top-color: rgba(255,255,255,0.1) !important; }
+/* Footer */
+[data-theme="dark"] .footer       { background: #0a0a0a !important; color: #f0f0ee !important; }
+[data-theme="dark"] .footer-massive { color: #f0f0ee !important; }
+[data-theme="dark"] .footer-col h4  { color: rgba(255,255,255,0.35) !important; }
+[data-theme="dark"] .hr-light       { border-top-color: rgba(255,255,255,0.09) !important; }
 
-/* Logo */
+/* Logo — invert to show on dark header */
 [data-theme="dark"] img[src*="logo-dark"] { filter: invert(1); }
 
+/* Placeholder boxes */
+[data-theme="dark"] .ph { background: var(--gray-100) !important; }
+[data-theme="dark"] .ph-label { color: var(--gray-400) !important; }
+
 /* Forms */
-[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
   background: var(--gray-100) !important;
   color: var(--black) !important;
   border-color: var(--gray-200) !important;
 }
 
-/* Bike product images — smart invert: white bg → dark, colors roughly preserved */
+/* Pill / tag chips */
+[data-theme="dark"] .pill { background: var(--gray-100) !important; border-color: var(--gray-200) !important; }
+
+/* Bike images — keep as-is (white bg bikes look fine on dark paper background) */
 [data-theme="dark"] img.bike-img {
-  filter: invert(1) hue-rotate(180deg);
   mix-blend-mode: normal;
 }
+
+/* Buttons on light-bg sections in dark mode */
+[data-theme="dark"] .btn-outline {
+  border-color: var(--black);
+  color: var(--black);
+}
+[data-theme="dark"] .btn-outline::before { background: var(--black); }
+[data-theme="dark"] .btn-outline:hover { color: var(--white); }
+
+/* Sub-hero (always dark bg) */
+[data-theme="dark"] .sub-hero-title { color: #f0f0ee !important; }
+
+/* eyebrow-light always on dark bg — keep visible */
+.eyebrow-light { color: rgba(255,255,255,0.45); }
 
 
 /* ── Blinking stock indicator ── */
