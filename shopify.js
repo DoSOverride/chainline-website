@@ -7,9 +7,17 @@ window.CL_SHOP = {
 // ── Fetch products from public JSON endpoint ──────────────────
 window.shopifyGetProducts = async function() {
   try {
-    const res = await fetch(`https://${window.CL_SHOP.domain}/products.json?limit=250`);
-    const json = await res.json();
-    return json.products.map(p => ({
+    const results = [];
+    let page = 1;
+    while (true) {
+      const res = await fetch(`https://${window.CL_SHOP.domain}/products.json?limit=250&page=${page}`);
+      const { products } = await res.json();
+      if (!products || products.length === 0) break;
+      results.push(...products);
+      if (products.length < 250) break;
+      page++;
+    }
+    return results.map(p => ({
       id:        p.id,
       title:     p.title,
       handle:    p.handle,
@@ -21,6 +29,13 @@ window.shopifyGetProducts = async function() {
       variantId: p.variants[0]?.id || null,
       sku:       p.variants[0]?.sku || '',
       available: p.variants[0]?.available || false,
+      variants:  p.variants.map(v => ({
+        id:        v.id,
+        sku:       v.sku,
+        title:     v.title,
+        price:     parseFloat(v.price || 0),
+        available: v.available,
+      })),
     }));
   } catch(e) {
     console.warn('[ChainLine] Could not fetch products:', e.message);
@@ -69,23 +84,30 @@ window.shopifyCart = {
 };
 
 // ── Add to cart by handle ─────────────────────────────────────
-window.clAddToCart = async function(handle, name, price, image) {
-  // Look up variantId from fetched products
-  const products = window.CL_SHOP.products || [];
+window.clAddToCart = async function(handle, name, price, image, sku) {
+  const products    = window.CL_SHOP.products    || [];
+  const variantMap  = window.CL_SHOP.skuVariantMap || {};
+
+  // 1. SKU direct lookup (most reliable for Lightspeed bikes)
+  if (sku && variantMap[sku]) {
+    const variantId = variantMap[sku];
+    window.shopifyCart.add(variantId, name, price, image);
+    return { variantId, name, price, image };
+  }
+
+  // 2. Handle or title match
   const match = products.find(p =>
     p.handle === handle ||
     p.title.toLowerCase() === (name || '').toLowerCase()
   );
-
-  if (!match || !match.variantId) {
-    console.warn('[ChainLine] Product not found in Shopify:', handle || name);
-    // Still add to cart with a placeholder so UX works
-    window.shopifyCart.add('unknown-' + Date.now(), name || handle, price || 0, image);
-    return;
+  if (match?.variantId) {
+    window.shopifyCart.add(match.variantId, match.title, match.price, match.image);
+    return match;
   }
 
-  window.shopifyCart.add(match.variantId, match.title, match.price, match.image);
-  return match;
+  // 3. Not in Shopify — can't checkout, warn clearly
+  console.warn('[ChainLine] Product not in Shopify, cannot checkout:', sku || handle || name);
+  return null;
 };
 
 // ── Init ──────────────────────────────────────────────────────
@@ -94,18 +116,23 @@ window.shopifyReady = (async () => {
     const products = await window.shopifyGetProducts();
     window.CL_SHOP.products = products;
 
-    // Build image lookup maps: by SKU and by normalized title
-    const skuMap   = {};
-    const titleMap = {};
+    // Build lookup maps: image by SKU/title, variantId by SKU
+    const skuMap     = {};
+    const titleMap   = {};
+    const variantMap = {};
     const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     products.forEach(p => {
-      if (p.image) {
-        if (p.sku)   skuMap[p.sku]       = p.image;
-        if (p.title) titleMap[norm(p.title)] = p.image;
-      }
+      if (p.title) titleMap[norm(p.title)] = p.image;
+      (p.variants || []).forEach(v => {
+        if (v.sku) {
+          variantMap[v.sku] = v.id;
+          if (p.image && !skuMap[v.sku]) skuMap[v.sku] = p.image;
+        }
+      });
     });
     window.CL_SHOP.skuImageMap   = skuMap;
     window.CL_SHOP.titleImageMap = titleMap;
+    window.CL_SHOP.skuVariantMap = variantMap;
 
     const count = window.shopifyCart.count();
     if (count > 0) {
