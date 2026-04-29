@@ -1242,67 +1242,45 @@ const FAQs = () => {
 const AboutPage = () => (
   <div className="page-fade" data-screen-label="P05 About">
     <SubHero eyebrow="About  /  N°01" title="We're ChainLine." italic="Kelowna's bike shop. Since 2009." />
+
+    {/* Story */}
     <section className="section section-pad bg-paper">
       <div className="container-narrow">
-        <blockquote className="reveal serif-italic" style={{ fontSize: "clamp(36px, 5vw, 72px)", lineHeight: 1.15, margin: 0, textAlign: "center", padding: "40px 0", borderTop: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)" }}>
-          "We sell bikes we believe in,<br/>to riders we respect."
+        <blockquote className="reveal serif-italic" style={{ fontSize: "clamp(28px, 4.5vw, 64px)", lineHeight: 1.15, margin: 0, textAlign: "center", padding: "40px 0", borderTop: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)" }}>
+          "Built for Kelowna.<br/>Backed by Canada."
         </blockquote>
-        <div style={{ marginTop: 80, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
-          <div className="reveal">
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--gray-600)" }}>
-              <span className="serif-italic" style={{ fontSize: 64, float: "left", lineHeight: 0.8, paddingRight: 12, paddingTop: 8 }}>I</span>n the autumn of 2009, two friends with an unreasonable number of bikes between them rented a 900-square-foot space on Highway 97 and called it ChainLine. The idea was simple: build the kind of shop they'd want to walk into. Honest advice. Brands they ride. Mechanics who care.
-            </p>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--gray-600)", marginTop: 20 }}>
-              Fifteen years on, we've moved twice, doubled the floor, tripled the staff, and held the line on the part that mattered. We still ride every brand we sell. We still answer our own phone. We still believe Kelowna deserves a better bike shop.
-            </p>
-          </div>
-          <div className="reveal reveal-d-2 ph ph-light ph-corners" style={{ aspectRatio: "4/5" }}><span className="ph-label">FOUNDERS  /  SHOP DAY ONE  /  4:5</span></div>
+        <div className="reveal" style={{ marginTop: 72 }}>
+          <p style={{ fontSize: 17, lineHeight: 1.75, color: "var(--gray-600)" }}>
+            <span className="serif-italic" style={{ fontSize: 64, float: "left", lineHeight: 0.8, paddingRight: 12, paddingTop: 8 }}>I</span>n the autumn of 2009, two friends with an unreasonable number of bikes between them rented a small space in Kelowna and called it ChainLine. The idea was simple: build the kind of shop they'd want to walk into. Honest advice. Brands they ride. Mechanics who care.
+          </p>
+          <p style={{ fontSize: 17, lineHeight: 1.75, color: "var(--gray-600)", marginTop: 24 }}>
+            Fifteen years on, we've grown the floor, grown the team, and held the line on what matters. We still ride every brand we sell. We still answer our own phone. We still believe Kelowna deserves a better bike shop — and we're still here to prove it.
+          </p>
+          <p style={{ fontSize: 17, lineHeight: 1.75, color: "var(--gray-600)", marginTop: 24 }}>
+            We're an authorized dealer for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots, Knolly, and Revel. Every bike on our floor has been ridden by someone on our team. We provide full-service repairs on all makes and models, and we back every purchase with complimentary assembly, tubeless setup, and a 30-day tune.
+          </p>
         </div>
       </div>
     </section>
 
+    {/* Timeline */}
     <section className="section section-pad bg-white">
       <div className="container-wide">
-        <div className="reveal section-label">Timeline</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", borderTop: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)" }}>
+        <div className="reveal section-label">Our Story</div>
+        <div style={{ borderTop: "1px solid var(--hairline)" }}>
           {[
-            ["2009", "Founded in Kelowna"],
-            ["2011", "First Transition dealer in BC interior"],
-            ["2014", "Expanded service department"],
-            ["2017", "Moved to current location"],
-            ["2020", "Launched online store"],
-            ["2024", "15 years of local riding"],
-          ].map(([y, t], i) => (
-            <div key={y} style={{ padding: "40px 24px 40px 0", borderRight: i < 5 ? "1px solid var(--hairline)" : "none" }}>
-              <div style={{ fontFamily: "var(--display)", fontSize: 36, fontWeight: 500, marginBottom: 12, letterSpacing: "-.02em" }}>{y}</div>
-              <div className="eyebrow" style={{ lineHeight: 1.5 }}>{t}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section className="section section-pad bg-paper" data-screen-label="P05 Team">
-      <div className="container-wide">
-        <div className="reveal section-label">Meet the Team</div>
-        <h2 className="display-xl reveal" style={{ marginBottom: 64 }}>The people<br/><span className="serif-italic">behind the bench.</span></h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
-          {[
-            { name: "Mara K.", role: "Co-founder / Buyer", trail: "Knox Antenna", bike: "Moots Routt YBB" },
-            { name: "Devon J.", role: "Co-founder / Master Tech", trail: "Black Mountain", bike: "Transition Patrol" },
-            { name: "Priya S.", role: "Lead Fitter", trail: "Crawford", bike: "Bianchi Specialissima" },
-            { name: "Tomás R.", role: "Wheelbuilder", trail: "Smith Creek", bike: "Surly Midnight Special" },
-            { name: "Hannah L.", role: "Service Manager", trail: "Bear Creek", bike: "Marin Rift Zone" },
-            { name: "Ben O.", role: "Sales Lead", trail: "Myra", bike: "Salsa Cutthroat" },
-            { name: "Jen W.", role: "Apparel Buyer", trail: "Mission Creek", bike: "Pivot Switchblade" },
-            { name: "Cole P.", role: "Apprentice Tech", trail: "Rose Valley", bike: "Marin Headlands" },
-          ].map((p, i) => (
-            <div key={i} className={"reveal reveal-d-" + (i % 4 + 1)}>
-              <div className="ph ph-light ph-corners" style={{ aspectRatio: "4/5", marginBottom: 16 }}><span className="ph-label">PORTRAIT  /  B&W</span></div>
-              <div className="display-s" style={{ marginBottom: 4 }}>{p.name}</div>
-              <div className="eyebrow" style={{ marginBottom: 8 }}>{p.role}</div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gray-500)", lineHeight: 1.7 }}>
-                Trail · {p.trail}<br/>Ride · {p.bike}
+            ["2009", "Founded on Ellis St., Kelowna", "Two riders, one small shop, one goal — a bike shop worth walking into."],
+            ["2011", "First Transition dealer in the BC Interior", "We brought trail geometry to Kelowna before it was mainstream."],
+            ["2014", "Full-service department launched", "Expanded to a dedicated service floor with certified technicians."],
+            ["2017", "Moved to 1139 Ellis St.", "Bigger floor, same team, same ethos."],
+            ["2020", "Rode through the pandemic", "Bikes became essential. We stayed open, kept wrenching, kept riding."],
+            ["2024", "15 years and counting", "Still local. Still answering our own phone. Still Kelowna's bike shop."],
+          ].map(([year, title, desc], i) => (
+            <div key={year} className={"reveal"} style={{ display:"grid", gridTemplateColumns:"120px 1fr", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline)", alignItems:"start" }}>
+              <div style={{ fontFamily:"var(--display)", fontSize:28, fontWeight:500, letterSpacing:"-.02em", color:"var(--gray-400)", paddingTop:3 }}>{year}</div>
+              <div>
+                <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:6 }}>{title}</div>
+                <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6, margin:0 }}>{desc}</p>
               </div>
             </div>
           ))}
@@ -1310,21 +1288,37 @@ const AboutPage = () => (
       </div>
     </section>
 
+    {/* Values */}
     <section className="section section-pad bg-black" data-screen-label="P05 Values">
       <div className="container-wide">
-        <div className="reveal section-label" style={{ color: "var(--gray-300)" }}>Values</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, borderTop: "1px solid var(--hairline-light)" }}>
+        <div className="reveal section-label" style={{ color:"var(--gray-400)" }}>What We Stand For</div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:0, borderTop:"1px solid var(--hairline-light)" }}>
           {[
-            ["01", "Local First", "We hire local. We sponsor local. We ride what's out the back door."],
-            ["02", "Honest Advice", "We'll tell you the bike you want isn't the bike you need. Or vice versa."],
-            ["03", "Ride What We Sell", "Every brand on the floor is one of us is racing, commuting, or both."],
+            ["01", "Ride What We Sell", "Every brand on the floor has been tested by someone on our team. We won't sell a bike we wouldn't ride ourselves."],
+            ["02", "Honest Advice", "We'll tell you if the bike you want isn't the right fit. Our goal is your best ride, not our best margin."],
+            ["03", "Local Through and Through", "We hire local, sponsor local, and ride the same trails as our customers. Kelowna isn't a market — it's home."],
           ].map(([n, t, d], i) => (
-            <div key={n} className={"reveal reveal-d-" + (i + 1)} style={{ padding: "48px 32px 48px 0", borderRight: i < 2 ? "1px solid var(--hairline-light)" : "none", paddingLeft: i > 0 ? 32 : 0 }}>
-              <div className="eyebrow eyebrow-light" style={{ marginBottom: 24 }}>{n}</div>
-              <div className="display-m" style={{ marginBottom: 16 }}>{t}</div>
-              <p style={{ color: "var(--gray-300)", fontSize: 15, lineHeight: 1.6 }}>{d}</p>
+            <div key={n} className={"reveal reveal-d-" + (i + 1)} style={{ padding:"48px 32px 48px 0", borderRight: i < 2 ? "1px solid var(--hairline-light)" : "none", paddingLeft: i > 0 ? 32 : 0 }}>
+              <div className="eyebrow eyebrow-light" style={{ marginBottom:24 }}>{n}</div>
+              <div className="display-m" style={{ marginBottom:16 }}>{t}</div>
+              <p style={{ color:"var(--gray-400)", fontSize:15, lineHeight:1.65 }}>{d}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Visit us */}
+    <section className="section section-pad bg-paper">
+      <div className="container-narrow" style={{ textAlign:"center" }}>
+        <div className="reveal section-label" style={{ justifyContent:"center" }}>Come See Us</div>
+        <h2 className="display-l reveal" style={{ marginBottom:32 }}>1139 Ellis St.<br/><span className="serif-italic">Kelowna, BC</span></h2>
+        <div className="reveal" style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", lineHeight:2.2, marginBottom:40 }}>
+          Mon 10–5 &nbsp;·&nbsp; Tue–Fri 9:30–5:30 &nbsp;·&nbsp; Sat 10–4 &nbsp;·&nbsp; Sun Closed
+        </div>
+        <div className="reveal" style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
+          <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Get Directions <ArrowRight /></a>
+          <a href="tel:2508601968" className="btn" data-cursor="link">(250) 860-1968 <ArrowRight /></a>
         </div>
       </div>
     </section>
