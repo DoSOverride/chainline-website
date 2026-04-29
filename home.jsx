@@ -1,5 +1,47 @@
 // ChainLine — Homepage sections
 
+// ── Hero image carousel ───────────────────────────────────────────────────────
+// Replace these URLs with your own photos — drag images into the chat to share them
+const HERO_SLIDES = [
+  "https://www.transitionbikes.com/images/C10-Senti-Myles-1.avif",
+  "https://www.transitionbikes.com/images/Hannah-BR-HP-Mobile-Low.jpg",
+  "https://www.transitionbikes.com/images/PhotoFeature-2026-Regulator-CX.jpg",
+  "https://www.transitionbikes.com/images/Smuggler_Janina_25.jpg",
+  "https://cdn.shopify.com/s/files/1/0714/3611/files/157_Trail.jpg?v=1718738593",
+];
+
+const HeroBg = () => {
+  const [cur, setCur] = React.useState(0);
+  const [prev, setPrev] = React.useState(null);
+
+  React.useEffect(() => {
+    const t = setInterval(() => {
+      setCur(c => {
+        setPrev(c);
+        return (c + 1) % HERO_SLIDES.length;
+      });
+    }, 5500);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div style={{ position: "absolute", inset: 0 }}>
+      {HERO_SLIDES.map((src, i) => (
+        <div key={i} style={{
+          position: "absolute", inset: 0,
+          backgroundImage: `url(${src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: i === cur ? 1 : 0,
+          transition: i === cur ? "opacity 1.4s ease" : (i === prev ? "opacity 1.4s ease" : "none"),
+          animation: i === cur ? "kenburns 8s ease-in-out forwards" : "none",
+        }} />
+      ))}
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.05) 35%, rgba(10,10,10,0.75) 100%)" }} />
+    </div>
+  );
+};
+
 const Hero = ({ variant }) => {
   const variants = [
     { headline: "BUILT FOR KELOWNA.", italic: "Backed by Canada.", sub: "Kelowna's only full-service performance bike shop." },
@@ -9,13 +51,10 @@ const Hero = ({ variant }) => {
   const v = variants[variant % variants.length];
   return (
     <section className="hero hero-section" data-screen-label="01 Hero" style={{ position: "relative", height: "100vh", minHeight: 720, color: "var(--white)", overflow: "hidden", background: "var(--black)" }}>
-      <div className="hero-bg" style={{ position: "absolute", inset: 0 }}>
-        <div className="kenburns ph ph-corners" style={{ height: "100%" }}>
-          <span className="ph-label" style={{ left: 24, bottom: 24 }}>HERO IMAGE  /  RIDER IN MOTION  /  B&W  /  16:9</span>
-        </div>
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.1) 30%, rgba(10,10,10,0.7) 100%)" }} />
-      </div>
-      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(140px,22vh,260px)", paddingTop: 80 }}>
+      <HeroBg />
+      {/* Fix: padding-top accounts for announce + contactbar + nav on mobile */}
+      <style>{`@media(max-width:768px){.hero-content{padding-top:150px!important}}`}</style>
+      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(100px,18vh,220px)", paddingTop: 80 }}>
         <div className="eyebrow eyebrow-light hero-edge-label" style={{ marginBottom: 12, opacity: 0.5, fontSize: 10, letterSpacing: ".18em" }}>
           N°01  /  THE LINEUP  ·  2026
         </div>
