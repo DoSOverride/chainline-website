@@ -544,12 +544,14 @@ const ShopPage = () => {
           </div>
         </div>
 
-        {/* Row 2: type tabs + brand chips */}
-        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"6px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
+        {/* Row 2: type tabs */}
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"6px", paddingBottom:"2px", overflowX:"auto", scrollbarWidth:"none" }}>
           {TYPE_TABS.map(t => (
             <button key={t} data-cursor="link" onClick={() => setType(t)} style={tabStyle(type === t)}>{t}</button>
           ))}
-          <div style={{ width:1, height:16, background:"var(--hairline)", margin:"0 10px", flexShrink:0 }} />
+        </div>
+        {/* Row 3: brand chips */}
+        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"2px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
           {ALL_BRANDS.map(br => {
             const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
             if (cnt === 0) return null;
