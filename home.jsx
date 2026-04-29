@@ -607,34 +607,37 @@ const DemoStrip = () => (
   </section>
 );
 
-// Testimonials
-const Testimonials = () => {
-  const t = [
-    { quote: "These folks built me a wheel that's stayed true for three seasons of bike park abuse. Nobody else in the valley does it like ChainLine.", name: "Marcus W.", ride: "Trail / Bike Park" },
-    { quote: "I came in with a budget and a vague idea. They listened, didn't upsell me once, and put me on the right bike on the first try.", name: "Eliana K.", ride: "Gravel / Commuter" },
-    { quote: "The bike fit changed my riding. Two hours, video analysis, no rush. I bought my last bike here. I'll buy my next one here too.", name: "David R.", ride: "Road" },
-  ];
-  return (
-    <section className="section section-pad bg-paper" data-screen-label="12 Testimonials">
-      <div className="container-wide">
-        <div className="reveal section-label">What Riders Say  /  N°09</div>
-        <div className="home-testimonials-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
-          {t.map((q, i) => (
-            <div key={i} className={"reveal reveal-d-" + (i + 1)} style={{ borderTop: "1px solid var(--hairline)", paddingTop: 32 }}>
-              <div style={{ display: "flex", gap: 2, marginBottom: 20, color: "var(--gray-600)" }}>
-                {[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: 14 }}>★</span>)}
-              </div>
-              <blockquote className="serif-italic" style={{ fontSize: 24, lineHeight: 1.4, margin: "0 0 24px", color: "var(--black)" }}>
-                "{q.quote}"
-              </blockquote>
-              <div className="eyebrow">{q.name}  ·  {q.ride}</div>
-            </div>
-          ))}
+// Testimonials — Google Maps embed
+const Testimonials = () => (
+  <section className="section section-pad bg-paper" data-screen-label="12 Testimonials">
+    <div className="container-wide">
+      <div className="reveal section-label">What Riders Say  /  N°09</div>
+      <div className="reveal" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:24 }}>
+        <div style={{ width:"100%", maxWidth:900, borderRadius:4, overflow:"hidden", boxShadow:"0 4px 32px rgba(0,0,0,0.10)", border:"1px solid var(--hairline)" }}>
+          <iframe
+            title="ChainLine Cycle Google Reviews"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2569.6801!2d-119.49879!3d49.88764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x537df5b0d3baf315%3A0x8dc4a97a72d41a9e!2sChainLine%20Cycle!5e0!3m2!1sen!2sca!4v1714000000000!5m2!1sen!2sca"
+            width="100%"
+            height="480"
+            style={{ border:0, display:"block" }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
+        <a
+          href="https://www.google.com/maps/place/ChainLine+Cycle/@49.88764,-119.49879,17z"
+          target="_blank"
+          rel="noopener"
+          className="btn btn-outline"
+          data-cursor="link"
+        >
+          Read All Reviews on Google <ArrowRight />
+        </a>
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);
 
 // Newsletter
 const Newsletter = () => {
