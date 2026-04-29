@@ -34,6 +34,12 @@ const App = () => {
   const [cartOpen, setCartOpen] = React.useState(false);
   const [cart, setCart] = React.useState([]);
   const [searchOpen, setSearchOpen] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(() => localStorage.getItem('cl-theme') === 'dark');
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('cl-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   // Sync cart from Shopify events
   React.useEffect(() => {
@@ -106,7 +112,7 @@ const App = () => {
       <ScrollProgress onDark={dark} />
       <div className="grain" />
 
-      <Header page={page} scrolled={scrolled} cartCount={cart.length} onCart={() => setCartOpen(true)} onMobile={() => setMobileNav(true)} onMega={setMegaOpen} megaOpen={megaOpen} onSearch={() => setSearchOpen(true)} />
+      <Header page={page} scrolled={scrolled} cartCount={cart.length} onCart={() => setCartOpen(true)} onMobile={() => setMobileNav(true)} onMega={setMegaOpen} megaOpen={megaOpen} onSearch={() => setSearchOpen(true)} darkMode={darkMode} onToggleDark={() => setDarkMode(d => !d)} />
       <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} onRemove={(i) => setCart(cart.filter((_, idx) => idx !== i))} />
       <StickyCTA show={showSticky} />

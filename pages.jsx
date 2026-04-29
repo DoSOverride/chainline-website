@@ -178,8 +178,23 @@ const BikePage = ({ bike, onBack, onCart }) => {
         <div>
           <div className="eyebrow reveal" style={{ marginBottom: 12 }}>{b.brand || b.vendor}</div>
           <h1 className="display-l reveal" style={{ marginBottom: 8 }}>{b.name || b.title}</h1>
-          <div className="reveal" style={{ fontFamily: 'var(--display)', fontSize: 'clamp(24px,3vw,36px)', fontWeight: 500, marginBottom: 32 }}>
+          <div className="reveal" style={{ fontFamily: 'var(--display)', fontSize: 'clamp(24px,3vw,36px)', fontWeight: 500, marginBottom: 16 }}>
             ${(b.price || 0).toLocaleString()} CAD
+          </div>
+
+          {/* Live stock status */}
+          <div className="reveal" style={{ display:'flex', alignItems:'center', gap:10, marginBottom:28, padding:'10px 16px', background: b.inStock !== false ? 'rgba(22,163,74,0.06)' : 'var(--gray-100)', border:'1px solid ' + (b.inStock !== false ? 'rgba(22,163,74,0.25)' : 'var(--hairline)'), borderRadius:2 }}>
+            {b.inStock !== false ? (
+              <>
+                <span className="stock-dot stock-dot-lg" />
+                <span style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'#16a34a', fontWeight:500 }}>In Stock — Ready to ride</span>
+              </>
+            ) : (
+              <>
+                <span style={{ width:10, height:10, borderRadius:'50%', background:'var(--gray-400)', display:'inline-block', flexShrink:0 }} />
+                <span style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-500)' }}>Available by Special Order — contact us</span>
+              </>
+            )}
           </div>
 
           <p className="reveal" style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--gray-600)', marginBottom: 40, maxWidth: 480 }}>{desc}</p>
@@ -459,9 +474,25 @@ const ShopPage = () => {
               <button className="btn btn-outline" data-cursor="link" onClick={() => { setBrand("All"); setType("All"); }}>Show All Bikes <ArrowRight /></button>
             </div>
           ) : (
-            <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
-              {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} />)}
-            </div>
+            <>
+              {liveLoading && filtered.length === 0 && (
+                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i}>
+                      <div className="skeleton" style={{ aspectRatio:"4/5", marginBottom:12 }} />
+                      <div className="skeleton" style={{ height:12, width:"60%", marginBottom:8, borderRadius:4 }} />
+                      <div className="skeleton" style={{ height:16, width:"80%", marginBottom:12, borderRadius:4 }} />
+                      <div className="skeleton" style={{ height:40, borderRadius:2 }} />
+                    </div>
+                  ))}
+                </div>
+              )}
+              {filtered.length > 0 && (
+                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
+                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} />)}
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -498,11 +529,9 @@ const BikeCardLarge = ({ b, idx }) => {
   const goToBike = () => window.cl.go("bike", { bike: b });
 
   return (
-    <div className={"reveal reveal-d-" + (idx % 3 + 1)}
-      style={{ cursor:"pointer" }}
-      onClick={goToBike}>
+    <div style={{ cursor:"pointer" }} onClick={goToBike}>
       {/* Image */}
-      <div style={{ aspectRatio:"4/5", marginBottom:16, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
+      <div style={{ aspectRatio:"4/5", marginBottom:14, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
         {img ? (
           <img src={img} alt={brand + " " + name}
             loading="lazy" decoding="async"
@@ -513,41 +542,43 @@ const BikeCardLarge = ({ b, idx }) => {
             <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
           </div>
         )}
-        {/* Special Order badge — replaces old full-screen overlay */}
-        {!inStock && (
-          <div style={{ position:"absolute", top:12, left:12, padding:"4px 10px", background:"var(--white)", color:"var(--gray-600)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid var(--hairline)" }}>
+        {/* Stock / availability badges */}
+        {inStock ? (
+          <div style={{ position:"absolute", top:10, left:10, display:"flex", alignItems:"center", gap:6, padding:"4px 9px", background:"rgba(255,255,255,0.92)", border:"1px solid rgba(22,163,74,0.3)", borderRadius:2 }}>
+            <span className="stock-dot" />
+            <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#16a34a" }}>In Stock</span>
+          </div>
+        ) : (
+          <div style={{ position:"absolute", top:10, left:10, padding:"4px 9px", background:"rgba(255,255,255,0.92)", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid var(--hairline)" }}>
             Special Order
           </div>
         )}
         {lowStock && (
-          <div style={{ position:"absolute", bottom:12, left:12, padding:"4px 10px", background:"var(--white)", color:"var(--gray-600)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid var(--hairline)" }}>
-            {qty} left
+          <div style={{ position:"absolute", bottom:10, left:10, padding:"4px 9px", background:"rgba(255,255,255,0.92)", color:"#b45309", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid rgba(180,83,9,0.3)" }}>
+            Only {qty} left
           </div>
         )}
         {b.badge && (
-          <div style={{ position:"absolute", top:12, right:12, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>
+          <div style={{ position:"absolute", top:10, right:10, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>
         )}
-        <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,0)", display:"flex", alignItems:"center", justifyContent:"center", transition:"background .3s" }}
+        <div style={{ position:"absolute", inset:0, transition:"background .3s" }}
           onMouseEnter={e => e.currentTarget.style.background='rgba(0,0,0,0.04)'}
-          onMouseLeave={e => e.currentTarget.style.background='rgba(0,0,0,0)'}>
-        </div>
+          onMouseLeave={e => e.currentTarget.style.background='transparent'} />
       </div>
       {/* Info */}
       <div className="eyebrow" style={{ marginBottom:4 }}>{brand}  ·  {b.type}</div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:12 }}>
-        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.5vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.2 }}>{name}</div>
+        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.4vw,19px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.2 }}>{name}</div>
         <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, flexShrink:0 }}>${price.toLocaleString()}</div>
       </div>
       {/* Actions */}
       <div style={{ display:"flex", gap:8 }} onClick={e => e.stopPropagation()}>
-        <button className="btn btn-outline" data-cursor="link"
-          onClick={goToBike}
-          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
+        <button className="btn btn-outline" data-cursor="link" onClick={goToBike}
+          style={{ flex:1, justifyContent:"center", padding:"11px 8px", fontSize:11 }}>
           View Bike
         </button>
-        <button className="btn" data-cursor="link"
-          onClick={handleAdd} disabled={adding || !inStock}
-          style={{ flex:1, justifyContent:"center", padding:"12px 8px", fontSize:11 }}>
+        <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
+          style={{ flex:1, justifyContent:"center", padding:"11px 8px", fontSize:11 }}>
           {!inStock ? "Special Order" : added ? "Added ✓" : adding ? "…" : "Add to Cart"}
         </button>
       </div>
@@ -570,33 +601,84 @@ const SubHero = ({ eyebrow, title, italic }) => (
 
 // SERVICES PAGE
 const ServicesPage = () => {
-  const services = [
-    { n: "01", name: "Basic Tune-Up", price: 89, desc: "Adjustments, lube, safety check. Same-day turnaround.", time: "SAME DAY" },
-    { n: "02", name: "Drivetrain Service", price: 145, desc: "Cassette, chain, derailleurs cleaned, tuned, lubed.", time: "1–2 DAYS" },
-    { n: "03", name: "Full Overhaul", price: 425, desc: "Complete teardown, clean, regrease, rebuild.", time: "3–5 DAYS" },
-    { n: "04", name: "Brake Service (Hydraulic)", price: 95, desc: "Bleed, pad replacement, rotor true. Per wheel.", time: "SAME DAY" },
-    { n: "05", name: "Suspension Service", price: 220, desc: "Lower-leg or full damper service. Fork or shock.", time: "1 WEEK" },
-    { n: "06", name: "Wheel True & Tension", price: 65, desc: "Hand-trued, tensioned, dished. Per wheel.", time: "SAME DAY" },
-    { n: "07", name: "Tubeless Setup", price: 55, desc: "Per wheel. Includes valves and sealant.", time: "SAME DAY" },
-    { n: "08", name: "Custom Build", price: 450, desc: "From frame up. Quoted on consult.", time: "1–2 WEEKS" },
-    { n: "09", name: "Pre-Season Inspection", price: 75, desc: "29-point check. Free if booked with tune-up.", time: "30 MIN" },
-    { n: "10", name: "Post-Crash Inspection", price: 95, desc: "Frame, fork, wheels, components. Insurance docs.", time: "SAME DAY" },
-    { n: "11", name: "Electronic Shifting Setup", price: 120, desc: "Di2 / AXS programming, calibration, firmware.", time: "1–2 DAYS" },
+  const [activeTab, setActiveTab] = React.useState("all");
+  const tabs = ["all", "mountain", "road", "suspension"];
+
+  const ALL_SERVICES = [
+    // ── All Bikes ──
+    { cat:"all", n:"01", name:"Tune-Up",                price:120,  desc:"Full adjustment, lube, safety check on all systems.",                time:"SAME DAY" },
+    { cat:"all", n:"02", name:"Complete Overhaul",       price:250,  desc:"Full teardown, degrease, regrease, rebuild. Includes adjustment.", time:"3–5 DAYS" },
+    { cat:"all", n:"03", name:"Bike Assessment",         price:30,   desc:"Thorough inspection with written report. Cost applied to repair.", time:"30 MIN"   },
+    { cat:"all", n:"04", name:"Safety Check",            price:40,   desc:"Pre-ride safety inspection. Brakes, gears, headset, wheels.",      time:"30 MIN"   },
+    { cat:"all", n:"05", name:"Flat Fix",                price:25,   desc:"Tube replacement including labour. Parts extra.",                  time:"SAME DAY" },
+    { cat:"all", n:"06", name:"Flat Fix — E-Bike Rear",  price:80,   desc:"Rear hub motor wheel removal and tube/tire replacement.",         time:"SAME DAY" },
+    { cat:"all", n:"07", name:"Wheel True",              price:25,   desc:"Hand-trued and tensioned per wheel.",                             time:"SAME DAY" },
+    { cat:"all", n:"08", name:"Tubeless Set Up",         price:35,   desc:"Per wheel. Includes tape, valve, and sealant setup.",             time:"SAME DAY" },
+    { cat:"all", n:"09", name:"Dropper Post Install",    price:50,   desc:"Full internal or external dropper post installation.",            time:"SAME DAY" },
+    { cat:"all", n:"10", name:"Bar Wrap",                price:30,   desc:"Professional bar tape wrap. Tape not included.",                  time:"SAME DAY" },
+    { cat:"all", n:"11", name:"CushCore Install",        price:50,   desc:"Per wheel. CushCore insert installation.",                        time:"1 DAY"    },
+    { cat:"all", n:"12", name:"Accessory Install",       price:30,   desc:"Racks, fenders, lights, mirrors, computers, etc.",               time:"SAME DAY" },
+    { cat:"all", n:"13", name:"Cable & Housing Full",    price:60,   desc:"Complete cable and housing replacement, all cables.",             time:"1–2 DAYS" },
+    { cat:"all", n:"14", name:"Cable & Housing Half",    price:35,   desc:"Partial cable and housing refresh.",                              time:"1 DAY"    },
+    // ── Mountain Bike ──
+    { cat:"mountain", n:"01", name:"Tune-Up",                       price:120, desc:"Full mountain tune: drivetrain, brakes, suspension check.", time:"SAME DAY" },
+    { cat:"mountain", n:"02", name:"Full Suspension Tune-Up",        price:220, desc:"Tune + suspension inspection and basic setup adjustment.",  time:"1–2 DAYS" },
+    { cat:"mountain", n:"03", name:"E-Bike Tune-Up",                 price:120, desc:"Mountain e-bike tune including motor and battery check.",   time:"1–2 DAYS" },
+    { cat:"mountain", n:"04", name:"Fork Seal Service",              price:65,  desc:"Lower leg removal, clean, new seals and foam rings.",       time:"1–2 DAYS" },
+    { cat:"mountain", n:"05", name:"Shock Air Can Service",          price:45,  desc:"Air can removal, clean, new seals and oil.",                time:"1 DAY"    },
+    { cat:"mountain", n:"06", name:"Dropper Post Service",           price:140, desc:"Full dropper post rebuild (Fox Transfer).",                 time:"1–2 DAYS" },
+    { cat:"mountain", n:"07", name:"Shimano Clutch Service",         price:25,  desc:"Clean and re-grease Shimano clutch mechanism.",            time:"SAME DAY" },
+    { cat:"mountain", n:"08", name:"E-Bike System Check & Firmware", price:25,  desc:"Bosch / Shimano Steps / Bafang firmware update + scan.",    time:"SAME DAY" },
+    { cat:"mountain", n:"09", name:"50-Hour Suspension Service",     price:220, desc:"Recommended every 50hrs: full lower leg + shock service.", time:"2–3 DAYS" },
+    { cat:"mountain", n:"10", name:"Cable Package — Internal Full",   price:60,  desc:"Full internal cable and housing replacement.",              time:"1–2 DAYS" },
+    { cat:"mountain", n:"11", name:"Cable Package — Half",           price:35,  desc:"Partial cable refresh, internal routing.",                  time:"1 DAY"    },
+    // ── Road Bike ──
+    { cat:"road", n:"01", name:"Road Tune-Up",                      price:120, desc:"Road-specific adjustment: brakes, gears, headset, wheels.", time:"SAME DAY" },
+    { cat:"road", n:"02", name:"Brake Bleed",                       price:60,  desc:"Hydraulic brake bleed per caliper. Parts extra.",           time:"SAME DAY" },
+    { cat:"road", n:"03", name:"Wheel True",                        price:25,  desc:"Hand-trued and tensioned per wheel.",                       time:"SAME DAY" },
+    { cat:"road", n:"04", name:"Full Cable Package",                price:60,  desc:"Complete shifter and brake cable + housing replacement.",   time:"1–2 DAYS" },
+    { cat:"road", n:"05", name:"Half Cable Package",                price:35,  desc:"Partial cable and housing replacement.",                    time:"1 DAY"    },
+    { cat:"road", n:"06", name:"Internal Full Cable Package",       price:60,  desc:"Full internal cable replacement including housing.",        time:"1–2 DAYS" },
+    { cat:"road", n:"07", name:"Internal Half Cable Package",       price:35,  desc:"Partial internal cable replacement.",                       time:"1 DAY"    },
+    { cat:"road", n:"08", name:"Bar Wrap",                          price:30,  desc:"Professional bar tape wrap. Tape not included.",            time:"SAME DAY" },
+    // ── Suspension Factory Service ──
+    { cat:"suspension", n:"01", name:"Fox Fork 125hr Factory",      price:230, desc:"Full Fox factory fork service at 125-hour interval.",       time:"1 WEEK"   },
+    { cat:"suspension", n:"02", name:"Fox Shock Factory Full",      price:210, desc:"Full Fox shock factory rebuild and service.",               time:"1 WEEK"   },
+    { cat:"suspension", n:"03", name:"Fox Transfer Dropper",        price:140, desc:"Full Fox Transfer dropper post factory service.",           time:"1 WEEK"   },
+    { cat:"suspension", n:"04", name:"RockShox Fork FS Level 1",    price:140, desc:"Lower leg and open bath fork service.",                     time:"1 WEEK"   },
+    { cat:"suspension", n:"05", name:"RockShox Fork FS Level 2",    price:170, desc:"Full charger damper + lower leg service.",                  time:"1 WEEK"   },
+    { cat:"suspension", n:"06", name:"RockShox Shock RS Level 1",   price:150, desc:"Inline shock full service.",                               time:"1 WEEK"   },
+    { cat:"suspension", n:"07", name:"RockShox Shock RS Level 2",   price:160, desc:"Full shock factory service.",                              time:"1 WEEK"   },
+    { cat:"suspension", n:"08", name:"RockShox Vivid / Reaktiv",    price:180, desc:"High-end shock full factory service.",                     time:"1 WEEK"   },
+    { cat:"suspension", n:"09", name:"RockShox Reverb Dropper",     price:160, desc:"Reverb dropper post factory service.",                     time:"1 WEEK"   },
+    { cat:"suspension", n:"10", name:"Rockshox Fork 200hr",         price:230, desc:"Major 200-hour fork factory service interval.",            time:"1 WEEK"   },
   ];
+
+  const services = activeTab === "all" ? ALL_SERVICES.filter(s => s.cat === "all") : ALL_SERVICES.filter(s => s.cat === activeTab);
   return (
     <div className="page-fade" data-screen-label="P03 Services">
       <SubHero eyebrow="Services  /  N°01" title="Your bike deserves" italic="the best." />
       <section className="section section-pad bg-white">
         <div className="container-wide">
-          <div className="reveal section-label">Service Menu  /  Pricing</div>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16, marginBottom:32 }}>
+            <div className="reveal section-label">Service Menu  /  Pricing</div>
+            <div style={{ display:"flex", gap:0, border:"1px solid var(--hairline)", borderRadius:2 }}>
+              {[["all","All Bikes"],["mountain","Mountain"],["road","Road"],["suspension","Suspension"]].map(([id, label]) => (
+                <button key={id} onClick={() => setActiveTab(id)}
+                  style={{ padding:"8px 18px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", border:"none", borderRight: id !== "suspension" ? "1px solid var(--hairline)" : "none", background: activeTab === id ? "var(--black)" : "transparent", color: activeTab === id ? "var(--white)" : "var(--gray-500)", cursor:"pointer", transition:"all .2s" }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div style={{ borderTop: "1px solid var(--hairline)" }}>
             {services.map((s, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i % 3 + 1) + " page-svc-row"} style={{ display: "grid", gridTemplateColumns: "60px 1.6fr 2fr 100px 140px 160px", gap: 32, padding: "32px 0", borderBottom: "1px solid var(--hairline)", alignItems: "center" }}>
+              <div key={i} className="page-svc-row" style={{ display: "grid", gridTemplateColumns: "60px 1.6fr 2fr 100px 120px 140px", gap: 24, padding: "28px 0", borderBottom: "1px solid var(--hairline)", alignItems: "center" }}>
                 <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".18em", color: "var(--gray-500)" }}>{s.n}</div>
-                <div className="display-s">{s.name}</div>
-                <div style={{ color: "var(--gray-500)", fontSize: 14 }}>{s.desc}</div>
+                <div className="display-s" style={{ fontSize:"clamp(15px,1.4vw,20px)" }}>{s.name}</div>
+                <div style={{ color: "var(--gray-500)", fontSize: 14, lineHeight:1.5 }}>{s.desc}</div>
                 <div className="eyebrow">{s.time}</div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 22, fontWeight: 500 }}>${s.price}</div>
+                <div style={{ fontFamily: "var(--display)", fontSize: 20, fontWeight: 500 }}>${s.price}</div>
                 <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
               </div>
             ))}
@@ -666,130 +748,160 @@ const ServicesPage = () => {
 
 // BOOK PAGE
 const BookPage = () => {
-  const [type, setType] = React.useState("service");
   const [step, setStep] = React.useState(1);
   const [data, setData] = React.useState({});
-  const types = [
-    { id: "service", glyph: "⊞", title: "Service", desc: "Tune-ups, repairs, overhauls" },
-    { id: "fitting", glyph: "⊟", title: "Fitting", desc: "Bike fit & position analysis" },
-    { id: "demo", glyph: "⊕", title: "Demo", desc: "Test ride any bike in our fleet" },
-    { id: "storage", glyph: "⊠", title: "Storage", desc: "Winter storage program" },
-  ];
-  const update = (k, v) => setData({ ...data, [k]: v });
-  const next = () => setStep(s => Math.min(s + 1, 5));
+  const update = (k, v) => setData(d => ({ ...d, [k]: v }));
+  const next = () => setStep(s => Math.min(s + 1, 4));
   const back = () => setStep(s => Math.max(s - 1, 1));
+
+  const SERVICES = [
+    "Tune-Up","Full Suspension Tune-Up","E-Bike Tune-Up","Complete Overhaul",
+    "Fork Seal Service","Shock Air Can Service","Dropper Service","Brake Bleed",
+    "Cable Package","Wheel Build","Tubeless Set Up","Flat Fix","Other / Not Sure",
+  ];
+
+  const inpStyle = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+
+  const submit = () => {
+    const subject = encodeURIComponent(`Bike Assessment / Service Request`);
+    const body = encodeURIComponent(
+      `ChainLine — Service Booking Request\n\n` +
+      `Customer:\nName: ${data.name||''}\nPhone: ${data.phone||''}\nEmail: ${data.email||''}\n\n` +
+      `Bike:\nBrand: ${data.bikeBrand||''}\nModel: ${data.bikeModel||''}\nYear: ${data.bikeYear||''}\n\n` +
+      `Service requested: ${data.service||'Assessment / Not specified'}\n` +
+      `Preferred drop-off date: ${data.date||'Flexible'}\n\n` +
+      `Issue / notes:\n${data.issue||'(none provided)'}\n\n` +
+      `[Photo upload is not available by email — please bring photos on your phone or drop-in for the assessment]`
+    );
+    window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
+    next();
+  };
 
   return (
     <div className="page-fade" data-screen-label="P04 Book">
-      <SubHero eyebrow="Booking  /  N°01" title="Book your visit." italic="We'll have it ready." />
+      <SubHero eyebrow="Booking  /  N°01" title="Book an assessment." italic="Drop it off, we'll take care of the rest." />
       <section className="section section-pad bg-white">
         <div className="container-narrow">
-          <div className="eyebrow reveal" style={{ marginBottom: 24 }}>Step 1  ·  Choose your visit</div>
-          <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, marginBottom: 80 }}>
-            {types.map(t => (
-              <button key={t.id} onClick={() => { setType(t.id); setStep(1); }} data-cursor="link" style={{ padding: 32, border: "1px solid " + (type === t.id ? "var(--black)" : "var(--hairline)"), background: type === t.id ? "var(--black)" : "var(--white)", color: type === t.id ? "var(--white)" : "var(--black)", textAlign: "left", aspectRatio: "1", display: "flex", flexDirection: "column", justifyContent: "space-between", transition: "all .3s" }}>
-                <div style={{ fontSize: 32, fontFamily: "var(--display)" }}>{t.glyph}</div>
-                <div>
-                  <div className="display-s" style={{ marginBottom: 8 }}>{t.title}</div>
-                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", opacity: 0.7 }}>{t.desc}</div>
-                </div>
-              </button>
-            ))}
-          </div>
 
-          {/* Progress */}
-          <div className="reveal" style={{ display: "flex", gap: 8, marginBottom: 48 }}>
-            {[1,2,3,4,5].map(s => (
-              <div key={s} style={{ flex: 1, height: 2, background: s <= step ? "var(--black)" : "var(--hairline)" }} />
+          {/* Progress bar */}
+          <div style={{ display:"flex", gap:6, marginBottom:40 }}>
+            {[1,2,3,4].map(s => (
+              <div key={s} style={{ flex:1, height:2, background: s <= step ? "var(--black)" : "var(--hairline)", transition:"background .3s" }} />
             ))}
           </div>
-          <div className="eyebrow reveal" style={{ marginBottom: 16 }}>Step {step} of 5</div>
+          <div className="eyebrow" style={{ marginBottom:24 }}>Step {step} of 4</div>
 
           {step === 1 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>What service?</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                {["Basic Tune-Up", "Full Overhaul", "Drivetrain", "Brake Service", "Suspension", "Wheel True", "Tubeless Setup", "Custom Build"].map(s => (
-                  <button key={s} onClick={() => { update("service", s); next(); }} data-cursor="link" style={{ padding: 24, border: "1px solid var(--hairline)", textAlign: "left", fontFamily: "var(--display)", fontSize: 18, fontWeight: 500, textTransform: "uppercase", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    {s} <ArrowRight />
-                  </button>
-                ))}
+            <div>
+              <h2 className="display-l" style={{ marginBottom:12 }}>Your details.</h2>
+              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>We'll call or text to confirm your appointment.</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:24 }}>
+                <div style={{ gridColumn:"1/-1" }}>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Full Name *</div>
+                  <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>update("name",e.target.value)} style={inpStyle} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Phone Number *</div>
+                  <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>update("phone",e.target.value)} style={inpStyle} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Email (optional)</div>
+                  <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>update("email",e.target.value)} style={inpStyle} />
+                </div>
               </div>
+              <button className="btn" data-cursor="link" disabled={!data.name || !data.phone} onClick={next} style={{ marginTop:8 }}>Continue <ArrowRight /></button>
             </div>
           )}
 
           {step === 2 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>Pick a date.</h2>
-              <Calendar onPick={(d) => { update("date", d); next(); }} />
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>Your bike.</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-                <Field label="Brand" placeholder="e.g. Transition" value={data.bikeBrand||""} onChange={v=>update("bikeBrand",v)} />
-                <Field label="Model" placeholder="e.g. Sentinel" value={data.bikeModel||""} onChange={v=>update("bikeModel",v)} />
-                <Field label="Year" placeholder="2023" value={data.bikeYear||""} onChange={v=>update("bikeYear",v)} />
-                <Field label="Frame size" placeholder="Medium" value={data.bikeSize||""} onChange={v=>update("bikeSize",v)} />
+            <div>
+              <h2 className="display-l" style={{ marginBottom:12 }}>Your bike.</h2>
+              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>Tell us what you're bringing in. Photos welcome — take one on your phone and show us when you drop off.</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:24 }}>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Brand</div>
+                  <input type="text" placeholder="e.g. Transition" value={data.bikeBrand||""} onChange={e=>update("bikeBrand",e.target.value)} style={inpStyle} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Model</div>
+                  <input type="text" placeholder="e.g. Sentinel" value={data.bikeModel||""} onChange={e=>update("bikeModel",e.target.value)} style={inpStyle} />
+                </div>
+                <div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Year</div>
+                  <input type="text" placeholder="2023" value={data.bikeYear||""} onChange={e=>update("bikeYear",e.target.value)} style={inpStyle} />
+                </div>
               </div>
-              <Field label="What's the issue?" textarea placeholder="Brakes feel spongy, drivetrain skipping in 4th gear..." value={data.issue||""} onChange={v=>update("issue",v)} />
-              <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
+              {/* Photo upload */}
+              <div style={{ marginBottom:24 }}>
+                <div className="eyebrow" style={{ marginBottom:8 }}>Photo of your bike (optional)</div>
+                <label style={{ display:"flex", alignItems:"center", gap:12, padding:"16px 20px", border:"1.5px dashed var(--hairline)", cursor:"pointer", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  {data.photoName || "Upload a photo or take one now"}
+                  <input type="file" accept="image/*" capture="environment" style={{ display:"none" }}
+                    onChange={e => { const f = e.target.files[0]; if(f) update("photoName", f.name); }} />
+                </label>
+                {data.photoName && <p style={{ marginTop:8, fontSize:13, color:"var(--gray-500)" }}>✓ {data.photoName} — bring this photo with you or email it separately.</p>}
+              </div>
+              <div style={{ display:"flex", gap:12 }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
                 <button className="btn" data-cursor="link" onClick={next}>Continue <ArrowRight /></button>
               </div>
             </div>
           )}
 
-          {step === 4 && (
-            <div className="reveal">
-              <h2 className="display-l" style={{ marginBottom: 40 }}>Your details.</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>First name</div>
-                  <input type="text" value={data.firstName||""} onChange={e=>update("firstName",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Last name</div>
-                  <input type="text" value={data.lastName||""} onChange={e=>update("lastName",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Email</div>
-                  <input type="email" value={data.email||""} onChange={e=>update("email",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Phone</div>
-                  <input type="tel" value={data.phone||""} onChange={e=>update("phone",e.target.value)}
-                    style={{ width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none" }} />
-                </div>
+          {step === 3 && (
+            <div>
+              <h2 className="display-l" style={{ marginBottom:12 }}>What's needed?</h2>
+              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Select the service you're after, or choose "Assessment" if you're not sure — we'll diagnose and quote before touching anything.</p>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:24 }}>
+                {SERVICES.map(s => (
+                  <button key={s} onClick={() => update("service", s)} data-cursor="link"
+                    style={{ padding:"16px 20px", border:"1.5px solid " + (data.service === s ? "var(--black)" : "var(--hairline)"), background: data.service === s ? "var(--black)" : "transparent", color: data.service === s ? "var(--white)" : "var(--black)", textAlign:"left", fontFamily:"var(--display)", fontSize:15, fontWeight:500, textTransform:"uppercase", transition:"all .2s", cursor:"pointer" }}>
+                    {s}
+                  </button>
+                ))}
               </div>
-              <div style={{ marginTop: 32, display: "flex", gap: 12 }}>
+              <div style={{ marginBottom:24 }}>
+                <div className="eyebrow" style={{ marginBottom:8 }}>Any other details?</div>
+                <textarea rows={4} placeholder="Brakes feel spongy, rear derailleur skipping, pedal creak, etc..." value={data.issue||""}
+                  onChange={e=>update("issue",e.target.value)}
+                  style={{ ...inpStyle, borderBottom:"none", border:"1px solid var(--hairline)", padding:16, resize:"vertical", fontSize:14 }} />
+              </div>
+              <div style={{ display:"flex", gap:12 }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={() => {
-                  const subject = encodeURIComponent(`Service Booking Request — ${types.find(t=>t.id===type)?.title || type}`);
-                  const body = encodeURIComponent(
-                    `New service booking request from ChainLine website:\n\n` +
-                    `Type: ${types.find(t=>t.id===type)?.title || type}\n` +
-                    `Service: ${data.service || 'Not specified'}\n` +
-                    `Preferred Date: ${data.date || 'Flexible'}\n\n` +
-                    `Bike:\nBrand: ${data.bikeBrand||''}\nModel: ${data.bikeModel||''}\nYear: ${data.bikeYear||''}\nSize: ${data.bikeSize||''}\nIssue: ${data.issue||''}\n\n` +
-                    `Customer:\nName: ${data.firstName||''} ${data.lastName||''}\nEmail: ${data.email||''}\nPhone: ${data.phone||''}`
-                  );
-                  window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
-                  next();
-                }}>
-                  Submit Booking <ArrowRight />
-                </button>
+                <button className="btn" data-cursor="link" onClick={next}>Continue <ArrowRight /></button>
               </div>
             </div>
           )}
 
-          {step === 5 && (
-            <div className="reveal">
+          {step === 4 && data.name && (
+            <div>
+              <h2 className="display-l" style={{ marginBottom:12 }}>Preferred drop-off date.</h2>
+              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Pick a day to bring your bike in. We'll confirm by phone or email within 24 hours.</p>
+              <Calendar onPick={(d) => update("date", d)} />
+              {data.date && <p style={{ marginTop:12, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Selected: {data.date}</p>}
+              <div style={{ marginTop:32, display:"flex", gap:12, flexWrap:"wrap" }}>
+                <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
+                <button className="btn" data-cursor="link" onClick={submit}>
+                  Send Booking Request <ArrowRight />
+                </button>
+              </div>
+              <p style={{ marginTop:16, fontSize:13, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".1em" }}>
+                This sends a booking request to bikes@chainline.ca. We'll call to confirm.
+              </p>
+            </div>
+          )}
+
+          {step === 4 && !data.name && (
+            <div style={{ textAlign:"center", padding:"40px 0" }}>
+              <p style={{ color:"var(--gray-500)", marginBottom:24 }}>Please go back and fill in your name and phone number.</p>
+              <button className="btn btn-outline" onClick={() => setStep(1)}>Start Over</button>
+            </div>
+          )}
+
+          {/* Confirmation after submit */}
+          {false && (
+            <div>
               <h2 className="display-l" style={{ marginBottom: 16 }}>Request Sent ✓</h2>
               <p className="serif-italic" style={{ fontSize: 22, color: "var(--gray-500)", marginBottom: 32 }}>We'll be in touch within 24 hours to confirm your slot.</p>
               <div style={{ padding:"24px 28px", background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:32 }}>

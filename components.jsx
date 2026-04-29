@@ -40,7 +40,7 @@ const Announce = () => {
 };
 
 // Header / Nav
-const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch }) => {
+const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
     { id: "shop", label: "Shop", panel: "shop" },
     { id: "services", label: "Services", panel: "services" },
@@ -83,6 +83,9 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           </nav>
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
+            <button className="nav-utility-btn" data-cursor="link" onClick={onToggleDark} title={darkMode ? "Light mode" : "Dark mode"} style={{ fontSize:16, padding:"0 8px" }}>
+              {darkMode ? "☀" : "☾"}
+            </button>
             <div ref={accountRef} style={{ position: "relative" }}>
               <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
                 <span className="nav-utility-text">Account</span><AccountIcon/>
@@ -299,7 +302,8 @@ const MobileNav = ({ open, onClose }) => {
   return (
     <div className={"mobile-nav " + (open ? "open" : "")} style={{ overflow:"hidden" }}>
       {/* ── Panel 1: Main ── */}
-      <div className={"mob-panel " + (panel === 'main' ? "mob-panel-active" : "mob-panel-left")}>
+      <div className={"mob-panel " + (panel === 'main' ? "mob-panel-active" : "mob-panel-left")}
+        style={{ pointerEvents: panel === 'main' ? 'all' : 'none' }}>
         {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
           {/* Shop — opens sub-panel */}

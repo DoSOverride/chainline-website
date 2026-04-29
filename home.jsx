@@ -15,7 +15,10 @@ const Hero = ({ variant }) => {
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.1) 30%, rgba(10,10,10,0.7) 100%)" }} />
       </div>
-      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: 80, paddingTop: 160 }}>
+      <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: 80, paddingTop: 80 }}>
+        <div className="eyebrow eyebrow-light hero-edge-label" style={{ marginBottom: 12, opacity: 0.5, fontSize: 10, letterSpacing: ".18em" }}>
+          N°01  /  THE LINEUP  ·  2026
+        </div>
         <div className="eyebrow eyebrow-light" style={{ marginBottom: 32 }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 12 }}>
             <span style={{ width: 24, height: 1, background: "currentColor", display: "inline-block" }}/>
@@ -48,10 +51,6 @@ const Hero = ({ variant }) => {
       </div>
       <style>{`@keyframes scrollDrip { 0% { top: -40px; } 100% { top: 80px; } }`}</style>
 
-      {/* Hero edge data */}
-      <div style={{ position: "absolute", top: 140, left: 40, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-        N°01  /  THE LINEUP  ·  2026
-      </div>
     </section>
   );
 };
@@ -393,7 +392,7 @@ const LocalStory = () => (
             Every brand we carry, we've ridden. Every mechanic on the floor races, commutes, or both. We're not a chain — we're a team, and we live where you ride.
           </p>
           <hr className="hr" style={{ marginBottom: 40 }} />
-          <div className="serif-italic" style={{ fontSize: 28, lineHeight: 1.3, marginBottom: 32 }}>
+          <div className="serif-italic built-for-kelowna" style={{ fontSize: 28, lineHeight: 1.3, marginBottom: 32 }}>
             Built for Kelowna. Backed by Canada.
           </div>
           <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("about")}>Our Story <ArrowRight /></button>
