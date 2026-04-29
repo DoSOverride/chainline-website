@@ -1548,7 +1548,7 @@ const DeptAccordion = ({ depts }) => {
 };
 
 const PartsPage = () => {
-  const [tab,       setTab]       = React.useState('components');
+  const [tab,       setTab]       = React.useState(window.cl?.intent?.tab || 'components');
   const [search,    setSearch]    = React.useState('');
   const [searchRes, setSearchRes] = React.useState(null);
   const [allDepts,  setAllDepts]  = React.useState([]);
