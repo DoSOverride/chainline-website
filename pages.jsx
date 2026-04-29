@@ -1251,13 +1251,10 @@ const AboutPage = () => (
         </blockquote>
         <div className="reveal" style={{ marginTop: 72 }}>
           <p style={{ fontSize: 17, lineHeight: 1.75, color: "var(--gray-600)" }}>
-            <span className="serif-italic" style={{ fontSize: 64, float: "left", lineHeight: 0.8, paddingRight: 12, paddingTop: 8 }}>I</span>n the autumn of 2009, two friends with an unreasonable number of bikes between them rented a small space in Kelowna and called it ChainLine. The idea was simple: build the kind of shop they'd want to walk into. Honest advice. Brands they ride. Mechanics who care.
+            <span className="serif-italic" style={{ fontSize: 64, float: "left", lineHeight: 0.8, paddingRight: 12, paddingTop: 8 }}>C</span>hainLine Cycle is Kelowna's finest bicycle service shop, with more than 100 years' combined experience serving riders across the Okanagan. We do super-fast flat repairs, custom bike and wheel builds, full hydraulic brake and suspension service, and repairs on any brand of bike.
           </p>
           <p style={{ fontSize: 17, lineHeight: 1.75, color: "var(--gray-600)", marginTop: 24 }}>
-            Fifteen years on, we've grown the floor, grown the team, and held the line on what matters. We still ride every brand we sell. We still answer our own phone. We still believe Kelowna deserves a better bike shop — and we're still here to prove it.
-          </p>
-          <p style={{ fontSize: 17, lineHeight: 1.75, color: "var(--gray-600)", marginTop: 24 }}>
-            We're an authorized dealer for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots, Knolly, and Revel. Every bike on our floor has been ridden by someone on our team. We provide full-service repairs on all makes and models, and we back every purchase with complimentary assembly, tubeless setup, and a 30-day tune.
+            We stock or can special order parts for all brands of drivetrain — Shimano, SRAM, Campagnolo, Hayes, Avid, TRP, Tektro, and more. We're an authorized dealer for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots, Knolly, and Revel. Bring your bike in and we'll have you riding high in no time.
           </p>
         </div>
       </div>
@@ -1282,6 +1279,32 @@ const AboutPage = () => (
                 <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:6 }}>{title}</div>
                 <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6, margin:0 }}>{desc}</p>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Team */}
+    <section className="section section-pad bg-paper">
+      <div className="container-wide">
+        <div className="reveal section-label">The Team</div>
+        <h2 className="display-xl reveal" style={{ marginBottom: 64 }}>The people<br/><span className="serif-italic">behind the bench.</span></h2>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(220px, 1fr))", gap:2 }}>
+          {[
+            { name:"Darrin Caruso",   role:"Owner · Manager · Mechanic · Sales" },
+            { name:"Matt Bisaro",     role:"Assistant Manager · Mechanic" },
+            { name:"Jason Tomm",      role:"Sales · Warranty" },
+            { name:"Phil Glerum",     role:"Mechanic · Sales" },
+            { name:"Tao Caruso",      role:"Sales · Assistant Manager" },
+            { name:"Steve Lauridsen", role:"Mechanic" },
+            { name:"Joanne King",     role:"Inventory · Shipping & Receiving" },
+            { name:"Steve Gaucher",   role:"IT · Event Organizer" },
+          ].map((p, i) => (
+            <div key={i} className={"reveal reveal-d-" + (i % 4 + 1)}
+              style={{ padding:"32px 28px", background:"var(--white)", borderTop:"2px solid var(--black)" }}>
+              <div style={{ fontFamily:"var(--display)", fontSize:"clamp(18px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{p.name}</div>
+              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", lineHeight:1.7 }}>{p.role}</div>
             </div>
           ))}
         </div>
