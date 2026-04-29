@@ -122,12 +122,12 @@ const BikeCard = ({ b, idx }) => (
         <ArrowRight />
       </div>
     </div>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
-      <div>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, flexWrap: "wrap" }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div className="eyebrow" style={{ marginBottom: 4 }}>{b.brand}  ·  {b.type}</div>
-        <div style={{ fontFamily: "var(--display)", fontSize: 18, fontWeight: 500, letterSpacing: "-.005em", textTransform: "uppercase" }}>{b.name}</div>
+        <div style={{ fontFamily: "var(--display)", fontSize: "clamp(14px,1.5vw,18px)", fontWeight: 500, letterSpacing: "-.005em", textTransform: "uppercase", lineHeight: 1.2 }}>{b.name}</div>
       </div>
-      <div style={{ fontFamily: "var(--display)", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}>${b.price.toLocaleString()}</div>
+      <div style={{ fontFamily: "var(--display)", fontSize: "clamp(13px,1.3vw,16px)", fontWeight: 500, whiteSpace: "nowrap", paddingTop: 2 }}>${b.price.toLocaleString()}</div>
     </div>
     <style>{`a:hover .bike-hover { transform: translateY(0); }`}</style>
   </a>
@@ -135,10 +135,17 @@ const BikeCard = ({ b, idx }) => (
 
 const FeaturedBikes = () => {
   const bikes = FEATURED_BIKES;
-  const VISIBLE = 4;
+  const getVisible = () => window.innerWidth < 600 ? 1 : window.innerWidth < 1024 ? 2 : 4;
+  const [visible, setVisible] = React.useState(getVisible());
   const [pos, setPos] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
-  const max = bikes.length - VISIBLE;
+  const max = Math.max(0, bikes.length - visible);
+
+  React.useEffect(() => {
+    const onResize = () => { setVisible(getVisible()); setPos(0); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   React.useEffect(() => {
     if (paused) return;
@@ -146,8 +153,7 @@ const FeaturedBikes = () => {
     return () => clearInterval(t);
   }, [paused, max]);
 
-  // Track is (bikes.length / VISIBLE * 100)% wide; each card is (100/bikes.length)% of track
-  const trackW = `${bikes.length / VISIBLE * 100}%`;
+  const trackW = `${bikes.length / visible * 100}%`;
   const cardW  = `${100 / bikes.length}%`;
   const shift  = `${pos * (100 / bikes.length)}%`;
 
