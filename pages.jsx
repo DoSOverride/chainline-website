@@ -449,12 +449,14 @@ const ShopPage = () => {
       const fmatch = s.match(FRAME_RE);
       const size = fmatch ? fmatch[1] : null;
       if (size) s = s.slice(0, s.lastIndexOf(fmatch[1])).trim();
-      // Wheel size — whitelist only valid bicycle sizes so model numbers (4,5,3 etc) don't match
+      // Strip leading model artifacts BEFORE wheel check:
+      // - digits e.g. "4 ", "3 ", "90 " (model numbers/years)
+      // - short uppercase codes e.g. "E ", "ST ", "CX " (sub-model codes)
+      s = s.replace(/^(\d+\s+|[A-Z]{1,3}\s+)+/, '').trim();
+      // Wheel size — whitelist only valid bicycle sizes
       const wmatch = s.match(VALID_WHEELS);
       const wheel = wmatch ? wmatch[1].replace(/c$/i,'C').replace(/b$/i,'B') + '"' : null;
       if (wheel) s = s.slice(wmatch[0].length).trim();
-      // Strip any stray leading model-level single digit left over from name parsing
-      s = s.replace(/^\d\s+/, '').trim();
       // Color is what remains
       const color = s.replace(/^[-–\s]+/, '').trim() || null;
       return { wheel, color, size };
