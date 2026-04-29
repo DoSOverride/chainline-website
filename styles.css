@@ -35,10 +35,10 @@
   --black:        #f0f0ee;
   --near-black:   #e0e0de;
   --soft-black:   #c4c4c2;
-  --white:        #111111;
-  --paper:        #191919;
-  --gray-100:     #242424;
-  --gray-200:     #2e2e2e;
+  --white:        #161616;
+  --paper:        #2a2a2a;
+  --gray-100:     #323232;
+  --gray-200:     #3c3c3c;
   --gray-300:     #484846;
   --gray-400:     #6a6a68;
   --gray-500:     #949490;
@@ -127,7 +127,7 @@
 /* Bike images — keep as-is (white bg bikes look fine on dark paper background) */
 [data-theme="dark"] img.bike-img {
   mix-blend-mode: normal !important;
-  filter: none !important;
+  filter: brightness(1.05) contrast(1.05) !important;
 }
 
 /* Buttons on light-bg sections in dark mode */
