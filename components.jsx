@@ -142,34 +142,31 @@ const Announce = () => {
 };
 
 // Contact bar
-const ContactBar = () => (
-  <div style={{ background:"var(--paper)", borderBottom:"1px solid var(--hairline)", padding:"7px 0" }}>
-    <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"clamp(16px,3vw,48px)", flexWrap:"wrap" }}>
-      <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-        <a href="tel:2508601968" data-cursor="link"
-          style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2.5A1.5 1.5 0 013.5 1h1.376a1 1 0 01.984.821l.53 2.646a1 1 0 01-.29.98L4.97 6.568a11.04 11.04 0 005.46 5.46l1.12-1.13a1 1 0 01.981-.291l2.646.53A1 1 0 0115 12.124V13.5A1.5 1.5 0 0113.5 15C6.596 15 1 9.404 1 2.5z"/></svg>
+const ContactBar = () => {
+  const ls = { display:"flex", alignItems:"center", gap:"clamp(4px,1vw,7px)", fontFamily:"var(--mono)", fontSize:"clamp(8px,2.2vw,10px)", letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" };
+  const ic = { flexShrink:0 };
+  return (
+    <div style={{ background:"var(--paper)", borderBottom:"1px solid var(--hairline)", padding:"6px 0", overflow:"hidden" }}>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"clamp(8px,2.5vw,40px)", flexWrap:"nowrap", padding:"0 clamp(6px,2vw,24px)" }}>
+        <a href="tel:2508601968" data-cursor="link" style={ls}>
+          <svg style={ic} width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2.5A1.5 1.5 0 013.5 1h1.376a1 1 0 01.984.821l.53 2.646a1 1 0 01-.29.98L4.97 6.568a11.04 11.04 0 005.46 5.46l1.12-1.13a1 1 0 01.981-.291l2.646.53A1 1 0 0115 12.124V13.5A1.5 1.5 0 0113.5 15C6.596 15 1 9.404 1 2.5z"/></svg>
           (250) 860-1968
         </a>
-        <a href="sms:2508601968" data-cursor="link"
-          style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <a href="sms:2508601968" data-cursor="link" style={ls}>
+          <svg style={ic} width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 2H2a1 1 0 00-1 1v8a1 1 0 001 1h3l2 2.5L9 12h5a1 1 0 001-1V3a1 1 0 00-1-1z"/>
-            <circle cx="5" cy="7" r=".6" fill="currentColor" stroke="none"/>
-            <circle cx="8" cy="7" r=".6" fill="currentColor" stroke="none"/>
-            <circle cx="11" cy="7" r=".6" fill="currentColor" stroke="none"/>
+            <circle cx="5" cy="7" r=".6" fill="currentColor" stroke="none"/><circle cx="8" cy="7" r=".6" fill="currentColor" stroke="none"/><circle cx="11" cy="7" r=".6" fill="currentColor" stroke="none"/>
           </svg>
           Text
         </a>
+        <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" data-cursor="link" style={ls}>
+          <svg style={ic} width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+          1139 Ellis St, Kelowna
+        </a>
       </div>
-      <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" data-cursor="link"
-        style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
-        1139 Ellis St · Downtown
-      </a>
     </div>
-  </div>
-);
+  );
+};
 
 // Header / Nav
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
@@ -197,6 +194,20 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
 
   return (
     <header className={"header " + (scrolled ? (page === "home" ? "solid" : "light") : "")} data-screen-label="00 Header">
+      {/* Global mobile typography — clamp all large display text so nothing overflows */}
+      <style>{`
+        @media(max-width:768px){
+          .display-xxl{font-size:clamp(30px,9vw,52px)!important;line-height:1.0!important}
+          .display-xl{font-size:clamp(26px,7.5vw,42px)!important}
+          .display-l{font-size:clamp(22px,6vw,34px)!important}
+          .display-m{font-size:clamp(18px,5vw,26px)!important}
+          .display-s{font-size:clamp(15px,4.5vw,21px)!important}
+          .serif-italic{font-size:clamp(18px,5.5vw,32px)!important}
+          .hero-italic{font-size:clamp(18px,5.5vw,40px)!important}
+          .page-contact-grid{grid-template-columns:1fr!important}
+          .bike-page-layout{grid-template-columns:1fr!important;gap:32px!important}
+        }
+      `}</style>
       <Announce />
       <ContactBar />
       <div className="container-wide">
@@ -516,9 +527,8 @@ const MobileNav = ({ open, onClose }) => {
           <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('accessories')}>Accessories <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
           {[
-            { label:"Services", route:"services" },
-            { label:"Book Online", route:"book" },
             { label:"Group Rides", route:"rides" },
             { label:"Trails", route:"trails" },
             { label:"Pinkbike", route:"classifieds" },
@@ -560,15 +570,31 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'components' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"drivetrain" })); }}>All Components</a>
-          {COMP_CATS.map(cat => (
-            <div key={cat.label}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 8px" }}>{cat.label}</div>
-              {cat.items.map(it => (
-                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"drivetrain" })); }}>All Components</a>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            {/* Left col: Drivetrain + Suspension */}
+            <div style={{ paddingRight:16 }}>
+              {COMP_CATS.filter(c => ["drivetrain","suspension"].includes(c.id || c.tab)).map(cat => (
+                <div key={cat.label} style={{ marginBottom:20 }}>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
+                  {cat.items.map(it => (
+                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+                  ))}
+                </div>
               ))}
             </div>
-          ))}
+            {/* Right col: Brakes + Cockpit + Wheels */}
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              {COMP_CATS.filter(c => !["drivetrain","suspension"].includes(c.id || c.tab)).map(cat => (
+                <div key={cat.label} style={{ marginBottom:20 }}>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
+                  {cat.items.map(it => (
+                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -576,15 +602,36 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"fit" })); }}>All Accessories</a>
-          {ACC_CATS.map(cat => (
-            <div key={cat.label}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", padding:"20px 0 8px" }}>{cat.label}</div>
-              {cat.items.map(it => (
-                <a key={it} href="#" style={subA} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
-              ))}
-            </div>
-          ))}
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"fit" })); }}>All Accessories</a>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            {ACC_CATS.map((cat, ci) => (
+              <div key={cat.label} style={{ paddingRight: ci===0?16:0, paddingLeft: ci===1?16:0, borderLeft: ci===1?"1px solid rgba(255,255,255,0.1)":"none" }}>
+                <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
+                {cat.items.map(it => (
+                  <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Panel 5: Services ── */}
+      <div className={"mob-panel " + (panel === 'services' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("services")); }}>All Services</a>
+          <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            {[
+              { label:"Book a Service",   route:"book"     },
+              { label:"Bike Fit",         route:"book"     },
+              { label:"Demo Ride",        route:"services" },
+              { label:"Bike Storage",     route:"services" },
+              { label:"Service Pricing",  route:"services" },
+            ].map(it => (
+              <a key={it.label} href="#" style={{ ...subA, fontSize:20 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+            ))}
+          </div>
         </div>
       </div>
     </div>
