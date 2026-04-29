@@ -298,9 +298,9 @@ const BrandsGrid = () => {
           </div>
           <div className="eyebrow">Curated, not stocked.</div>
         </div>
-        <div className="reveal home-brands-grid" style={{ display: "grid", gridTemplateColumns: "repeat(9, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
+        <div className="home-brands-grid" style={{ display: "grid", gridTemplateColumns: "repeat(9, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
           {brands.map((b, i) => (
-            <a key={i} href="#" data-cursor="link" className="brand-tile" style={{ aspectRatio: "1.1/1", display: "grid", placeItems: "center", borderRight: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", background: "var(--white)", fontFamily: "var(--display)", fontSize: 14, fontWeight: 600, letterSpacing: ".14em", transition: "background .3s, color .3s" }}>
+            <a key={i} href="#" data-cursor="link" className={"brand-tile reveal reveal-d-" + (i % 3 + 1)} onClick={e => { e.preventDefault(); window.cl.go("shop", { brand: b.charAt(0) + b.slice(1).toLowerCase() }); }} style={{ aspectRatio: "1.1/1", display: "grid", placeItems: "center", borderRight: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", background: "var(--white)", fontFamily: "var(--display)", fontSize: 14, fontWeight: 600, letterSpacing: ".14em", transition: "background .3s, color .3s" }}>
               {b}
             </a>
           ))}
