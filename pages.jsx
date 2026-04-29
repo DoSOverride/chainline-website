@@ -99,6 +99,11 @@ const getBikeDescription = (b) => {
 
 // ── Bike Detail Page ──────────────────────────────────────────
 const BikePage = ({ bike, onBack, onCart }) => {
+  const [selectedSize, setSelectedSize] = React.useState(null);
+  React.useEffect(() => {
+    if (bike?.sizes) setSelectedSize(bike.sizes.find(sz=>sz.inStock) || bike.sizes[0] || null);
+    else setSelectedSize(null);
+  }, [bike?.handle]);
   const [adding, setAdding] = React.useState(false);
   const [added, setAdded]   = React.useState(false);
 
@@ -196,6 +201,32 @@ const BikePage = ({ bike, onBack, onCart }) => {
               </>
             )}
           </div>
+
+          {/* Size selector */}
+          {b.sizes && b.sizes.length > 0 && (
+            <div className="reveal" style={{ marginBottom:28 }}>
+              <div className="eyebrow" style={{ marginBottom:12 }}>Choose Size</div>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                {b.sizes.map((sz, i) => (
+                  <button key={i} onClick={() => setSelectedSize(sz)} data-cursor="link"
+                    style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase',
+                      border:'1.5px solid ' + (selectedSize?.variant === sz.variant ? 'var(--black)' : sz.inStock ? 'rgba(22,163,74,0.4)' : 'var(--hairline)'),
+                      background: selectedSize?.variant === sz.variant ? 'var(--black)' : 'transparent',
+                      color: selectedSize?.variant === sz.variant ? 'var(--white)' : sz.inStock ? '#16a34a' : 'var(--gray-400)',
+                      cursor:'pointer', transition:'all .2s' }}>
+                    {sz.variant}
+                  </button>
+                ))}
+              </div>
+              {selectedSize && (
+                <div style={{ marginTop:10, display:'flex', alignItems:'center', gap:8 }}>
+                  {selectedSize.inStock
+                    ? <><span className="stock-dot" /><span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', color:'#16a34a' }}>{selectedSize.variant} · In Stock</span></>
+                    : <span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--gray-500)' }}>{selectedSize.variant} · Contact us to order</span>}
+                </div>
+              )}
+            </div>
+          )}
 
           <p className="reveal" style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--gray-600)', marginBottom: 40, maxWidth: 480 }}>{desc}</p>
 
@@ -357,30 +388,45 @@ const ShopPage = () => {
     return () => window.removeEventListener('lightspeed:ready', onReady);
   }, []);
 
-  // Catalog: SHOP_BIKES merged with live Lightspeed stock data
+  // Catalog: SHOP_BIKES merged with live Lightspeed stock data + size variants
   const allProducts = React.useMemo(() => {
     if (!liveProducts) return SHOP_BIKES;
+    const SIZE_LABELS = new Set(['small','medium','large','x-large','xlarge','xs','xl','xxl','sm','md','lg','one size']);
+    function extractVariant(liveName, shopBrand, shopName) {
+      let rest = liveName.replace(new RegExp('^' + shopBrand.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\s*','i'), '');
+      _norm(shopName).split(' ').filter(w=>w.length>=3).forEach(kw => {
+        rest = rest.replace(new RegExp(kw,'i'), '');
+      });
+      rest = rest.trim().replace(/\s+/g,' ');
+      return rest || liveName.split(' ').pop() || null;
+    }
     return SHOP_BIKES.map(s => {
       const sb  = _norm(s.brand || '');
       const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
-      const live = liveProducts.find(l => {
+      const matches = liveProducts.filter(l => {
         const lb = _norm((l.name || '').split(' ')[0]);
         if (lb !== sb) return false;
         const ln = _norm(l.name);
         return sKw.length === 0 || sKw.every(w => ln.includes(w));
       });
-      return live ? { ...s, price: live.price, inStock: true, qty: live.qty } : { ...s, inStock: false };
+      if (matches.length === 0) return { ...s, inStock: false };
+      const best = matches.find(m => m.inStock) || matches[0];
+      const sizes = matches.length > 1
+        ? matches.map(m => ({
+            variant: extractVariant(m.name, s.brand || '', s.name),
+            inStock: m.inStock, qty: m.qty, price: m.price, sku: m.sku,
+          })).filter(sz => sz.variant)
+        : null;
+      return { ...s, price: best.price || s.price, inStock: matches.some(m=>m.inStock), qty: best.qty, sku: best.sku, sizes };
     });
   }, [liveProducts]);
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
-  const SPECIAL_ORDER_ONLY = ["Knolly","Revel"]; // no bikes currently in stock for these brands
   const TYPE_TABS = ["All","Mountain","Gravel","E-Bike","Commuter","Comfort","Kids"];
 
-  // Brand filter: show full catalog for selected brand (instock + orderable).
-  // No brand filter: show only in-stock bikes.
+  // Always show only in-stock bikes
   let filtered = brand !== "All"
-    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand && b.type !== undefined)
+    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand && b.inStock !== false)
     : allProducts.filter(b => b.inStock !== false);
 
   // Type filter
@@ -396,21 +442,12 @@ const ShopPage = () => {
     borderBottom:"2px solid " + (active ? "var(--black)" : "transparent"), transition:"all .2s"
   });
 
-  const isSpecialOrderBrand = SPECIAL_ORDER_ONLY.includes(brand);
-
   return (
     <div className="page-fade">
       <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
 
-      {/* ── Loading bar ── */}
-      {liveLoading && (
-        <div style={{ position:"sticky", top:78, zIndex:51, height:3, background:"var(--paper)", overflow:"hidden" }}>
-          <div style={{ position:"absolute", top:0, left:"-60%", width:"60%", height:"100%", background:"var(--black)", animation:"shopLoadBar 1.4s ease-in-out infinite" }} />
-        </div>
-      )}
-
       {/* ── Filter + sort bar ── */}
-      <div className="shop-filter-sticky" style={{ position:"sticky", top: liveLoading ? 81 : 78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
+      <div className="shop-filter-sticky" style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
 
         {/* Row 1: count + active brand pill + sort */}
         <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:0, display:"flex", alignItems:"center", gap:10 }}>
@@ -459,15 +496,7 @@ const ShopPage = () => {
       {/* ── Grid ── */}
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          {isSpecialOrderBrand ? (
-            <div style={{ textAlign:"center", padding:"80px 0" }}>
-              <div className="display-m" style={{ marginBottom:16 }}>{brand} · Special Order</div>
-              <p style={{ color:"var(--gray-500)", maxWidth:480, margin:"0 auto 32px", lineHeight:1.65 }}>
-                We carry {brand} bikes by special order. Contact us to discuss models, pricing, and lead times — we'll find the right build for you.
-              </p>
-              <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Contact Us <ArrowRight /></button>
-            </div>
-          ) : filtered.length === 0 && !liveLoading ? (
+          {filtered.length === 0 && !liveLoading ? (
             <div style={{ textAlign:"center", padding:"80px 0" }}>
               <div className="display-m" style={{ marginBottom:16 }}>No bikes found.</div>
               <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Try a different filter or check back when we get new stock in.</p>
@@ -542,17 +571,11 @@ const BikeCardLarge = ({ b, idx }) => {
             <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
           </div>
         )}
-        {/* Stock / availability badges */}
-        {inStock ? (
-          <div style={{ position:"absolute", top:10, left:10, display:"flex", alignItems:"center", gap:6, padding:"4px 9px", background:"rgba(255,255,255,0.92)", border:"1px solid rgba(22,163,74,0.3)", borderRadius:2 }}>
-            <span className="stock-dot" />
-            <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#16a34a" }}>In Stock</span>
-          </div>
-        ) : (
-          <div style={{ position:"absolute", top:10, left:10, padding:"4px 9px", background:"rgba(255,255,255,0.92)", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid var(--hairline)" }}>
-            Special Order
-          </div>
-        )}
+        {/* In-stock badge */}
+        <div style={{ position:"absolute", top:10, left:10, display:"flex", alignItems:"center", gap:6, padding:"4px 9px", background:"rgba(255,255,255,0.92)", border:"1px solid rgba(22,163,74,0.3)", borderRadius:2 }}>
+          <span className="stock-dot" />
+          <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#16a34a" }}>In Stock</span>
+        </div>
         {lowStock && (
           <div style={{ position:"absolute", bottom:10, left:10, padding:"4px 9px", background:"rgba(255,255,255,0.92)", color:"#b45309", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", border:"1px solid rgba(180,83,9,0.3)" }}>
             Only {qty} left
@@ -567,19 +590,29 @@ const BikeCardLarge = ({ b, idx }) => {
       </div>
       {/* Info */}
       <div className="eyebrow" style={{ marginBottom:4 }}>{brand}  ·  {b.type}</div>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:12 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:b.sizes ? 8 : 12 }}>
         <div style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.4vw,19px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.2 }}>{name}</div>
         <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, flexShrink:0 }}>${price.toLocaleString()}</div>
       </div>
+      {/* Size chips */}
+      {b.sizes && (
+        <div style={{ display:"flex", gap:4, flexWrap:"wrap", marginBottom:10 }}>
+          {b.sizes.filter(sz=>sz.inStock).map((sz,i) => (
+            <span key={i} style={{ padding:"2px 7px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", border:"1px solid rgba(22,163,74,0.4)", color:"#16a34a", borderRadius:2 }}>
+              {sz.variant}
+            </span>
+          ))}
+        </div>
+      )}
       {/* Actions */}
       <div style={{ display:"flex", gap:8 }} onClick={e => e.stopPropagation()}>
         <button className="btn btn-outline" data-cursor="link" onClick={goToBike}
           style={{ flex:1, justifyContent:"center", padding:"11px 8px", fontSize:11 }}>
           View Bike
         </button>
-        <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
+        <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding}
           style={{ flex:1, justifyContent:"center", padding:"11px 8px", fontSize:11 }}>
-          {!inStock ? "Special Order" : added ? "Added ✓" : adding ? "…" : "Add to Cart"}
+          {added ? "Added ✓" : adding ? "…" : b.sizes ? "Pick Size" : "Add to Cart"}
         </button>
       </div>
     </div>
@@ -1553,6 +1586,17 @@ const PartsPage = () => {
 const ClassifiedsPage = () => {
   const PB_SHOP = "https://www.pinkbike.com/u/ChainLineCycle/buysell/";
   const PB_POST = "https://www.pinkbike.com/buysell/post/";
+  const WORKER  = "https://still-term-f1ec.taocaruso77.workers.dev";
+
+  const [pbListings, setPbListings] = React.useState(null);
+  const [pbLoading,  setPbLoading]  = React.useState(true);
+
+  React.useEffect(() => {
+    fetch(`${WORKER}/api/pinkbike`)
+      .then(r => r.json())
+      .then(d => { setPbListings(d.listings || []); setPbLoading(false); })
+      .catch(() => { setPbListings([]); setPbLoading(false); });
+  }, []);
   return (
     <div className="page-fade">
       <SubHero eyebrow="Pinkbike  /  N°01" title="Buy. Sell. Ride." italic="Find your next bike." />
@@ -1600,14 +1644,66 @@ const ClassifiedsPage = () => {
             ))}
           </div>
 
+          {/* Live Pinkbike listings */}
+          <div className="reveal" style={{ marginBottom:64 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
+              <div className="section-label" style={{ marginBottom:0 }}>
+                Live Listings{!pbLoading && pbListings?.length > 0 ? `  ·  ${pbListings.length}` : ''}
+                <span style={{ marginLeft:12, opacity:.5 }}>via Pinkbike</span>
+              </div>
+              <a href={PB_SHOP} target="_blank" rel="noopener" data-cursor="link"
+                style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", display:"flex", alignItems:"center", gap:6 }}>
+                View all on Pinkbike <ArrowRight size={10} />
+              </a>
+            </div>
+
+            {pbLoading && (
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:24 }}>
+                {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height:260, borderRadius:2 }} />)}
+              </div>
+            )}
+
+            {!pbLoading && pbListings?.length > 0 && (
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:24 }}>
+                {pbListings.map((l, i) => (
+                  <a key={i} href={l.url} target="_blank" rel="noopener" data-cursor="link"
+                    style={{ display:"flex", flexDirection:"column", border:"1px solid var(--hairline)", textDecoration:"none", color:"inherit", transition:"border-color .2s" }}
+                    onMouseEnter={e=>e.currentTarget.style.borderColor='var(--black)'}
+                    onMouseLeave={e=>e.currentTarget.style.borderColor='var(--hairline)'}>
+                    {l.image
+                      ? <img src={l.image} alt={l.title} className="bike-img" style={{ width:"100%", aspectRatio:"4/3", objectFit:"cover" }} />
+                      : <div className="ph" style={{ aspectRatio:"4/3" }} />}
+                    <div style={{ padding:"16px 20px 20px", flex:1, display:"flex", flexDirection:"column", gap:8 }}>
+                      {l.condition && <span className="pill" style={{ color:"var(--gray-500)", alignSelf:"flex-start", fontSize:9 }}>{l.condition}</span>}
+                      <div style={{ fontFamily:"var(--display)", fontSize:"clamp(13px,1.2vw,16px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.3, flex:1 }}>{l.title}</div>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                        <span style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500 }}>${l.price.toLocaleString()}</span>
+                        <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>Pinkbike →</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {!pbLoading && (!pbListings || pbListings.length === 0) && (
+              <div style={{ textAlign:"center", padding:"40px 0", border:"1px solid var(--hairline)" }}>
+                <p style={{ color:"var(--gray-500)", fontSize:14, marginBottom:16 }}>No live listings right now.</p>
+                <a href={PB_SHOP} target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">
+                  Check Pinkbike directly <ArrowRight />
+                </a>
+              </div>
+            )}
+          </div>
+
           {/* CTA */}
           <div className="reveal" style={{ textAlign:"center" }}>
             <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:24 }}>
               Looking to consign your bike through the shop? Email us.
             </p>
             <div style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
-              <a href={PB_SHOP} target="_blank" rel="noopener" className="btn" data-cursor="link">
-                Our Pinkbike Listings <ArrowRight />
+              <a href={PB_POST} target="_blank" rel="noopener" className="btn" data-cursor="link">
+                Post on Pinkbike <ArrowRight />
               </a>
               <a href="mailto:bikes@chainline.ca?subject=Consignment Enquiry" className="btn btn-outline" data-cursor="link">
                 Consign with Us <ArrowRight />

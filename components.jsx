@@ -343,10 +343,6 @@ const MobileNav = ({ open, onClose }) => {
             </a>
           ))}
         </div>
-        <div style={{ padding:"20px 24px", borderTop:"1px solid var(--hairline-light)", display:"flex", justifyContent:"space-between", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", flexShrink:0 }}>
-          <span>MON–SAT  10–6</span>
-          <span>IG · STRAVA · FB</span>
-        </div>
       </div>
 
       {/* ── Panel 2: Shop ── */}
@@ -463,7 +459,7 @@ const Footer = () => (
             ))}
           </div>
           <div style={{ marginTop: 16 }}>
-            <a href="https://www.google.com/maps/search/ChainLine+Cycle+Kelowna" target="_blank" rel="noopener"
+            <a href="https://search.google.com/local/writereview?placeid=ChIJbbM4_V7zfVMRmOhSjhXRP9o&source=g.page.m._&laa=merchant-review-solicitation" target="_blank" rel="noopener"
               className="link-underline" data-cursor="link"
               style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", display:"inline-flex", alignItems:"center", gap:6 }}>
               ★ Rate us on Google
