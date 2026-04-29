@@ -6,10 +6,10 @@ const _TYPES     = ["mountain","gravel","e-bike","commuter","comfort","kids"];
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools"];
 const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy"];
 
-function hashToRoute(hash) {
-  const h = (hash || '').replace(/^#\/?/, '').trim();
-  if (!h || h === 'home') return { page: 'home', intent: null };
-  const [seg1, seg2] = h.split('/');
+function pathToRoute(pathname) {
+  const p = (pathname || '/').replace(/^\//, '').trim();
+  if (!p || p === 'home') return { page: 'home', intent: null };
+  const [seg1, seg2] = p.split('/');
   const s1 = seg1.toLowerCase(), s2 = (seg2 || '').toLowerCase();
 
   if (s1 === 'bikes' || s1 === 'shop') {
@@ -27,19 +27,19 @@ function hashToRoute(hash) {
   return { page: 'home', intent: null };
 }
 
-function routeToHash(page, intent) {
-  if (!page || page === 'home') return '#';
+function routeToPath(page, intent) {
+  if (!page || page === 'home') return '/';
   if (page === 'shop') {
-    if (intent?.type) return `#bikes/${intent.type.toLowerCase().replace('-', '-')}`;
-    if (intent?.brand) return `#bikes/${intent.brand.toLowerCase()}`;
-    return '#bikes';
+    if (intent?.type) return `/bikes/${intent.type.toLowerCase()}`;
+    if (intent?.brand) return `/bikes/${intent.brand.toLowerCase()}`;
+    return '/bikes';
   }
   if (page === 'bike') {
     const h = intent?.bike?.handle;
-    return h ? `#bike/${h}` : '#bikes';
+    return h ? `/bike/${h}` : '/bikes';
   }
-  if (page === 'parts') return intent?.tab ? `#parts/${intent.tab}` : '#parts';
-  return `#${page}`;
+  if (page === 'parts') return intent?.tab ? `/parts/${intent.tab}` : '/parts';
+  return `/${page}`;
 }
 
 const ScrollProgress = ({ onDark }) => {
@@ -126,7 +126,7 @@ const App = () => {
       window.cl.currentPage = p;
       window.cl.intent = intent || null;
       _fromCode = true;
-      window.location.hash = routeToHash(p, intent);
+      window.history.pushState({ page: p, intent: intent || null }, '', routeToPath(p, intent));
       setTimeout(() => { _fromCode = false; }, 50);
       setPage(p);
       window.scrollTo({ top: 0, behavior: "auto" });
@@ -138,19 +138,21 @@ const App = () => {
       else window.cl.go("shop");
     };
 
-    // Browser back/forward
-    const onHashChange = () => {
+    // Browser back/forward via popstate
+    const onPopState = (e) => {
       if (_fromCode) return;
-      const { page: p, intent } = hashToRoute(window.location.hash);
+      const { page: p, intent } = e.state?.page
+        ? { page: e.state.page, intent: e.state.intent }
+        : pathToRoute(window.location.pathname);
       window.cl.currentPage = p;
       window.cl.intent = intent;
       setPage(p);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
-    window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onPopState);
 
-    // Load initial route from hash on first render
-    const initial = hashToRoute(window.location.hash);
+    // Load initial route from pathname on first render
+    const initial = pathToRoute(window.location.pathname);
     if (initial.page !== 'home') {
       window.cl.currentPage = initial.page;
       window.cl.intent = initial.intent;
@@ -159,7 +161,7 @@ const App = () => {
       window.cl.currentPage = 'home';
     }
 
-    return () => window.removeEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   // Scroll
