@@ -164,7 +164,7 @@ const App = () => {
   React.useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 80);
-      setShowSticky(window.scrollY > 800 && page !== "book");
+      setShowSticky(page !== "book");
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
