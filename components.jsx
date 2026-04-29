@@ -141,9 +141,8 @@ const AccountIcon = () => (
 const CartIcon = ({ count }) => (
   <div style={{ position:"relative", display:"inline-flex", alignItems:"center" }}>
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 01-8 0"/>
+      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+      <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61H19.4a2 2 0 001.98-1.71l1.62-9.29H6"/>
     </svg>
     {count > 0 && (
       <span style={{ position:"absolute", top:-5, right:-6, background:"var(--black)", color:"var(--white)", width:13, height:13, borderRadius:"50%", fontSize:7, fontFamily:"var(--mono)", fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center", lineHeight:1 }}>
