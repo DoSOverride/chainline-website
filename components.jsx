@@ -415,7 +415,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
       cols: [
         { h: "Info", items: ["About", "Contact", "Our Brands"] },
         { h: "Shop", items: ["Gift Cards", "Classifieds", "Sale"] },
-        { h: "Rides & Trails", items: ["Group Rides", "Trails", "Pinkbike"] },
+        { h: "Community", items: ["Pinkbike", "Strava Club", "Events"] },
       ],
     },
   };
@@ -575,18 +575,8 @@ const MobileNav = ({ open, onClose }) => {
           <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('accessories')}>Accessories <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
-          {[
-            { label:"Group Rides", route:"rides" },
-            { label:"Trails", route:"trails" },
-            { label:"Pinkbike", route:"classifieds" },
-            { label:"About", route:"about" },
-            { label:"Contact", route:"contact" },
-          ].map(l => (
-            <a key={l.label} href="#" style={linkA}
-              onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(l.route)); }}>
-              {l.label}
-            </a>
-          ))}
+          <div style={linkA} onClick={() => setPanel('explore')}>Explore <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('more')}>More <ChevR /></div>
         </div>
       </div>
 
@@ -670,14 +660,65 @@ const MobileNav = ({ open, onClose }) => {
           <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("services")); }}>All Services</a>
           <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             {[
-              { label:"Book a Service",   route:"book"     },
-              { label:"Bike Fit",         route:"book"     },
-              { label:"Demo Ride",        route:"services" },
-              { label:"Bike Storage",     route:"services" },
-              { label:"Service Pricing",  route:"services" },
+              { label:"Book a Service",  route:"book"     },
+              { label:"Bike Fit",        route:"book"     },
+              { label:"Demo Ride",       route:"services" },
+              { label:"Bike Storage",    route:"services" },
+              { label:"Service Pricing", route:"services" },
             ].map(it => (
               <a key={it.label} href="#" style={{ ...subA, fontSize:20 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Panel 6: Explore ── */}
+      <div className={"mob-panel " + (panel === 'explore' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            <div style={{ paddingRight:16 }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Community</div>
+              {["Group Rides","Strava Club","Skill Clinics","Events"].map(it => (
+                <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("rides")); }}>{it}</a>
+              ))}
+            </div>
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Trails</div>
+              {["Knox Mountain","Bear Creek","Myra Canyon","Kelowna Bike Park"].map(it => (
+                <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("trails")); }}>{it}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Panel 7: More ── */}
+      <div className={"mob-panel " + (panel === 'more' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            <div style={{ paddingRight:16 }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Info</div>
+              {[
+                { label:"About",      route:"about"      },
+                { label:"Contact",    route:"contact"    },
+                { label:"Our Brands", route:"brands"     },
+                { label:"Pinkbike",   route:"classifieds"},
+              ].map(it => (
+                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+              ))}
+            </div>
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Shop</div>
+              {[
+                { label:"Gift Cards",  route:"giftcards"  },
+                { label:"Classifieds", route:"classifieds"},
+                { label:"Sale",        route:"shop"       },
+              ].map(it => (
+                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
