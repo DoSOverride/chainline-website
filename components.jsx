@@ -39,6 +39,29 @@ const Announce = () => {
   );
 };
 
+// Contact bar
+const ContactBar = () => (
+  <div style={{ background:"var(--paper)", borderBottom:"1px solid var(--hairline)", padding:"7px 0" }}>
+    <div className="container-wide" style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"clamp(16px,3vw,48px)", flexWrap:"wrap" }}>
+      <a href="tel:2508601968" data-cursor="link"
+        style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2.5A1.5 1.5 0 013.5 1h1.376a1 1 0 01.984.821l.53 2.646a1 1 0 01-.29.98L4.97 6.568a11.04 11.04 0 005.46 5.46l1.12-1.13a1 1 0 01.981-.291l2.646.53A1 1 0 0115 12.124V13.5A1.5 1.5 0 0113.5 15C6.596 15 1 9.404 1 2.5z"/></svg>
+        (250) 860-1968
+      </a>
+      <a href="mailto:bikes@chainline.ca" data-cursor="link"
+        style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 4l7 5 7-5"/></svg>
+        bikes@chainline.ca
+      </a>
+      <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" data-cursor="link"
+        style={{ display:"flex", alignItems:"center", gap:7, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" }}>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+        1139 Ellis St, Kelowna
+      </a>
+    </div>
+  </div>
+);
+
 // Header / Nav
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
@@ -66,6 +89,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
   return (
     <header className={"header " + (scrolled ? (page === "home" ? "solid" : "light") : "")} data-screen-label="00 Header">
       <Announce />
+      <ContactBar />
       <div className="container-wide">
         <div className="nav" onMouseLeave={scheduleClose}>
           <Wordmark />
@@ -865,4 +889,4 @@ const SearchModal = ({ onClose }) => {
   );
 };
 
-Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ChatWidget, SearchModal });
+Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ContactBar, ChatWidget, SearchModal });
