@@ -292,11 +292,7 @@ const SHOP_BIKES = [
 
 // SHOP
 const ShopPage = () => {
-  const intent = (window.cl && window.cl.intent) || null;
-  const [brand, setBrand]   = React.useState((intent && intent.brand) || "All");
-  const [type, setType]     = React.useState((intent && intent.type)  || "All");
-  const [sort, setSort]     = React.useState("featured");
-  const [saleOnly, setSale] = React.useState(false);
+  const [sort, setSort]         = React.useState("featured");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -336,129 +332,54 @@ const ShopPage = () => {
     return () => window.removeEventListener('lightspeed:ready', onReady);
   }, []);
 
-  React.useEffect(() => {
-    if (window.cl && window.cl.intent) {
-      if (window.cl.intent.brand) setBrand(window.cl.intent.brand);
-      if (window.cl.intent.type)  setType(window.cl.intent.type);
-      window.cl.intent = null;
-    }
-  });
-
-  // Merge: SHOP_BIKES is the catalog; Lightspeed overlays live price + inStock status.
-  // Match by: same brand prefix AND all 4+ char keywords from shop-bike name appear in live name.
-  // This avoids the 8-char prefix bug where "stinson " matched every Stinson variant.
+  // All in-stock bikes from the catalog
   const allProducts = React.useMemo(() => {
-    if (!liveProducts) return SHOP_BIKES;
+    if (!liveProducts) return SHOP_BIKES.filter(b => b.inStock !== false);
     return SHOP_BIKES.map(s => {
       const sb  = _norm(s.brand || '');
-      const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4); // keyword set
+      const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
       const live = liveProducts.find(l => {
         const lb = _norm((l.name || '').split(' ')[0]);
-        if (lb !== sb) return false;                  // brands must match exactly
+        if (lb !== sb) return false;
         const ln = _norm(l.name);
-        return sKw.length === 0 || sKw.every(w => ln.includes(w)); // all keywords present
+        return sKw.length === 0 || sKw.every(w => ln.includes(w));
       });
       return live ? { ...s, price: live.price, inStock: true, qty: live.qty } : { ...s, inStock: false };
-    });
+    }).filter(b => b.inStock !== false);
   }, [liveProducts]);
 
-  const ALL_BRANDS = ["Marin","Transition","Surly","Salsa","Pivot","Bianchi","Moots"];
-  const ALL_TYPES = [
-    { label:"All",      match: () => true },
-    { label:"Mountain", match: b => b.type === "Mountain" },
-    { label:"Gravel",   match: b => b.type === "Gravel" },
-    { label:"E-Bike",   match: b => b.type === "E-Bike" },
-    { label:"Commuter", match: b => b.type === "Commuter" },
-    { label:"Comfort",  match: b => b.type === "Comfort" },
-    { label:"Kids",     match: b => b.type === "Kids" },
-  ];
-  // Only show type tabs that have at least one bike in the current data
-  const TYPES = ALL_TYPES.filter(t => t.label === "All" || allProducts.some(b => t.match(b)));
-
-  const matchType = TYPES.find(t => t.label === type) || TYPES[0];
-
-  let filtered = allProducts.filter(b => {
-    const matchesBrand = brand === "All" || (b.brand || b.vendor || "") === brand;
-    const matchesType  = matchType.match(b);
-    // Global view: instock only. Brand view: show full catalog.
-    const matchesStock = brand !== "All" || b.inStock !== false;
-    return matchesBrand && matchesType && matchesStock;
-  });
-
-  if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
-  if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
-
-  const btnBase = { fontFamily:"var(--display)", fontWeight:600, letterSpacing:".1em", textTransform:"uppercase", border:"1.5px solid", transition:"all .25s", cursor:"pointer" };
+  let filtered = [...allProducts];
+  if (sort === "price-asc")  filtered = filtered.sort((a,b) => a.price - b.price);
+  if (sort === "price-desc") filtered = filtered.sort((a,b) => b.price - a.price);
 
   return (
     <div className="page-fade">
       <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
 
-      {/* ── Sticky filter bar ── */}
+      {/* ── Slim sort bar ── */}
       <div className="shop-filter-sticky" style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
-
-        {/* Row 1 — All Bikes / Sale + status */}
-        <div className="container-wide" style={{ paddingTop:"14px", paddingBottom:0, display:"flex", alignItems:"center", gap:8 }}>
-          <button onClick={() => { setBrand("All"); setType("All"); setSale(false); }} data-cursor="link"
-            style={{ ...btnBase, padding:"8px 18px", fontSize:12, background: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "transparent", color: brand==="All"&&type==="All"&&!saleOnly ? "var(--white)" : "var(--black)", borderColor: brand==="All"&&type==="All"&&!saleOnly ? "var(--black)" : "var(--hairline)" }}>
-            All Bikes
-          </button>
-          <button onClick={() => { setSale(true); setBrand("All"); setType("All"); }} data-cursor="link"
-            style={{ ...btnBase, padding:"8px 18px", fontSize:12, background:saleOnly?"var(--black)":"transparent", color:saleOnly?"var(--white)":"var(--black)", borderColor:saleOnly?"var(--black)":"var(--hairline)" }}>
-            Sale Bikes
-          </button>
-          <div style={{ marginLeft:"auto", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
-            {liveLoading ? "Loading live inventory…" : liveProducts ? `${filtered.length} bikes · Live` : filtered.length + " bikes"}
+        <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:"12px", display:"flex", alignItems:"center", gap:12 }}>
+          <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
+            {liveLoading ? "Loading live inventory…" : `${filtered.length} bikes${liveProducts ? " · Live" : ""}`}
           </div>
-          <select value={sort} onChange={e => setSort(e.target.value)}
-            style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"5px 10px", background:"var(--white)", outline:"none" }}>
-            <option value="featured">Featured</option>
-            <option value="price-asc">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
-          </select>
-        </div>
-
-        {/* Row 2 — type tabs + brand chips (scrollable) */}
-        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"8px", paddingBottom:"12px", overflowX:"auto", gap:0, scrollbarWidth:"none" }}>
-          {/* Type tabs */}
-          {TYPES.map(t => (
-            <button key={t.label} onClick={() => { setType(t.label); setSale(false); }} data-cursor="link"
-              style={{ padding:"5px 14px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", background:"transparent", border:"none", whiteSpace:"nowrap", color: type===t.label&&!saleOnly ? "var(--black)" : "var(--gray-400)", borderBottom:"2px solid " + (type===t.label&&!saleOnly ? "var(--black)" : "transparent"), transition:"all .2s", flexShrink:0 }}>
-              {t.label}
-            </button>
-          ))}
-          {/* Divider */}
-          <div style={{ width:1, height:20, background:"var(--hairline)", margin:"0 12px", flexShrink:0 }} />
-          {/* Brand chips */}
-          {ALL_BRANDS.map(br => {
-            const active = brand === br && !saleOnly;
-            const count  = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
-            if (count === 0) return null;
-            return (
-              <button key={br} onClick={() => { setBrand(br === brand ? "All" : br); setSale(false); }} data-cursor="link"
-                style={{ padding:"5px 12px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", background: active ? "var(--black)" : "transparent", color: active ? "var(--white)" : "var(--gray-500)", border:"none", borderBottom:"2px solid " + (active ? "var(--black)" : "transparent"), whiteSpace:"nowrap", transition:"all .2s", flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
-                {br}
-                <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.5 }}>{count}</span>
-              </button>
-            );
-          })}
+          <div style={{ marginLeft:"auto" }}>
+            <select value={sort} onChange={e => setSort(e.target.value)}
+              style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"6px 12px", background:"var(--white)", outline:"none" }}>
+              <option value="featured">Sort: Featured</option>
+              <option value="price-asc">Price: Low → High</option>
+              <option value="price-desc">Price: High → Low</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* ── Grid ── */}
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
-          {saleOnly ? (
+          {filtered.length === 0 ? (
             <div style={{ textAlign:"center", padding:"80px 0" }}>
-              <div className="display-m" style={{ marginBottom:16 }}>Sale bikes coming soon.</div>
-              <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Check back regularly or sign up for our newsletter to be notified of sales and clearance bikes.</p>
-              <button className="btn btn-outline" onClick={() => { setSale(false); setBrand("All"); setType("All"); }} data-cursor="link">View All Bikes <ArrowRight /></button>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div style={{ textAlign:"center", padding:"80px 0" }}>
-              <div className="display-m" style={{ marginBottom:16 }}>No bikes found.</div>
-              <p style={{ color:"var(--gray-500)", marginBottom:32 }}>We may be getting new {brand !== "All" ? brand : ""} stock in soon — check back or contact us.</p>
-              <button className="btn btn-outline" onClick={() => { setBrand("All"); setType("All"); }} data-cursor="link">Show All Bikes <ArrowRight /></button>
+              <div className="display-m" style={{ marginBottom:16 }}>Loading bikes…</div>
+              <p style={{ color:"var(--gray-500)" }}>Check back in a moment or contact us directly.</p>
             </div>
           ) : (
             <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
