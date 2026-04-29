@@ -1316,7 +1316,7 @@ img {
   .bike-page { padding-top: 100px !important; }
 
   /* ── Shop ── */
-  .shop-filter-sticky { top: 64px !important; }
+  .shop-filter-sticky { top: 132px !important; }
   .shop-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
 
   /* ── Bike detail ── */

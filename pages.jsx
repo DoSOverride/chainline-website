@@ -166,7 +166,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
   return (
     <div className="page-fade bike-page" style={{ paddingTop: 114 }}>
       {/* Back */}
-      <div className="bike-back-bar" style={{ position: 'sticky', top: 114, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '12px 0' }}>
+      <div className="bike-back-bar" style={{ position: 'sticky', top: 132, zIndex: 50, background: 'rgba(250,250,250,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--hairline)', padding: '12px 0' }}>
         <div className="container-wide" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={goBack} data-cursor="link" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.14em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8, background:'none', border:'none', cursor:'pointer' }}>
             ← Back
@@ -520,7 +520,7 @@ const ShopPage = () => {
       <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
 
       {/* ── Filter + sort bar ── */}
-      <div className="shop-filter-sticky" style={{ position:"sticky", top:78, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
+      <div className="shop-filter-sticky" style={{ position:"sticky", top:132, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
 
         {/* Row 1: count + active brand pill + sort */}
         <div className="container-wide" style={{ paddingTop:"12px", paddingBottom:0, display:"flex", alignItems:"center", gap:10 }}>
