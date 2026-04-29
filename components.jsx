@@ -194,7 +194,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
 
   return (
     <header className={"header " + (scrolled ? (page === "home" ? "solid" : "light") : "")} data-screen-label="00 Header">
-      {/* Global mobile typography — clamp all large display text so nothing overflows */}
+      {/* Global mobile typography + dark mode button overrides */}
       <style>{`
         @media(max-width:768px){
           .display-xxl{font-size:clamp(30px,9vw,52px)!important;line-height:1.0!important}
@@ -206,6 +206,43 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           .hero-italic{font-size:clamp(18px,5.5vw,40px)!important}
           .page-contact-grid{grid-template-columns:1fr!important}
           .bike-page-layout{grid-template-columns:1fr!important;gap:32px!important}
+        }
+        [data-theme='dark'] .chat-toggle-btn{
+          background:#1c1c1c!important;
+          border-color:rgba(255,255,255,0.18)!important;
+          color:#f0f0ee!important;
+          box-shadow:0 4px 20px rgba(0,0,0,0.6)!important;
+        }
+        [data-theme='dark'] .chat-popup{
+          background:#161616!important;
+          border-color:rgba(255,255,255,0.1)!important;
+        }
+        [data-theme='dark'] .sticky-cta .btn{
+          background:#1c1c1c!important;
+          color:#f0f0ee!important;
+          border:1px solid rgba(255,255,255,0.2)!important;
+        }
+        [data-theme='dark'] .btn-light{
+          background:rgba(255,255,255,0.1)!important;
+          color:#f0f0ee!important;
+          border-color:rgba(255,255,255,0.2)!important;
+        }
+        [data-theme='dark'] .btn-outline-light{
+          border-color:rgba(255,255,255,0.3)!important;
+          color:#f0f0ee!important;
+        }
+        [data-theme='dark'] .btn{
+          background:#1c1c1c!important;
+          color:#f0f0ee!important;
+          border-color:#1c1c1c!important;
+        }
+        [data-theme='dark'] .btn-outline{
+          background:transparent!important;
+          color:#f0f0ee!important;
+          border-color:rgba(255,255,255,0.25)!important;
+        }
+        [data-theme='dark'] .btn-outline:hover{
+          background:rgba(255,255,255,0.08)!important;
         }
       `}</style>
       <Announce />
@@ -904,7 +941,7 @@ const ChatWidget = () => {
 
   return (
     <>
-      <button onClick={() => setOpen(o => !o)} data-cursor="link"
+      <button onClick={() => setOpen(o => !o)} data-cursor="link" className="chat-toggle-btn"
         style={{ position: "fixed", left: btnBottom, bottom: btnBottom, zIndex: 80, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
         {open
           ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2l12 12M14 2L2 14"/></svg>
@@ -912,7 +949,7 @@ const ChatWidget = () => {
         }
       </button>
       {open && (
-        <div style={{ position: "fixed", left: btnBottom, bottom: btnBottom + 64, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
+        <div className="chat-popup" style={{ position: "fixed", left: btnBottom, bottom: btnBottom + 64, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
             <div>
               <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine Cycle Support</div>

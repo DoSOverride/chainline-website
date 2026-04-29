@@ -37,7 +37,7 @@ const HeroBg = () => {
           animation: i === cur ? "kenburns 8s ease-in-out forwards" : "none",
         }} />
       ))}
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.2) 40%, rgba(10,10,10,0.85) 100%)" }} />
+      <div className="hero-gradient-overlay" style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.05) 38%, rgba(10,10,10,0.75) 100%)" }} />
     </div>
   );
 };
@@ -56,6 +56,9 @@ const Hero = ({ variant }) => {
         @media(max-width:768px){
           .hero-content{padding-top:190px!important;padding-bottom:60px!important;justify-content:flex-start!important}
           .hero-section{height:100svh!important;min-height:600px!important}
+        }
+        [data-theme='dark'] .hero-gradient-overlay{
+          background:linear-gradient(to bottom,rgba(10,10,10,0.15) 0%,rgba(10,10,10,0.02) 38%,rgba(10,10,10,0.45) 100%)!important
         }
       `}</style>
       <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(80px,14vh,180px)", paddingTop: 80 }}>
