@@ -57,7 +57,7 @@ const ContactBar = () => (
             <circle cx="8" cy="7" r=".6" fill="currentColor" stroke="none"/>
             <circle cx="11" cy="7" r=".6" fill="currentColor" stroke="none"/>
           </svg>
-          Text Us
+          Text
         </a>
       </div>
       <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" data-cursor="link"
