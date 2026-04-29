@@ -794,7 +794,7 @@ const BookPage = () => {
     "Cable Package","Wheel Build","Tubeless Set Up","Flat Fix","Other / Not Sure",
   ];
 
-  const FORMSPREE_ID = "xpwrvdnj"; // bikes@chainline.ca endpoint
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
   const inpStyle = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
   const [submitting, setSubmitting] = React.useState(false);
 
@@ -802,30 +802,29 @@ const BookPage = () => {
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append("name",    data.name || '');
-      fd.append("phone",   data.phone || '');
-      fd.append("email",   data.email || '');
+      fd.append("name",    data.name    || '');
+      fd.append("phone",   data.phone   || '');
+      fd.append("email",   data.email   || '');
       fd.append("bike",    `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim());
       fd.append("service", data.service || 'Assessment / Not sure');
-      fd.append("date",    data.date || 'Flexible');
-      fd.append("issue",   data.issue || '');
-      fd.append("_subject", `Service Booking — ${data.name || 'Customer'}`);
+      fd.append("date",    data.date    || 'Flexible');
+      fd.append("issue",   data.issue   || '');
       if (data.photoFile) fd.append("photo", data.photoFile);
 
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-        method: "POST", headers: { Accept: "application/json" }, body: fd,
-      });
-      if (res.ok) setSubmitted(true);
-      else throw new Error("Submit failed");
+      const res  = await fetch(`${WORKER}/api/book`, { method: "POST", body: fd });
+      const json = await res.json();
+      if (json.ok) { setSubmitted(true); return; }
+      throw new Error("Worker error");
     } catch {
-      // Fallback to mailto if Formspree fails
+      // Fallback: open mailto so no booking is ever lost
       const body = encodeURIComponent(
         `ChainLine — Service Booking\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email||'-'}\nBike: ${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}\nService: ${data.service||'Assessment'}\nDate: ${data.date||'Flexible'}\nNotes: ${data.issue||'-'}`
       );
-      window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Service Booking — ' + (data.name||'Customer'))}&body=${body}`;
+      window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Service Booking — '+(data.name||'Customer'))}&body=${body}`;
       setSubmitted(true);
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   return (
