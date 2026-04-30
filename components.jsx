@@ -390,15 +390,17 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "kids") return ["shop", { type: "Kids" }];
     // Brand filters → shop page filtered by brand
     if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel", "revel cycles"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1).replace(/ cycles$/,'') }];
-    // Parts — pass exact dept + tab so DeptAccordion auto-opens on landing
+    // Components vs Accessories split — tabs in ACC_TABS go to /accessories, rest to /components
+    const ACC_TABS = ["fit","tools","accessories"];
+    const tabPage  = (tab) => ACC_TABS.includes(tab) ? "accessories" : "components";
     const PM={"cassette":{dept:"Cassette",tab:"drivetrain"},"chains":{dept:"Chains",tab:"drivetrain"},"chainrings":{dept:"Chainrings",tab:"drivetrain"},"cranks":{dept:"Cranks",tab:"drivetrain"},"derailleurs":{dept:"Derailleur Rear",tab:"drivetrain"},"shifters":{dept:"Shifters MTB",tab:"drivetrain"},"bottom brackets":{dept:"Bottom Brackets",tab:"drivetrain"},"cables":{dept:"Cables",tab:"drivetrain"},"brake pads":{dept:"Brake pads",tab:"brakes"},"brake levers":{dept:"Brake Lever U",tab:"brakes"},"rims":{dept:"Rims",tab:"wheels"},"hubs":{dept:"Hubs",tab:"wheels"},"spokes":{dept:"Spokes",tab:"wheels"},"wheelsets":{dept:"Wheelset (FR+RR)",tab:"wheels"},"skewers":{dept:"Skewers QR",tab:"wheels"}};
     const PM2={'tires 29"':{dept:'Tires 29"',tab:"wheels"},"tires 700c":{dept:"Tires 700C",tab:"wheels"},'tires 27.5"':{dept:'Tires 27" & 26x1&1/4 etc...',tab:"wheels"},'tires 26"':{dept:'Tires 26"',tab:"wheels"},"fat bike tires":{dept:"Tires Fatbike",tab:"wheels"},"tubes":{dept:"Tubes",tab:"wheels"},"tire sealant":{dept:"Tire Sealant",tab:"wheels"},"tire protection":{dept:"Tire Protection",tab:"wheels"},"forks":{dept:"Forks",tab:"suspension"},"rear shock":{dept:"Rear Shock",tab:"suspension"},"handlebar":{dept:"Handlebar",tab:"cockpit"},"stem":{dept:"Stem",tab:"cockpit"},"grips":{dept:"Grips",tab:"cockpit"},"bar tape":{dept:"Bar tape",tab:"cockpit"},"headsets":{dept:"Headsets",tab:"cockpit"},"seat post":{dept:"Seat post",tab:"cockpit"},"saddles":{dept:"Saddles",tab:"cockpit"},"helmets":{dept:"Helmet",tab:"fit"},"armour":{dept:"Armour",tab:"fit"},"gloves":{dept:"Gloves",tab:"fit"},"sunglasses":{dept:"Sunglasses",tab:"fit"},"clothing":{dept:"Clothing",tab:"fit"},"socks":{dept:"Socks",tab:"fit"},"arm warmers":{dept:"Arm Warmers",tab:"fit"},"leg warmers":{dept:"Leg Warmers",tab:"fit"},"shoes":{dept:"Shoes Mountain",tab:"fit"},"cleats":{dept:"Cleats",tab:"fit"},"pumps":{dept:"Pumps",tab:"tools"},"tools":{dept:"Tools",tab:"tools"},"bags":{dept:"Bags",tab:"accessories"},"packs":{dept:"Packs",tab:"accessories"},"hydration":{dept:"Hydration",tab:"accessories"},"lights":{dept:"Lights",tab:"accessories"},"computers":{dept:"Computers",tab:"accessories"},"locks":{dept:"Locks",tab:"accessories"},"fenders":{dept:"Fenders",tab:"accessories"},"bells":{dept:"Bells",tab:"accessories"},"kickstands":{dept:"Kickstands",tab:"accessories"},"bike racks":{dept:"Bike Racks",tab:"accessories"},"water bottles":{dept:"Water Bottle",tab:"accessories"}};
     const pMatch = PM[l] || PM2[l];
-    if (pMatch) return ["parts", pMatch];
-    if (l.includes("helmet") || l.includes("protection") || l.includes("apparel")) return ["parts",{tab:"fit"}];
-    if (l.includes("bags & rack") || l.includes("bags and rack")) return ["parts",{tab:"accessories"}];
-    if (l.includes("component")) return ["parts",{tab:"drivetrain"}];
-    if (l.includes("accessor")) return ["parts",{tab:"accessories"}];
+    if (pMatch) return [tabPage(pMatch.tab), pMatch];
+    if (l.includes("helmet") || l.includes("protection") || l.includes("apparel")) return ["accessories",{tab:"fit"}];
+    if (l.includes("bags & rack") || l.includes("bags and rack")) return ["accessories",{tab:"accessories"}];
+    if (l.includes("component")) return ["components",{tab:"drivetrain"}];
+    if (l.includes("accessor")) return ["accessories",{tab:"accessories"}];
     if (l.includes("gift")) return ["giftcards", null];
     if (l.includes("classified") || l.includes("pinkbike")) return ["classifieds", null];
     if (l.includes("sale")) return ["shop", null];
@@ -506,16 +508,20 @@ const MobileNav = ({ open, onClose }) => {
 
   const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
   const TYPES  = ["All Bikes","Mountain","Gravel","Road","E-Bike","Commuter","Comfort","Kids"];
+  const ACC_TABS_MOB = ["fit","tools","accessories"];
+  const mobPage = (tab) => ACC_TABS_MOB.includes(tab) ? "accessories" : "components";
   const COMP_CATS = [
-    { label:"Drivetrain", tab:"drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
-    { label:"Brakes",     tab:"brakes",     items:["Brake pads","Brake Levers","Brake Parts"] },
-    { label:"Wheels & Tires", tab:"wheels", items:["Rims","Hubs","Spokes","Wheelsets",'Tires 29"','Tires 700C','Tires 26"',"Tubes","Tire Sealant"] },
-    { label:"Cockpit",    tab:"cockpit",    items:["Handlebar","Stem","Grips","Headsets","Saddles","Seat post"] },
-    { label:"Suspension", tab:"suspension", items:["Forks","Rear Shock","Fork Parts"] },
+    { label:"Drivetrain",   tab:"drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
+    { label:"Brakes",       tab:"brakes",     items:["Brake pads","Brake Levers","Brake Parts"] },
+    { label:"Wheels",       tab:"wheels",     items:["Rims","Hubs","Spokes","Wheelsets","Skewers"] },
+    { label:"Tires & Tubes",tab:"wheels",     items:['Tires 29"','Tires 700C','Tires 27.5"','Tires 26"',"Fat Bike Tires","Tubes","Tire Sealant","Tire Protection"] },
+    { label:"Cockpit",      tab:"cockpit",    items:["Handlebar","Stem","Grips","Bar tape","Headsets","Saddles","Seat post"] },
+    { label:"Suspension",   tab:"suspension", items:["Forks","Rear Shock","Fork Parts"] },
   ];
   const ACC_CATS = [
-    { label:"Clothing & Helmets", tab:"fit",   items:["Helmets","Armour","Gloves","Sunglasses","Clothing","Socks","Shoes"] },
-    { label:"Tools & Bags",       tab:"tools", items:["Bags","Packs","Lights","Computers","Pumps","Tools","Locks","Fenders"] },
+    { label:"Clothing & Helmets", tab:"fit",         items:["Helmets","Armour","Gloves","Sunglasses","Clothing","Socks","Shoes"] },
+    { label:"Bags & Lighting",    tab:"accessories",  items:["Bags","Packs","Lights","Computers","Hydration"] },
+    { label:"Tools & More",       tab:"tools",        items:["Pumps","Tools","Locks","Fenders","Bells","Kickstands","Bike Racks"] },
   ];
 
   const ChevR = () => <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 3l5 5-5 5"/></svg>;
@@ -573,26 +579,26 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'components' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"drivetrain" })); }}>All Components</a>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab:"drivetrain" })); }}>All Components</a>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
-            {/* Left col: Drivetrain + Suspension */}
+            {/* Left col: Drivetrain + Tires & Tubes + Suspension */}
             <div style={{ paddingRight:16 }}>
-              {COMP_CATS.filter(c => ["drivetrain","suspension"].includes(c.id || c.tab)).map(cat => (
+              {COMP_CATS.filter(c => ["drivetrain","suspension"].includes(c.tab) || c.label === "Tires & Tubes").map(cat => (
                 <div key={cat.label} style={{ marginBottom:20 }}>
                   <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
                   {cat.items.map(it => (
-                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(mobPage(cat.tab), { tab: cat.tab, dept: it })); }}>{it}</a>
                   ))}
                 </div>
               ))}
             </div>
-            {/* Right col: Brakes + Cockpit + Wheels */}
+            {/* Right col: Brakes + Wheels + Cockpit */}
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
-              {COMP_CATS.filter(c => !["drivetrain","suspension"].includes(c.id || c.tab)).map(cat => (
+              {COMP_CATS.filter(c => !["drivetrain","suspension"].includes(c.tab) && c.label !== "Tires & Tubes").map(cat => (
                 <div key={cat.label} style={{ marginBottom:20 }}>
                   <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
                   {cat.items.map(it => (
-                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(mobPage(cat.tab), { tab: cat.tab, dept: it })); }}>{it}</a>
                   ))}
                 </div>
               ))}
@@ -605,13 +611,13 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab:"fit" })); }}>All Accessories</a>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab:"fit" })); }}>All Accessories</a>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             {ACC_CATS.map((cat, ci) => (
-              <div key={cat.label} style={{ paddingRight: ci===0?16:0, paddingLeft: ci===1?16:0, borderLeft: ci===1?"1px solid rgba(255,255,255,0.1)":"none" }}>
+              <div key={cat.label} style={{ paddingRight: ci===0?16:0, paddingLeft: ci>0?16:0, borderLeft: ci>0?"1px solid rgba(255,255,255,0.1)":"none" }}>
                 <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
                 {cat.items.map(it => (
-                  <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts", { tab: cat.tab, dept: it })); }}>{it}</a>
+                  <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab: cat.tab, dept: it })); }}>{it}</a>
                 ))}
               </div>
             ))}
