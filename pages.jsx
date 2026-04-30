@@ -1795,52 +1795,7 @@ const ContactPage = () => (
   </div>
 );
 
-// GIFT CARDS — email domain typo detection
-// Compares only the provider name (before the dot) against known names,
-// so personal domains like @smith.ca or @jones.com are never flagged.
-const GC_PROVIDERS = [
-  { name:'gmail',      tlds:['com'] },
-  { name:'hotmail',    tlds:['com','ca'] },
-  { name:'yahoo',      tlds:['com','ca'] },
-  { name:'outlook',    tlds:['com','ca'] },
-  { name:'icloud',     tlds:['com'] },
-  { name:'live',       tlds:['com','ca'] },
-  { name:'me',         tlds:['com'] },
-  { name:'msn',        tlds:['com'] },
-  { name:'shaw',       tlds:['ca'] },
-  { name:'telus',      tlds:['net'] },
-  { name:'rogers',     tlds:['com'] },
-  { name:'protonmail', tlds:['com'] },
-];
-
-function _lev(a, b) {
-  const dp = Array.from({length:a.length+1}, (_,i) => Array.from({length:b.length+1}, (_,j) => i===0?j:j===0?i:0));
-  for (let i=1;i<=a.length;i++) for (let j=1;j<=b.length;j++)
-    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
-  return dp[a.length][b.length];
-}
-
-function suggestEmailFix(email) {
-  const at = email.lastIndexOf('@');
-  if (at < 1) return null;
-  const fullDomain = email.slice(at+1).toLowerCase();
-  const dotIdx = fullDomain.lastIndexOf('.');
-  if (dotIdx < 1) return null;
-  const namepart = fullDomain.slice(0, dotIdx); // e.g. "gmmailll" from "gmmailll.com"
-  const tld      = fullDomain.slice(dotIdx+1);  // e.g. "com"
-
-  // Exact match — already correct
-  if (GC_PROVIDERS.some(p => p.name === namepart && p.tlds.includes(tld))) return null;
-
-  // Find closest known provider name (ignoring TLD so @smith.ca is never confused with @shaw.ca)
-  let best = null, bestDist = Infinity;
-  for (const p of GC_PROVIDERS) {
-    const dist = _lev(namepart, p.name);
-    if (dist < bestDist) { bestDist = dist; best = `${p.name}.${p.tlds[0]}`; }
-  }
-  // Only flag if clearly a typo (≤2 edits on name part, and name is at least 3 chars)
-  return bestDist <= 2 && namepart.length >= 3 ? best : null;
-}
+// GIFT CARDS
 
 const GiftCardsPage = () => {
   const WORKER   = 'https://still-term-f1ec.taocaruso77.workers.dev';
@@ -1850,7 +1805,6 @@ const GiftCardsPage = () => {
   const [selectedAmt, setSelectedAmt] = React.useState(null);
   const [customAmt,   setCustomAmt]   = React.useState('');
   const [recipientEmail, setRecipientEmail] = React.useState('');
-  const [dismissedSuggestion, setDismissedSuggestion] = React.useState('');
   const [added, setAdded] = React.useState(false);
 
   React.useEffect(() => {
@@ -1865,24 +1819,14 @@ const GiftCardsPage = () => {
       .catch(() => {});
   }, []);
 
-  const amount      = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
-  const varId       = variantMap[amount] || null;
-  const validEmail  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
-  const rawSuggestion    = recipientEmail.includes('@') ? suggestEmailFix(recipientEmail) : null;
-  const domainSuggestion = rawSuggestion === dismissedSuggestion ? null : rawSuggestion;
-  const canAdd           = amount >= 10 && varId && validEmail && !domainSuggestion;
-
-  const applyDomainFix = () => {
-    const at = recipientEmail.lastIndexOf('@');
-    setRecipientEmail(recipientEmail.slice(0, at+1) + domainSuggestion);
-    setDismissedSuggestion('');
-  };
+  const amount     = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
+  const varId      = variantMap[amount] || null;
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
+  const canAdd     = amount >= 10 && !!varId && validEmail;
 
   const addToCart = () => {
     if (!canAdd) return;
-    // variant stored as display string — CartDrawer renders it as text
-    // recipient email stored separately so checkout() can append it to the Shopify URL
-    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, `Send to: ${recipientEmail}`);
+    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, `For: ${recipientEmail}`);
     window._gcRecipientEmail = recipientEmail;
     window.dispatchEvent(new CustomEvent('cart:open'));
     setAdded(true);
@@ -1940,27 +1884,14 @@ const GiftCardsPage = () => {
               placeholder="Send gift card code to..."
               value={recipientEmail}
               onChange={e => setRecipientEmail(e.target.value)}
-              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(domainSuggestion?"#e05c3a":validEmail?"var(--black)":recipientEmail.length>3?"#e05c3a":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
+              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(validEmail?"var(--black)":recipientEmail.length>3?"#e05c3a":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
             />
-            {domainSuggestion && (
-              <div style={{ marginTop:10, display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
-                <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"#e05c3a" }}>
-                  Did you mean @{domainSuggestion}?
-                </span>
-                <button onClick={applyDomainFix} style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", background:"var(--black)", color:"var(--white)", border:"none", padding:"4px 10px", cursor:"pointer" }}>
-                  Fix it →
-                </button>
-                <button onClick={() => setDismissedSuggestion(domainSuggestion)} style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", background:"transparent", color:"var(--gray-500)", border:"1px solid var(--hairline)", padding:"4px 10px", cursor:"pointer" }}>
-                  No, it's correct
-                </button>
-              </div>
-            )}
-            {!domainSuggestion && recipientEmail.length > 3 && !validEmail && (
+            {recipientEmail.length > 3 && !validEmail && (
               <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"#e05c3a" }}>
                 Double-check the email — the gift card code gets sent here
               </div>
             )}
-            {!domainSuggestion && validEmail && (
+            {validEmail && (
               <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"var(--stock-green)" }}>
                 ✓ Code will be sent to {recipientEmail}
               </div>
