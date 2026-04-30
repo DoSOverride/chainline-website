@@ -651,7 +651,7 @@ const ShopPage = () => {
         {/* Row 2: type tabs */}
         <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"6px", paddingBottom:"2px", overflowX:"auto", scrollbarWidth:"none" }}>
           {TYPE_TABS.map(t => (
-            <button key={t} data-cursor="link" onClick={() => setType(t)} style={tabStyle(type === t)}>{t}</button>
+            <button key={t} className={"shop-filter-tab" + (type === t ? " active" : "")} data-cursor="link" onClick={() => setType(t)} style={tabStyle(type === t)}>{t}</button>
           ))}
         </div>
         {/* Row 3: brand chips */}
@@ -662,7 +662,7 @@ const ShopPage = () => {
             const active = brand === br;
             const inactiveColor = "var(--gray-600)";
             return (
-              <button key={br} data-cursor="link"
+              <button key={br} className={"shop-filter-tab" + (active ? " active" : "")} data-cursor="link"
                 onClick={() => { setBrand(active ? "All" : br); setType("All"); }}
                 onMouseEnter={e => { e.currentTarget.style.color = "var(--black)"; e.currentTarget.style.borderBottomColor = "var(--gray-400)"; }}
                 onMouseLeave={e => { e.currentTarget.style.color = active ? "var(--black)" : inactiveColor; e.currentTarget.style.borderBottomColor = active ? "var(--black)" : "transparent"; }}
@@ -769,9 +769,10 @@ const BikeCardLarge = ({ b, idx }) => {
     padding:"6px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase",
     border:"1px solid", cursor:"pointer", borderRadius:2, background:"none",
     borderColor: active ? "var(--black)" : "var(--hairline)",
-    color: active ? "var(--black)" : avail ? "var(--gray-600)" : "var(--gray-300)",
-    opacity: avail ? 1 : 0.4,
+    color: active ? "var(--black)" : avail ? "var(--gray-600)" : "var(--gray-400)",
+    opacity: avail ? 1 : 0.45,
   });
+  const chipClass = (active, avail) => "shop-chip" + (active ? " active" : avail ? "" : " unavail");
 
   const handleAdd = async (e) => {
     e.preventDefault(); e.stopPropagation();
@@ -792,7 +793,7 @@ const BikeCardLarge = ({ b, idx }) => {
   return (
     <div style={{ cursor:"pointer" }} onClick={goToBike}>
       {/* Image */}
-      <div style={{ aspectRatio:"4/5", marginBottom:14, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
+      <div className="shop-bike-card-img" style={{ aspectRatio:"4/5", marginBottom:14, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
         {img ? (
           <img src={img} alt={brand + " " + name} className="bike-img" loading="lazy" decoding="async"
             style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply", transition:"transform .4s ease" }}
@@ -830,7 +831,7 @@ const BikeCardLarge = ({ b, idx }) => {
                 {wheels.map(w => {
                   const avail = variants.some(v => v.wheel === w && v.inStock);
                   return (
-                    <button key={w} style={chipStyle(selWheel===w, avail)} onClick={() => {
+                    <button key={w} className={chipClass(selWheel===w, avail)} style={chipStyle(selWheel===w, avail)} onClick={() => {
                       setWheel(w);
                       const avColors = availColors(w);
                       const nc = avColors.includes(selColor) ? selColor : avColors[0] || null;
@@ -851,7 +852,7 @@ const BikeCardLarge = ({ b, idx }) => {
                 {availColors(selWheel).map(c => {
                   const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && v.color===c && v.inStock);
                   return (
-                    <button key={c} style={chipStyle(selColor===c, avail)} onClick={() => {
+                    <button key={c} className={chipClass(selColor===c, avail)} style={chipStyle(selColor===c, avail)} onClick={() => {
                       setColor(c);
                       const avSizes = availSizes(selWheel, c);
                       setSize(avSizes.includes(selSize) ? selSize : avSizes[0] || null);
@@ -869,7 +870,7 @@ const BikeCardLarge = ({ b, idx }) => {
                 {availSizes(selWheel, selColor).map(sz => {
                   const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && (!hasColors||v.color===selColor) && v.size===sz && v.inStock);
                   return (
-                    <button key={sz} style={chipStyle(selSize===sz, avail)} onClick={() => setSize(sz)}>{sz}</button>
+                    <button key={sz} className={chipClass(selSize===sz, avail)} style={chipStyle(selSize===sz, avail)} onClick={() => setSize(sz)}>{sz}</button>
                   );
                 })}
               </div>
@@ -3014,10 +3015,13 @@ const SocialPage = () => {
 // ── Store Landing Page ────────────────────────────────────────────────────────
 const StorePage = () => {
   const [q, setQ] = React.useState('');
-  const [results, setResults] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState('');
+  const [preview, setPreview] = React.useState([]);
+  const [allResults, setAllResults] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   const [loadedTabs, setLoadedTabs] = React.useState([]);
   const inputRef = React.useRef(null);
+  const resultsRef = React.useRef(null);
 
   const ALL_TABS = ['drivetrain','brakes','wheels','cockpit','suspension','fit','tools','accessories'];
   const TAB_PAGE = (id) => ['fit','tools','accessories'].includes(id) ? 'accessories' : ['wheels'].includes(id) ? 'parts' : 'components';

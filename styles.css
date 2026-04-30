@@ -206,6 +206,44 @@
   border-color: rgba(255,255,255,0.2);
 }
 
+/* ── Shop page dark mode ─────────────────────────────────────── */
+
+/* Filter bar tabs — inactive text too dark on near-black bar */
+[data-theme="dark"] .shop-filter-tab {
+  color: rgba(255,255,255,0.45) !important;
+  border-bottom-color: transparent !important;
+}
+[data-theme="dark"] .shop-filter-tab.active {
+  color: #fafafa !important;
+  border-bottom-color: #fafafa !important;
+}
+[data-theme="dark"] .shop-filter-tab:hover {
+  color: rgba(255,255,255,0.8) !important;
+}
+
+/* Bike card image — use light bg + multiply so white-bg photos blend cleanly */
+[data-theme="dark"] .shop-bike-card-img {
+  background: #d8d8d6 !important;
+}
+[data-theme="dark"] .shop-bike-card-img .bike-img {
+  mix-blend-mode: multiply !important;
+  filter: none !important;
+}
+
+/* Variant chips — unavailable text barely visible in dark mode */
+[data-theme="dark"] .shop-chip {
+  border-color: rgba(255,255,255,0.15) !important;
+  color: rgba(255,255,255,0.75) !important;
+}
+[data-theme="dark"] .shop-chip.active {
+  border-color: #fafafa !important;
+  color: #fafafa !important;
+}
+[data-theme="dark"] .shop-chip.unavail {
+  color: rgba(255,255,255,0.3) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
 /* Dark mode — hero gradient overlay */
 [data-theme="dark"] .hero-gradient-overlay {
   background: linear-gradient(to bottom, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.02) 38%, rgba(10,10,10,0.45) 100%) !important;
