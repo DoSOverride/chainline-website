@@ -2155,7 +2155,8 @@ const PartsPage = () => {
     const intent = window.cl?.intent;
     if (!intent) return;
     if (intent.tab && PART_TABS.find(t => t.id === intent.tab)) setCat(intent.tab);
-    if (intent.dept) setSearch(intent.dept);
+    if (intent.dept)   setSearch(intent.dept);
+    if (intent.search) setSearch(intent.search);
     window.cl.intent = null;
   }, []);
 
@@ -3001,4 +3002,112 @@ const SocialPage = () => {
   );
 };
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
+// ── Components Landing Page ──────────────────────────────────────────────────
+const ComponentsLandingPage = () => {
+  const [q, setQ] = React.useState('');
+  const cats = [
+    { id:'drivetrain', label:'Drivetrain',    emoji:'⚙️', desc:'Cassettes, chains, cranks, derailleurs, shifters, cables, bottom brackets' },
+    { id:'brakes',     label:'Brakes',        emoji:'🔴', desc:'Hydraulic & mechanical disc brakes, pads, levers, rotors, adapters' },
+    { id:'wheels',     label:'Wheels & Tires',emoji:'⭕', desc:'Wheelsets, rims, hubs, spokes, tires, tubes, sealant, axles' },
+    { id:'cockpit',    label:'Cockpit',       emoji:'🎛️', desc:'Handlebars, stems, grips, saddles, seatposts, headsets, bar tape' },
+    { id:'suspension', label:'Suspension',    emoji:'🔩', desc:'Forks, rear shocks, fork oil, seals, bushings, fork parts' },
+  ];
+  const go = (id) => window.cl.go('components', { tab: id });
+  const search = () => { if (q.trim().length >= 2) window.cl.go('components', { tab: 'drivetrain', search: q.trim() }); };
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Components  /  In Stock" title="Components." italic="Everything your bike needs." />
+      <section style={{ background:'var(--white)', padding:'60px 0 100px' }}>
+        <div className="container-wide">
+          {/* Search */}
+          <div style={{ maxWidth:600, margin:'0 auto 64px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
+            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
+              placeholder="Search cassettes, brakes, saddles…"
+              style={{ flex:1, padding:'16px 20px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:15, background:'transparent', color:'var(--black)' }} />
+            <button onClick={search} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
+          </div>
+          {/* Category grid */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
+            {cats.map(c => (
+              <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
+                style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s, transform .15s' }}
+                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                <span style={{ fontSize:36, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:6, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
+                </div>
+                <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
+              </button>
+            ))}
+          </div>
+          {/* Footer CTA */}
+          <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
+            <div className="eyebrow" style={{ marginBottom:12 }}>Can't find what you need?</div>
+            <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products and can special order almost anything — usually here within a few days.</p>
+            <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+              <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
+              <button className="btn" data-cursor="link" onClick={()=>window.cl.go('contact')}>Contact Us <ArrowRight /></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+// ── Accessories Landing Page ──────────────────────────────────────────────────
+const AccessoriesLandingPage = () => {
+  const [q, setQ] = React.useState('');
+  const cats = [
+    { id:'fit',         label:'Clothing & Helmets', emoji:'⛑️', desc:'Helmets, gloves, shoes, jerseys, shorts, arm warmers, sunglasses, armour' },
+    { id:'tools',       label:'Tools & Maintenance',emoji:'🔧', desc:'Workshop tools, pumps, floor pumps, lube, degreasers, trainers' },
+    { id:'accessories', label:'Accessories',        emoji:'🎒', desc:'Lights, locks, computers, bags, racks, fenders, bells, water bottles' },
+  ];
+  const go = (id) => window.cl.go('accessories', { tab: id });
+  const search = () => { if (q.trim().length >= 2) window.cl.go('accessories', { tab: 'accessories', search: q.trim() }); };
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Accessories  /  In Stock" title="Accessories." italic="Gear up, ride ready." />
+      <section style={{ background:'var(--white)', padding:'60px 0 100px' }}>
+        <div className="container-wide">
+          {/* Search */}
+          <div style={{ maxWidth:600, margin:'0 auto 64px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
+            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
+              placeholder="Search helmets, lights, locks, tools…"
+              style={{ flex:1, padding:'16px 20px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:15, background:'transparent', color:'var(--black)' }} />
+            <button onClick={search} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
+          </div>
+          {/* Category grid — 3 full-width cards */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
+            {cats.map(c => (
+              <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
+                style={{ display:'flex', alignItems:'center', gap:24, padding:'40px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
+                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                <span style={{ fontSize:40, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:8, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
+                </div>
+                <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
+              </button>
+            ))}
+          </div>
+          {/* Footer CTA */}
+          <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
+            <div className="eyebrow" style={{ marginBottom:12 }}>Don't see what you're after?</div>
+            <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products. If it's not on the shelf, we can order it — usually a few days out.</p>
+            <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+              <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
+              <button className="btn" data-cursor="link" onClick={()=>window.cl.go('contact')}>Contact Us <ArrowRight /></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ComponentsLandingPage, AccessoriesLandingPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
