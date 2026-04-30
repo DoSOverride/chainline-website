@@ -169,6 +169,36 @@ window.lightspeedSearch = function(query) {
   );
 };
 
+// ── Enrich a bike that has no static BIKE_DATA entry ─────────
+// Calls /api/enrich/:handle — first call hits AI (~1s), subsequent calls are KV-cached (instant).
+window.enrichBike = async function(bike) {
+  if (!bike?.handle) return null;
+  // Already enriched or has static data
+  if (window.BIKE_DATA?.[bike.handle]?.description) return window.BIKE_DATA[bike.handle];
+  if (window.CL_LS.enrichCache?.[bike.handle]) return window.CL_LS.enrichCache[bike.handle];
+
+  try {
+    const qs = new URLSearchParams({
+      name:  bike.name  || bike.handle,
+      brand: (bike.brand || bike.vendor || bike.name?.split(' ')[0] || ''),
+      type:  bike.type  || bike.department || '',
+      price: Math.round(bike.price || 0),
+      dept:  bike.department || '',
+    });
+    const res  = await fetch(`${window.CL_LS.workerUrl}/api/enrich/${encodeURIComponent(bike.handle)}?${qs}`);
+    const data = await res.json();
+    if (data.description) {
+      window.CL_LS.enrichCache = window.CL_LS.enrichCache || {};
+      window.CL_LS.enrichCache[bike.handle] = data;
+      console.log(`[ChainLine] Enriched: ${bike.handle} (${res.headers.get('X-Cache') || 'generated'})`);
+    }
+    return data;
+  } catch(e) {
+    console.warn('[ChainLine] Enrich failed:', e.message);
+    return null;
+  }
+};
+
 // ── Init: load bikes directly from /api/bikes ────────────────
 window.lightspeedReady = (async () => {
   try {
@@ -188,6 +218,16 @@ window.lightspeedReady = (async () => {
       window.CL_LS.loaded = true;
       console.log(`[ChainLine] Lightspeed bikes loaded: ${bikeData.count} bikes with stock data`);
       window.dispatchEvent(new CustomEvent('lightspeed:ready', { detail: { count: bikeData.count } }));
+
+      // Auto-enrich any bikes not in the static BIKE_DATA catalogue (fire-and-forget)
+      const unknown = bikeData.bikes.filter(b => b.handle && !window.BIKE_DATA?.[b.handle]);
+      if (unknown.length > 0) {
+        console.log(`[ChainLine] Auto-enriching ${unknown.length} new bikes…`);
+        // Stagger requests so we don't hammer the AI endpoint
+        for (let i = 0; i < unknown.length; i++) {
+          setTimeout(() => window.enrichBike(unknown[i]), i * 800);
+        }
+      }
     }
     // Also load first page of all products for parts/search in background
     const first = await window.lightspeedFetch({ limit: 100 });

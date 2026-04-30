@@ -111,16 +111,35 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const [selSize,  setSize]  = React.useState(defV?.size  || null);
   const [adding, setAdding]  = React.useState(false);
   const [added,  setAdded]   = React.useState(false);
+  const [enriched, setEnriched] = React.useState(null);
 
   React.useEffect(() => {
     const d = (bike?.variants||[]).filter(v=>v.inStock)[0] || (bike?.variants||[])[0];
     setWheel(d?.wheel||null); setColor(d?.color||null); setSize(d?.size||null);
   }, [bike?.handle]);
 
+  // Auto-enrich bikes not in the static catalogue
+  React.useEffect(() => {
+    const b = bike || {};
+    if (!b.handle || window.BIKE_DATA?.[b.handle]?.description) return;
+    const cached = window.CL_LS?.enrichCache?.[b.handle];
+    if (cached?.description) { setEnriched(cached); return; }
+    window.enrichBike?.(b).then(d => { if (d?.description) setEnriched(d); });
+  }, [bike?.handle]);
+
   const b = bike || {};
-  const specs = getBikeSpecs(b);
-  const desc  = getBikeDescription(b);
-  const data  = getBikeData(b);
+  const staticData = getBikeData(b);
+  const data  = enriched?.description
+    ? { ...staticData, description: enriched.description, specs: { ...(enriched.specs || {}), ...(staticData.specs || {}) } }
+    : staticData;
+  // specs must always be an array of {label, value}
+  const specsRaw = data.specs && Object.keys(data.specs).length > 1 ? data.specs : null;
+  const specs = specsRaw
+    ? [...Object.entries(specsRaw).filter(([k,v])=>k&&v).slice(0,8).map(([label,value])=>({label,value})),
+       { label:'Bike Type', value: b.type||'' },
+       { label:'Warranty', value:'2-year frame & fork, 1-year components' }]
+    : getBikeSpecs(b);
+  const desc  = data.description || getBikeDescription(b);
 
   const selected = variants.find(v =>
     (!hasWheels || v.wheel === selWheel) &&
