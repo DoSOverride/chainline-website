@@ -873,6 +873,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 0.6s ease, transform 0.6s ease;
@@ -889,6 +891,17 @@ img {
   border-radius: 50%;
   background: var(--white);
   margin: 0 14px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .announce {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+  .announce-msg .dot {
+    margin: 0 8px;
+  }
 }
 
 .nav {
