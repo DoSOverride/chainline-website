@@ -1841,6 +1841,7 @@ const GiftCardsPage = () => {
   const [selectedAmt, setSelectedAmt] = React.useState(null);
   const [customAmt,   setCustomAmt]   = React.useState('');
   const [recipientEmail, setRecipientEmail] = React.useState('');
+  const [dismissedSuggestion, setDismissedSuggestion] = React.useState('');
   const [added, setAdded] = React.useState(false);
 
   React.useEffect(() => {
@@ -1858,12 +1859,14 @@ const GiftCardsPage = () => {
   const amount      = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
   const varId       = variantMap[amount] || null;
   const validEmail  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
-  const domainSuggestion = recipientEmail.includes('@') ? suggestEmailFix(recipientEmail) : null;
-  const canAdd      = amount >= 10 && varId && validEmail && !domainSuggestion;
+  const rawSuggestion    = recipientEmail.includes('@') ? suggestEmailFix(recipientEmail) : null;
+  const domainSuggestion = rawSuggestion === dismissedSuggestion ? null : rawSuggestion;
+  const canAdd           = amount >= 10 && varId && validEmail && !domainSuggestion;
 
   const applyDomainFix = () => {
     const at = recipientEmail.lastIndexOf('@');
     setRecipientEmail(recipientEmail.slice(0, at+1) + domainSuggestion);
+    setDismissedSuggestion('');
   };
 
   const addToCart = () => {
@@ -1934,6 +1937,9 @@ const GiftCardsPage = () => {
                 </span>
                 <button onClick={applyDomainFix} style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", background:"var(--black)", color:"var(--white)", border:"none", padding:"4px 10px", cursor:"pointer" }}>
                   Fix it →
+                </button>
+                <button onClick={() => setDismissedSuggestion(domainSuggestion)} style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", background:"transparent", color:"var(--gray-500)", border:"1px solid var(--hairline)", padding:"4px 10px", cursor:"pointer" }}>
+                  No, it's correct
                 </button>
               </div>
             )}
