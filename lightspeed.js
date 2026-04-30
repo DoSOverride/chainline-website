@@ -160,41 +160,11 @@ function nameToType(name) {
 // e.g. "Marin Bobcat Trail 4 LG Gloss Blue" → { size:"L", color:"Gloss Blue" }
 function parseNameParts(fullName) {
   if (!fullName) return { size: null, color: null };
-
-  // Words that are specs/material, not colours
-  const NOT_COLOR = new Set(['carbon','alloy','aluminum','steel','titanium','custom',
-    'frame','frameset','sport','elite','comp','pro','trail','enduro','am','eagle',
-    'deore','shimano','sram','gx','sx','nx','xt','xo','di2','axs','grx','ride',
-    'coil','air','v2','v3','gen','single','crown','boost','plus']);
-
-  // Full-word sizes — Lightspeed uses these at the end of names
-  const FULL_WORDS = [
-    ['xx-large','XXL'],['xxlarge','XXL'],
-    ['x-large','XL'],['xlarge','XL'],['extra-large','XL'],['extra large','XL'],
-    ['x-small','XS'],['xsmall','XS'],['extra-small','XS'],
-    ['small','S'],['medium','M'],['large','L'],
-  ];
-  const lower = fullName.toLowerCase();
-  for (const [word, abbr] of FULL_WORDS) {
-    if (lower.endsWith(' ' + word) || lower === word) {
-      const before = fullName.slice(0, -(word.length + 1)).trim();
-      // Extract colour: walk backwards from the end, collecting capitalized words
-      // that aren't known spec words, up to 3 words
-      const words = before.split(/\s+/);
-      const colourWords = [];
-      for (let i = words.length - 1; i >= 0 && colourWords.length < 3; i--) {
-        const w = words[i];
-        if (!w || w.length < 2) break;
-        if (NOT_COLOR.has(w.toLowerCase())) break;
-        if (/^[A-Z]/.test(w)) colourWords.unshift(w); else break;
-      }
-      return { size: abbr, color: colourWords.length ? colourWords.join(' ') : null };
-    }
-  }
-
-  // Abbreviation matching (Marin-style: "LG Gloss Blue", "XL Black")
+  // Multi-char abbreviations first (most specific, least ambiguous)
   const MULTI  = /\b(XXL|XS\/S|S\/M|M\/L|L\/XL|XL|XS|SM|MD|LG)\b/;
+  // Single S/M/L only if followed by a colour word (capital) or end of string
   const SINGLE = /\b(S|M|L)\b(?=\s+[A-Z]|\s*$)/;
+  // Road bike cm sizes 49–63
   const ROAD   = /\b([4-6][0-9])\s*cm\b/i;
   const m = fullName.match(MULTI) || fullName.match(ROAD) || fullName.match(SINGLE);
   if (!m) return { size: null, color: null };
@@ -339,6 +309,3 @@ window.lightspeedReady = (async () => {
     console.warn('[ChainLine] Lightspeed unavailable:', err.message);
   }
 })();
-
-window.parseNameParts = parseNameParts;
-window.guessWheelSize = guessWheelSize;

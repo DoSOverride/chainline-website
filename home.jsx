@@ -327,82 +327,62 @@ const BrandsGrid = () => {
 };
 
 // Services preview
-// Base prices — overridden by live Lightspeed Labour prices when available
 const SERVICES = [
-  { n:"01", name:"Tune-Up & Maintenance",    desc:"Adjustments, lube, safety check. Same-day turnaround.",           fallback:75,  lsKey:"tune up" },
-  { n:"02", name:"Custom Bike Builds",       desc:"From frame up. Hand-laced wheels, dialed cockpit.",               fallback:450, lsKey:"labour - bike build consumer direct" },
-  { n:"03", name:"Professional Bike Fitting",desc:"Power-meter ready, video gait analysis included.",                fallback:80,  lsKey:null },
-  { n:"04", name:"Bike Storage Program",     desc:"Dry, secure, climate-controlled. Spring-ready return.",           fallback:180, lsKey:null },
-  { n:"05", name:"Wheel Building",           desc:"Hand-laced, tensioned, trued. Lifetime true-up included.",        fallback:260, lsKey:null },
-  { n:"06", name:"Warranty & Recall Service",desc:"We handle the paperwork. Authorized for all our brands.",         fallback:45,  lsKey:"labour ltp service charge" },
+  { n: "01", name: "Tune-Up & Maintenance", desc: "Adjustments, lube, safety check. Same-day turnaround.", price: "FROM $89" },
+  { n: "02", name: "Custom Bike Builds", desc: "From frame up. Hand-laced wheels, dialed cockpit.", price: "FROM $450" },
+  { n: "03", name: "Professional Bike Fitting", desc: "Power-meter ready, video gait analysis included.", price: "FROM $200" },
+  { n: "04", name: "Bike Storage Program", desc: "Dry, secure, climate-controlled. Spring-ready return.", price: "FROM $180" },
+  { n: "05", name: "Wheel Building", desc: "Hand-laced, tensioned, trued. Lifetime true-up included.", price: "FROM $260" },
+  { n: "06", name: "Warranty & Recall Service", desc: "We handle the paperwork. Authorized for all our brands.", price: "FROM $45" },
 ];
 
-const ServiceCard = ({ s, livePrice }) => {
-  const price = livePrice ? `FROM $${livePrice}` : `FROM $${s.fallback}`;
-  return (
-    <div className="svc-card reveal" style={{ position: "relative", height: 280, perspective: 1200 }}>
-      <div className="svc-inner" style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d", transition: "transform .7s cubic-bezier(.2,.8,.2,1)" }}>
-        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", border: "1px solid var(--hairline-light)", padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div className="eyebrow eyebrow-light">{s.n}</div>
-          <div>
-            <h3 className="display-s" style={{ marginBottom: 12 }}>{s.name}</h3>
-            <p style={{ fontSize: 14, color: "var(--gray-300)", margin: 0 }}>{s.desc}</p>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-            <span>Hover for details</span><span>↻</span>
-          </div>
+const ServiceCard = ({ s }) => (
+  <div className="svc-card reveal" style={{ position: "relative", height: 280, perspective: 1200 }}>
+    <div className="svc-inner" style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d", transition: "transform .7s cubic-bezier(.2,.8,.2,1)" }}>
+      <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", border: "1px solid var(--hairline-light)", padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div className="eyebrow eyebrow-light">{s.n}</div>
+        <div>
+          <h3 className="display-s" style={{ marginBottom: 12 }}>{s.name}</h3>
+          <p style={{ fontSize: 14, color: "var(--gray-300)", margin: 0 }}>{s.desc}</p>
         </div>
-        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", background: "#111", border: "1px solid var(--hairline-light)", color: "var(--white)", padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-          <div className="eyebrow eyebrow-light">{s.n}  ·  STARTING AT</div>
-          <div className="display-l" style={{ fontSize: 56 }}>{price}</div>
-          <button className="btn btn-light" data-cursor="link" style={{ alignSelf: "flex-start" }} onClick={() => window.cl.go("book")}>Book Now <ArrowRight /></button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)" }}>
+          <span>Hover for details</span><span>↻</span>
         </div>
+      </div>
+      <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", background: "#111", border: "1px solid var(--hairline-light)", color: "var(--white)", padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div className="eyebrow eyebrow-light">{s.n}  ·  STARTING AT</div>
+        <div className="display-l" style={{ fontSize: 56 }}>{s.price}</div>
+        <button className="btn btn-light" data-cursor="link" style={{ alignSelf: "flex-start" }} onClick={() => window.cl.go("book")}>Book Now <ArrowRight /></button>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-const ServicesPreview = () => {
-  const [lsPrices, setLsPrices] = React.useState({});
-
-  React.useEffect(() => {
-    window.lightspeedGetDept?.('Labour').then(items => {
-      const map = {};
-      (items || []).forEach(it => {
-        if (it.name && it.price > 0) map[it.name.toLowerCase().trim()] = it.price;
-      });
-      setLsPrices(map);
-    }).catch(() => {});
-  }, []);
-
-  const liveFor = (s) => s.lsKey ? (lsPrices[s.lsKey] || null) : null;
-
-  return (
-    <section className="section section-pad bg-black" data-screen-label="05 Services">
-      <div className="container-wide">
-        <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 80, gap: 40, flexWrap: "wrap" }}>
-          <div>
-            <div className="section-label" style={{ color: "var(--gray-300)" }}>Full-Service Shop  /  N°03</div>
-            <h2 className="display-xl">We keep<br/>you <span className="serif-italic">rolling.</span></h2>
-          </div>
-          <div style={{ maxWidth: 360, color: "var(--gray-300)", fontSize: 15, lineHeight: 1.6 }}>
-            Four dedicated mechanics. More torque wrenches than we can count. One unbreakable rule — no bike leaves the stand until it leaves perfect.
-          </div>
+const ServicesPreview = () => (
+  <section className="section section-pad bg-black" data-screen-label="05 Services">
+    <div className="container-wide">
+      <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 80, gap: 40, flexWrap: "wrap" }}>
+        <div>
+          <div className="section-label" style={{ color: "var(--gray-300)" }}>Full-Service Shop  /  N°03</div>
+          <h2 className="display-xl">We keep<br/>you <span className="serif-italic">rolling.</span></h2>
         </div>
-        <div className="home-services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--hairline-light)", borderRight: 0, borderBottom: 0 }}>
-          {SERVICES.map((s, i) => (
-            <div key={i} style={{ borderRight: "1px solid var(--hairline-light)", borderBottom: "1px solid var(--hairline-light)" }}>
-              <ServiceCard s={s} livePrice={liveFor(s)} />
-            </div>
-          ))}
-        </div>
-        <div className="reveal" style={{ marginTop: 80, display: "flex", justifyContent: "center" }}>
-          <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Service Online <ArrowRight /></button>
+        <div style={{ maxWidth: 360, color: "var(--gray-300)", fontSize: 15, lineHeight: 1.6 }}>
+          Four dedicated mechanics. More torque wrenches than we can count. One unbreakable rule — no bike leaves the stand until it leaves perfect.
         </div>
       </div>
-    </section>
-  );
-};
+      <div className="home-services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--hairline-light)", borderRight: 0, borderBottom: 0 }}>
+        {SERVICES.map((s, i) => (
+          <div key={i} style={{ borderRight: "1px solid var(--hairline-light)", borderBottom: "1px solid var(--hairline-light)" }}>
+            <ServiceCard s={s} />
+          </div>
+        ))}
+      </div>
+      <div className="reveal" style={{ marginTop: 80, display: "flex", justifyContent: "center" }}>
+        <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Service Online <ArrowRight /></button>
+      </div>
+    </div>
+  </section>
+);
 
 // Book Online Banner
 const BookBanner = () => (
