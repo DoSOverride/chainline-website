@@ -212,7 +212,6 @@ const App = () => {
             <GroupRidesTeaser />
             <TrailSpotlight />
             <DemoStrip />
-            <Testimonials />
           </>
         )}
         {page === "shop" && <ShopPage />}
