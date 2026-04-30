@@ -3303,46 +3303,87 @@ const useTabCounts = (tabIds) => {
 // ── Parts Landing Page ────────────────────────────────────────────────────────
 const PartsLandingPage = () => {
   const [q, setQ] = React.useState('');
-  const cats = [
-    { id:'wheels',    label:'Tires & Tubes',      emoji:'🔘', desc:'Road, MTB, gravel, fat bike tires — all sizes. Tubes, sealant, tire protection' },
-    { id:'drivetrain',label:'Chains & Cables',    emoji:'🔗', desc:'Drive chains, shift cables, housing, derailleur hangers, freewheels' },
-    { id:'brakes',    label:'Brake Pads & Parts', emoji:'🛑', desc:'Hydraulic & mechanical pads, brake parts, rotor adapters' },
-    { id:'cockpit',   label:'Tape & Grips',       emoji:'🌀', desc:'Bar tape, cork tape, MTB grips, lock-on grips, spacers' },
-    { id:'tools',     label:'Lube & Maintenance', emoji:'🫙', desc:'Chain lube, grease, degreaser, assembly paste, fork oil, cleaners' },
+  // Sections: each has a heading + specific search tiles
+  const sections = [
+    {
+      heading: 'Tires',
+      tiles: [
+        { search:'Tires 29"',  label:'29" MTB Tires',     emoji:'🔘', desc:'Trail, enduro, XC — all brands' },
+        { search:'Tires 700C', label:'700C Road/Gravel',   emoji:'🔘', desc:'Road, gravel, commuter tires' },
+        { search:'Tires 27',   label:'27.5" Tires',        emoji:'🔘', desc:'27.5" mountain & trail tires' },
+        { search:'Tires 26',   label:'26" Tires',          emoji:'🔘', desc:'26 inch, fat bike, kids' },
+        { search:'Fatbike',    label:'Fat Bike Tires',     emoji:'🔘', desc:'4"+ tires for snow & sand' },
+      ]
+    },
+    {
+      heading: 'Tubes & Sealing',
+      tiles: [
+        { search:'Tubes',        label:'Inner Tubes',       emoji:'🫧', desc:'All wheel sizes, all valve types' },
+        { search:'Tire Sealant', label:'Tubeless Sealant',  emoji:'🫙', desc:'Stan\'s, Orange Seal, and more' },
+        { search:'Tire Protect', label:'Tire Protection',   emoji:'🛡️', desc:'Inserts, liners, flat protection' },
+      ]
+    },
+    {
+      heading: 'Drivetrain Parts',
+      tiles: [
+        { search:'Chains',    label:'Drive Chains',    emoji:'🔗', desc:'8–12 speed, all brands' },
+        { search:'Cables',    label:'Cables & Housing',emoji:'〰️', desc:'Shift & brake cables, housing' },
+        { search:'Cassette',  label:'Cassettes',       emoji:'⚙️', desc:'Road, MTB, all speeds' },
+      ]
+    },
+    {
+      heading: 'Brake & Cockpit',
+      tiles: [
+        { search:'Brake pads', label:'Brake Pads',  emoji:'🛑', desc:'Hydraulic, mechanical, all brands' },
+        { search:'Bar tape',   label:'Bar Tape',    emoji:'🌀', desc:'Cork, foam, synthetic wrap' },
+        { search:'Grips',      label:'Grips',       emoji:'✊', desc:'Lock-on, ergonomic, foam grips' },
+      ]
+    },
+    {
+      heading: 'Maintenance',
+      tiles: [
+        { search:'Lube',    label:'Chain Lube',   emoji:'🫙', desc:'Wet, dry, wax-based lubes' },
+        { search:'Degrease',label:'Degreasers',   emoji:'🧴', desc:'Chain clean, degreaser sprays' },
+        { search:'Pumps',   label:'Pumps',        emoji:'💨', desc:'Floor pumps, mini pumps, CO₂' },
+      ]
+    },
   ];
-  const counts = useTabCounts(cats.map(c => c.id));
-  const go = (id) => window.cl.go('parts', { tab: id });
-  const search = () => { if (q.trim().length >= 2) window.cl.go('parts', { tab: 'wheels', search: q.trim() }); };
+  const go = (search) => window.cl.go('store', { search });
+  const doSearch = () => { if (q.trim().length >= 2) window.cl.go('store', { search: q.trim() }); };
   return (
     <div className="page-fade">
       <SubHero eyebrow="Parts  /  In Stock" title="Parts." italic="Keep it rolling." />
       <section style={{ background:'var(--white)', padding:'60px 0 100px' }}>
         <div className="container-wide">
-          <div style={{ maxWidth:600, margin:'0 auto 64px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
-            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
+          {/* Search */}
+          <div style={{ maxWidth:600, margin:'0 auto 56px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
+            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&doSearch()}
               placeholder="Search tires, tubes, chains, brake pads…"
               style={{ flex:1, padding:'16px 20px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:15, background:'transparent', color:'var(--black)' }} />
-            <button onClick={search} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
+            <button onClick={doSearch} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
-            {cats.map(c => (
-              <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
-                style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
-                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-count').style.color='rgba(255,255,255,0.4)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-count').style.color='var(--gray-400)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
-                <span style={{ fontSize:36, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:4, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
-                  <div className="cat-count" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:4, transition:'color .15s' }}>
-                    {counts[c.id] === null ? <span style={{ opacity:.4 }}>Loading…</span> : `${counts[c.id]} in stock`}
-                  </div>
-                  <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
-                </div>
-                <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
-              </button>
-            ))}
-          </div>
-          <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
+          {/* Sectioned category grid */}
+          {sections.map(sec => (
+            <div key={sec.heading} style={{ marginBottom:56 }}>
+              <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:12, paddingBottom:10, borderBottom:'1px solid var(--hairline)' }}>{sec.heading}</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:2 }}>
+                {sec.tiles.map(c => (
+                  <button key={c.label} onClick={()=>go(c.search)} data-cursor="link"
+                    style={{ display:'flex', alignItems:'center', gap:16, padding:'20px 20px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
+                    onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.45)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                    onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                    <span style={{ fontSize:24, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:3, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                      <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.08em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.5, transition:'color .15s' }}>{c.desc}</div>
+                    </div>
+                    <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight size={10} /></span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div style={{ marginTop:32, textAlign:'center', padding:'40px 0', borderTop:'1px solid var(--hairline)' }}>
             <div className="eyebrow" style={{ marginBottom:12 }}>Need something specific?</div>
             <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock consumables for all major brands. If we don't have it, we can order it.</p>
             <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>

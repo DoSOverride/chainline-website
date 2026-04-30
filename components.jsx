@@ -344,9 +344,36 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     },
     store: {
       storeCols: [
-        { h: "Components", route: "components", items: ["Drivetrain", "Brakes", "Suspension", "Cockpit", "Wheelsets", "Rims", "Hubs", "Headsets"] },
-        { h: "Parts",       route: "parts",       items: ["Tires", "Tubes", "Chains", "Cables", "Brake pads", "Bar tape", "Grips", "Lube"] },
-        { h: "Accessories", route: "accessories", items: ["Helmets", "Gloves", "Clothing", "Lights", "Locks", "Bags", "Computers", "Tools"] },
+        { h: "Components", route: "components", items: [
+          { label:"Drivetrain",  go:["components",{tab:"drivetrain"}] },
+          { label:"Brakes",      go:["components",{tab:"brakes"}] },
+          { label:"Suspension",  go:["components",{tab:"suspension"}] },
+          { label:"Cockpit",     go:["components",{tab:"cockpit"}] },
+          { label:"Wheelsets",   go:["components",{tab:"wheels"}] },
+          { label:"Rims",        go:["components",{tab:"wheels"}] },
+          { label:"Hubs",        go:["components",{tab:"wheels"}] },
+          { label:"Headsets",    go:["components",{tab:"cockpit"}] },
+        ]},
+        { h: "Parts", route: "parts", items: [
+          { label:'Tires 29"',   go:["store",{search:'Tires 29"'}] },
+          { label:"Tires 700C",  go:["store",{search:"Tires 700C"}] },
+          { label:'Tires 27.5"', go:["store",{search:"Tires 27"}] },
+          { label:"Fat Tires",   go:["store",{search:"Fatbike"}] },
+          { label:"Tubes",       go:["store",{search:"Tubes"}] },
+          { label:"Chains",      go:["store",{search:"Chains"}] },
+          { label:"Cables",      go:["store",{search:"Cables"}] },
+          { label:"Brake Pads",  go:["store",{search:"Brake pads"}] },
+        ]},
+        { h: "Accessories", route: "accessories", items: [
+          { label:"Helmets",   go:["accessories",{tab:"fit"}] },
+          { label:"Gloves",    go:["accessories",{tab:"fit"}] },
+          { label:"Clothing",  go:["accessories",{tab:"fit"}] },
+          { label:"Lights",    go:["accessories",{tab:"accessories"}] },
+          { label:"Locks",     go:["accessories",{tab:"accessories"}] },
+          { label:"Bags",      go:["accessories",{tab:"accessories"}] },
+          { label:"Computers", go:["accessories",{tab:"accessories"}] },
+          { label:"Tools",     go:["accessories",{tab:"tools"}] },
+        ]},
       ],
     },
     services: {
@@ -394,6 +421,11 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("bags & rack") || l.includes("bags and rack")) return ["accessories",{tab:"accessories"}];
     if (l === "all bikes" || l === "bikes") return ["shop", null];
     if (l === "tires") return ["parts",{tab:"wheels"}];
+    if (l === "drivetrain") return ["components",{tab:"drivetrain"}];
+    if (l === "brakes" || l === "brake") return ["components",{tab:"brakes"}];
+    if (l === "suspension") return ["components",{tab:"suspension"}];
+    if (l === "cockpit") return ["components",{tab:"cockpit"}];
+    if (l === "wheelsets" || l === "wheels & tubeless") return ["components",{tab:"wheels"}];
     if (l.includes("component")) return ["components",{tab:"drivetrain"}];
     if (l.includes("accessor")) return ["accessories",{tab:"accessories"}];
     if (l === "store") return ["store", null];
@@ -405,8 +437,8 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("demo")) return ["demo", null];
     if (l.includes("warranty")) return ["warranty", null];
     if (l.includes("fitting") || l.includes("bike fit") || l.includes("bike fitting")) return ["fitting", null];
-    if (l.includes("storage") || l.includes("store")) return ["storage", null];
-    if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("service pricing")) return ["services", null];
+    if (l === "storage" || l.includes("storage program")) return ["storage", null];
+    if (l.includes("tune") || l === "custom builds" || l.includes("service pricing") || l.includes("service menu") || l === "tune-ups") return ["services", null];
     // Explore
     if (l.includes("social")) return ["social", null];
     if (l.includes("clinic") || l.includes("event") || l.includes("skill")) return ["events", null];
@@ -453,8 +485,10 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
               {d.storeCols.map((col, ci) => (
                 <div key={ci} className="mega-col">
                   <h4 style={{ cursor:"pointer" }} onClick={() => { onClose(); window.cl.go(col.route); }}>{col.h}</h4>
-                  <ul>{col.items.map(it => (
-                    <li key={it}><a href="#" data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go('store', { search: it }); }}>{it}</a></li>
+                  <ul>{col.items.map(item => (
+                    <li key={item.label}>
+                      <a href="#" data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
+                    </li>
                   ))}</ul>
                 </div>
               ))}
