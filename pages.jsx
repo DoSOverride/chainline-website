@@ -2757,30 +2757,122 @@ const StoragePage = () => {
   );
 };
 
-const SocialPage = () => (
-  <div style={{ minHeight:"80vh" }}>
-    <SubHero title="Social" eyebrow="ChainLine" sub="Follow along — rides, builds, shop life, and Kelowna trails." />
-    <section style={{ padding:"80px 0" }}>
-      <div className="container">
-        <div style={{ textAlign:"center", maxWidth:560, margin:"0 auto" }}>
-          <div className="eyebrow" style={{ marginBottom:16 }}>Coming Soon</div>
-          <div className="display-s" style={{ marginBottom:20 }}>Our feed is on its way</div>
-          <p style={{ color:"var(--gray-500)", marginBottom:40 }}>
-            Follow us on Instagram, TikTok, and YouTube for the latest from the shop floor and the trails.
-          </p>
-          <div style={{ display:"flex", gap:16, flexWrap:"wrap", justifyContent:"center" }}>
-            {[
-              ["Instagram","https://instagram.com/ChainLineCycle"],
-              ["TikTok","https://tiktok.com/@ChainLineCycle"],
-              ["YouTube","https://youtube.com/@ChainLine_Cycle"],
-            ].map(([label, href]) => (
-              <a key={label} href={href} target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">{label}</a>
-            ))}
+const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+
+const SocialPage = () => {
+  const [videos, setVideos] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  const [active, setActive] = React.useState(null);
+
+  React.useEffect(() => {
+    fetch(`${WORKER}/api/youtube`)
+      .then(r => r.json())
+      .then(data => { setVideos(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
+  }, []);
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') setActive(null); };
+    if (active) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [active]);
+
+  const formatDate = (iso) => {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-CA', { year:'numeric', month:'short', day:'numeric' });
+  };
+
+  return (
+    <div style={{ minHeight:"80vh" }}>
+      <SubHero title="Social" eyebrow="ChainLine" sub="Rides, builds, shop life, and Kelowna trails — straight from our YouTube." />
+
+      <section style={{ padding:"64px 0 96px" }}>
+        <div className="container-wide">
+
+          {loading && (
+            <div style={{ textAlign:"center", padding:"80px 0", color:"var(--gray-400)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}>
+              Loading videos…
+            </div>
+          )}
+
+          {error && (
+            <div style={{ textAlign:"center", padding:"80px 0" }}>
+              <div style={{ color:"var(--gray-500)", marginBottom:24 }}>Couldn't load videos right now.</div>
+              <a href="https://youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Watch on YouTube</a>
+            </div>
+          )}
+
+          {!loading && !error && videos.length === 0 && (
+            <div style={{ textAlign:"center", padding:"80px 0" }}>
+              <div style={{ color:"var(--gray-500)", marginBottom:24 }}>No videos yet — check back soon.</div>
+              <a href="https://youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">YouTube Channel</a>
+            </div>
+          )}
+
+          {videos.length > 0 && (
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:28 }}>
+              {videos.map(v => (
+                <div key={v.id} onClick={() => setActive(v)} data-cursor="link"
+                  style={{ cursor:"pointer", display:"flex", flexDirection:"column" }}>
+                  <div style={{ position:"relative", aspectRatio:"16/9", overflow:"hidden", background:"var(--gray-100)", marginBottom:14 }}>
+                    {v.thumbnail
+                      ? <img src={v.thumbnail} alt={v.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block", transition:"transform .4s ease" }}
+                          onMouseEnter={e => e.currentTarget.style.transform="scale(1.03)"}
+                          onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
+                      : <div style={{ width:"100%", height:"100%", background:"var(--gray-100)" }} />
+                    }
+                    <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", opacity:0, transition:"opacity .2s", background:"rgba(0,0,0,0.25)" }}
+                      onMouseEnter={e => e.currentTarget.style.opacity=1}
+                      onMouseLeave={e => e.currentTarget.style.opacity=0}>
+                      <div style={{ width:56, height:56, borderRadius:"50%", background:"rgba(255,255,255,0.95)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--black)"><path d="M8 5v14l11-7z"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:15, fontWeight:500, letterSpacing:"-.01em", textTransform:"uppercase", lineHeight:1.3, marginBottom:6, color:"var(--black)" }}>{v.title}</div>
+                  {v.published && <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{formatDate(v.published)}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {videos.length > 0 && (
+            <div style={{ textAlign:"center", marginTop:56 }}>
+              <a href="https://youtube.com/@ChainLine_Cycle" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">
+                More on YouTube <ArrowRight />
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Video modal */}
+      {active && (
+        <div onClick={() => setActive(null)}
+          style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:1000, display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}>
+          <div onClick={e => e.stopPropagation()} style={{ width:"100%", maxWidth:900, position:"relative" }}>
+            <button onClick={() => setActive(null)} data-cursor="link"
+              style={{ position:"absolute", top:-40, right:0, background:"none", border:"none", color:"rgba(255,255,255,0.7)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", cursor:"pointer" }}>
+              Close ✕
+            </button>
+            <div style={{ aspectRatio:"16/9", background:"#000" }}>
+              <iframe
+                src={`https://www.youtube.com/embed/${active.id}?autoplay=1&rel=0`}
+                style={{ width:"100%", height:"100%", border:"none" }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <div style={{ padding:"16px 0 0", color:"var(--white)" }}>
+              <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:4 }}>{active.title}</div>
+              {active.description && <div style={{ fontFamily:"var(--mono)", fontSize:11, color:"rgba(255,255,255,0.5)", letterSpacing:".08em" }}>{active.description}</div>}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
-);
+      )}
+    </div>
+  );
+};
 
 Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
