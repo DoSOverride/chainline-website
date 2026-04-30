@@ -2041,11 +2041,11 @@ const useTabInventory = (tabId) => {
 const PartRow = React.memo(({ item, tabEmoji }) => {
   const dept = item.department || '';
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"28px 1fr auto", gap:"0 12px", alignItems:"center", padding:"10px 14px", borderBottom:"1px solid var(--hairline)", background:"var(--white)", transition:"background .15s" }}
+    <div className="parts-row parts-row-grid" style={{ display:"grid", gridTemplateColumns:"28px 1fr auto", gap:"0 12px", alignItems:"center", padding:"10px 14px", borderBottom:"1px solid var(--hairline)", background:"var(--white)", transition:"background .15s" }}
       onMouseEnter={e => e.currentTarget.style.background = 'var(--paper)'}
       onMouseLeave={e => e.currentTarget.style.background = 'var(--white)'}>
       {/* Icon */}
-      <div style={{ fontSize:14, textAlign:"center", opacity:.6, userSelect:"none" }}>{tabEmoji}</div>
+      <div className="parts-row-icon" style={{ fontSize:14, textAlign:"center", opacity:.6, userSelect:"none" }}>{tabEmoji}</div>
       {/* Name + dept */}
       <div style={{ minWidth:0 }}>
         <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{item.name}</div>
@@ -2148,7 +2148,7 @@ const PartsPage = () => {
           </div>
 
           {/* ── Main ── */}
-          <div style={{ padding:"40px 0 80px" }}>
+          <div className="parts-main" style={{ padding:"40px 0 80px", minWidth:0, overflow:"hidden" }}>
 
             {/* Category banner */}
             {!search && (
@@ -2174,7 +2174,7 @@ const PartsPage = () => {
             )}
 
             {/* Search + header */}
-            <div style={{ padding:"24px 32px 24px", borderBottom:"1px solid var(--hairline)" }}>
+            <div className="parts-search-area" style={{ padding:"24px 32px 24px", borderBottom:"1px solid var(--hairline)" }}>
               <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
                 <h1 style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", margin:0, flex:1 }}>
                   {search ? `"${search}"` : activeTab.label}
@@ -2189,7 +2189,7 @@ const PartsPage = () => {
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
                 <span style={{ fontSize:16, color:"var(--gray-400)", userSelect:"none" }}>⌕</span>
-                <input ref={searchRef} type="text" placeholder="Search by brand, product, or SKU — e.g. Maxxis, cassette, GX…"
+                <input ref={searchRef} type="text" placeholder="Search parts, brands, SKUs…"
                   value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
                   style={{ flex:1, padding:"13px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:15, background:"transparent", color:"var(--black)" }} />
                 {search && <button onClick={() => { setSearch(''); setPage(0); searchRef.current?.focus(); }}
@@ -2219,7 +2219,7 @@ const PartsPage = () => {
                       <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:24 }}>
                         {search ? "Try a different spelling or browse a category on the left." : "We can order almost anything — give us a call."}
                       </p>
-                      <div style={{ display:"flex", gap:12, justifyContent:"center" }}>
+                      <div className="parts-cta-btns" style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
                         <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
                         <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Contact Us <ArrowRight /></button>
                       </div>
@@ -2241,10 +2241,10 @@ const PartsPage = () => {
                     </button>
                   </div>
                 )}
-                <div style={{ padding:"40px 32px 0", borderTop:"1px solid var(--hairline)", marginTop:16 }}>
+                <div className="parts-footer-cta" style={{ padding:"40px 32px 0", borderTop:"1px solid var(--hairline)", marginTop:16 }}>
                   <div className="eyebrow" style={{ marginBottom:8 }}>Can't find what you need?</div>
                   <p style={{ fontSize:13, color:"var(--gray-500)", marginBottom:12 }}>We stock 7,000+ products. If it's not listed, we can order it — usually arrives within a few days.</p>
-                  <div style={{ display:"flex", gap:10 }}>
+                  <div className="parts-cta-btns" style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                     <a href="tel:2508601968" className="btn btn-outline" data-cursor="link" style={{ fontSize:11 }}>Call (250) 860-1968</a>
                     <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ fontSize:11 }}>Contact Us <ArrowRight /></button>
                   </div>
