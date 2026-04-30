@@ -19,7 +19,7 @@ const ANNOUNCE_ITEMS = [
     msg: "Free shipping on orders over $250",
   },
   {
-    msg: "Tune-ups booking 1–2 weeks out · Flat fixes anytime if we can fit you in",
+    msg: "Tune-ups — booking 1–2 weeks out",
     form: { title: "Book a Service", subject: "Service Booking",
       fields: [
         { key:"name",    label:"Your Name",     type:"text",     placeholder:"Jane Smith",             required:true  },
@@ -30,7 +30,17 @@ const ANNOUNCE_ITEMS = [
     },
   },
   {
-    msg: "Bike storage — drop off anytime, pick up when you're ready",
+    msg: "Flat fixes — walk-ins welcome",
+    form: { title: "Book a Service", subject: "Flat Fix",
+      fields: [
+        { key:"name",    label:"Your Name", type:"text", placeholder:"Jane Smith",     required:true  },
+        { key:"phone",   label:"Phone",      type:"tel",  placeholder:"(250) 555-0100", required:true  },
+        { key:"notes",   label:"Details",   type:"textarea", placeholder:"Bike type, tube size if known…", required:false },
+      ],
+    },
+  },
+  {
+    msg: "Bike storage — drop off anytime",
     form: { title: "Bike Storage Enquiry", subject: "Bike Storage",
       fields: [
         { key:"name",  label:"Your Name",  type:"text",     placeholder:"Jane Smith",                              required:true  },
