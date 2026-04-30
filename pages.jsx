@@ -1787,7 +1787,22 @@ const ContactPage = () => (
 );
 
 // GIFT CARDS — email domain typo detection
-const GC_DOMAINS = ['gmail.com','hotmail.com','yahoo.com','outlook.com','icloud.com','live.com','me.com','msn.com','shaw.ca','telus.net','yahoo.ca','hotmail.ca','rogers.com','protonmail.com','googlemail.com'];
+// Compares only the provider name (before the dot) against known names,
+// so personal domains like @smith.ca or @jones.com are never flagged.
+const GC_PROVIDERS = [
+  { name:'gmail',      tlds:['com'] },
+  { name:'hotmail',    tlds:['com','ca'] },
+  { name:'yahoo',      tlds:['com','ca'] },
+  { name:'outlook',    tlds:['com','ca'] },
+  { name:'icloud',     tlds:['com'] },
+  { name:'live',       tlds:['com','ca'] },
+  { name:'me',         tlds:['com'] },
+  { name:'msn',        tlds:['com'] },
+  { name:'shaw',       tlds:['ca'] },
+  { name:'telus',      tlds:['net'] },
+  { name:'rogers',     tlds:['com'] },
+  { name:'protonmail', tlds:['com'] },
+];
 
 function _lev(a, b) {
   const dp = Array.from({length:a.length+1}, (_,i) => Array.from({length:b.length+1}, (_,j) => i===0?j:j===0?i:0));
@@ -1799,15 +1814,23 @@ function _lev(a, b) {
 function suggestEmailFix(email) {
   const at = email.lastIndexOf('@');
   if (at < 1) return null;
-  const domain = email.slice(at+1).toLowerCase();
-  if (domain.length < 2) return null;
-  if (GC_DOMAINS.includes(domain)) return null;
+  const fullDomain = email.slice(at+1).toLowerCase();
+  const dotIdx = fullDomain.lastIndexOf('.');
+  if (dotIdx < 1) return null;
+  const namepart = fullDomain.slice(0, dotIdx); // e.g. "gmmailll" from "gmmailll.com"
+  const tld      = fullDomain.slice(dotIdx+1);  // e.g. "com"
+
+  // Exact match — already correct
+  if (GC_PROVIDERS.some(p => p.name === namepart && p.tlds.includes(tld))) return null;
+
+  // Find closest known provider name (ignoring TLD so @smith.ca is never confused with @shaw.ca)
   let best = null, bestDist = Infinity;
-  for (const d of GC_DOMAINS) {
-    const dist = _lev(domain, d);
-    if (dist < bestDist) { bestDist = dist; best = d; }
+  for (const p of GC_PROVIDERS) {
+    const dist = _lev(namepart, p.name);
+    if (dist < bestDist) { bestDist = dist; best = `${p.name}.${p.tlds[0]}`; }
   }
-  return bestDist <= 3 ? best : null;
+  // Only flag if clearly a typo (≤2 edits on name part, and name is at least 3 chars)
+  return bestDist <= 2 && namepart.length >= 3 ? best : null;
 }
 
 const GiftCardsPage = () => {
