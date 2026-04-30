@@ -1249,235 +1249,154 @@ const ServicesPage = () => {
 
 // BOOK PAGE
 const BookPage = () => {
-  const [step, setStep] = React.useState(1);
-  const [data, setData] = React.useState({});
+  const [data,      setData]      = React.useState({});
   const [submitted, setSubmitted] = React.useState(false);
-  const update = (k, v) => setData(d => ({ ...d, [k]: v }));
-  const next = () => setStep(s => Math.min(s + 1, 4));
-  const back = () => setStep(s => Math.max(s - 1, 1));
+  const [submitting,setSubmitting]= React.useState(false);
+  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
 
   const SERVICES = [
-    "Tune-Up","Full Suspension Tune-Up","E-Bike Tune-Up","Complete Overhaul",
-    "Fork Seal Service","Shock Air Can Service","Dropper Service","Brake Bleed",
-    "Cable Package","Wheel Build","Tubeless Set Up","Flat Fix","Other / Not Sure",
+    "Tune-Up", "Full Suspension Tune-Up", "E-Bike Tune-Up", "Complete Overhaul",
+    "Fork Seal Service", "Shock Air Can Service", "Dropper Service", "Brake Bleed",
+    "Cable Package", "Wheel Build", "Tubeless Set Up", "Flat Fix", "Not Sure / Assessment",
   ];
 
   const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
-  const inpStyle = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
-  const [submitting, setSubmitting] = React.useState(false);
+  const inp = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+
+  const canSubmit = data.name && data.phone && data.email && data.service && data.issue;
 
   const submit = async () => {
+    if (!canSubmit) return;
     setSubmitting(true);
     try {
-      const bikeStr = `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim();
       const fd = new FormData();
-      fd.append("name",    data.name    || '');
-      fd.append("phone",   data.phone   || '');
-      fd.append("email",   data.email   || '');
-      fd.append("bike",    bikeStr);
-      fd.append("service", data.service || 'Assessment / Not sure');
-      fd.append("date",    data.date    || 'Flexible');
-      fd.append("issue",   data.issue   || '');
+      fd.append("name",    data.name);
+      fd.append("phone",   data.phone);
+      fd.append("email",   data.email);
+      fd.append("bike",    `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim());
+      fd.append("service", data.service);
+      fd.append("date",    data.date || 'Flexible');
+      fd.append("issue",   data.issue);
       if (data.photoFile) fd.append("photo", data.photoFile);
-
-      // Build a separate FormData for work-order (no photo needed)
-      const woFd = new FormData();
-      woFd.append("name",    data.name    || '');
-      woFd.append("phone",   data.phone   || '');
-      woFd.append("email",   data.email   || '');
-      woFd.append("bike",    bikeStr);
-      woFd.append("service", data.service || 'Assessment / Not sure');
-      woFd.append("date",    data.date    || 'Flexible');
-      woFd.append("issue",   data.issue   || '');
-
-      // Fire both in parallel — email is primary, work-order is best-effort
-      const [res] = await Promise.all([
-        fetch(`${WORKER}/api/book`, { method: "POST", body: fd }),
-        fetch(`${WORKER}/api/work-order`, { method: "POST", body: woFd }).catch(() => {}),
-      ]);
+      const res  = await fetch(`${WORKER}/api/book`, { method:"POST", body: fd });
       const json = await res.json();
       if (json.ok) { setSubmitted(true); return; }
-      throw new Error("Worker error");
+      throw new Error("error");
     } catch {
-      // Fallback: open mailto so no booking is ever lost
-      const body = encodeURIComponent(
-        `ChainLine — Service Booking\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email||'-'}\nBike: ${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}\nService: ${data.service||'Assessment'}\nDate: ${data.date||'Flexible'}\nNotes: ${data.issue||'-'}`
-      );
+      const body = encodeURIComponent(`ChainLine — Service Booking\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email}\nBike: ${data.bikeBrand||''} ${data.bikeModel||''}\nService: ${data.service}\nDate: ${data.date||'Flexible'}\nNotes: ${data.issue}`);
       window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Service Booking — '+(data.name||'Customer'))}&body=${body}`;
       setSubmitted(true);
-    } finally {
-      setSubmitting(false);
-    }
+    } finally { setSubmitting(false); }
   };
+
+  if (submitted) return (
+    <div className="page-fade">
+      <SubHero eyebrow="Booking  /  N°01" title="Request sent." italic="We'll be in touch." />
+      <section className="section section-pad bg-white">
+        <div className="container-narrow">
+          <div style={{ padding:"32px", background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:32 }}>
+            <p style={{ fontSize:15, lineHeight:1.8, color:"var(--gray-600)", margin:0 }}>
+              Your booking request has been sent to <strong>bikes@chainline.ca</strong>. We'll call or email within 24 hours to confirm your appointment.<br/><br/>
+              Questions? <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon 10–5, Tue–Fri 9:30–5:30, Sat 10–4.
+            </p>
+          </div>
+          <div style={{ display:"flex", gap:12 }}>
+            <button className="btn btn-outline" onClick={() => { setData({}); setSubmitted(false); }}>Book another</button>
+            <button className="btn" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 
   return (
     <div className="page-fade" data-screen-label="P04 Book">
-      <SubHero eyebrow="Booking  /  N°01" title="Book an assessment." italic="Drop it off, we'll take care of the rest." />
+      <SubHero eyebrow="Booking  /  N°01" title="Book a service." italic="Drop it off, we'll handle the rest." />
       <section className="section section-pad bg-white">
         <div className="container-narrow">
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 32px" }}>
 
-          {/* Progress bar — hidden after submit */}
-          {!submitted && (
-            <>
-              <div style={{ display:"flex", gap:6, marginBottom:40 }}>
-                {[1,2,3,4].map(s => (
-                  <div key={s} style={{ flex:1, height:2, background: s <= step ? "var(--black)" : "var(--hairline)", transition:"background .3s" }} />
-                ))}
-              </div>
-              <div className="eyebrow" style={{ marginBottom:24 }}>Step {step} of 4</div>
-            </>
-          )}
-
-          {!submitted && step === 1 && (
+            {/* Left col — contact + bike */}
             <div>
-              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>Your details.</h2>
-              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>We'll call or text to confirm your appointment.</p>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:24 }}>
-                <div style={{ gridColumn:"1/-1" }}>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Name *</div>
-                  <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>update("name",e.target.value)} style={inpStyle} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Phone Number *</div>
-                  <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>update("phone",e.target.value)} style={inpStyle} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Email *</div>
-                  <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>update("email",e.target.value)} style={inpStyle} />
-                </div>
+              <div className="eyebrow" style={{ marginBottom:24 }}>Your details</div>
+              <div style={{ marginBottom:20 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Name *</div>
+                <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>upd("name",e.target.value)} style={inp} />
               </div>
-              <button className="btn" data-cursor="link" disabled={!data.name || !data.phone || !data.email} onClick={next} style={{ marginTop:8 }}>Continue <ArrowRight /></button>
-            </div>
-          )}
+              <div style={{ marginBottom:20 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Phone *</div>
+                <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>upd("phone",e.target.value)} style={inp} />
+              </div>
+              <div style={{ marginBottom:40 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Email *</div>
+                <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>upd("email",e.target.value)} style={inp} />
+              </div>
 
-          {!submitted && step === 2 && (
-            <div>
-              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>Your bike.</h2>
-              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>Tell us what you're bringing in. Photos welcome — take one on your phone and show us when you drop off.</p>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:24 }}>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Brand</div>
-                  <input type="text" placeholder="e.g. Transition" value={data.bikeBrand||""} onChange={e=>update("bikeBrand",e.target.value)} style={inpStyle} />
+              <div className="eyebrow" style={{ marginBottom:24 }}>Your bike</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 16px" }}>
+                <div style={{ marginBottom:20 }}>
+                  <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Brand</div>
+                  <input type="text" placeholder="Transition" value={data.bikeBrand||""} onChange={e=>upd("bikeBrand",e.target.value)} style={inp} />
                 </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Model</div>
-                  <input type="text" placeholder="e.g. Sentinel" value={data.bikeModel||""} onChange={e=>update("bikeModel",e.target.value)} style={inpStyle} />
-                </div>
-                <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Year</div>
-                  <input type="text" placeholder="2023" value={data.bikeYear||""} onChange={e=>update("bikeYear",e.target.value)} style={inpStyle} />
+                <div style={{ marginBottom:20 }}>
+                  <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Model</div>
+                  <input type="text" placeholder="Sentinel" value={data.bikeModel||""} onChange={e=>upd("bikeModel",e.target.value)} style={inp} />
                 </div>
               </div>
-              {/* Photo upload */}
-              <div style={{ marginBottom:24 }}>
-                <div className="eyebrow" style={{ marginBottom:8 }}>Photo of your bike (optional)</div>
-                <label style={{ display:"flex", alignItems:"center", gap:12, padding:"16px 20px", border:"1.5px dashed var(--hairline)", cursor:"pointer", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase" }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                  {data.photoName || "Upload a photo or take one now"}
-                  <input type="file" accept="image/*" capture="environment" style={{ display:"none" }}
-                    onChange={e => { const f = e.target.files[0]; if(f) { update("photoName", f.name); update("photoFile", f); } }} />
-                </label>
-                {data.photoName && <p style={{ marginTop:8, fontSize:13, color:"var(--gray-500)" }}>✓ {data.photoName} — bring this photo with you or email it separately.</p>}
+              <div style={{ marginBottom:20 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Year</div>
+                <input type="text" placeholder="2024" value={data.bikeYear||""} onChange={e=>upd("bikeYear",e.target.value)} style={inp} />
               </div>
-              <div style={{ display:"flex", gap:12 }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={next}>Continue <ArrowRight /></button>
+              <div style={{ marginBottom:40 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Preferred drop-off date</div>
+                <input type="text" placeholder="e.g. May 10, or Flexible" value={data.date||""} onChange={e=>upd("date",e.target.value)} style={inp} />
               </div>
             </div>
-          )}
 
-          {!submitted && step === 3 && (
+            {/* Right col — service + notes */}
             <div>
-              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>What's needed?</h2>
-              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Select the service you're after, or choose "Assessment" if you're not sure — we'll diagnose and quote before touching anything.</p>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:24 }}>
+              <div className="eyebrow" style={{ marginBottom:24 }}>Service needed *</div>
+              <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:32 }}>
                 {SERVICES.map(s => (
-                  <button key={s} onClick={() => update("service", s)} data-cursor="link"
-                    style={{ padding:"16px 20px", border:"1.5px solid " + (data.service === s ? "var(--black)" : "var(--hairline)"), background: data.service === s ? "var(--black)" : "transparent", color: data.service === s ? "var(--white)" : "var(--black)", textAlign:"left", fontFamily:"var(--display)", fontSize:15, fontWeight:500, textTransform:"uppercase", transition:"all .2s", cursor:"pointer" }}>
+                  <button key={s} data-cursor="link" onClick={() => upd("service", s)}
+                    style={{ padding:"13px 18px", border:"1.5px solid "+(data.service===s?"var(--black)":"var(--hairline)"), background:data.service===s?"var(--black)":"transparent", color:data.service===s?"var(--white)":"var(--black)", textAlign:"left", fontFamily:"var(--display)", fontSize:14, fontWeight:500, textTransform:"uppercase", cursor:"pointer", transition:"all .15s" }}>
                     {s}
                   </button>
                 ))}
               </div>
-              <div style={{ marginBottom:24 }}>
-                <div className="eyebrow" style={{ marginBottom:8 }}>Describe the issue or what you need *</div>
-                <textarea rows={4} placeholder="e.g. Front brakes feel spongy, rear derailleur skipping on climbs, pedal creak, full tune-up…" value={data.issue||""}
-                  onChange={e=>update("issue",e.target.value)}
-                  style={{ ...inpStyle, borderBottom:"none", border:"1px solid var(--hairline)", padding:16, resize:"vertical", fontSize:14 }} />
-              </div>
-              <div style={{ display:"flex", gap:12 }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" disabled={!data.service || !data.issue} onClick={next}>Continue <ArrowRight /></button>
-              </div>
-            </div>
-          )}
 
-          {!submitted && step === 4 && data.name && (
-            <div>
-              <h2 className="display-l book-step-h" style={{ marginBottom:12 }}>Preferred drop-off date.</h2>
-              <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:28 }}>Pick a day to bring your bike in. We'll confirm by phone or email within 24 hours.</p>
-              <Calendar onPick={(d) => update("date", d)} />
-              {data.date && <p style={{ marginTop:12, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Selected: {data.date}</p>}
-              <div style={{ marginTop:32, display:"flex", gap:12, flexWrap:"wrap" }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={submit} disabled={submitting}>
-                  {submitting ? "Sending…" : "Send Booking Request"} {!submitting && <ArrowRight />}
-                </button>
+              <div style={{ marginBottom:24 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Describe the issue *</div>
+                <textarea rows={5} placeholder="What's going on? e.g. front brake spongy, rear derailleur skipping, full tune-up needed…" value={data.issue||""} onChange={e=>upd("issue",e.target.value)}
+                  style={{ ...inp, borderBottom:"none", border:"1px solid var(--hairline)", padding:14, resize:"vertical", fontSize:14 }} />
               </div>
-              <p style={{ marginTop:16, fontSize:13, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".1em" }}>
-                This sends a booking request to bikes@chainline.ca. We'll call to confirm.
+
+              <div style={{ marginBottom:24 }}>
+                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Photo of your bike (optional)</div>
+                <label style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 18px", border:"1.5px dashed var(--hairline)", cursor:"pointer", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  {data.photoName || "Upload or take a photo"}
+                  <input type="file" accept="image/*" capture="environment" style={{ display:"none" }}
+                    onChange={e => { const f=e.target.files[0]; if(f){upd("photoName",f.name);upd("photoFile",f);} }} />
+                </label>
+              </div>
+
+              <button className="btn" data-cursor="link" disabled={!canSubmit || submitting} onClick={submit}
+                style={{ width:"100%", justifyContent:"center" }}>
+                {submitting ? "Sending…" : "Send Booking Request"} {!submitting && <ArrowRight />}
+              </button>
+              <p style={{ marginTop:12, fontSize:12, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".08em", textTransform:"uppercase" }}>
+                Sends to bikes@chainline.ca · We confirm within 24 hrs
               </p>
             </div>
-          )}
-
-          {!submitted && step === 4 && !data.name && (
-            <div style={{ textAlign:"center", padding:"40px 0" }}>
-              <p style={{ color:"var(--gray-500)", marginBottom:24 }}>Please go back and fill in your name and phone number.</p>
-              <button className="btn btn-outline" onClick={() => setStep(1)}>Start Over</button>
-            </div>
-          )}
-
-          {/* Confirmation after submit */}
-          {submitted && (
-            <div>
-              <h2 className="display-l" style={{ marginBottom: 16 }}>Request Sent ✓</h2>
-              <p className="serif-italic" style={{ fontSize: 22, color: "var(--gray-500)", marginBottom: 32 }}>We'll be in touch within 24 hours to confirm your slot.</p>
-              <div style={{ padding:"24px 28px", background:"var(--paper)", borderLeft:"3px solid var(--black)", marginBottom:32 }}>
-                <p style={{ fontSize:14, color:"var(--gray-600)", lineHeight:1.7 }}>
-                  Your booking request has been sent to <strong>bikes@chainline.ca</strong>. You'll receive a confirmation call or email to lock in your appointment time.<br/><br/>
-                  Questions? Call us at <a href="tel:2508601968" style={{ fontWeight:600 }}>(250) 860-1968</a> — Mon 10–5, Tue–Fri 9:30–5:30, Sat 10–4.
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: 12 }}>
-                <button className="btn btn-outline" data-cursor="link" onClick={() => { setStep(1); setData({}); }}>Book another</button>
-                <button className="btn" data-cursor="link" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="section section-pad-sm bg-paper" style={{ padding: "80px 0" }}>
-        <div className="container-wide">
-          <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, borderTop: "1px solid var(--hairline)" }}>
-            {[
-              { n: "01", t: "Book Online", d: "Pick a service, time, and tell us about your bike." },
-              { n: "02", t: "Drop Off", d: "Stop by the shop. We tag the bike, log the work order." },
-              { n: "03", t: "We Call", d: "When it's ready. Pickup any time the shop is open." },
-            ].map((s, i) => (
-              <div key={i} style={{ padding: "32px 32px 32px 0", borderRight: i < 2 ? "1px solid var(--hairline)" : "none", paddingLeft: i > 0 ? 32 : 0 }}>
-                <div className="eyebrow" style={{ marginBottom: 16 }}>{s.n}</div>
-                <div className="display-m" style={{ marginBottom: 12 }}>{s.t}</div>
-                <p style={{ color: "var(--gray-500)", fontSize: 15, margin: 0 }}>{s.d}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
-
       <FAQs />
     </div>
   );
 };
+
 
 const Field = ({ label, placeholder, textarea, value, onChange }) => (
   <label style={{ display: "block" }}>
