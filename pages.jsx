@@ -3138,6 +3138,29 @@ const StorePage = () => {
   );
 };
 
+// ── Shared: preload tabs and track per-tab item counts ───────────────────────
+const useTabCounts = (tabIds) => {
+  const [counts, setCounts] = React.useState(() => {
+    const init = {};
+    tabIds.forEach(id => { init[id] = window.CL_LS?.tabCache?.[id]?.length ?? null; });
+    return init;
+  });
+  React.useEffect(() => {
+    let cancelled = false;
+    tabIds.forEach(id => {
+      if (window.CL_LS?.tabCache?.[id]) {
+        setCounts(c => ({ ...c, [id]: window.CL_LS.tabCache[id].length }));
+      } else {
+        window.lightspeedGetTab?.(id).then(items => {
+          if (!cancelled) setCounts(c => ({ ...c, [id]: items.length }));
+        });
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+  return counts;
+};
+
 // ── Parts Landing Page ────────────────────────────────────────────────────────
 const PartsLandingPage = () => {
   const [q, setQ] = React.useState('');
@@ -3148,6 +3171,7 @@ const PartsLandingPage = () => {
     { id:'cockpit',   label:'Tape & Grips',       emoji:'🌀', desc:'Bar tape, cork tape, MTB grips, lock-on grips, spacers' },
     { id:'tools',     label:'Lube & Maintenance', emoji:'🫙', desc:'Chain lube, grease, degreaser, assembly paste, fork oil, cleaners' },
   ];
+  const counts = useTabCounts(cats.map(c => c.id));
   const go = (id) => window.cl.go('parts', { tab: id });
   const search = () => { if (q.trim().length >= 2) window.cl.go('parts', { tab: 'wheels', search: q.trim() }); };
   return (
@@ -3165,11 +3189,14 @@ const PartsLandingPage = () => {
             {cats.map(c => (
               <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
                 style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
-                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-count').style.color='rgba(255,255,255,0.4)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-count').style.color='var(--gray-400)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
                 <span style={{ fontSize:36, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:6, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:4, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-count" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:4, transition:'color .15s' }}>
+                    {counts[c.id] === null ? <span style={{ opacity:.4 }}>Loading…</span> : `${counts[c.id]} in stock`}
+                  </div>
                   <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
                 </div>
                 <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
@@ -3200,6 +3227,7 @@ const ComponentsLandingPage = () => {
     { id:'cockpit',    label:'Cockpit',       emoji:'🎛️', desc:'Handlebars, stems, grips, saddles, seatposts, headsets, bar tape' },
     { id:'suspension', label:'Suspension',    emoji:'🔩', desc:'Forks, rear shocks, fork oil, seals, bushings, fork parts' },
   ];
+  const counts = useTabCounts(cats.map(c => c.id));
   const go = (id) => window.cl.go('components', { tab: id });
   const search = () => { if (q.trim().length >= 2) window.cl.go('components', { tab: 'drivetrain', search: q.trim() }); };
   return (
@@ -3218,19 +3246,21 @@ const ComponentsLandingPage = () => {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
             {cats.map(c => (
               <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
-                style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s, transform .15s' }}
-                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
+                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-count').style.color='rgba(255,255,255,0.4)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-count').style.color='var(--gray-400)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
                 <span style={{ fontSize:36, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:6, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:4, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-count" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:4, transition:'color .15s' }}>
+                    {counts[c.id] === null ? <span style={{ opacity:.4 }}>Loading…</span> : `${counts[c.id]} in stock`}
+                  </div>
                   <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
                 </div>
                 <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
               </button>
             ))}
           </div>
-          {/* Footer CTA */}
           <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
             <div className="eyebrow" style={{ marginBottom:12 }}>Can't find what you need?</div>
             <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products and can special order almost anything — usually here within a few days.</p>
@@ -3253,6 +3283,7 @@ const AccessoriesLandingPage = () => {
     { id:'tools',       label:'Tools & Maintenance',emoji:'🔧', desc:'Workshop tools, pumps, floor pumps, lube, degreasers, trainers' },
     { id:'accessories', label:'Accessories',        emoji:'🎒', desc:'Lights, locks, computers, bags, racks, fenders, bells, water bottles' },
   ];
+  const counts = useTabCounts(cats.map(c => c.id));
   const go = (id) => window.cl.go('accessories', { tab: id });
   const search = () => { if (q.trim().length >= 2) window.cl.go('accessories', { tab: 'accessories', search: q.trim() }); };
   return (
@@ -3272,18 +3303,20 @@ const AccessoriesLandingPage = () => {
             {cats.map(c => (
               <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
                 style={{ display:'flex', alignItems:'center', gap:24, padding:'40px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
-                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-count').style.color='rgba(255,255,255,0.4)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-count').style.color='var(--gray-400)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
                 <span style={{ fontSize:40, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:8, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:4, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-count" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:4, transition:'color .15s' }}>
+                    {counts[c.id] === null ? <span style={{ opacity:.4 }}>Loading…</span> : `${counts[c.id]} in stock`}
+                  </div>
                   <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
                 </div>
                 <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
               </button>
             ))}
           </div>
-          {/* Footer CTA */}
           <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
             <div className="eyebrow" style={{ marginBottom:12 }}>Don't see what you're after?</div>
             <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products. If it's not on the shelf, we can order it — usually a few days out.</p>

@@ -194,6 +194,12 @@ const App = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [page]);
 
+  // Silent background cache warmer — starts 4s after initial load
+  React.useEffect(() => {
+    const t = setTimeout(() => window.lightspeedWarmCache?.(), 4000);
+    return () => clearTimeout(t);
+  }, []);
+
   // Reveal observer (re-runs on page change)
   React.useEffect(() => {
     const els = document.querySelectorAll(".reveal:not(.in)");

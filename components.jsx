@@ -189,7 +189,13 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
   ];
 
   const closeTimer = React.useRef(null);
-  const openMega = (p) => { if (closeTimer.current) clearTimeout(closeTimer.current); onMega(p); };
+  const openMega = (p) => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    onMega(p);
+    // Preload inventory when hovering Store or Bikes
+    if (p === 'store') window.lightspeedWarmCache?.();
+    if (p === 'shop')  window.lightspeedGetBikes?.();
+  };
   const scheduleClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => onMega(null), 180); };
 
   const [accountOpen, setAccountOpen] = React.useState(false);

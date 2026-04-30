@@ -63,6 +63,17 @@ window.lightspeedGetTab = async function(tabId) {
   } catch { return []; }
 };
 
+// ── Warm cache: silently preload tabs with small delays ───────
+window.lightspeedWarmCache = async function(tabs) {
+  if (!tabs) tabs = ['drivetrain','brakes','wheels','cockpit','suspension','fit','tools','accessories'];
+  for (const tab of tabs) {
+    if (!window.CL_LS.tabCache?.[tab]) {
+      await window.lightspeedGetTab(tab);
+      await new Promise(r => setTimeout(r, 250)); // space out requests
+    }
+  }
+};
+
 // ── Filter bikes from inventory ───────────────────────────────
 window.lightspeedGetBikes = function() {
   // Use dedicated bikes endpoint data if available (has real stock)
