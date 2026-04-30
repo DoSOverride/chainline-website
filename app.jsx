@@ -3,9 +3,9 @@
 // ── URL hash routing ──────────────────────────────────────────
 const _BRANDS    = ["marin","transition","surly","pivot","salsa","bianchi","moots","knolly","revel"];
 const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","kids"];
-const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools","accessories"];
+const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
 const _COMP_TABS = ["drivetrain","brakes","wheels","cockpit","suspension"];
-const _ACC_TABS  = ["fit","tools","accessories"];
+const _ACC_TABS  = ["helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
 const _PAGES     = ["services","book","about","contact","rides","trails","events","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social"];
 const partPageFor = (tab) => _ACC_TABS.includes(tab) ? "accessories" : "components";
 
