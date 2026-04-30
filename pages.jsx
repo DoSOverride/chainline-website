@@ -1969,10 +1969,10 @@ const PartCartBtn = ({ item, compact }) => {
 
 const R2 = "https://still-term-f1ec.taocaruso77.workers.dev/r2";
 const PART_TABS = [
-  { id:'drivetrain',  label:'Drivetrain',         emoji:'⚙️',  img: null,
+  { id:'drivetrain',  label:'Drivetrain',         emoji:'⚙️',  img: `${R2}/parts/drivetrain-hero.jpg`,
     sub: "Cassettes, chains, derailleurs, cranks, shifters",
     depts:['Cassette','Chains','Chainrings','Chain Retention','Cranks','Bottom Brackets','Derailleur Front','Derailleur Rear','Deraileur Hangers','Free Hub Body','Freewheel','Shifters MTB','Shifters - Road','Cables'] },
-  { id:'brakes',      label:'Brakes',             emoji:'🔴',  img: null,
+  { id:'brakes',      label:'Brakes',             emoji:'🔴',  img: `${R2}/parts/brakes-hero.jpg`,
     sub: "Disc brakes, brake pads, levers, cables",
     depts:['Brake','Brake pads','Brake parts','Brake Lever U','Brake Lever V','Brake adapter disc'] },
   { id:'wheels',      label:'Wheels & Tires',     emoji:'⭕',  img: `${R2}/shop/interior-tires.jpg`,
@@ -1987,7 +1987,7 @@ const PART_TABS = [
   { id:'fit',         label:'Clothing & Helmets', emoji:'🪖',  img: `${R2}/shop/interior-surly.jpg`,
     sub: "Helmets, gloves, shoes, clothing, armour, sunglasses",
     depts:['Helmet','Gloves','Shoes Mountain','Shoes Road','Cleats','Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips','Sunglasses','Armour'] },
-  { id:'tools',       label:'Tools & Maintenance',emoji:'🔧',  img: null,
+  { id:'tools',       label:'Tools & Maintenance',emoji:'🔧',  img: `${R2}/parts/tools-hero.jpg`,
     sub: "Workshop tools, pumps, lube, trainers",
     depts:['Tools','Pumps','Lube','Trainers'] },
   { id:'accessories', label:'Accessories',        emoji:'🎒',  img: `${R2}/shop/shop-interior.jpg`,
