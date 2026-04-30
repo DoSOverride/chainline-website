@@ -2007,45 +2007,24 @@ const categoriseItem = (item) => {
   return null;
 };
 
-// ── usePartsInventory hook ────────────────────────────────────────────────
-// Single load — caches result in window.CL_LS.allParts so revisiting is instant
-const usePartsInventory = () => {
-  const [items,    setItems]    = React.useState(() => {
-    const cached = window.CL_LS?.allParts;
-    return cached || (window.CL_LS?.products || []).filter(p => !isBikeDept(p.department));
-  });
-  const [loading,  setLoading]  = React.useState(!window.CL_LS?.allParts);
-  const [total,    setTotal]    = React.useState(window.CL_LS?.total || 0);
+// ── useTabInventory hook ──────────────────────────────────────────────────
+// Per-tab loading: fetches only in-stock items for the active tab, caches per tab
+const useTabInventory = (tabId) => {
+  const [items,   setItems]   = React.useState(() => window.CL_LS?.tabCache?.[tabId] || []);
+  const [loading, setLoading] = React.useState(!window.CL_LS?.tabCache?.[tabId]);
 
   React.useEffect(() => {
-    if (window.CL_LS?.allParts) return; // already cached
-
-    const refresh = () => {
-      const all = (window.CL_LS?.products || []).filter(p => !isBikeDept(p.department));
-      if (all.length > items.length) setItems(all);
-      setTotal(window.CL_LS?.total || 0);
-    };
-
-    // Listen for progressive loads
-    window.addEventListener('lightspeed:ready', refresh);
-
-    // Trigger full load if not started
-    if (!window.CL_LS?.loaded) {
-      window.lightspeedLoadAll?.().then(() => {
-        const all = (window.CL_LS?.products || []).filter(p => !isBikeDept(p.department));
-        window.CL_LS.allParts = all;
-        setItems(all);
-        setLoading(false);
-      });
-    } else {
-      refresh();
+    const cached = window.CL_LS?.tabCache?.[tabId];
+    if (cached) { setItems(cached); setLoading(false); return; }
+    setLoading(true);
+    setItems([]);
+    window.lightspeedGetTab(tabId).then(result => {
+      setItems(result);
       setLoading(false);
-    }
+    });
+  }, [tabId]);
 
-    return () => window.removeEventListener('lightspeed:ready', refresh);
-  }, []);
-
-  return { items, loading, total };
+  return { items, loading };
 };
 
 // ── PartRow ───────────────────────────────────────────────────────────────
@@ -2076,7 +2055,6 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const PartsPage = () => {
-  const { items, loading } = usePartsInventory();
   const [cat,    setCat]    = React.useState('drivetrain');
   const [search, setSearch] = React.useState('');
   const [page,   setPage]   = React.useState(0);
@@ -2092,38 +2070,22 @@ const PartsPage = () => {
     window.cl.intent = null;
   }, []);
 
+  const { items, loading } = useTabInventory(cat);
   const activeTab = PART_TABS.find(t => t.id === cat) || PART_TABS[0];
 
-  // Only in-stock items — the canonical rule
-  const inStockItems = React.useMemo(() => items.filter(p => p.qty > 0), [items]);
-
-  // Category counts — in-stock only
-  const counts = React.useMemo(() => {
-    const c = {};
-    PART_TABS.forEach(t => {
-      c[t.id] = inStockItems.filter(p => categoriseItem(p) === t.id).length;
-    });
-    return c;
-  }, [inStockItems]);
-
-  // Filtered + sorted items — always in-stock only
+  // Filtered + sorted — items from Worker are already in-stock only
   const filtered = React.useMemo(() => {
     const q = search.trim().toLowerCase();
-    let pool;
-    if (q.length >= 2) {
-      // Search across all in-stock parts (not restricted to current category)
-      pool = inStockItems.filter(p => {
-        const name = (p.name || '').toLowerCase();
-        const dept = (p.department || '').toLowerCase();
-        const sku  = (p.sku  || '').toLowerCase();
-        return name.includes(q) || dept.includes(q) || sku.includes(q);
-      });
-    } else {
-      pool = inStockItems.filter(p => categoriseItem(p) === cat);
-    }
-    // Sort by price ascending (all in-stock)
+    const pool = q.length >= 2
+      ? items.filter(p => {
+          const name = (p.name || '').toLowerCase();
+          const dept = (p.department || '').toLowerCase();
+          const sku  = (p.sku  || '').toLowerCase();
+          return name.includes(q) || dept.includes(q) || sku.includes(q);
+        })
+      : items;
     return [...pool].sort((a, b) => (a.price||0) - (b.price||0));
-  }, [inStockItems, cat, search]);
+  }, [items, search]);
 
   const visible = filtered.slice(0, (page + 1) * PAGE);
   const hasMore = visible.length < filtered.length;
@@ -2146,16 +2108,19 @@ const PartsPage = () => {
           {/* ── Sidebar ── */}
           <div style={{ borderRight:"1px solid var(--hairline)", paddingTop:40, position:"sticky", top:80, alignSelf:"start", height:"calc(100vh - 80px)", overflowY:"auto" }}>
             <div style={{ padding:"0 16px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Categories</div>
-            {PART_TABS.map(t => (
-              <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)} style={sideStyle(cat === t.id && !search)}>
-                <span style={{ fontSize:15, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
-                <span style={{ flex:1, lineHeight:1.3 }}>{t.label}</span>
-                {counts[t.id] > 0 && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity: cat === t.id && !search ? .7 : .45, flexShrink:0 }}>{counts[t.id]}</span>}
-              </button>
-            ))}
+            {PART_TABS.map(t => {
+              const cached = window.CL_LS?.tabCache?.[t.id];
+              return (
+                <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)} style={sideStyle(cat === t.id && !search)}>
+                  <span style={{ fontSize:15, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
+                  <span style={{ flex:1, lineHeight:1.3 }}>{t.label}</span>
+                  {cached && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity: cat === t.id && !search ? .7 : .45, flexShrink:0 }}>{cached.length}</span>}
+                </button>
+              );
+            })}
             <div style={{ margin:"20px 16px 0", paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", lineHeight:1.8 }}>
-                Live · Lightspeed{loading && <span style={{ marginLeft:6, opacity:.5 }}>loading…</span>}
+                Live · Lightspeed
               </div>
             </div>
           </div>
@@ -2186,18 +2151,12 @@ const PartsPage = () => {
                   style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer", padding:"4px 6px" }}>✕ Clear</button>}
               </div>
 
-              {/* Search loading warning */}
-              {search && loading && (
-                <div style={{ marginTop:8, display:"flex", alignItems:"center", gap:6, fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"#b45309" }}>
-                  <span>⟳</span> Still loading full inventory — results may be incomplete
-                </div>
-              )}
             </div>
 
             {/* Product list */}
             {filtered.length === 0 ? (
               <div style={{ padding:"60px 32px", textAlign:"center" }}>
-                {loading && !search
+                {loading
                   ? (
                     <div>
                       {[1,2,3,4,5,6].map(i => (

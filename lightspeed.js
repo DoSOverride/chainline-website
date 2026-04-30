@@ -50,6 +50,19 @@ window.lightspeedGetDept = async function(deptName) {
   } catch { return []; }
 };
 
+// ── Fetch in-stock items for one parts tab (cached) ───────────
+window.lightspeedGetTab = async function(tabId) {
+  if (!window.CL_LS.tabCache) window.CL_LS.tabCache = {};
+  if (window.CL_LS.tabCache[tabId]) return window.CL_LS.tabCache[tabId];
+  try {
+    const res  = await fetch(`${window.CL_LS.workerUrl}/api/parts?tab=${tabId}`);
+    const data = await res.json();
+    const items = data.items || [];
+    window.CL_LS.tabCache[tabId] = items;
+    return items;
+  } catch { return []; }
+};
+
 // ── Filter bikes from inventory ───────────────────────────────
 window.lightspeedGetBikes = function() {
   // Use dedicated bikes endpoint data if available (has real stock)
