@@ -511,9 +511,9 @@ const GearHScroll = () => {
                 }
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }} />
                 <div style={{ position: "absolute", top: 20, left: 20, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>{String(i + 1).padStart(2, "0")}</div>
-                <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "var(--white)" }}>
-                  <div className="display-s" style={{ marginBottom: 10 }}>{c.name}</div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)" }}>
+                <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "#fff" }}>
+                  <div className="display-s" style={{ marginBottom: 10, textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>{c.name}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)" }}>
                     <span>Shop now</span>
                     <ArrowRight />
                   </div>
@@ -603,10 +603,10 @@ const TrailSpotlight = () => {
             <img src={`${WORKER_URL}/r2/lifestyle/trail-knox.jpg`} alt="Knox Mountain trails"
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", display: "block" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)" }} />
-            <div style={{ position: "absolute", left: 32, right: 32, bottom: 32, color: "var(--white)" }}>
+            <div style={{ position: "absolute", left: 32, right: 32, bottom: 32, color: "#fff" }}>
               <div className="eyebrow eyebrow-light" style={{ marginBottom: 12 }}>Featured  ·  Spring–Fall</div>
-              <div className="display-l" style={{ marginBottom: 16 }}>{trails[0].name}</div>
-              <div style={{ display: "flex", gap: 24, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", alignItems: "center" }}>
+              <div className="display-l" style={{ marginBottom: 16, textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}>{trails[0].name}</div>
+              <div style={{ display: "flex", gap: 24, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)", alignItems: "center" }}>
                 <Dots n={trails[0].dots} />
                 <span>{trails[0].km} km</span>
                 <span>{trails[0].gain} m gain</span>
@@ -621,9 +621,9 @@ const TrailSpotlight = () => {
                 <img src={`${WORKER_URL}/r2/lifestyle/${i === 0 ? "trail-forest.jpg" : "trail-action.jpg"}`} alt={t.name}
                   style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", position: "absolute", inset: 0 }} />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)" }} />
-                <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "var(--white)" }}>
-                  <div className="display-m" style={{ marginBottom: 8 }}>{t.name}</div>
-                  <div style={{ display: "flex", gap: 16, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", alignItems: "center" }}>
+                <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "#fff" }}>
+                  <div className="display-m" style={{ marginBottom: 8, textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{t.name}</div>
+                  <div style={{ display: "flex", gap: 16, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.7)", alignItems: "center" }}>
                     <Dots n={t.dots} />
                     <span>{t.km} km</span>
                     <span>{t.gain} m</span>
