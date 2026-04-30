@@ -182,8 +182,8 @@ const ContactBar = () => {
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
     { id: "shop",        label: "Bikes",        panel: "shop",        route: "shop" },
-    { id: "components",  label: "Components",   panel: "components",  route: "parts",    intent: { tab: "drivetrain" } },
-    { id: "accessories", label: "Accessories",  panel: "accessories", route: "parts",    intent: { tab: "accessories" } },
+    { id: "components",  label: "Components",   panel: "components",  route: "components",  intent: { tab: "drivetrain" } },
+    { id: "accessories", label: "Accessories",  panel: "accessories", route: "accessories", intent: { tab: "accessories" } },
     { id: "services",    label: "Services",     panel: "services",    route: "services" },
     { id: "explore",     label: "Explore",      panel: "explore",     route: "rides" },
     { id: "more",        label: "More",         panel: "more",        route: "about" },
@@ -812,7 +812,7 @@ const Footer = () => (
         <div className="footer-col">
           <h4>Shop</h4>
           <ul>
-            {[["Bikes","shop"],["Components","parts",{tab:"drivetrain"}],["Accessories","parts",{tab:"accessories"}],["Gift Cards","giftcards"],["Sale","shop"],["Our Brands","brands"]].map(([label,route,intent]) => (
+            {[["Bikes","shop"],["Components","components",{tab:"drivetrain"}],["Accessories","accessories",{tab:"accessories"}],["Gift Cards","giftcards"],["Sale","shop"],["Our Brands","brands"]].map(([label,route,intent]) => (
               <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent||null);}}>{label}</a></li>
             ))}
           </ul>

@@ -4,7 +4,10 @@
 const _BRANDS    = ["marin","transition","surly","pivot","salsa","bianchi","moots","knolly","revel"];
 const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","kids"];
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools","accessories"];
+const _COMP_TABS = ["drivetrain","brakes","wheels","cockpit","suspension"];
+const _ACC_TABS  = ["fit","tools","accessories"];
 const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social"];
+const partPageFor = (tab) => _ACC_TABS.includes(tab) ? "accessories" : "components";
 
 function pathToRoute(pathname) {
   const p = (pathname || '/').replace(/^\//, '').trim();
@@ -22,7 +25,9 @@ function pathToRoute(pathname) {
     const bike = (window.SHOP_BIKES || []).find(b => b.handle === s2);
     return bike ? { page: 'bike', intent: { bike } } : { page: 'shop', intent: null };
   }
-  if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
+  if (s1 === 'components') return { page: 'components', intent: { tab: s2 && _PART_TABS.includes(s2) ? s2 : 'drivetrain' } };
+  if (s1 === 'accessories') return { page: 'accessories', intent: { tab: s2 && _PART_TABS.includes(s2) ? s2 : 'accessories' } };
+  if (s1 === 'parts') return { page: partPageFor(s2 || ''), intent: { tab: s2 && _PART_TABS.includes(s2) ? s2 : 'drivetrain' } };
   if (_PAGES.includes(s1)) return { page: s1, intent: null };
   return { page: 'home', intent: null };
 }
@@ -38,7 +43,8 @@ function routeToPath(page, intent) {
     const h = intent?.bike?.handle;
     return h ? `/bike/${h}` : '/bikes';
   }
-  if (page === 'parts') return intent?.tab ? `/parts/${intent.tab}` : '/parts';
+  if (page === 'components') return intent?.tab ? `/components/${intent.tab}` : '/components';
+  if (page === 'accessories') return intent?.tab ? `/accessories/${intent.tab}` : '/accessories';
   return `/${page}`;
 }
 
@@ -132,6 +138,8 @@ const App = () => {
     let _fromCode = false;
 
     window.cl.go = (p, intent) => {
+      // Redirect legacy "parts" route to components/accessories based on tab
+      if (p === 'parts') p = partPageFor(intent?.tab || '');
       const cur = window.cl.currentPage;
       if (cur && cur !== p) window.cl.history.push({ page: cur, intent: window.cl.intent });
       if (window.cl.history.length > 20) window.cl.history.shift();
@@ -238,7 +246,7 @@ const App = () => {
         {page === "trails" && <TrailsPage />}
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
-        {page === "parts" && <PartsPage />}
+        {(page === "components" || page === "accessories") && <PartsPage />}
         {page === "classifieds" && <ClassifiedsPage />}
         {page === "brands" && <BrandPage />}
         {page === "terms" && <TermsPage />}
