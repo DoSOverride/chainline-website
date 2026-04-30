@@ -2,7 +2,7 @@
 
 // ── URL hash routing ──────────────────────────────────────────
 const _BRANDS    = ["marin","transition","surly","pivot","salsa","bianchi","moots","knolly","revel"];
-const _TYPES     = ["mountain","gravel","e-bike","commuter","comfort","kids"];
+const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","kids"];
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools"];
 const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy"];
 

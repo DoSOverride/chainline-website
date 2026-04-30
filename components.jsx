@@ -370,12 +370,12 @@ const ArrowRight = ({ size = 12 }) => (
 );
 
 const MegaMenu = ({ open, onOpen, onClose }) => {
-  const BIKE_BRANDS = ["Marin", "Transition", "Surly", "Pivot", "Salsa", "Bianchi", "Moots", "Knolly", "Revel"];
-  const BIKE_TYPES  = ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"];
+  const BIKE_BRANDS  = ["Marin", "Transition", "Surly", "Pivot", "Salsa"];
+  const BIKE_BRANDS2 = ["Bianchi", "Moots", "Knolly", "Revel"];
   const data = {
     shop: {
-      brandCol: BIKE_BRANDS,
-      typeCol:  BIKE_TYPES,
+      brandCol:  BIKE_BRANDS,
+      brandCol2: BIKE_BRANDS2,
       cols: [
         { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
         { h: "More", items: ["Sale", "Gift Cards", "Pinkbike"] },
@@ -431,7 +431,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l === "commuter") return ["shop", { type: "Commuter" }];
     if (l === "kids") return ["shop", { type: "Kids" }];
     // Brand filters → shop page filtered by brand
-    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1) }];
+    if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel", "revel cycles"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1).replace(/ cycles$/,'') }];
     // Parts — pass exact dept + tab so DeptAccordion auto-opens on landing
     const PM={"cassette":{dept:"Cassette",tab:"drivetrain"},"chains":{dept:"Chains",tab:"drivetrain"},"chainrings":{dept:"Chainrings",tab:"drivetrain"},"cranks":{dept:"Cranks",tab:"drivetrain"},"derailleurs":{dept:"Derailleur Rear",tab:"drivetrain"},"shifters":{dept:"Shifters MTB",tab:"drivetrain"},"bottom brackets":{dept:"Bottom Brackets",tab:"drivetrain"},"cables":{dept:"Cables",tab:"drivetrain"},"brake pads":{dept:"Brake pads",tab:"brakes"},"brake levers":{dept:"Brake Lever U",tab:"brakes"},"rims":{dept:"Rims",tab:"wheels"},"hubs":{dept:"Hubs",tab:"wheels"},"spokes":{dept:"Spokes",tab:"wheels"},"wheelsets":{dept:"Wheelset (FR+RR)",tab:"wheels"},"skewers":{dept:"Skewers QR",tab:"wheels"}};
     const PM2={'tires 29"':{dept:'Tires 29"',tab:"wheels"},"tires 700c":{dept:"Tires 700C",tab:"wheels"},'tires 27.5"':{dept:'Tires 27" & 26x1&1/4 etc...',tab:"wheels"},'tires 26"':{dept:'Tires 26"',tab:"wheels"},"fat bike tires":{dept:"Tires Fatbike",tab:"wheels"},"tubes":{dept:"Tubes",tab:"wheels"},"tire sealant":{dept:"Tire Sealant",tab:"wheels"},"tire protection":{dept:"Tire Protection",tab:"wheels"},"forks":{dept:"Forks",tab:"suspension"},"rear shock":{dept:"Rear Shock",tab:"suspension"},"handlebar":{dept:"Handlebar",tab:"cockpit"},"stem":{dept:"Stem",tab:"cockpit"},"grips":{dept:"Grips",tab:"cockpit"},"bar tape":{dept:"Bar tape",tab:"cockpit"},"headsets":{dept:"Headsets",tab:"cockpit"},"seat post":{dept:"Seat post",tab:"cockpit"},"saddles":{dept:"Saddles",tab:"cockpit"},"helmets":{dept:"Helmet",tab:"fit"},"armour":{dept:"Armour",tab:"fit"},"gloves":{dept:"Gloves",tab:"fit"},"sunglasses":{dept:"Sunglasses",tab:"fit"},"clothing":{dept:"Clothing",tab:"fit"},"socks":{dept:"Socks",tab:"fit"},"arm warmers":{dept:"Arm Warmers",tab:"fit"},"leg warmers":{dept:"Leg Warmers",tab:"fit"},"shoes":{dept:"Shoes Mountain",tab:"fit"},"cleats":{dept:"Cleats",tab:"fit"},"bags":{dept:"Bags",tab:"tools"},"packs":{dept:"Packs",tab:"tools"},"hydration":{dept:"Hydration ",tab:"tools"},"lights":{dept:"Lights",tab:"tools"},"computers":{dept:"Computers",tab:"tools"},"pumps":{dept:"Pumps",tab:"tools"},"tools":{dept:"Tools",tab:"tools"},"locks":{dept:"Locks",tab:"tools"},"fenders":{dept:"Fenders",tab:"tools"},"bells":{dept:"Bells",tab:"tools"},"kickstands":{dept:"Kickstands",tab:"tools"},"bike racks":{dept:"Bike Racks",tab:"tools"},"water bottles":{dept:"Water Bottle",tab:"tools"}};
@@ -466,7 +466,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Shop panel: brands | styles | parts | more */}
+          {/* Shop panel: brands col1 | brands col2 | parts | more */}
           {d.brandCol ? (
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:48 }}>
               <div className="mega-col">
@@ -474,8 +474,11 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
                 <ul>{d.brandCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
               <div className="mega-col">
-                <h4>By Style</h4>
-                <ul>{d.typeCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                {d.brandCol2 ? (
+                  <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                ) : d.typeCol ? (
+                  <><h4>By Style</h4><ul>{d.typeCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul></>
+                ) : null}
               </div>
               {d.cols.map((c, i) => (
                 <div key={i} className="mega-col">
@@ -538,7 +541,6 @@ const MobileNav = ({ open, onClose }) => {
   const dismiss = (fn) => { onClose(); fn && fn(); };
 
   const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
-  const TYPES  = ["All Bikes","Mountain","Gravel","E-Bike","Commuter","Comfort","Kids"];
   const COMP_CATS = [
     { label:"Drivetrain", tab:"drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
     { label:"Brakes",     tab:"brakes",     items:["Brake pads","Brake Levers","Brake Parts"] },
@@ -585,20 +587,11 @@ const MobileNav = ({ open, onClose }) => {
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
           <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
-          {/* By Brand + By Style side by side */}
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
-            <div style={{ paddingRight:16 }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>By Brand</div>
-              {BRANDS.map(br => (
-                <a key={br} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
-              ))}
-            </div>
-            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>By Style</div>
-              {TYPES.map(t => (
-                <a key={t} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
-              ))}
-            </div>
+          <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Shop By Brand</div>
+            {BRANDS.map(br => (
+              <a key={br} href="#" style={{ ...subA, fontSize:22, padding:"10px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
+            ))}
           </div>
         </div>
       </div>

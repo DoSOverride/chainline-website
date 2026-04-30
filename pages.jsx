@@ -394,6 +394,28 @@ const SHOP_BIKES = [
   { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Mountain", tags:"Fat Bike, Snow, Sand",              price:3500, img:"https://surlybikes.com/cdn/shop/files/surly-ice-cream-truck-bike-yellow-BK00596-2000px-sq.jpg?v=1741976875&width=1946" },
   // ── Knolly ────────────────────────────────────────────────────
   { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, badge:"PRO", img:"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351" },
+  // ── Salsa ─────────────────────────────────────────────────────
+  { brand:"Salsa", name:"Timberjack GX Eagle",  handle:"salsa-timberjack-gx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",          price:3500, img:null },
+  { brand:"Salsa", name:"Spearfish C GX Eagle", handle:"salsa-spearfish-c-gx-eagle", type:"Mountain", tags:"Mountain Bike, Full Suspension, 29\"",    price:5800, img:null },
+  { brand:"Salsa", name:"Timberjack SX Eagle",  handle:"salsa-timberjack-sx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",          price:2800, img:null },
+  { brand:"Salsa", name:"Journeyman Sora 700c", handle:"salsa-journeyman-sora",      type:"Gravel",   tags:"Adventure Bike, Gravel, 700c",           price:1350, img:null },
+  { brand:"Salsa", name:"Cutthroat GRX",        handle:"salsa-cutthroat-grx",        type:"Gravel",   tags:"Gravel Bike, Adventure, Drop Bar",       price:4500, img:null },
+  { brand:"Salsa", name:"Warbird GRX 600",      handle:"salsa-warbird-grx-600",      type:"Gravel",   tags:"Gravel Bike, Race, 700c",                price:3200, img:null },
+  // ── Bianchi ───────────────────────────────────────────────────
+  { brand:"Bianchi", name:"Oltre RC",        handle:"bianchi-oltre-rc",        type:"Road",   tags:"Road Bike, Race, Carbon",                    price:10500, badge:"PRO", img:null },
+  { brand:"Bianchi", name:"Aria",            handle:"bianchi-aria",            type:"Road",   tags:"Road Bike, Endurance, Carbon",               price:3800, img:null },
+  { brand:"Bianchi", name:"Impulso Pro",     handle:"bianchi-impulso-pro",     type:"Road",   tags:"Road Bike, Endurance, Aluminum",             price:2500, img:null },
+  { brand:"Bianchi", name:"Grok S GRX",      handle:"bianchi-grok-s-grx",      type:"Gravel", tags:"Gravel Bike, Celeste, 700c",                 price:2800, img:null },
+  { brand:"Bianchi", name:"E-SUV Comp",      handle:"bianchi-e-suv-comp",      type:"E-Bike", tags:"Electric Bike, Mountain, Full Suspension",   price:5200, img:null },
+  // ── Moots ─────────────────────────────────────────────────────
+  { brand:"Moots", name:"Routt RSL GRX",     handle:"moots-routt-rsl-grx",     type:"Gravel",   tags:"Gravel Bike, Titanium, 700c",              price:9500, badge:"PRO", img:null },
+  { brand:"Moots", name:"Baxter GRX",        handle:"moots-baxter-grx",        type:"Gravel",   tags:"Gravel Bike, Titanium, Adventure",         price:7500, badge:"PRO", img:null },
+  { brand:"Moots", name:"Highline GX Eagle", handle:"moots-highline-gx-eagle", type:"Mountain", tags:"Mountain Bike, Hardtail, Titanium, 29\"", price:6500, badge:"PRO", img:null },
+  { brand:"Moots", name:"Ybb SL GX Eagle",   handle:"moots-ybb-sl-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Full Suspension, Titanium", price:8500, badge:"PRO", img:null },
+  // ── Revel ─────────────────────────────────────────────────────
+  { brand:"Revel", name:"Ranger GX Eagle",   handle:"revel-ranger-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension, 29\"", price:5800, badge:"PRO", img:null },
+  { brand:"Revel", name:"Rascal GX Eagle",   handle:"revel-rascal-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension",        price:5200, badge:"PRO", img:null },
+  { brand:"Revel", name:"Rail GX Eagle",     handle:"revel-rail-gx-eagle",     type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension, 29\"", price:6200, badge:"PRO", img:null },
 ];
 
 // SHOP
@@ -536,7 +558,7 @@ const ShopPage = () => {
   }, [liveProducts]);
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
-  const TYPE_TABS = ["All","Mountain","Gravel","E-Bike","Commuter","Comfort","Kids"];
+  const TYPE_TABS = ["All","Mountain","Gravel","Road","E-Bike","Commuter","Comfort","Kids"];
 
   // Always show only in-stock bikes
   let filtered = brand !== "All"
