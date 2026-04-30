@@ -113,15 +113,18 @@ const useBikeVariants = (bike) => {
 
     const IMPORTANT_SHORT = new Set(['jr','sx','gx','cx','rs','sl','29','27','26','20','16']);
     const STOP = new Set(['the','and','for','with','ride','comp','elite','race','pro','base','alloy','carbon','plus','size']);
+    const SPEC = new Set(['carbon','alloy','aluminum','steel','custom','frame','frameset','sport',
+      'elite','comp','pro','trail','enduro','eagle','deore','shimano','sram','gx','sx','nx',
+      'xt','xo','di2','axs','grx','ride','coil','v2','v3','gen','single','crown','boost']);
 
     const buildVariants = () => {
+      // Use ALL bikes (including out-of-stock) so sold-out sizes show as greyed options
       const lsBikes = window.CL_LS?.bikes || [];
       if (!lsBikes.length) return false;
 
       const rawName = (bike.name || bike.title || '').toLowerCase();
       const brand   = (bike.brand || '').toLowerCase();
 
-      // Tokens from model name — short important ones included, stop words excluded
       const tokens = rawName.split(/\s+/).filter(w => {
         const wl = w.toLowerCase().replace(/[^a-z0-9]/g,'');
         return (wl.length >= 3 || IMPORTANT_SHORT.has(wl)) && !STOP.has(wl);
@@ -129,25 +132,36 @@ const useBikeVariants = (bike) => {
 
       const matches = lsBikes.filter(ls => {
         const n = (ls.name || '').toLowerCase();
-        // Brand must appear at start of Lightspeed name
         if (brand && !n.startsWith(brand + ' ') && !n.startsWith(brand + '-')) return false;
-        // All model tokens must appear in the Lightspeed name
         return tokens.every(t => n.includes(t));
       });
 
       if (!matches.length) { setVarLoading(false); return true; }
 
-      setVariants(matches.map(ls => ({
-        sku:     ls.sku,
-        name:    ls.name,
-        price:   ls.price,
-        size:    ls.parsedSize  || null,
-        color:   ls.parsedColor || null,
-        wheel:   ls.wheelSize   || null,
-        inStock: ls.inStock,
-        qty:     ls.qty || 0,
-        img:     ls.img || null,
-      })));
+      // Extract colour by stripping brand + model tokens + spec words from LS name
+      const extractColor = (lsName, size) => {
+        let s = lsName;
+        if (brand) s = s.replace(new RegExp('^' + brand + '\\s*', 'i'), '').trim();
+        tokens.forEach(t => { s = s.replace(new RegExp('\\b' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','gi'),' '); });
+        s = s.replace(/\b[\d]+\/[\d]+\b/g,' ').replace(/\bv\d+\b/gi,' ').replace(/\b\d{4}\b/g,' ');
+        s = s.replace(new RegExp('\\b(' + [...SPEC].join('|') + ')\\b','gi'),' ');
+        if (size) {
+          const sizeAlts = { S:'small', M:'medium', L:'large', XL:'x-large|xlarge|xl', XS:'x-small|xsmall|xs', XXL:'xx-large|xxlarge|xxl' };
+          const pat = (sizeAlts[size] || size).replace(/\|/g,'|') + '|' + size.toLowerCase();
+          try { s = s.replace(new RegExp('\\b(' + pat + ')\\b','gi'),' '); } catch(e) {}
+        }
+        const words = s.split(/\s+/).filter(w => w.length >= 2 && /^[A-Za-z]/.test(w));
+        return words.length ? words.join(' ').trim() : null;
+      };
+
+      setVariants(matches.map(ls => {
+        const { size, color: rawColor } = ls.parsedSize || ls.parsedColor
+          ? { size: ls.parsedSize, color: ls.parsedColor }
+          : { size: null, color: null };
+        const color = extractColor(ls.name, size) || rawColor;
+        return { sku: ls.sku, name: ls.name, price: ls.price, size, color,
+          wheel: ls.wheelSize || null, inStock: ls.inStock, qty: ls.qty || 0, img: ls.img || null };
+      }));
       setVarLoading(false);
       return true;
     };
@@ -358,12 +372,15 @@ const BikePage = ({ bike, onBack, onCart }) => {
                 {[76,92,68].map((w,i) => <div key={i} className="ph" style={{ height:36, width:w, borderRadius:2 }} />)}
               </div>
             )}
-            {/* Single variant — show as info tags */}
+            {/* Single variant — show as selected buttons */}
             {!varLoading && variants.length === 1 && (variants[0].wheel || variants[0].size || variants[0].color) && (
-              <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
-                {variants[0].wheel && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-500)' }}>{variants[0].wheel}</span>}
-                {variants[0].size  && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--black)', background:'var(--black)', color:'var(--white)' }}>{variants[0].size}</span>}
-                {variants[0].color && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{variants[0].color}</span>}
+              <div style={{ marginBottom:14 }}>
+                <div className="eyebrow" style={{ marginBottom:8 }}>This size · in stock</div>
+                <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                  {variants[0].wheel && <span style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--black)', background:'var(--black)', color:'var(--white)' }}>{variants[0].wheel}</span>}
+                  {variants[0].size  && <span style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--black)', background:'var(--black)', color:'var(--white)' }}>{variants[0].size}</span>}
+                  {variants[0].color && <span style={{ padding:'9px 18px', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{variants[0].color}</span>}
+                </div>
               </div>
             )}
             {!varLoading && (<>
