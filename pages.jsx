@@ -2185,7 +2185,7 @@ const PartsPage = () => {
               <>
                 <div>
                   {visible.map((item) => (
-                    <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={PART_TABS.find(t => t.id === (categoriseItem(item)||cat))?.emoji || '📦'} />
+                    <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
                   ))}
                 </div>
                 {hasMore && (
