@@ -1519,8 +1519,28 @@ img {
   .bike-page-layout > div:first-child { position: static !important; height: auto !important; }
   .spec-row { grid-template-columns: 110px 1fr !important; }
 
-  /* ── Cart ── */
-  .drawer { width: 100vw !important; }
+  /* ── Cart — bottom sheet on mobile ── */
+  .drawer {
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-height: 82vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    transform: translateY(110%) !important;
+  }
+  .drawer.open { transform: translateY(0) !important; }
+  .drawer::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--hairline);
+    border-radius: 2px;
+    margin: 14px auto 2px;
+    flex-shrink: 0;
+  }
 
   /* ── Sticky CTA — compact on mobile ── */
   .sticky-cta .btn { padding: 14px 20px; font-size: 11px; }
