@@ -1967,20 +1967,22 @@ const PartCartBtn = ({ item, compact }) => {
 // Architecture: load all inventory once → filter client-side → instant nav
 
 const PART_TABS = [
-  { id:'drivetrain', label:'Drivetrain',        emoji:'⚙️',
+  { id:'drivetrain',  label:'Drivetrain',         emoji:'⚙️',
     depts:['Cassette','Chains','Chainrings','Chain Retention','Cranks','Bottom Brackets','Derailleur Front','Derailleur Rear','Deraileur Hangers','Free Hub Body','Freewheel','Shifters MTB','Shifters - Road','Cables'] },
-  { id:'brakes',     label:'Brakes',            emoji:'🔴',
+  { id:'brakes',      label:'Brakes',             emoji:'🔴',
     depts:['Brake','Brake pads','Brake parts','Brake Lever U','Brake Lever V','Brake adapter disc'] },
-  { id:'wheels',     label:'Wheels & Tires',    emoji:'⭕',
+  { id:'wheels',      label:'Wheels & Tires',     emoji:'⭕',
     depts:['Wheels','Wheelset (FR+RR)','Rims','Hubs','Hub Parts','Spokes','Skewers QR','Axle','Tires 29"','Tires 700C','Tires 26"','Tires 27" & 26x1&1/4 etc...','Tires 24"','Tires 12, 16, 20','Tires Fatbike','Tires Tubular','Tubes','Tire Sealant','Tire Protection'] },
-  { id:'cockpit',    label:'Cockpit',           emoji:'🎛️',
+  { id:'cockpit',     label:'Cockpit',            emoji:'🎛️',
     depts:['Handlebar','Stem','Grips','Bar tape','Aerobar','Saddles','Seat post','Headsets','Spacers','Bearings'] },
-  { id:'suspension', label:'Suspension',        emoji:'🔩',
+  { id:'suspension',  label:'Suspension',         emoji:'🔩',
     depts:['Forks','Fork Parts','Fork Oil','Rear Shock','Seals'] },
-  { id:'fit',        label:'Clothing & Helmets',emoji:'🪖',
+  { id:'fit',         label:'Clothing & Helmets', emoji:'🪖',
     depts:['Helmet','Gloves','Shoes Mountain','Shoes Road','Cleats','Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips','Sunglasses','Armour'] },
-  { id:'tools',      label:'Tools & Accessories',emoji:'🔧',
-    depts:['Tools','Pumps','Lube','Lights','Locks','Computers','Bags','Packs','Car Racks','Bike Racks','Fenders','Kickstands','Water Bottle','Water Bottle cage','Hydration ','Bells','Mirrors','Misc. Accessories','Trainers','Basket'] },
+  { id:'tools',       label:'Tools & Maintenance',emoji:'🔧',
+    depts:['Tools','Pumps','Lube','Trainers'] },
+  { id:'accessories', label:'Accessories',        emoji:'🎒',
+    depts:['Lights','Locks','Computers','Bags','Packs','Car Racks','Bike Racks','Fenders','Kickstands','Water Bottle','Water Bottle cage','Hydration ','Bells','Mirrors','Misc. Accessories','Basket'] },
 ];
 
 const BIKE_EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
@@ -2092,39 +2094,39 @@ const PartsPage = () => {
 
   const activeTab = PART_TABS.find(t => t.id === cat) || PART_TABS[0];
 
-  // Category counts (memoised)
+  // Only in-stock items — the canonical rule
+  const inStockItems = React.useMemo(() => items.filter(p => p.qty > 0), [items]);
+
+  // Category counts — in-stock only
   const counts = React.useMemo(() => {
     const c = {};
     PART_TABS.forEach(t => {
-      c[t.id] = items.filter(p => categoriseItem(p) === t.id).length;
+      c[t.id] = inStockItems.filter(p => categoriseItem(p) === t.id).length;
     });
     return c;
-  }, [items]);
+  }, [inStockItems]);
 
-  // Filtered + sorted items
+  // Filtered + sorted items — always in-stock only
   const filtered = React.useMemo(() => {
     const q = search.trim().toLowerCase();
     let pool;
     if (q.length >= 2) {
-      pool = items.filter(p =>
-        (p.name||'').toLowerCase().includes(q) ||
-        (p.department||'').toLowerCase().includes(q) ||
-        (p.sku||'').toLowerCase().includes(q)
-      );
+      // Search across all in-stock parts (not restricted to current category)
+      pool = inStockItems.filter(p => {
+        const name = (p.name || '').toLowerCase();
+        const dept = (p.department || '').toLowerCase();
+        const sku  = (p.sku  || '').toLowerCase();
+        return name.includes(q) || dept.includes(q) || sku.includes(q);
+      });
     } else {
-      pool = items.filter(p => categoriseItem(p) === cat);
+      pool = inStockItems.filter(p => categoriseItem(p) === cat);
     }
-    // Sort: in-stock first, then by price asc
-    return [...pool].sort((a, b) => {
-      if (a.inStock && !b.inStock) return -1;
-      if (!a.inStock && b.inStock) return 1;
-      return (a.price||0) - (b.price||0);
-    });
-  }, [items, cat, search]);
+    // Sort by price ascending (all in-stock)
+    return [...pool].sort((a, b) => (a.price||0) - (b.price||0));
+  }, [inStockItems, cat, search]);
 
-  const visible  = filtered.slice(0, (page + 1) * PAGE);
-  const hasMore  = visible.length < filtered.length;
-  const inStock  = filtered.filter(p => p.inStock).length;
+  const visible = filtered.slice(0, (page + 1) * PAGE);
+  const hasMore = visible.length < filtered.length;
 
   const switchCat = (id) => { setCat(id); setSearch(''); setPage(0); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
@@ -2146,9 +2148,9 @@ const PartsPage = () => {
             <div style={{ padding:"0 16px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Categories</div>
             {PART_TABS.map(t => (
               <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)} style={sideStyle(cat === t.id && !search)}>
-                <span style={{ fontSize:16, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
+                <span style={{ fontSize:15, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
                 <span style={{ flex:1, lineHeight:1.3 }}>{t.label}</span>
-                {counts[t.id] > 0 && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.55, flexShrink:0 }}>{counts[t.id]}</span>}
+                {counts[t.id] > 0 && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity: cat === t.id && !search ? .7 : .45, flexShrink:0 }}>{counts[t.id]}</span>}
               </button>
             ))}
             <div style={{ margin:"20px 16px 0", paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
@@ -2164,32 +2166,55 @@ const PartsPage = () => {
             {/* Search + header */}
             <div style={{ padding:"0 32px 24px", borderBottom:"1px solid var(--hairline)" }}>
               <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
-                <h1 style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,30px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", margin:0, flex:1 }}>
-                  {search ? `Search: "${search}"` : activeTab.label}
+                <h1 style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", margin:0, flex:1 }}>
+                  {search ? `"${search}"` : activeTab.label}
                 </h1>
-                {filtered.length > 0 && (
-                  <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-500)", letterSpacing:".1em", textTransform:"uppercase", flexShrink:0 }}>
-                    {inStock > 0 && `${inStock} in stock · `}{filtered.length} items
-                  </span>
-                )}
+                <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-500)", letterSpacing:".1em", textTransform:"uppercase", flexShrink:0 }}>
+                  {loading ? <span style={{ color:"#b45309" }}>loading…</span> : `${filtered.length} in stock`}
+                </span>
               </div>
-              <div style={{ display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 14px" }}>
-                <span style={{ fontSize:16, color:"var(--gray-400)" }}>⌕</span>
-                <input ref={searchRef} type="text" placeholder="Search parts — cassette, Maxxis, brake pads…"
+
+              {/* Search input */}
+              <div style={{ display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 14px", transition:"border-color .15s" }}
+                onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
+                onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
+                <span style={{ fontSize:16, color:"var(--gray-400)", userSelect:"none" }}>⌕</span>
+                <input ref={searchRef} type="text" placeholder="Search by brand, product, or SKU — e.g. Maxxis, cassette, GX…"
                   value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
                   style={{ flex:1, padding:"13px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:15, background:"transparent", color:"var(--black)" }} />
-                {search && <button onClick={() => { setSearch(''); searchRef.current?.focus(); }} style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer", padding:4 }}>CLEAR</button>}
+                {search && <button onClick={() => { setSearch(''); setPage(0); searchRef.current?.focus(); }}
+                  style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer", padding:"4px 6px" }}>✕ Clear</button>}
               </div>
+
+              {/* Search loading warning */}
+              {search && loading && (
+                <div style={{ marginTop:8, display:"flex", alignItems:"center", gap:6, fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"#b45309" }}>
+                  <span>⟳</span> Still loading full inventory — results may be incomplete
+                </div>
+              )}
             </div>
 
             {/* Product list */}
             {filtered.length === 0 ? (
               <div style={{ padding:"60px 32px", textAlign:"center" }}>
-                {loading
-                  ? <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Loading inventory…</p>
-                  : <>
-                      <p style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, textTransform:"uppercase", marginBottom:10 }}>Nothing found</p>
-                      <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:24 }}>We can order almost anything — give us a call or send a message.</p>
+                {loading && !search
+                  ? (
+                    <div>
+                      {[1,2,3,4,5,6].map(i => (
+                        <div key={i} style={{ display:"grid", gridTemplateColumns:"28px 1fr auto", gap:"0 12px", padding:"12px 14px", borderBottom:"1px solid var(--hairline)" }}>
+                          <div style={{ height:14, background:"var(--paper)", borderRadius:2 }} />
+                          <div style={{ height:14, background:"var(--paper)", borderRadius:2, opacity:.7 }} />
+                          <div style={{ height:14, width:60, background:"var(--paper)", borderRadius:2 }} />
+                        </div>
+                      ))}
+                    </div>
+                  ) : <>
+                      <p style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, textTransform:"uppercase", marginBottom:10 }}>
+                        {search ? `No results for "${search}"` : "Nothing in stock right now"}
+                      </p>
+                      <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:24 }}>
+                        {search ? "Try a different spelling or browse a category on the left." : "We can order almost anything — give us a call."}
+                      </p>
                       <div style={{ display:"flex", gap:12, justifyContent:"center" }}>
                         <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
                         <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Contact Us <ArrowRight /></button>
