@@ -413,6 +413,12 @@ const BikeScroller = () => {
   const bikes = allBikes.filter(b => { if (seen.has(b.handle)) return false; seen.add(b.handle); return true; });
   if (bikes.length === 0) return null;
 
+  // Match BrandMarquee pixel speed (~60px/s at 38s over ~2300px track)
+  const BRAND_PX_PER_S = 60;
+  const itemWidth = 220; // 200px + 20px marginRight
+  const trackPx = bikes.length * itemWidth;
+  const duration = Math.round(trackPx / BRAND_PX_PER_S);
+
   const BikeItem = ({ b }) => (
     <div onClick={() => window.cl.go("bike", { bike: b })}
       style={{ flexShrink:0, width:200, height:148, marginRight:20, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
@@ -421,7 +427,7 @@ const BikeScroller = () => {
     </div>
   );
   const Track = () => (
-    <div className="marquee-track" style={{ display:"flex" }}>
+    <div className="marquee-track" style={{ display:"flex", animationDuration:`${duration}s` }}>
       {bikes.map((b, i) => <BikeItem key={i} b={b} />)}
     </div>
   );
