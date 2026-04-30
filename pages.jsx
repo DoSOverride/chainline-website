@@ -137,17 +137,34 @@ const useBikeVariants = (bike) => {
 
       if (!matches.length) { setVarLoading(false); return true; }
 
-      setVariants(matches.map(ls => ({
-        sku:     ls.sku,
-        name:    ls.name,
-        price:   ls.price,
-        size:    ls.parsedSize  || null,
-        color:   ls.parsedColor || null,
-        wheel:   ls.wheelSize   || null,
-        inStock: ls.inStock,
-        qty:     ls.qty || 0,
-        img:     ls.img || null,
-      })));
+      const SPEC = new Set(['carbon','alloy','aluminum','steel','custom','frame','frameset',
+        'sport','elite','comp','pro','trail','enduro','eagle','deore','shimano','sram',
+        'gx','sx','nx','xt','xo','di2','axs','grx','ride','coil','v2','v3','gen',
+        'single','crown','boost']);
+
+      const extractColor = (lsName, size) => {
+        let s = lsName;
+        if (brand) s = s.replace(new RegExp('^' + brand + '\\s*', 'i'), '').trim();
+        tokens.forEach(t => { s = s.replace(new RegExp('\\b' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','gi'),' '); });
+        s = s.replace(/\b[\d]+\/[\d]+\b/g,' ').replace(/\bv\d+\b/gi,' ').replace(/\b\d{4}\b/g,' ');
+        s = s.replace(new RegExp('\\b(' + [...SPEC].join('|') + ')\\b','gi'),' ');
+        if (size) {
+          const sizeAlts = { S:'small',M:'medium',L:'large',XL:'x-large|xlarge|xl',XS:'x-small|xsmall|xs',XXL:'xx-large|xxlarge|xxl' };
+          const pat = (sizeAlts[size] || size) + '|' + size.toLowerCase();
+          try { s = s.replace(new RegExp('\\b(' + pat + ')\\b','gi'),' '); } catch(e) {}
+        }
+        const words = s.split(/\s+/).filter(w => w.length >= 2 && /^[A-Za-z]/.test(w));
+        return words.length ? words.join(' ').trim() : null;
+      };
+
+      setVariants(matches.map(ls => {
+        const parsed = window.parseNameParts ? window.parseNameParts(ls.name) : { size: null, color: null };
+        const size  = parsed.size  || null;
+        const color = extractColor(ls.name, size) || parsed.color || null;
+        const wheel = ls.wheelSize || window.guessWheelSize?.(ls.name) || null;
+        return { sku: ls.sku, name: ls.name, price: ls.price, size, color,
+          wheel, inStock: ls.inStock, qty: ls.qty || 0, img: ls.img || null };
+      }));
       setVarLoading(false);
       return true;
     };
