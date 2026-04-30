@@ -355,16 +355,15 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     },
     explore: {
       cols: [
-        { h: "Community", items: ["Group Rides", "Skill Clinics", "Events"] },
+        { h: "Rides & Events", items: ["Group Rides", "Skill Clinics", "Events"] },
         { h: "Trails", items: ["Knox Mountain", "Bear Creek", "Myra Canyon", "Kelowna Bike Park"] },
-        { h: "Connect", items: ["Social", "Trail Conditions", "Classifieds"] },
+        { h: "Community", items: ["Pinkbike", "Social", "Trail Conditions"] },
       ],
     },
     more: {
       cols: [
-        { h: "Info", items: ["About", "Contact", "Our Brands"] },
-        { h: "Shop", items: ["Gift Cards", "Classifieds", "Sale"] },
-        { h: "Community", items: ["Pinkbike", "Social", "Events"] },
+        { h: "About Us", items: ["About", "Contact", "Our Brands"] },
+        { h: "Shop", items: ["Gift Cards", "Sale"] },
       ],
     },
   };
@@ -636,12 +635,17 @@ const MobileNav = ({ open, onClose }) => {
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             <div style={{ paddingRight:16 }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Community</div>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Rides & Events</div>
               {["Group Rides","Skill Clinics","Events"].map(it => (
                 <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("rides")); }}>{it}</a>
               ))}
-              <a href="#" style={{ ...subA, fontSize:18, padding:"9px 0", marginTop:8 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("social")); }}>Social</a>
-              <a href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("classifieds")); }}>Classifieds</a>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14, marginTop:24 }}>Community</div>
+              {[
+                { label:"Pinkbike", route:"classifieds" },
+                { label:"Social",   route:"social"      },
+              ].map(it => (
+                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+              ))}
             </div>
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Trails</div>
@@ -659,12 +663,11 @@ const MobileNav = ({ open, onClose }) => {
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             <div style={{ paddingRight:16 }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Info</div>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>About Us</div>
               {[
-                { label:"About",      route:"about"      },
-                { label:"Contact",    route:"contact"    },
-                { label:"Our Brands", route:"brands"     },
-                { label:"Social",     route:"social"     },
+                { label:"About",      route:"about"  },
+                { label:"Contact",    route:"contact" },
+                { label:"Our Brands", route:"brands"  },
               ].map(it => (
                 <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
@@ -672,9 +675,8 @@ const MobileNav = ({ open, onClose }) => {
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Shop</div>
               {[
-                { label:"Gift Cards",  route:"giftcards"  },
-                { label:"Pinkbike",    route:"classifieds"},
-                { label:"Sale",        route:"shop"       },
+                { label:"Gift Cards", route:"giftcards" },
+                { label:"Sale",       route:"shop"      },
               ].map(it => (
                 <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
