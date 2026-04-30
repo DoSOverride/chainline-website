@@ -56,12 +56,11 @@ window.lightspeedGetBikes = function() {
   if (window.CL_LS.bikes && window.CL_LS.bikes.length > 0) {
     return window.CL_LS.bikes
       .filter(p => {
-        // Exclude frames; include bikes with known dept OR known e-bike/mountain model names
+        // Bikes already come from categoryID=49 (Bikes), so include all in-stock ones.
+        // Only exclude if department explicitly says "frame" or similar.
+        if (!p.department) return true; // blank dept = still a bike, include it
         const type = deptToType(p.department);
-        if (type !== null) return true;
-        // Some bikes have blank department in Lightspeed — rescue by name
-        const n = (p.name || '').toLowerCase();
-        return ['regulator','shuttle am','patrol','emtb'].some(k => n.includes(k));
+        return type !== null; // null only returned for frame departments
       })
       .filter(p => p.inStock)
       .map(p => ({
@@ -118,7 +117,9 @@ function deptToType(dept) {
 
 function nameToType(name) {
   const n = (name || '').toLowerCase();
-  if (n.includes('regulator') || n.includes('shuttle') || n.includes('e-bike') || n.includes('ebike')) return 'E-Bike';
+  if (n.includes('regulator') || n.includes('shuttle') || n.includes('e-bike') || n.includes('ebike') || n.includes('stinson e')) return 'E-Bike';
+  if (n.includes('bridge club') || n.includes('warbird') || n.includes('cutthroat') || n.includes('journeyman') || n.includes('gestalt') || n.includes('nicasio') || n.includes('grappler')) return 'Gravel';
+  if (n.includes('fairfax') || n.includes('kentfield') || n.includes('san anselmo')) return 'Commuter';
   return 'Mountain';
 }
 
