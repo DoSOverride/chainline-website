@@ -355,16 +355,16 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     },
     explore: {
       cols: [
-        { h: "Community", items: ["Group Rides", "Strava Club", "Skill Clinics", "Events"] },
+        { h: "Community", items: ["Group Rides", "Skill Clinics", "Events"] },
         { h: "Trails", items: ["Knox Mountain", "Bear Creek", "Myra Canyon", "Kelowna Bike Park"] },
-        { h: "Stories", items: ["Journal", "Trail Conditions", "Classifieds"] },
+        { h: "Connect", items: ["Social", "Trail Conditions", "Classifieds"] },
       ],
     },
     more: {
       cols: [
         { h: "Info", items: ["About", "Contact", "Our Brands"] },
         { h: "Shop", items: ["Gift Cards", "Classifieds", "Sale"] },
-        { h: "Community", items: ["Pinkbike", "Strava Club", "Events"] },
+        { h: "Community", items: ["Pinkbike", "Social", "Events"] },
       ],
     },
   };
@@ -399,9 +399,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("storage") || l.includes("store")) return ["storage", null];
     if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("service pricing")) return ["services", null];
     // Explore
-    if (l.includes("ride") || l.includes("strava") || l.includes("clinic") || l.includes("event")) return ["rides", null];
+    if (l.includes("social")) return ["social", null];
+    if (l.includes("ride") || l.includes("clinic") || l.includes("event")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
-    if (l.includes("journal") || l.includes("stories") || l.includes("note")) return ["home", null];
     if (l === "about") return ["about", null];
     if (l === "contact") return ["contact", null];
     if (l.includes("brand")) return ["brands", null];
@@ -638,6 +638,8 @@ const MobileNav = ({ open, onClose }) => {
               {["Group Rides","Skill Clinics","Events"].map(it => (
                 <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("rides")); }}>{it}</a>
               ))}
+              <a href="#" style={{ ...subA, fontSize:18, padding:"9px 0", marginTop:8 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("social")); }}>Social</a>
+              <a href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("classifieds")); }}>Classifieds</a>
             </div>
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Trails</div>

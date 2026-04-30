@@ -2757,4 +2757,30 @@ const StoragePage = () => {
   );
 };
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage });
+const SocialPage = () => (
+  <div style={{ minHeight:"80vh" }}>
+    <SubHero title="Social" eyebrow="ChainLine" sub="Follow along — rides, builds, shop life, and Kelowna trails." />
+    <section style={{ padding:"80px 0" }}>
+      <div className="container">
+        <div style={{ textAlign:"center", maxWidth:560, margin:"0 auto" }}>
+          <div className="eyebrow" style={{ marginBottom:16 }}>Coming Soon</div>
+          <div className="display-s" style={{ marginBottom:20 }}>Our feed is on its way</div>
+          <p style={{ color:"var(--gray-500)", marginBottom:40 }}>
+            Follow us on Instagram, TikTok, and YouTube for the latest from the shop floor and the trails.
+          </p>
+          <div style={{ display:"flex", gap:16, flexWrap:"wrap", justifyContent:"center" }}>
+            {[
+              ["Instagram","https://instagram.com/ChainLineCycle"],
+              ["TikTok","https://tiktok.com/@ChainLineCycle"],
+              ["YouTube","https://youtube.com/@ChainLine_Cycle"],
+            ].map(([label, href]) => (
+              <a key={label} href={href} target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">{label}</a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+);
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
