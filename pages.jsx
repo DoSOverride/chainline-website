@@ -3612,16 +3612,25 @@ Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, 
 
 // EVENTS & CLINICS PAGE
 const EventsPage = () => {
-  const CLINICS = [
-    { n:"01", name:"MTB Fundamentals",        level:"Beginner",     price:"$75", duration:"3 hrs",    included:"Bike available if needed · Helmet required",  desc:"Body position, braking, cornering, and basic trail features. Perfect if you're new to singletrack or returning after a long break. We meet at the shop and roll to Knox." },
-    { n:"02", name:"Trail Skills Progression", level:"Intermediate", price:"$95", duration:"4 hrs",    included:"Small group (max 6) · Video feedback",         desc:"Rock gardens, drops, switchbacks, technical climbs. You can ride blue trails comfortably — we'll push you toward the blacks. Knox Mountain and Crawford." },
-    { n:"03", name:"Women's Ride & Clinic",    level:"All levels",   price:"$85", duration:"Half day", included:"Coffee at the shop after",                     desc:"Women-only skills session followed by a group ride. Relaxed pace, honest coaching, no ego. Runs monthly through the season — one of our most popular programs." },
-    { n:"04", name:"Kids & Youth Clinic",      level:"Ages 8–16",    price:"$60", duration:"2.5 hrs",  included:"Helmets + pads available · Max 8 kids",        desc:"Confidence-building fundamentals for younger riders. Fun, safe, and progressive. Kelowna Bike Park and Knox beginner trails. Parent or guardian welcome." },
+  const MCGEE_CLINICS = [
+    {
+      tag: "Adult · All Levels",
+      name: "Adult Skills Clinic",
+      desc: "Six progressive sessions covering descending, jumping, climbing, cornering, and bike maintenance. Runs July and August across Knox, Crawford, Gillard, SilverStar, and more. All levels welcome — beginner to advanced.",
+      details: "6 sessions · $600 · Drop-ins available",
+      url: "https://mcgeecycle.com/adultskillclinic",
+    },
+    {
+      tag: "Youth · Ages 7–14",
+      name: "Skills Camp",
+      desc: "Mon–Fri summer camp led by PMBIA-certified coaches including pro rider Will Curry. Skill sessions, trail exploration, games, and bike maintenance workshops. Small coach-to-rider ratios. Six weeks offered July and August.",
+      details: "Mon–Fri · 10 AM–3:30 PM · Drop-ins available",
+      url: "https://mcgeecycle.com/skills-camp",
+    },
   ];
   const EVENTS = [
     { month:"May", tag:"Demo Day",   name:"Transition + Pivot Spring Demo", desc:"Try before you buy. Full fleet of 2026 Transition and Pivot bikes for half-day Knox laps. Register in store — spots fill fast.",           cta:"Register in store" },
     { month:"Jun", tag:"Group Ride", name:"Solstice Lap — Knox Mountain",   desc:"Annual summer solstice group ride. Longest day of the year, longest lap we can muster. All abilities welcome. Potluck at the trailhead after.", cta:"Show up" },
-    { month:"Sep", tag:"Clinic",     name:"Fall Shred Clinic",              desc:"One last big clinic before the season winds down. Mixed levels, two instructors, full day on Knox and Crawford. Books out every year.",          cta:"Call to book" },
     { month:"Oct", tag:"Shop Event", name:"Bike Swap & Service Day",        desc:"Sell your old gear, pick something new up. Discounted tune-ups all day. Live music and food trucks in the parking lot. Free to attend.",       cta:"Free entry" },
   ];
   return (
@@ -3634,21 +3643,31 @@ const EventsPage = () => {
               <div className="section-label">Skill Clinics  /  N°01</div>
               <h2 className="display-xl">Learn to<br/><span className="serif-italic">ride better.</span></h2>
             </div>
-            <p style={{ maxWidth:380, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>Small groups. Real coaches. Run by riders who work at the shop and ride these trails every week. Call us or drop in to book your spot.</p>
+            <p style={{ maxWidth:400, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>We partner with <strong>McGee Cycle</strong> — Kelowna's dedicated MTB coaching program. PMBIA-certified coaches, small groups, real trails.</p>
           </div>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:24 }}>
-            {CLINICS.map((c, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i+1)} style={{ padding:36, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:14 }}>
-                <div style={{ display:"flex", justifyContent:"space-between" }}>
-                  <div className="eyebrow">{c.n}  ·  {c.level}</div>
-                  <span className="pill">{c.price}</span>
+          <div className="mcgee-clinics-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:24 }}>
+            {MCGEE_CLINICS.map((c, i) => (
+              <a key={i} href={c.url} target="_blank" rel="noopener" data-cursor="link"
+                className={"reveal reveal-d-" + (i+1)}
+                style={{ display:"flex", flexDirection:"column", gap:16, padding:40, border:"1px solid var(--hairline)", textDecoration:"none", color:"inherit", transition:"border-color .2s" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor="var(--black)"}
+                onMouseLeave={e => e.currentTarget.style.borderColor="var(--hairline)"}>
+                <div className="eyebrow">{c.tag}</div>
+                <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1 }}>{c.name}</div>
+                <p style={{ fontSize:15, lineHeight:1.75, color:"var(--gray-600)", flex:1, margin:0 }}>{c.desc}</p>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{c.details}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
+                  Book at mcgeecycle.com <ArrowRight size={9} />
                 </div>
-                <div style={{ fontFamily:"var(--display)", fontSize:22, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1 }}>{c.name}</div>
-                <p style={{ fontSize:14, lineHeight:1.75, color:"var(--gray-600)", flex:1, margin:0 }}>{c.desc}</p>
-                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{c.duration}  ·  {c.included}</div>
-                <a href="tel:2508601968" className="btn btn-outline" data-cursor="link" style={{ alignSelf:"flex-start" }}>Book by phone <ArrowRight /></a>
-              </div>
+              </a>
             ))}
+          </div>
+          <div className="reveal" style={{ marginTop:32, padding:"24px 32px", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"space-between", gap:24, flexWrap:"wrap" }}>
+            <div>
+              <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:4 }}>McGee Cycle</div>
+              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)" }}>mcgeecycle@gmail.com  ·  (289) 775-2233</div>
+            </div>
+            <a href="https://mcgeecycle.com" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Visit mcgeecycle.com <ArrowRight /></a>
           </div>
         </div>
       </section>

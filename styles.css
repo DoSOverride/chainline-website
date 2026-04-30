@@ -1643,6 +1643,7 @@ img {
   .fitting-row > :nth-child(2) { display: none; }
   .booking-types { grid-template-columns: 1fr 1fr !important; }
   .booking-service-grid { grid-template-columns: 1fr !important; }
+  .mcgee-clinics-grid { grid-template-columns: 1fr !important; }
   .page-svc-row { grid-template-columns: 1fr !important; gap: 4px !important; }
   .page-svc-row > *:not(:first-child):not(:nth-child(2)) { display: none !important; }
   .page-wide-row { grid-template-columns: 1fr !important; }
