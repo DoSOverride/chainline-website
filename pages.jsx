@@ -2237,6 +2237,18 @@ const ClassifiedsPage = () => {
       <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
         <div className="container-wide">
 
+          {/* Consign / Post CTA — top */}
+          <div className="reveal" style={{ display:"flex", gap:16, alignItems:"center", flexWrap:"wrap", marginBottom:48, padding:"24px 32px", background:"var(--paper)", borderLeft:"3px solid var(--black)" }}>
+            <div style={{ flex:1, minWidth:200 }}>
+              <div style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:6 }}>Sell or consign with ChainLine</div>
+              <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", margin:0 }}>List on Pinkbike · Consign through the shop · Email us to get started</p>
+            </div>
+            <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
+              <a href="mailto:bikes@chainline.ca?subject=Consignment Enquiry" className="btn" data-cursor="link">Consign with Us <ArrowRight /></a>
+              <a href={PB_POST} target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Post on Pinkbike <ArrowRight /></a>
+            </div>
+          </div>
+
           {/* Live Pinkbike listings */}
           <div className="reveal" style={{ marginBottom:64 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
@@ -2421,7 +2433,7 @@ const PrivacyPage = () => (
 // WARRANTY PAGE
 const WarrantyPage = () => (
   <div className="page-fade" data-screen-label="Warranty">
-    <SubHero eyebrow="Services  /  Warranty" title="We've got you covered." italic="Warranty work, done right." />
+    <SubHero eyebrow="Services  /  Warranty" title="Warranty work." italic="Done right." />
     <section className="section section-pad bg-white">
       <div className="container-narrow">
         <p style={{ fontSize:17, lineHeight:1.75, color:"var(--gray-600)", marginBottom:40, maxWidth:600 }}>
@@ -2576,4 +2588,178 @@ const DemoPage = () => {
   );
 };
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage });
+// BIKE FITTING PAGE
+const FittingPage = () => {
+  const [data, setData] = React.useState({});
+  const [submitted, setSubmitted] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
+  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+  const inp = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+
+  const FITS = [
+    { name:"Position Check", price:"$80", dur:"45 min", desc:"Saddle height, reach, cleat position. Great starting point for new bikes." },
+    { name:"Road / Gravel Fit", price:"$220", dur:"2 hours", desc:"Full motion capture, cleat analysis, saddle pressure mapping." },
+    { name:"Mountain Bike Fit", price:"$220", dur:"2 hours", desc:"Body geometry and suspension position dialled for trail riding." },
+    { name:"Full Body + Video", price:"$380", dur:"3 hours", desc:"Everything included — best for chronic pain or high performance goals." },
+  ];
+
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("name",    data.name    || '');
+      fd.append("phone",   data.phone   || '');
+      fd.append("email",   data.email   || '');
+      fd.append("service", `BIKE FIT: ${data.fitType || 'Position Check'}`);
+      fd.append("bike",    data.bike    || '');
+      fd.append("date",    data.date    || 'Flexible');
+      fd.append("issue",   data.notes   || '');
+      const res = await fetch(`${WORKER}/api/book`, { method:"POST", body: fd });
+      const json = await res.json();
+      if (json.ok) { setSubmitted(true); return; }
+      throw new Error();
+    } catch {
+      const body = encodeURIComponent(`Bike Fit Request\n\nName: ${data.name}\nPhone: ${data.phone}\nFit: ${data.fitType||'Position Check'}\nBike: ${data.bike||'-'}\nDate: ${data.date||'Flexible'}\nNotes: ${data.notes||'-'}`);
+      window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Bike Fit — '+(data.name||'Customer'))}&body=${body}`;
+      setSubmitted(true);
+    } finally { setSubmitting(false); }
+  };
+
+  return (
+    <div className="page-fade" data-screen-label="Bike Fitting">
+      <SubHero eyebrow="Services  /  Fitting" title="Ride better." italic="Feel better." />
+      <section className="section section-pad bg-white">
+        <div className="container-wide">
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:80, alignItems:"start" }}>
+            <div>
+              <div className="section-label" style={{ marginBottom:32 }}>Choose your fit level</div>
+              {FITS.map((f, i) => (
+                <div key={i} data-cursor="link" onClick={() => upd("fitType", f.name)}
+                  style={{ padding:"20px 0", borderBottom:"1px solid var(--hairline)", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:16,
+                    background: data.fitType === f.name ? "transparent" : "transparent" }}>
+                  <div style={{ flex:1 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:4 }}>
+                      <div style={{ width:12, height:12, borderRadius:"50%", border:`2px solid ${data.fitType===f.name?"var(--black)":"var(--hairline)"}`, background: data.fitType===f.name?"var(--black)":"transparent", transition:"all .2s" }} />
+                      <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{f.name}</div>
+                    </div>
+                    <p style={{ fontSize:14, color:"var(--gray-500)", margin:"0 0 0 22px", lineHeight:1.5 }}>{f.desc} · <em>{f.dur}</em></p>
+                  </div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, flexShrink:0 }}>{f.price}</div>
+                </div>
+              ))}
+              <p style={{ marginTop:24, fontSize:13, color:"var(--gray-500)", lineHeight:1.6 }}>All fittings done in our dedicated fitting studio with a certified fitter. Report included. Book online or call (250) 860-1968.</p>
+            </div>
+            <div>
+              {submitted ? (
+                <div style={{ padding:"60px 0", textAlign:"center" }}>
+                  <div style={{ fontFamily:"var(--display)", fontSize:28, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", marginBottom:12 }}>Request sent.</div>
+                  <p style={{ color:"var(--gray-500)", fontSize:15 }}>We'll call to confirm your fitting time. See you in the studio.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="section-label" style={{ marginBottom:32 }}>Your details</div>
+                  <div style={{ marginBottom:20 }}><div className="eyebrow" style={{ marginBottom:8 }}>Name *</div><input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>upd("name",e.target.value)} style={inp} /></div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 32px", marginBottom:20 }}>
+                    <div><div className="eyebrow" style={{ marginBottom:8 }}>Phone *</div><input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>upd("phone",e.target.value)} style={inp} /></div>
+                    <div><div className="eyebrow" style={{ marginBottom:8 }}>Email</div><input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>upd("email",e.target.value)} style={inp} /></div>
+                  </div>
+                  <div style={{ marginBottom:20 }}><div className="eyebrow" style={{ marginBottom:8 }}>Bike (brand + model)</div><input type="text" placeholder="e.g. Transition Sentinel Large" value={data.bike||""} onChange={e=>upd("bike",e.target.value)} style={inp} /></div>
+                  <div style={{ marginBottom:20 }}><div className="eyebrow" style={{ marginBottom:8 }}>Preferred date / time</div><input type="text" placeholder="e.g. Saturday morning" value={data.date||""} onChange={e=>upd("date",e.target.value)} style={inp} /></div>
+                  <div style={{ marginBottom:32 }}><div className="eyebrow" style={{ marginBottom:8 }}>Goals or pain points</div><input type="text" placeholder="e.g. knee pain, new bike setup, power goals…" value={data.notes||""} onChange={e=>upd("notes",e.target.value)} style={inp} /></div>
+                  <button className="btn" data-cursor="link" disabled={!data.name||!data.phone||submitting} onClick={submit}>{submitting?"Sending…":"Book a Fitting"} {!submitting&&<ArrowRight/>}</button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+// BIKE STORAGE PAGE
+const StoragePage = () => {
+  const [data, setData] = React.useState({});
+  const [submitted, setSubmitted] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
+  const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+  const inp = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("name",    data.name  || '');
+      fd.append("phone",   data.phone || '');
+      fd.append("email",   data.email || '');
+      fd.append("service", `STORAGE: ${data.bikes||'1 bike'} · Drop-off ${data.dropoff||'TBD'}`);
+      fd.append("bike",    data.bikes || '');
+      fd.append("date",    data.dropoff || 'Flexible');
+      fd.append("issue",   data.notes || '');
+      const res = await fetch(`${WORKER}/api/book`, { method:"POST", body: fd });
+      const json = await res.json();
+      if (json.ok) { setSubmitted(true); return; }
+      throw new Error();
+    } catch {
+      const body = encodeURIComponent(`Bike Storage Enquiry\n\nName: ${data.name}\nPhone: ${data.phone}\nBike(s): ${data.bikes||'-'}\nDrop-off: ${data.dropoff||'TBD'}\nNotes: ${data.notes||'-'}`);
+      window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Storage — '+(data.name||'Customer'))}&body=${body}`;
+      setSubmitted(true);
+    } finally { setSubmitting(false); }
+  };
+
+  return (
+    <div className="page-fade" data-screen-label="Bike Storage">
+      <SubHero eyebrow="Services  /  Storage" title="Winter storage." italic="Spring ready." />
+      <section className="section section-pad bg-white">
+        <div className="container-wide">
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:80, alignItems:"start" }}>
+            <div>
+              <div className="section-label" style={{ marginBottom:32 }}>How it works</div>
+              {[
+                ["01", "Drop off", "Anytime from October. We log the condition, take photos, tag it."],
+                ["02", "Stored safe", "Climate-controlled, locked facility. Monthly battery checks for e-bikes."],
+                ["03", "Spring service", "Tuned, inspected, and ready to roll the day you call to pick up."],
+              ].map(([n, t, d], i) => (
+                <div key={i} style={{ borderTop:"1px solid var(--hairline)", padding:"28px 0" }}>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>{n}</div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{t}</div>
+                  <p style={{ fontSize:14, color:"var(--gray-500)", margin:0, lineHeight:1.6 }}>{d}</p>
+                </div>
+              ))}
+              <div style={{ borderTop:"1px solid var(--hairline)", paddingTop:28 }}>
+                <div className="eyebrow" style={{ marginBottom:8 }}>Pricing</div>
+                <div style={{ fontFamily:"var(--display)", fontSize:24, fontWeight:500 }}>From $180</div>
+                <p style={{ fontSize:14, color:"var(--gray-500)", marginTop:8 }}>Per bike, per season. E-bikes and oversized bikes may vary. Ask us.</p>
+              </div>
+            </div>
+            <div>
+              {submitted ? (
+                <div style={{ padding:"60px 0", textAlign:"center" }}>
+                  <div style={{ fontFamily:"var(--display)", fontSize:28, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", marginBottom:12 }}>Enquiry sent.</div>
+                  <p style={{ color:"var(--gray-500)", fontSize:15 }}>We'll follow up to confirm drop-off and answer any questions.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="section-label" style={{ marginBottom:32 }}>Book your spot</div>
+                  <div style={{ marginBottom:20 }}><div className="eyebrow" style={{ marginBottom:8 }}>Name *</div><input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>upd("name",e.target.value)} style={inp} /></div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 32px", marginBottom:20 }}>
+                    <div><div className="eyebrow" style={{ marginBottom:8 }}>Phone *</div><input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>upd("phone",e.target.value)} style={inp} /></div>
+                    <div><div className="eyebrow" style={{ marginBottom:8 }}>Email</div><input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>upd("email",e.target.value)} style={inp} /></div>
+                  </div>
+                  <div style={{ marginBottom:20 }}><div className="eyebrow" style={{ marginBottom:8 }}>Bike(s)</div><input type="text" placeholder="e.g. Transition Sentinel + Trek Marlin" value={data.bikes||""} onChange={e=>upd("bikes",e.target.value)} style={inp} /></div>
+                  <div style={{ marginBottom:20 }}><div className="eyebrow" style={{ marginBottom:8 }}>Approx. drop-off date</div><input type="text" placeholder="e.g. Mid-October" value={data.dropoff||""} onChange={e=>upd("dropoff",e.target.value)} style={inp} /></div>
+                  <div style={{ marginBottom:32 }}><div className="eyebrow" style={{ marginBottom:8 }}>Notes</div><input type="text" placeholder="Number of bikes, e-bike, any questions…" value={data.notes||""} onChange={e=>upd("notes",e.target.value)} style={inp} /></div>
+                  <button className="btn" data-cursor="link" disabled={!data.name||!data.phone||submitting} onClick={submit}>{submitting?"Sending…":"Request Storage"} {!submitting&&<ArrowRight/>}</button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage });

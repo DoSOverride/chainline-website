@@ -90,10 +90,14 @@ const Hero = ({ variant }) => {
 
 // Featured bikes — sourced from real ChainLine inventory
 const FEATURED_BIKES = [
-  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-Senti-XT-DersertDusk-Side.avif","handle":"transition-sentinel"},
-  {"brand":"Pivot",     "name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"badge":"PRO","img":"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/switchblade-v6-bitw-nz-pivotcycles-030_3158889ca","handle":"pivot-switchblade-ride-eagle-70-90"},
-  {"brand":"Transition","name":"Regulator CX Eagle 90","type":"E-Bike","rawType":"Electric Bike","price":13000,"badge":"PRO","img":"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif","handle":"transition-regulator-cx-eagle-90"},
-  {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
+  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"img":"https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg","handle":"transition-sentinel"},
+  {"brand":"Pivot",     "name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"img":"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
+  {"brand":"Transition","name":"Regulator CX Eagle 90","type":"E-Bike","rawType":"Electric Bike","price":13000,"img":"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif","handle":"transition-regulator-cx-eagle-90"},
+  {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"img":"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
+  {"brand":"Surly",     "name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"img":"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946","handle":"surly-bridge-club"},
+  {"brand":"Pivot",     "name":"Shuttle AM Ride Eagle 70/90","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
+  {"brand":"Knolly",    "name":"Fugitive","type":"Mountain","rawType":"Mountain Bike","price":4550,"img":"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351","handle":"knolly-fugitive"},
+  {"brand":"Surly",     "name":"Sorceress","type":"Mountain","rawType":"Fat Bike","price":3400,"img":"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946","handle":"surly-sorceress"},
 ];
 
 
@@ -240,7 +244,53 @@ const StatsBar = () => (
   </section>
 );
 
-// Brand logos grid
+// Brand logos grid — tiles flip on hover to show a representative bike/shop image
+const BRAND_FLIP_IMAGES = {
+  "MARIN":       "https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935",
+  "TRANSITION":  "https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg",
+  "SURLY":       "interior-surly.jpg",
+  "SALSA":       "interior-tires.jpg",
+  "PIVOT":       "https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg",
+  "BIANCHI":     "interior-parts.jpg",
+  "MOOTS":       "interior-parts.jpg",
+  "KNOLLY":      "https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351",
+  "REVEL":       "interior-parts.jpg",
+};
+
+const BrandTile = ({ b, i }) => {
+  const [flipped, setFlipped] = React.useState(false);
+  const img = BRAND_FLIP_IMAGES[b];
+  const brandName = b.charAt(0) + b.slice(1).toLowerCase();
+  return (
+    <div
+      data-cursor="link"
+      className={"reveal reveal-d-" + (i % 3 + 1)}
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
+      onClick={() => window.cl.go("shop", { brand: brandName })}
+      style={{ aspectRatio: "1.1/1", borderRight: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", cursor: "pointer", perspective: 800, position: "relative" }}
+    >
+      <div style={{
+        position: "absolute", inset: 0,
+        transformStyle: "preserve-3d",
+        transition: "transform 0.55s cubic-bezier(.2,.8,.2,1)",
+        transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+      }}>
+        {/* Front: brand name */}
+        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", display: "grid", placeItems: "center", background: "var(--white)", fontFamily: "var(--display)", fontSize: "clamp(9px,1vw,14px)", fontWeight: 600, letterSpacing: ".14em", color: "var(--black)" }}>
+          {b}
+        </div>
+        {/* Back: bike/shop image */}
+        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", overflow: "hidden", background: "var(--black)" }}>
+          {img && <img src={img} alt={b} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", opacity: 0.85 }} />}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)" }} />
+          <span style={{ position: "absolute", bottom: 10, left: 0, right: 0, textAlign: "center", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--white)" }}>{b}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const BrandsGrid = () => {
   const brands = ["MARIN", "TRANSITION", "SURLY", "SALSA", "PIVOT", "BIANCHI", "MOOTS", "KNOLLY", "REVEL"];
   return (
@@ -254,11 +304,7 @@ const BrandsGrid = () => {
           <div className="eyebrow">Curated, not stocked.</div>
         </div>
         <div className="home-brands-grid" style={{ display: "grid", gridTemplateColumns: "repeat(9, 1fr)", border: "1px solid var(--hairline)", borderRight: 0, borderBottom: 0 }}>
-          {brands.map((b, i) => (
-            <a key={i} href="#" data-cursor="link" className={"brand-tile reveal reveal-d-" + (i % 3 + 1)} onClick={e => { e.preventDefault(); window.cl.go("shop", { brand: b.charAt(0) + b.slice(1).toLowerCase() }); }} style={{ aspectRatio: "1.1/1", display: "grid", placeItems: "center", borderRight: "1px solid var(--hairline)", borderBottom: "1px solid var(--hairline)", background: "var(--white)", fontFamily: "var(--display)", fontSize: 14, fontWeight: 600, letterSpacing: ".14em", transition: "background .3s, color .3s" }}>
-              {b}
-            </a>
-          ))}
+          {brands.map((b, i) => <BrandTile key={b} b={b} i={i} />)}
         </div>
       </div>
     </section>
@@ -306,7 +352,7 @@ const ServicesPreview = () => (
           <h2 className="display-xl">We keep<br/>you <span className="serif-italic">rolling.</span></h2>
         </div>
         <div style={{ maxWidth: 360, color: "var(--gray-300)", fontSize: 15, lineHeight: 1.6 }}>
-          Six dedicated mechanics. Seventeen torque wrenches. One unbreakable rule — no bike leaves the stand until it leaves perfect.
+          Four dedicated mechanics. More torque wrenches than we can count. One unbreakable rule — no bike leaves the stand until it leaves perfect.
         </div>
       </div>
       <div className="home-services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 0, border: "1px solid var(--hairline-light)", borderRight: 0, borderBottom: 0 }}>
@@ -344,13 +390,19 @@ const BookBanner = () => (
   </section>
 );
 
-// Bike image scroller — infinite marquee of bike photos
+// Bike image scroller — infinite marquee using all bikes with images
 const BikeScroller = () => {
-  const bikes = FEATURED_BIKES.filter(b => b.img);
+  // Pull from full SHOP_BIKES catalogue; deduplicate by handle
+  const allBikes = (window.SHOP_BIKES || FEATURED_BIKES).filter(b => b.img);
+  const seen = new Set();
+  const bikes = allBikes.filter(b => { if (seen.has(b.handle)) return false; seen.add(b.handle); return true; });
+  if (bikes.length === 0) return null;
+
   const BikeItem = ({ b }) => (
     <div onClick={() => window.cl.go("bike", { bike: b })}
       style={{ flexShrink:0, width:200, height:148, marginRight:20, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
-      <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }} />
+      <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
+        onError={e => { e.target.parentElement.style.display = 'none'; }} />
     </div>
   );
   const Track = () => (
@@ -371,8 +423,9 @@ const LocalStory = () => (
   <section className="section section-pad bg-paper" data-screen-label="07 Story">
     <div className="container-wide">
       <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
-        <div className="reveal ph ph-light ph-corners" style={{ aspectRatio: "4/5", position: "relative" }}>
-          <span className="ph-label">SHOP INTERIOR  /  B&W  /  4:5</span>
+        <div className="reveal" style={{ aspectRatio: "4/5", position: "relative", overflow: "hidden" }}>
+          <img src="interior-tires.jpg" alt="ChainLine Cycle — Kelowna's bike shop since 2009"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
           <div style={{ position: "absolute", top: 24, left: 24, padding: "8px 14px", background: "var(--black)", color: "var(--white)", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase" }}>EST. 2009</div>
         </div>
         <div className="reveal reveal-d-2">

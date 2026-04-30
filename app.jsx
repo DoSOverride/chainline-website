@@ -4,7 +4,7 @@
 const _BRANDS    = ["marin","transition","surly","pivot","salsa","bianchi","moots","knolly","revel"];
 const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","kids"];
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools"];
-const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy","demo","warranty"];
+const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage"];
 
 function pathToRoute(pathname) {
   const p = (pathname || '/').replace(/^\//, '').trim();
@@ -231,6 +231,8 @@ const App = () => {
         {page === "privacy" && <PrivacyPage />}
         {page === "warranty" && <WarrantyPage />}
         {page === "demo" && <DemoPage />}
+        {page === "fitting" && <FittingPage />}
+        {page === "storage" && <StoragePage />}
       </main>
 
       <Footer />

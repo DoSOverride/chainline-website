@@ -395,7 +395,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.startsWith("book a service") || l === "book") return ["book", null];
     if (l.includes("demo")) return ["demo", null];
     if (l.includes("warranty")) return ["warranty", null];
-    if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("fit") || l.includes("storage")) return ["services", null];
+    if (l.includes("fitting") || l.includes("bike fit") || l.includes("bike fitting")) return ["fitting", null];
+    if (l.includes("storage") || l.includes("store")) return ["storage", null];
+    if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("service pricing")) return ["services", null];
     // Explore
     if (l.includes("ride") || l.includes("strava") || l.includes("clinic") || l.includes("event")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
@@ -615,8 +617,8 @@ const MobileNav = ({ open, onClose }) => {
             {[
               { label:"Book a Service",  route:"book"      },
               { label:"Book a Demo",     route:"demo"      },
-              { label:"Bike Fitting",    route:"services"  },
-              { label:"Bike Storage",    route:"services"  },
+              { label:"Bike Fitting",    route:"fitting"   },
+              { label:"Bike Storage",    route:"storage"   },
               { label:"Warranty",        route:"warranty"  },
               { label:"Service Pricing", route:"services"  },
             ].map(it => (
@@ -633,7 +635,7 @@ const MobileNav = ({ open, onClose }) => {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             <div style={{ paddingRight:16 }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Community</div>
-              {["Group Rides","Strava Club","Skill Clinics","Events"].map(it => (
+              {["Group Rides","Skill Clinics","Events"].map(it => (
                 <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("rides")); }}>{it}</a>
               ))}
             </div>
@@ -667,7 +669,7 @@ const MobileNav = ({ open, onClose }) => {
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Shop</div>
               {[
                 { label:"Gift Cards",  route:"giftcards"  },
-                { label:"Classifieds", route:"classifieds"},
+                { label:"Pinkbike",    route:"classifieds"},
                 { label:"Sale",        route:"shop"       },
               ].map(it => (
                 <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
@@ -802,7 +804,7 @@ const Footer = () => (
         <div className="footer-col">
           <h4>Services</h4>
           <ul>
-            {[["Book a Service","book"],["Book a Demo","demo"],["Bike Fitting","services"],["Custom Builds","services"],["Storage Program","services"],["Warranty","warranty"]].map(([label,route]) => (
+            {[["Book a Service","book"],["Book a Demo","demo"],["Bike Fitting","fitting"],["Custom Builds","services"],["Storage Program","storage"],["Warranty","warranty"]].map(([label,route]) => (
               <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
             ))}
           </ul>
