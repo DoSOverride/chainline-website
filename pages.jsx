@@ -1057,7 +1057,7 @@ const ServicesPage = () => {
   const T = ["Washed and re-lubed","Adjusted gears and brakes","Trued and tensioned wheels","Checked BB, hubs and headset","Checked stem and bar bolts"];
   const ALL_SERVICES = [
     // ── All Bikes: tune-ups, flat fix, overhaul, then misc ──
-    { cat:"all", n:"01", name:"Basic Tune Up",            price:60,  time:"SAME DAY",
+    { cat:"all", n:"01", name:"Basic Tune Up",            price:75,  time:"SAME DAY",
       includes:["Adjusted gears and brakes","Checked stem and bar bolts","Safety inspection"] },
     { cat:"all", n:"02", name:"Tune Up",                  price:120, time:"SAME DAY",
       includes:[...T] },
