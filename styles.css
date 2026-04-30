@@ -145,11 +145,19 @@
   color: rgba(255,255,255,0.9) !important;
 }
 
-/* Parts add-to-cart button — idle state inverts in dark mode, needs explicit dark bg */
-[data-theme="dark"] .part-cart-btn[data-state="idle"] {
-  background: rgba(255,255,255,0.14) !important;
+/* Parts/shop add-to-cart buttons — var(--black) bg becomes white in dark mode */
+[data-theme="dark"] .part-cart-btn {
+  background: #1c1c1c !important;
   color: #f0f0ee !important;
   outline: 1px solid rgba(255,255,255,0.2);
+}
+[data-theme="dark"] .part-cart-stepper-add {
+  background: #1c1c1c !important;
+  color: #f0f0ee !important;
+}
+[data-theme="dark"] .part-cart-stepper-remove {
+  background: #2a2a2a !important;
+  color: #f0f0ee !important;
 }
 
 /* Parts sidebar active tab — var(--black) inverts to near-white in dark mode */

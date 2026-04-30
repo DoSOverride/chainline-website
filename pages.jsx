@@ -2019,9 +2019,9 @@ const PartCartBtn = ({ item, compact }) => {
     const btnBase = { height:26, fontFamily:"var(--mono)", fontSize:12, border:"1px solid var(--hairline)", cursor:"pointer", flexShrink:0, transition:"background .15s" };
     return (
       <div style={{ display:"flex", alignItems:"center" }}>
-        <button onClick={removeOne} style={{ ...btnBase, width:26, background:"var(--paper)", color:"var(--black)", borderRight:"none" }}>−</button>
+        <button onClick={removeOne} className="part-cart-stepper-remove" style={{ ...btnBase, width:26, background:"var(--paper)", color:"var(--black)", borderRight:"none" }}>−</button>
         <span style={{ width:28, height:26, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".06em", border:"1px solid var(--hairline)", borderLeft:"none", borderRight:"none", color:"var(--black)" }}>{cartQty}</span>
-        <button onClick={addOne} disabled={atMax || loading} style={{ ...btnBase, width:26, background: atMax ? "var(--paper)" : "var(--black)", color: atMax ? "var(--gray-400)" : "var(--white)", borderLeft:"none", cursor: atMax ? "default" : "pointer" }}>{loading ? "…" : "+"}</button>
+        <button onClick={addOne} disabled={atMax || loading} className="part-cart-stepper-add" style={{ ...btnBase, width:26, background: atMax ? "var(--paper)" : "var(--black)", color: atMax ? "var(--gray-400)" : "var(--white)", borderLeft:"none", cursor: atMax ? "default" : "pointer" }}>{loading ? "…" : "+"}</button>
       </div>
     );
   }
