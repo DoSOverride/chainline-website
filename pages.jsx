@@ -98,32 +98,116 @@ const getBikeDescription = (b) => {
   return `The ${vendor} ${name} — quality components, solid performance, backed by ChainLine's expert service team since 2009.`;
 };
 
+// ── useBikeVariants: find all Lightspeed sizes/colours for any bike ──────────
+// Works for SHOP_BIKES (static) and live Lightspeed bikes alike.
+// Matches using significant tokens from the model name, respecting brand prefix.
+const useBikeVariants = (bike) => {
+  const [variants, setVariants] = React.useState(bike?.variants || []);
+  const [varLoading, setVarLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!bike) { setVarLoading(false); return; }
+    if ((bike.variants || []).length > 1) {
+      setVariants(bike.variants); setVarLoading(false); return; // already hydrated
+    }
+
+    const IMPORTANT_SHORT = new Set(['jr','sx','gx','cx','rs','sl','29','27','26','20','16']);
+    const STOP = new Set(['the','and','for','with','ride','comp','elite','race','pro','base','alloy','carbon','plus','size']);
+
+    const buildVariants = () => {
+      const lsBikes = window.CL_LS?.bikes || [];
+      if (!lsBikes.length) return false;
+
+      const rawName = (bike.name || bike.title || '').toLowerCase();
+      const brand   = (bike.brand || '').toLowerCase();
+
+      // Tokens from model name — short important ones included, stop words excluded
+      const tokens = rawName.split(/\s+/).filter(w => {
+        const wl = w.toLowerCase().replace(/[^a-z0-9]/g,'');
+        return (wl.length >= 3 || IMPORTANT_SHORT.has(wl)) && !STOP.has(wl);
+      });
+
+      const matches = lsBikes.filter(ls => {
+        const n = (ls.name || '').toLowerCase();
+        // Brand must appear at start of Lightspeed name
+        if (brand && !n.startsWith(brand + ' ') && !n.startsWith(brand + '-')) return false;
+        // All model tokens must appear in the Lightspeed name
+        return tokens.every(t => n.includes(t));
+      });
+
+      if (!matches.length) { setVarLoading(false); return true; }
+
+      setVariants(matches.map(ls => ({
+        sku:     ls.sku,
+        name:    ls.name,
+        price:   ls.price,
+        size:    ls.parsedSize  || null,
+        color:   ls.parsedColor || null,
+        wheel:   ls.wheelSize   || null,
+        inStock: ls.inStock,
+        qty:     ls.qty || 0,
+        img:     ls.img || null,
+      })));
+      setVarLoading(false);
+      return true;
+    };
+
+    setVariants(bike?.variants || []);
+    if (!buildVariants()) {
+      // Bikes not loaded yet — wait for the ready signal
+      const onReady = () => buildVariants();
+      window.addEventListener('lightspeed:ready', onReady);
+      window.lightspeedReady?.then(onReady).catch(() => setVarLoading(false));
+      return () => window.removeEventListener('lightspeed:ready', onReady);
+    }
+  }, [bike?.handle, bike?.name, bike?.brand]);
+
+  return { variants, varLoading };
+};
+
 // ── Bike Detail Page ──────────────────────────────────────────
 const BikePage = ({ bike, onBack, onCart }) => {
-  const variants   = bike?.variants || [];
-  const inStockV   = variants.filter(v => v.inStock);
-  const hasWheels  = [...new Set(variants.map(v=>v.wheel).filter(Boolean))].length > 1;
-  const hasColors  = [...new Set(variants.map(v=>v.color).filter(Boolean))].length > 1;
-  const hasSizes   = [...new Set(variants.map(v=>v.size).filter(Boolean))].length > 1;
-  const defV = inStockV[0] || variants[0];
+  const { variants, varLoading } = useBikeVariants(bike);
 
-  const [selWheel, setWheel] = React.useState(defV?.wheel || null);
-  const [selColor, setColor] = React.useState(defV?.color || null);
-  const [selSize,  setSize]  = React.useState(defV?.size  || null);
+  const inStockV  = variants.filter(v => v.inStock);
+  const hasWheels = [...new Set(variants.map(v=>v.wheel).filter(Boolean))].length > 1;
+  const hasColors = [...new Set(variants.map(v=>v.color).filter(Boolean))].length > 1;
+  const hasSizes  = [...new Set(variants.map(v=>v.size).filter(Boolean))].length > 1;
+
+  const [selWheel, setWheel] = React.useState(null);
+  const [selColor, setColor] = React.useState(null);
+  const [selSize,  setSize]  = React.useState(null);
+  const [defaultSet, setDefaultSet] = React.useState(false);
   const [adding, setAdding]  = React.useState(false);
   const [added,  setAdded]   = React.useState(false);
   const [enriched, setEnriched] = React.useState(null);
   const [cartQty, setCartQty] = React.useState(0);
 
+  // Reset everything when the bike changes
   React.useEffect(() => {
-    const d = (bike?.variants||[]).filter(v=>v.inStock)[0] || (bike?.variants||[])[0];
-    setWheel(d?.wheel||null); setColor(d?.color||null); setSize(d?.size||null);
+    setDefaultSet(false);
+    setWheel(bike?.wheelSize || bike?.parsedSize && null || null);
+    setColor(bike?.parsedColor || null);
+    setSize(bike?.parsedSize  || null);
+    setEnriched(null);
   }, [bike?.handle]);
 
-  // Auto-enrich bikes not in the static catalogue
+  // Set default selections once variants arrive
+  React.useEffect(() => {
+    if (defaultSet || variants.length === 0) return;
+    const d = inStockV[0] || variants[0];
+    setWheel(d?.wheel || null);
+    setColor(d?.color || null);
+    setSize(d?.size   || null);
+    setDefaultSet(true);
+  }, [variants, defaultSet]);
+
+  // Enrich only if bike-data.js doesn't already have a description
   React.useEffect(() => {
     const b = bike || {};
-    if (!b.handle || window.BIKE_DATA?.[b.handle]?.description) return;
+    if (!b.handle) return;
+    const existing = getBikeData(b);
+    if (existing.description && existing.description.length > 40) return; // already have it
     const cached = window.CL_LS?.enrichCache?.[b.handle];
     if (cached?.description) { setEnriched(cached); return; }
     window.enrichBike?.(b).then(d => { if (d?.description) setEnriched(d); });
@@ -266,16 +350,23 @@ const BikePage = ({ bike, onBack, onCart }) => {
             )}
           </div>
 
-          {/* Variant selectors — or static info tags for single-variant Lightspeed bikes */}
-          {(variants.length > 1 || bike?.parsedSize || bike?.parsedColor || bike?.wheelSize) && (
-            <div className="reveal" style={{ marginBottom:24 }}>
-              {variants.length <= 1 && (bike?.parsedSize || bike?.parsedColor || bike?.wheelSize) && (
-                <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
-                  {bike.wheelSize && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-500)' }}>{bike.wheelSize} Wheels</span>}
-                  {bike.parsedSize && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--black)', background:'var(--black)', color:'var(--white)' }}>{bike.parsedSize}</span>}
-                  {bike.parsedColor && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{bike.parsedColor}</span>}
-                </div>
-              )}
+          {/* Variant selectors */}
+          <div className="reveal" style={{ marginBottom:24 }}>
+            {/* Loading state */}
+            {varLoading && (
+              <div style={{ display:'flex', gap:8, marginBottom:14 }}>
+                {[1,2,3].map(i => <div key={i} style={{ height:36, width:64+i*12, background:'var(--paper)', borderRadius:2, animation:'pulse 1.5s ease-in-out infinite', animationDelay:`${i*0.15}s` }} />)}
+              </div>
+            )}
+            {/* Single variant — show as info tags */}
+            {!varLoading && variants.length === 1 && (variants[0].wheel || variants[0].size || variants[0].color) && (
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
+                {variants[0].wheel && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-500)' }}>{variants[0].wheel}</span>}
+                {variants[0].size  && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--black)', background:'var(--black)', color:'var(--white)' }}>{variants[0].size}</span>}
+                {variants[0].color && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{variants[0].color}</span>}
+              </div>
+            )}
+            {!varLoading && (
               {hasWheels && (
                 <div style={{ marginBottom:14 }}>
                   <div className="eyebrow" style={{ marginBottom:8 }}>Wheel Size</div>
@@ -1245,11 +1336,11 @@ const BookPage = () => {
                   <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>update("phone",e.target.value)} style={inpStyle} />
                 </div>
                 <div>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Email (optional)</div>
+                  <div className="eyebrow" style={{ marginBottom:8 }}>Email *</div>
                   <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>update("email",e.target.value)} style={inpStyle} />
                 </div>
               </div>
-              <button className="btn" data-cursor="link" disabled={!data.name || !data.phone} onClick={next} style={{ marginTop:8 }}>Continue <ArrowRight /></button>
+              <button className="btn" data-cursor="link" disabled={!data.name || !data.phone || !data.email} onClick={next} style={{ marginTop:8 }}>Continue <ArrowRight /></button>
             </div>
           )}
 
@@ -1302,14 +1393,14 @@ const BookPage = () => {
                 ))}
               </div>
               <div style={{ marginBottom:24 }}>
-                <div className="eyebrow" style={{ marginBottom:8 }}>Any other details?</div>
-                <textarea rows={4} placeholder="Brakes feel spongy, rear derailleur skipping, pedal creak, etc..." value={data.issue||""}
+                <div className="eyebrow" style={{ marginBottom:8 }}>Describe the issue or what you need *</div>
+                <textarea rows={4} placeholder="e.g. Front brakes feel spongy, rear derailleur skipping on climbs, pedal creak, full tune-up…" value={data.issue||""}
                   onChange={e=>update("issue",e.target.value)}
                   style={{ ...inpStyle, borderBottom:"none", border:"1px solid var(--hairline)", padding:16, resize:"vertical", fontSize:14 }} />
               </div>
               <div style={{ display:"flex", gap:12 }}>
                 <button className="btn btn-outline" data-cursor="link" onClick={back}>← Back</button>
-                <button className="btn" data-cursor="link" onClick={next}>Continue <ArrowRight /></button>
+                <button className="btn" data-cursor="link" disabled={!data.service || !data.issue} onClick={next}>Continue <ArrowRight /></button>
               </div>
             </div>
           )}
