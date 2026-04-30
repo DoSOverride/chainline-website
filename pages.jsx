@@ -355,9 +355,9 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Bolinas Ridge 2 29",  handle:"marin-bolinas-ridge-2-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:800,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_2_27_BLACK_grande.png?v=1755781803" },
   { brand:"Marin", name:"Wildcat Trail 1 27.5",handle:"marin-wildcat-trail-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels, Women's", price:860, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_WILDCAT_TRAIL_1_275_PURPLE_SIDE_grande.png?v=1753783522" },
   { brand:"Marin", name:"Pine Mountain 1 29",  handle:"marin-pine-mountain-1-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:1960, img:"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935" },
-  { brand:"Transition", name:"Sentinel",             handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, badge:"PRO", img:"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg" },
-  { brand:"Transition", name:"Spire Carbon Eagle 90",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, badge:"PRO", img:"https://www.transitionbikes.com/WebStoreImages/SB-Spire-AlloyE70-UltraViolet.avif" },
-  { brand:"Pivot", name:"Switchblade Ride Eagle 70/90", handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, badge:"PRO", img:"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg" },
+  { brand:"Transition", name:"Sentinel",             handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg" },
+  { brand:"Transition", name:"Spire Carbon Eagle 90",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://www.transitionbikes.com/WebStoreImages/SB-Spire-AlloyE70-UltraViolet.avif" },
+  { brand:"Pivot", name:"Switchblade Ride Eagle 70/90", handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg" },
   { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Fat Bike",  price:3400, img:"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946" },
   { brand:"Marin", name:"Gestalt 2",   handle:"marin-gestalt-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2000, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_GESTALT_2_BLACK_SIDE_grande.png?v=1753870775" },
   { brand:"Marin", name:"Gestalt X10", handle:"marin-gestalt-x10",  type:"Gravel",   tags:"Gravel Bike, 700c",        price:1400, img:"https://marinbikes.com/cdn/shop/files/2023_Gestalt_X10_GalleryE_side.jpg?v=1744825311&width=1000" },
@@ -367,8 +367,8 @@ const SHOP_BIKES = [
   { brand:"Surly", name:"Bridge Club", handle:"surly-bridge-club",  type:"Gravel",   tags:"Gravel Bike, Adventure",   price:1850, img:"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946" },
   { brand:"Marin", name:"Stinson E",    handle:"marin-stinson-e",    type:"E-Bike",  tags:"Electric Bike, City",      price:2100, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_BLACK_SIDE_1_grande.png?v=1753862906" },
   { brand:"Marin", name:"Stinson E ST", handle:"marin-stinson-e-st", type:"E-Bike",  tags:"Electric Bike, Step-Through", price:2100, img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_SILVER_SIDE_52da63a1-edc3-401a-a329-2405e10cfb54_grande.png?v=1755715647" },
-  { brand:"Pivot",      name:"Shuttle AM Ride Eagle 70/90",handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, badge:"PRO", img:"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg" },
-  { brand:"Transition", name:"Regulator CX Eagle 90",      handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, badge:"PRO", img:"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
+  { brand:"Pivot",      name:"Shuttle AM Ride Eagle 70/90",handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg" },
+  { brand:"Transition", name:"Regulator CX Eagle 90",      handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
   { brand:"Marin", name:"Fairfax 1",       handle:"marin-fairfax-1",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:700,  img:"https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_1_RED_SIDE_4f661e02-11de-454f-bb55-5ef9d8d805fc_grande.png?v=1755769099" },
   { brand:"Marin", name:"Fairfax 2",       handle:"marin-fairfax-2",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:960,  img:"https://marinbikes.com/cdn/shop/files/2022_MARIN_FAIRFAX_2_MAROON_SIDE_391346d2-76af-4fa7-8e8a-4f0a68e0cf32_grande.png?v=1753872171" },
   { brand:"Marin", name:"San Anselmo DS2", handle:"marin-san-anselmo-ds2",type:"Commuter", tags:"Dual-Sport, Women's",     price:960,  img:"https://marinbikes.com/cdn/shop/files/2021_San_Anselmo_DS1_Color.jpg?v=1744825386&width=1000" },
@@ -393,7 +393,7 @@ const SHOP_BIKES = [
   { brand:"Surly", name:"Karate Monkey",    handle:"surly-karate-monkey",    type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",     price:2800, img:"https://surlybikes.com/cdn/shop/files/surly-karate-monkey-front-suspension-bike-blue-BK00263-2000px-sq.jpg?v=1742063134&width=1946" },
   { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Mountain", tags:"Fat Bike, Snow, Sand",              price:3500, img:"https://surlybikes.com/cdn/shop/files/surly-ice-cream-truck-bike-yellow-BK00596-2000px-sq.jpg?v=1741976875&width=1946" },
   // ── Knolly ────────────────────────────────────────────────────
-  { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, badge:"PRO", img:"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351" },
+  { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, img:"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351" },
   // ── Salsa ─────────────────────────────────────────────────────
   { brand:"Salsa", name:"Timberjack GX Eagle",  handle:"salsa-timberjack-gx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",          price:3500, img:null },
   { brand:"Salsa", name:"Spearfish C GX Eagle", handle:"salsa-spearfish-c-gx-eagle", type:"Mountain", tags:"Mountain Bike, Full Suspension, 29\"",    price:5800, img:null },
@@ -402,20 +402,20 @@ const SHOP_BIKES = [
   { brand:"Salsa", name:"Cutthroat GRX",        handle:"salsa-cutthroat-grx",        type:"Gravel",   tags:"Gravel Bike, Adventure, Drop Bar",       price:4500, img:null },
   { brand:"Salsa", name:"Warbird GRX 600",      handle:"salsa-warbird-grx-600",      type:"Gravel",   tags:"Gravel Bike, Race, 700c",                price:3200, img:null },
   // ── Bianchi ───────────────────────────────────────────────────
-  { brand:"Bianchi", name:"Oltre RC",        handle:"bianchi-oltre-rc",        type:"Road",   tags:"Road Bike, Race, Carbon",                    price:10500, badge:"PRO", img:null },
+  { brand:"Bianchi", name:"Oltre RC",        handle:"bianchi-oltre-rc",        type:"Road",   tags:"Road Bike, Race, Carbon",                    price:10500, img:null },
   { brand:"Bianchi", name:"Aria",            handle:"bianchi-aria",            type:"Road",   tags:"Road Bike, Endurance, Carbon",               price:3800, img:null },
   { brand:"Bianchi", name:"Impulso Pro",     handle:"bianchi-impulso-pro",     type:"Road",   tags:"Road Bike, Endurance, Aluminum",             price:2500, img:null },
   { brand:"Bianchi", name:"Grok S GRX",      handle:"bianchi-grok-s-grx",      type:"Gravel", tags:"Gravel Bike, Celeste, 700c",                 price:2800, img:null },
   { brand:"Bianchi", name:"E-SUV Comp",      handle:"bianchi-e-suv-comp",      type:"E-Bike", tags:"Electric Bike, Mountain, Full Suspension",   price:5200, img:null },
   // ── Moots ─────────────────────────────────────────────────────
-  { brand:"Moots", name:"Routt RSL GRX",     handle:"moots-routt-rsl-grx",     type:"Gravel",   tags:"Gravel Bike, Titanium, 700c",              price:9500, badge:"PRO", img:null },
-  { brand:"Moots", name:"Baxter GRX",        handle:"moots-baxter-grx",        type:"Gravel",   tags:"Gravel Bike, Titanium, Adventure",         price:7500, badge:"PRO", img:null },
-  { brand:"Moots", name:"Highline GX Eagle", handle:"moots-highline-gx-eagle", type:"Mountain", tags:"Mountain Bike, Hardtail, Titanium, 29\"", price:6500, badge:"PRO", img:null },
-  { brand:"Moots", name:"Ybb SL GX Eagle",   handle:"moots-ybb-sl-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Full Suspension, Titanium", price:8500, badge:"PRO", img:null },
+  { brand:"Moots", name:"Routt RSL GRX",     handle:"moots-routt-rsl-grx",     type:"Gravel",   tags:"Gravel Bike, Titanium, 700c",              price:9500, img:null },
+  { brand:"Moots", name:"Baxter GRX",        handle:"moots-baxter-grx",        type:"Gravel",   tags:"Gravel Bike, Titanium, Adventure",         price:7500, img:null },
+  { brand:"Moots", name:"Highline GX Eagle", handle:"moots-highline-gx-eagle", type:"Mountain", tags:"Mountain Bike, Hardtail, Titanium, 29\"", price:6500, img:null },
+  { brand:"Moots", name:"Ybb SL GX Eagle",   handle:"moots-ybb-sl-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Full Suspension, Titanium", price:8500, img:null },
   // ── Revel ─────────────────────────────────────────────────────
-  { brand:"Revel", name:"Ranger GX Eagle",   handle:"revel-ranger-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension, 29\"", price:5800, badge:"PRO", img:null },
-  { brand:"Revel", name:"Rascal GX Eagle",   handle:"revel-rascal-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension",        price:5200, badge:"PRO", img:null },
-  { brand:"Revel", name:"Rail GX Eagle",     handle:"revel-rail-gx-eagle",     type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension, 29\"", price:6200, badge:"PRO", img:null },
+  { brand:"Revel", name:"Ranger GX Eagle",   handle:"revel-ranger-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension, 29\"", price:5800, img:null },
+  { brand:"Revel", name:"Rascal GX Eagle",   handle:"revel-rascal-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension",        price:5200, img:null },
+  { brand:"Revel", name:"Rail GX Eagle",     handle:"revel-rail-gx-eagle",     type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension, 29\"", price:6200, img:null },
 ];
 
 // SHOP
@@ -762,11 +762,6 @@ const BikeCardLarge = ({ b, idx }) => {
           <span className="stock-dot" />
           <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#ffffff" }}>In Stock</span>
         </div>
-        {lowStock && (
-          <div style={{ position:"absolute", bottom:10, left:10, padding:"4px 9px", background:"rgba(0,0,0,0.72)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#ffffff", backdropFilter:"blur(4px)", borderRadius:2 }}>
-            Only {qty} left
-          </div>
-        )}
         {b.badge && <div style={{ position:"absolute", top:10, right:10, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>}
         <div style={{ position:"absolute", inset:0, transition:"background .3s" }}
           onMouseEnter={e => e.currentTarget.style.background='rgba(0,0,0,0.04)'}
@@ -1099,10 +1094,10 @@ const ServicesPage = () => {
         <div className="container-wide">
           <div className="reveal" style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 32, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", alignItems: "center" }}>
             <span>Turnaround</span>
-            <span>Basic Tune  ·  Same Day</span>
-            <span>Full Overhaul  ·  3–5 Days</span>
-            <span>Custom Build  ·  1–2 Weeks</span>
-            <span>Suspension  ·  1 Week</span>
+            <span>Flat Fix  ·  Same Day</span>
+            <span>E-Bike Flat Fix  ·  1–2 Days</span>
+            <span>Tune Up  ·  1–2 Weeks</span>
+            <span>Overhaul  ·  Sometimes Sooner</span>
           </div>
         </div>
       </section>
@@ -1402,10 +1397,10 @@ const Calendar = ({ onPick }) => {
 const FAQs = () => {
   const [open, setOpen] = React.useState(0);
   const items = [
-    { q: "How long does a basic tune-up take?", a: "Most basic tune-ups are same-day if dropped off before 11am. We'll call you when it's ready." },
+    { q: "How long does a tune-up take?", a: "Most tune-ups take 1–2 weeks depending on the season. Flat fixes, wheel trues and brake bleeds are usually same-day. We'll call or text you when it's ready." },
     { q: "Do you service e-bikes?", a: "Yes. Our techs are certified on Bosch, Shimano STEPS, and Brose systems. We also service most e-MTB suspension." },
-    { q: "Can I drop off after hours?", a: "We have a secure overnight drop slot. Fill out a tag online before you come and we'll process it first thing." },
-    { q: "Do you take walk-ins?", a: "We'll always look at your bike. For full services, booking online guarantees a slot." },
+    { q: "Do you do warranty work?", a: "Yes — we handle warranty claims for all brands we carry. There may be a service charge of around $45 plus any shipping costs depending on the manufacturer. Contact us and we'll sort it out." },
+    { q: "Do you take walk-ins?", a: "We'll always look at your bike. For full services, booking online guarantees a slot and helps us get you on the schedule faster." },
   ];
   return (
     <section className="section section-pad bg-white">
@@ -1887,7 +1882,7 @@ const GiftCardsPage = () => {
               <button onClick={()=>setQty(q=>q+1)} style={{ width:40,height:44,border:"none",background:"none",cursor:"pointer",fontSize:18,fontFamily:"var(--display)" }}>+</button>
             </div>
             <button className="btn" data-cursor="link" disabled={!canSend||adding} onClick={sendRequest}
-              style={{ flex:1, justifyContent:"center", minWidth:180, opacity: canAdd?1:0.4 }}>
+              style={{ flex:1, justifyContent:"center", minWidth:180, opacity: canSend?1:0.4 }}>
               {added?"Request Sent ✓":adding?"Sending…":"Order Gift Card"} {!adding&&!added&&<ArrowRight/>}
             </button>
           </div>
@@ -2388,4 +2383,162 @@ const PrivacyPage = () => (
   </div>
 );
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS });
+// WARRANTY PAGE
+const WarrantyPage = () => (
+  <div className="page-fade" data-screen-label="Warranty">
+    <SubHero eyebrow="Services  /  Warranty" title="We've got you covered." italic="Warranty work, done right." />
+    <section className="section section-pad bg-white">
+      <div className="container-narrow">
+        <p style={{ fontSize:17, lineHeight:1.75, color:"var(--gray-600)", marginBottom:40, maxWidth:600 }}>
+          We handle warranty claims for all brands we carry — Marin, Transition, Pivot, Surly, Salsa, Bianchi, Moots, Knolly, and Revel. If something fails under normal use, bring it in and we'll assess it and work with the manufacturer on your behalf.
+        </p>
+        {[
+          ["What's covered", "Frame and component defects under normal riding conditions. Manufacturer timelines and decisions apply. We'll advocate for you throughout the process."],
+          ["Service charge", "Most warranty assessments and submissions carry a $45 service charge. This covers our time inspecting, documenting, and liaising with the manufacturer. The charge is waived if the claim is approved and the work is done in-store."],
+          ["Shipping costs", "If the manufacturer requires the part or frame to be shipped, shipping costs are passed through at cost. We'll get you a quote before anything ships."],
+          ["Timelines", "Warranty timelines are set by the manufacturer — typically 2–6 weeks. We'll keep you updated throughout and push for the fastest resolution possible."],
+          ["How to start", "Bring your bike or the affected component in-store. We'll inspect it, take photos, and start the claim. You can also call us at (250) 860-1968 or email bikes@chainline.ca to get the process started."],
+        ].map(([title, body], i) => (
+          <div key={i} style={{ borderTop:"1px solid var(--hairline)", padding:"28px 0" }}>
+            <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:12 }}>{title}</div>
+            <p style={{ fontSize:15, lineHeight:1.7, color:"var(--gray-500)", margin:0, maxWidth:560 }}>{body}</p>
+          </div>
+        ))}
+        <div style={{ borderTop:"1px solid var(--hairline)", paddingTop:40, display:"flex", gap:16, flexWrap:"wrap" }}>
+          <button className="btn" data-cursor="link" onClick={() => window.cl.go('book')}>Book a Service <ArrowRight /></button>
+          <a href="tel:2508601968" className="btn" style={{ background:"transparent", border:"1px solid var(--black)", color:"var(--black)" }}>Call (250) 860-1968 <ArrowRight /></a>
+        </div>
+      </div>
+    </section>
+  </div>
+);
+
+// BOOK A DEMO PAGE
+const DemoPage = () => {
+  const [step, setStep] = React.useState(1);
+  const [data, setData] = React.useState({});
+  const [submitted, setSubmitted] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
+  const update = (k, v) => setData(d => ({ ...d, [k]: v }));
+  const next = () => setStep(s => Math.min(s + 1, 3));
+  const back = () => setStep(s => Math.max(s - 1, 1));
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+  const inpStyle = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+
+  const BIKES = [
+    "Transition Sentinel","Transition Spire","Transition Regulator",
+    "Pivot Switchblade","Pivot Shuttle AM",
+    "Marin Hawk Hill","Marin Pine Mountain",
+    "Not sure — help me choose",
+  ];
+
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("name",    data.name    || '');
+      fd.append("phone",   data.phone   || '');
+      fd.append("email",   data.email   || '');
+      fd.append("service", `DEMO REQUEST: ${data.bike || 'Not specified'}`);
+      fd.append("bike",    data.bike    || '');
+      fd.append("date",    data.date    || 'Flexible');
+      fd.append("issue",   data.notes   || '');
+      const res = await fetch(`${WORKER}/api/book`, { method:"POST", body: fd });
+      const json = await res.json();
+      if (json.ok) { setSubmitted(true); return; }
+      throw new Error();
+    } catch {
+      const body = encodeURIComponent(`Demo Request\n\nName: ${data.name}\nPhone: ${data.phone}\nEmail: ${data.email||'-'}\nBike: ${data.bike||'-'}\nDate: ${data.date||'Flexible'}\nNotes: ${data.notes||'-'}`);
+      window.location.href = `mailto:bikes@chainline.ca?subject=${encodeURIComponent('Demo Request — '+(data.name||'Customer'))}&body=${body}`;
+      setSubmitted(true);
+    } finally { setSubmitting(false); }
+  };
+
+  return (
+    <div className="page-fade" data-screen-label="Book a Demo">
+      <SubHero eyebrow="Demos  /  N°01" title="Try before you buy." italic="Take your next bike for a spin." />
+      <section className="section section-pad bg-white">
+        <div className="container-narrow">
+          {submitted ? (
+            <div style={{ textAlign:"center", padding:"60px 0" }}>
+              <div style={{ fontFamily:"var(--display)", fontSize:32, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", marginBottom:16 }}>Request received.</div>
+              <p style={{ color:"var(--gray-500)", fontSize:16, marginBottom:32 }}>We'll call to confirm your demo and get the bike dialled for you.</p>
+              <button className="btn" data-cursor="link" onClick={() => window.cl.go('shop')}>Browse Bikes <ArrowRight /></button>
+            </div>
+          ) : (
+            <>
+              <div style={{ display:"flex", gap:6, marginBottom:40 }}>
+                {[1,2,3].map(s => (
+                  <div key={s} style={{ flex:1, height:2, background: s <= step ? "var(--black)" : "var(--hairline)", transition:"background .3s" }} />
+                ))}
+              </div>
+              <div className="eyebrow" style={{ marginBottom:24 }}>Step {step} of 3</div>
+
+              {step === 1 && (
+                <div>
+                  <h2 className="display-l" style={{ marginBottom:12 }}>Your details.</h2>
+                  <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>We'll call to confirm and set up the demo.</p>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"24px 32px", marginBottom:32 }}>
+                    <div style={{ gridColumn:"1/-1" }}>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Name *</div>
+                      <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>update("name",e.target.value)} style={inpStyle} />
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Phone *</div>
+                      <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>update("phone",e.target.value)} style={inpStyle} />
+                    </div>
+                    <div>
+                      <div className="eyebrow" style={{ marginBottom:8 }}>Email</div>
+                      <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>update("email",e.target.value)} style={inpStyle} />
+                    </div>
+                  </div>
+                  <button className="btn" data-cursor="link" disabled={!data.name||!data.phone} onClick={next}>Continue <ArrowRight /></button>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div>
+                  <h2 className="display-l" style={{ marginBottom:12 }}>Which bike?</h2>
+                  <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>We'll have it set up and ready for you.</p>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:32 }}>
+                    {BIKES.map(b => (
+                      <button key={b} data-cursor="link" onClick={() => update("bike", b)}
+                        style={{ padding:"14px 16px", border:"2px solid "+(data.bike===b?"var(--black)":"var(--hairline)"), background:data.bike===b?"var(--black)":"transparent", color:data.bike===b?"var(--white)":"var(--black)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", textAlign:"left", cursor:"pointer", transition:"all .15s" }}>
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ display:"flex", gap:12 }}>
+                    <button className="btn" style={{ background:"transparent", border:"1px solid var(--black)", color:"var(--black)" }} onClick={back}>Back</button>
+                    <button className="btn" data-cursor="link" disabled={!data.bike} onClick={next}>Continue <ArrowRight /></button>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div>
+                  <h2 className="display-l" style={{ marginBottom:12 }}>When works?</h2>
+                  <p style={{ color:"var(--gray-500)", fontSize:15, marginBottom:36 }}>Demos are available during shop hours. We'll confirm by phone.</p>
+                  <div style={{ marginBottom:24 }}>
+                    <div className="eyebrow" style={{ marginBottom:8 }}>Preferred date / time</div>
+                    <input type="text" placeholder="e.g. Saturday afternoon, any weekday" value={data.date||""} onChange={e=>update("date",e.target.value)} style={inpStyle} />
+                  </div>
+                  <div style={{ marginBottom:32 }}>
+                    <div className="eyebrow" style={{ marginBottom:8 }}>Anything we should know?</div>
+                    <input type="text" placeholder="Riding style, experience level, height…" value={data.notes||""} onChange={e=>update("notes",e.target.value)} style={inpStyle} />
+                  </div>
+                  <div style={{ display:"flex", gap:12 }}>
+                    <button className="btn" style={{ background:"transparent", border:"1px solid var(--black)", color:"var(--black)" }} onClick={back}>Back</button>
+                    <button className="btn" data-cursor="link" disabled={submitting} onClick={submit}>{submitting?"Sending…":"Request Demo"} {!submitting&&<ArrowRight/>}</button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage });

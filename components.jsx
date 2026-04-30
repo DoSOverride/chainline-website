@@ -443,8 +443,10 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("classified") || l.includes("pinkbike")) return ["classifieds", null];
     if (l.includes("sale")) return ["shop", null];
     // Services / book
-    if (l.startsWith("book")) return ["book", null];
-    if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("warranty") || l.includes("fit") || l.includes("storage") || l.includes("demo")) return ["services", null];
+    if (l.startsWith("book a service") || l === "book") return ["book", null];
+    if (l.includes("demo")) return ["demo", null];
+    if (l.includes("warranty")) return ["warranty", null];
+    if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("fit") || l.includes("storage")) return ["services", null];
     // Explore
     if (l.includes("ride") || l.includes("strava") || l.includes("clinic") || l.includes("event")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
@@ -662,11 +664,12 @@ const MobileNav = ({ open, onClose }) => {
           <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("services")); }}>All Services</a>
           <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             {[
-              { label:"Book a Service",  route:"book"     },
-              { label:"Bike Fit",        route:"book"     },
-              { label:"Demo Ride",       route:"services" },
-              { label:"Bike Storage",    route:"services" },
-              { label:"Service Pricing", route:"services" },
+              { label:"Book a Service",  route:"book"      },
+              { label:"Book a Demo",     route:"demo"      },
+              { label:"Bike Fitting",    route:"services"  },
+              { label:"Bike Storage",    route:"services"  },
+              { label:"Warranty",        route:"warranty"  },
+              { label:"Service Pricing", route:"services"  },
             ].map(it => (
               <a key={it.label} href="#" style={{ ...subA, fontSize:20 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
             ))}
@@ -830,7 +833,7 @@ const Footer = () => (
         <div className="footer-col">
           <h4>Services</h4>
           <ul>
-            {[["Book a Service","book"],["Bike Fitting","book"],["Custom Builds","services"],["Storage Program","services"],["Demo Bikes","book"],["Warranty","services"]].map(([label,route]) => (
+            {[["Book a Service","book"],["Book a Demo","demo"],["Bike Fitting","services"],["Custom Builds","services"],["Storage Program","services"],["Warranty","warranty"]].map(([label,route]) => (
               <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
             ))}
           </ul>

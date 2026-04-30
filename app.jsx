@@ -229,6 +229,8 @@ const App = () => {
         {page === "brands" && <BrandPage />}
         {page === "terms" && <TermsPage />}
         {page === "privacy" && <PrivacyPage />}
+        {page === "warranty" && <WarrantyPage />}
+        {page === "demo" && <DemoPage />}
       </main>
 
       <Footer />
