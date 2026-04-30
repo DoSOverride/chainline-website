@@ -2076,7 +2076,7 @@ const PART_TABS = [
   { id:'protection', label:'Gloves & Armour',    emoji:'🥊', img:`${R2}/shop/interior-surly.jpg`,   sub:"Gloves, body armour, sunglasses",                 depts:['Gloves','Armour','Sunglasses'] },
   { id:'shoes',      label:'Shoes & Cleats',     emoji:'👟', img:`${R2}/shop/interior-surly.jpg`,   sub:"MTB shoes, road shoes, cleats",                   depts:['Shoes Mountain','Shoes Road','Cleats'] },
   { id:'clothing',   label:'Clothing',           emoji:'👕', img:`${R2}/shop/interior-surly.jpg`,   sub:"Jerseys, shorts, arm warmers, socks",             depts:['Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips'] },
-  { id:'tools',      label:'Tools & Maintenance',emoji:'🔧', img:`${R2}/parts/tools-hero.jpg`,      sub:"Workshop tools, pumps, lube, trainers",           depts:['Tools','Pumps','Lube','Trainers'] },
+  { id:'tools',      label:'Tools & Maintenance',emoji:'🔧', img:`${R2}/parts/tools-hero.jpg`,      sub:"Pumps, lube, degreasers, workshop tools",         depts:['Tools','Pumps','Lube','Degreasers','Trainers'] },
   { id:'bags',       label:'Bags & Hydration',   emoji:'🎒', img:`${R2}/lifestyle/rides-social.jpg`,sub:"Packs, bags, hydration, water bottles",           depts:['Bags','Packs','Hydration','Water Bottle','Water Bottle cage','Basket'] },
   { id:'lights',     label:'Lights & Computers', emoji:'💡', img:`${R2}/lifestyle/trail-forest.jpg`,sub:"Bike lights, cycling computers, GPS",             depts:['Lights','Computers'] },
   { id:'locks',      label:'Locks',              emoji:'🔒', img:`${R2}/shop/shop-interior.jpg`,    sub:"Cable locks, U-locks, chain locks",               depts:['Locks'] },
