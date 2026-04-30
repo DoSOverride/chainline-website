@@ -155,12 +155,13 @@ const useBikeVariants = (bike) => {
       };
 
       setVariants(matches.map(ls => {
-        const { size, color: rawColor } = ls.parsedSize || ls.parsedColor
-          ? { size: ls.parsedSize, color: ls.parsedColor }
-          : { size: null, color: null };
+        const parsed = window.parseNameParts ? window.parseNameParts(ls.name) : { size: null, color: null };
+        const size  = ls.parsedSize  || parsed.size  || null;
+        const rawColor = ls.parsedColor || parsed.color || null;
         const color = extractColor(ls.name, size) || rawColor;
+        const wheel = ls.wheelSize || window.guessWheelSize?.(ls.name) || null;
         return { sku: ls.sku, name: ls.name, price: ls.price, size, color,
-          wheel: ls.wheelSize || null, inStock: ls.inStock, qty: ls.qty || 0, img: ls.img || null };
+          wheel, inStock: ls.inStock, qty: ls.qty || 0, img: ls.img || null };
       }));
       setVarLoading(false);
       return true;
@@ -241,6 +242,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
     : getBikeSpecs(b);
   const desc  = data.description || getBikeDescription(b);
 
+  const defV = inStockV[0] || variants[0];
   const selected = variants.find(v =>
     (!hasWheels || v.wheel === selWheel) &&
     (!hasColors || v.color === selColor) &&

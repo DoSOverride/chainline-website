@@ -339,3 +339,6 @@ window.lightspeedReady = (async () => {
     console.warn('[ChainLine] Lightspeed unavailable:', err.message);
   }
 })();
+
+window.parseNameParts = parseNameParts;
+window.guessWheelSize = guessWheelSize;
