@@ -531,9 +531,8 @@ const GroupRidesTeaser = () => {
     return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
   };
   const rides = [
-    { dow: 1, name: "Knox Mountain Monday", meta: "MTB · 22km · 650m", level: "Intermediate" },
-    { dow: 3, name: "Lunch Loop",           meta: "Road · 35km · Flat", level: "All abilities" },
-    { dow: 6, name: "Gravel Sundays",       meta: "Gravel · 75km · Backcountry", level: "Advanced" },
+    { dow: 4, name: "Thursday Night Shuttle / Pedal", meta: "MTB · Shuttle or Pedal", level: "All levels" },
+    { dow: 5, name: "Friday Night Pedal Ride",        meta: "MTB · Crawford",          level: "All paces"  },
   ].map(r => ({ ...r, date: nextDate(r.dow) }));
   return (
     <section className="section section-pad bg-black" data-screen-label="09 Group Rides">
@@ -546,7 +545,7 @@ const GroupRidesTeaser = () => {
             <div className="section-label" style={{ color: "var(--gray-300)" }}>Community  /  N°06</div>
             <h2 className="display-xl" style={{ marginBottom: 24 }}>Ride <span className="serif-italic">with us.</span></h2>
             <p style={{ fontSize: 16, color: "var(--gray-300)", lineHeight: 1.6, marginBottom: 40 }}>
-              Five regular rides every week. Road, gravel, mountain, social. Show up, clip in, leave faster than you came.
+              Two rides every week, all year. Mountain, shuttle, pedal. Show up, clip in, leave faster than you came.
             </p>
             <div style={{ borderTop: "1px solid var(--hairline-light)" }}>
               {rides.map((r, i) => (

@@ -1565,24 +1565,6 @@ const AboutPage = () => (
 const RidesPage = () => {
   const rides = [
     {
-      day: "Monday", dow: 1,
-      name: "Knox Mountain Monday",
-      time: "5:30 PM",
-      meet: "Knox Mountain — Bottom Parking Lot",
-      desc: "Weekly MTB night on Knox. Show up at the bottom lot and we ride together. Intermediate pace — you should be comfortable on tech singletrack.",
-      type: "MTB", meta: "22km · 650m gain", level: "Intermediate",
-      loc: "Knox Mountain Park, Kelowna, BC",
-    },
-    {
-      day: "Wednesday", dow: 3,
-      name: "Lunch Loop",
-      time: "12:00 PM",
-      meet: "ChainLine Cycle — 1139 Ellis St",
-      desc: "Midweek road spin out of the shop. 35km, flat, quick. Back in under 90 minutes. All abilities — if you can hold a conversation you're fine.",
-      type: "Road", meta: "35km · Flat", level: "All abilities",
-      loc: "ChainLine Cycle, 1139 Ellis St, Kelowna, BC",
-    },
-    {
       day: "Thursday", dow: 4,
       name: "Thursday Night Shuttle / Pedal",
       time: "6:00 PM Sharp",
@@ -1599,15 +1581,6 @@ const RidesPage = () => {
       desc: "Weekly pedal night at Crawford. Meet at the power lines and we roll from there. Good vibes, all paces.",
       type: "MTB", meta: "~20km · Trail", level: "All paces",
       loc: "Crawford Power Lines, Kelowna, BC",
-    },
-    {
-      day: "Saturday", dow: 6,
-      name: "Gravel Sundays",
-      time: "8:00 AM",
-      meet: "ChainLine Cycle — 1139 Ellis St",
-      desc: "Longer backcountry gravel loop out of the shop. 75km, mixed surfaces, some climbing. Advanced riders — come fuelled up and ready to work.",
-      type: "Gravel", meta: "75km · Backcountry", level: "Advanced",
-      loc: "ChainLine Cycle, 1139 Ellis St, Kelowna, BC",
     },
   ];
 
