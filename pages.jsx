@@ -1967,22 +1967,31 @@ const PartCartBtn = ({ item, compact }) => {
 // ── Parts & Accessories — full rebuild ──────────────────────────────────────
 // Architecture: load all inventory once → filter client-side → instant nav
 
+const R2 = "https://still-term-f1ec.taocaruso77.workers.dev/r2";
 const PART_TABS = [
-  { id:'drivetrain',  label:'Drivetrain',         emoji:'⚙️',
+  { id:'drivetrain',  label:'Drivetrain',         emoji:'⚙️',  img: null,
+    sub: "Cassettes, chains, derailleurs, cranks, shifters",
     depts:['Cassette','Chains','Chainrings','Chain Retention','Cranks','Bottom Brackets','Derailleur Front','Derailleur Rear','Deraileur Hangers','Free Hub Body','Freewheel','Shifters MTB','Shifters - Road','Cables'] },
-  { id:'brakes',      label:'Brakes',             emoji:'🔴',
+  { id:'brakes',      label:'Brakes',             emoji:'🔴',  img: null,
+    sub: "Disc brakes, brake pads, levers, cables",
     depts:['Brake','Brake pads','Brake parts','Brake Lever U','Brake Lever V','Brake adapter disc'] },
-  { id:'wheels',      label:'Wheels & Tires',     emoji:'⭕',
+  { id:'wheels',      label:'Wheels & Tires',     emoji:'⭕',  img: `${R2}/shop/interior-tires.jpg`,
+    sub: "Tires, tubes, wheels, rims, hubs, sealant",
     depts:['Wheels','Wheelset (FR+RR)','Rims','Hubs','Hub Parts','Spokes','Skewers QR','Axle','Tires 29"','Tires 700C','Tires 26"','Tires 27" & 26x1&1/4 etc...','Tires 24"','Tires 12, 16, 20','Tires Fatbike','Tires Tubular','Tubes','Tire Sealant','Tire Protection'] },
-  { id:'cockpit',     label:'Cockpit',            emoji:'🎛️',
+  { id:'cockpit',     label:'Cockpit',            emoji:'🎛️',  img: `${R2}/shop/interior-parts.jpg`,
+    sub: "Handlebars, stems, grips, saddles, seatposts, headsets",
     depts:['Handlebar','Stem','Grips','Bar tape','Aerobar','Saddles','Seat post','Headsets','Spacers','Bearings'] },
-  { id:'suspension',  label:'Suspension',         emoji:'🔩',
+  { id:'suspension',  label:'Suspension',         emoji:'🔩',  img: `${R2}/lifestyle/trail-knox.jpg`,
+    sub: "Forks, rear shocks, oil, seals",
     depts:['Forks','Fork Parts','Fork Oil','Rear Shock','Seals'] },
-  { id:'fit',         label:'Clothing & Helmets', emoji:'🪖',
+  { id:'fit',         label:'Clothing & Helmets', emoji:'🪖',  img: `${R2}/shop/interior-surly.jpg`,
+    sub: "Helmets, gloves, shoes, clothing, armour, sunglasses",
     depts:['Helmet','Gloves','Shoes Mountain','Shoes Road','Cleats','Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips','Sunglasses','Armour'] },
-  { id:'tools',       label:'Tools & Maintenance',emoji:'🔧',
+  { id:'tools',       label:'Tools & Maintenance',emoji:'🔧',  img: null,
+    sub: "Workshop tools, pumps, lube, trainers",
     depts:['Tools','Pumps','Lube','Trainers'] },
-  { id:'accessories', label:'Accessories',        emoji:'🎒',
+  { id:'accessories', label:'Accessories',        emoji:'🎒',  img: `${R2}/shop/shop-interior.jpg`,
+    sub: "Lights, locks, computers, bags, racks, fenders",
     depts:['Lights','Locks','Computers','Bags','Packs','Car Racks','Bike Racks','Fenders','Kickstands','Water Bottle','Water Bottle cage','Hydration ','Bells','Mirrors','Misc. Accessories','Basket'] },
 ];
 
@@ -2129,8 +2138,31 @@ const PartsPage = () => {
           {/* ── Main ── */}
           <div style={{ padding:"40px 0 80px" }}>
 
+            {/* Category banner */}
+            {!search && (
+              activeTab.img
+                ? <div style={{ position:"relative", height:160, overflow:"hidden", marginBottom:0 }}>
+                    <img src={activeTab.img} alt={activeTab.label}
+                      style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)" }} />
+                    <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", padding:"0 32px", gap:16 }}>
+                      <div>
+                        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"var(--white)", lineHeight:1.1 }}>{activeTab.label}</div>
+                        <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.6)", marginTop:6 }}>{activeTab.sub}</div>
+                      </div>
+                    </div>
+                  </div>
+                : <div style={{ height:120, background:"var(--black)", display:"flex", alignItems:"center", padding:"0 32px", gap:16, marginBottom:0 }}>
+                    <div style={{ fontSize:28, lineHeight:1 }}>{activeTab.emoji}</div>
+                    <div>
+                      <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"var(--white)", lineHeight:1.1 }}>{activeTab.label}</div>
+                      <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:6 }}>{activeTab.sub}</div>
+                    </div>
+                  </div>
+            )}
+
             {/* Search + header */}
-            <div style={{ padding:"0 32px 24px", borderBottom:"1px solid var(--hairline)" }}>
+            <div style={{ padding:"24px 32px 24px", borderBottom:"1px solid var(--hairline)" }}>
               <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
                 <h1 style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", margin:0, flex:1 }}>
                   {search ? `"${search}"` : activeTab.label}
