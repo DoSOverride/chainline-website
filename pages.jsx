@@ -1873,8 +1873,18 @@ const GiftCardsPage = () => {
               placeholder="Send gift card code to..."
               value={recipientEmail}
               onChange={e => setRecipientEmail(e.target.value)}
-              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(validEmail?"var(--black)":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
+              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(validEmail?"var(--black)":recipientEmail.length>3?"#e05c3a":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
             />
+            {recipientEmail.length > 3 && !validEmail && (
+              <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"#e05c3a" }}>
+                Double-check the email address — the gift card code gets sent here
+              </div>
+            )}
+            {validEmail && (
+              <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"var(--stock-green)" }}>
+                ✓ Gift card code will be sent to {recipientEmail}
+              </div>
+            )}
           </div>
 
           <button className="btn" data-cursor="link"
