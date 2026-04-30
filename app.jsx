@@ -6,7 +6,7 @@ const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","ki
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools","accessories"];
 const _COMP_TABS = ["drivetrain","brakes","wheels","cockpit","suspension"];
 const _ACC_TABS  = ["fit","tools","accessories"];
-const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social"];
+const _PAGES     = ["services","book","about","contact","rides","trails","events","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social"];
 const partPageFor = (tab) => _ACC_TABS.includes(tab) ? "accessories" : "components";
 
 function pathToRoute(pathname) {
@@ -257,6 +257,7 @@ const App = () => {
         {page === "demo" && <DemoPage />}
         {page === "fitting" && <FittingPage />}
         {page === "storage" && <StoragePage />}
+        {page === "events" && <EventsPage />}
         {page === "social" && <SocialPage />}
       </main>
 

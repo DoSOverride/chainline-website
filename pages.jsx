@@ -3204,3 +3204,90 @@ const AccessoriesLandingPage = () => {
 };
 
 Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, PartsLandingPage, ComponentsLandingPage, AccessoriesLandingPage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
+
+// EVENTS & CLINICS PAGE
+const EventsPage = () => {
+  const CLINICS = [
+    { n:"01", name:"MTB Fundamentals",        level:"Beginner",     price:"$75", duration:"3 hrs",    included:"Bike available if needed · Helmet required",  desc:"Body position, braking, cornering, and basic trail features. Perfect if you're new to singletrack or returning after a long break. We meet at the shop and roll to Knox." },
+    { n:"02", name:"Trail Skills Progression", level:"Intermediate", price:"$95", duration:"4 hrs",    included:"Small group (max 6) · Video feedback",         desc:"Rock gardens, drops, switchbacks, technical climbs. You can ride blue trails comfortably — we'll push you toward the blacks. Knox Mountain and Crawford." },
+    { n:"03", name:"Women's Ride & Clinic",    level:"All levels",   price:"$85", duration:"Half day", included:"Coffee at the shop after",                     desc:"Women-only skills session followed by a group ride. Relaxed pace, honest coaching, no ego. Runs monthly through the season — one of our most popular programs." },
+    { n:"04", name:"Kids & Youth Clinic",      level:"Ages 8–16",    price:"$60", duration:"2.5 hrs",  included:"Helmets + pads available · Max 8 kids",        desc:"Confidence-building fundamentals for younger riders. Fun, safe, and progressive. Kelowna Bike Park and Knox beginner trails. Parent or guardian welcome." },
+  ];
+  const EVENTS = [
+    { month:"May", tag:"Demo Day",   name:"Transition + Pivot Spring Demo", desc:"Try before you buy. Full fleet of 2026 Transition and Pivot bikes for half-day Knox laps. Register in store — spots fill fast.",           cta:"Register in store" },
+    { month:"Jun", tag:"Group Ride", name:"Solstice Lap — Knox Mountain",   desc:"Annual summer solstice group ride. Longest day of the year, longest lap we can muster. All abilities welcome. Potluck at the trailhead after.", cta:"Show up" },
+    { month:"Sep", tag:"Clinic",     name:"Fall Shred Clinic",              desc:"One last big clinic before the season winds down. Mixed levels, two instructors, full day on Knox and Crawford. Books out every year.",          cta:"Call to book" },
+    { month:"Oct", tag:"Shop Event", name:"Bike Swap & Service Day",        desc:"Sell your old gear, pick something new up. Discounted tune-ups all day. Live music and food trucks in the parking lot. Free to attend.",       cta:"Free entry" },
+  ];
+  return (
+    <div className="page-fade" data-screen-label="P Events">
+      <SubHero eyebrow="Community  /  N°02" title="Events &" italic="Clinics." sub="Skills clinics, demo days, group rides, and shop events — all year in Kelowna." />
+      <section className="section section-pad bg-white">
+        <div className="container-wide">
+          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:64, flexWrap:"wrap", gap:24 }}>
+            <div>
+              <div className="section-label">Skill Clinics  /  N°01</div>
+              <h2 className="display-xl">Learn to<br/><span className="serif-italic">ride better.</span></h2>
+            </div>
+            <p style={{ maxWidth:380, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>Small groups. Real coaches. Run by riders who work at the shop and ride these trails every week. Call us or drop in to book your spot.</p>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:24 }}>
+            {CLINICS.map((c, i) => (
+              <div key={i} className={"reveal reveal-d-" + (i+1)} style={{ padding:36, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:14 }}>
+                <div style={{ display:"flex", justifyContent:"space-between" }}>
+                  <div className="eyebrow">{c.n}  ·  {c.level}</div>
+                  <span className="pill">{c.price}</span>
+                </div>
+                <div style={{ fontFamily:"var(--display)", fontSize:22, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1 }}>{c.name}</div>
+                <p style={{ fontSize:14, lineHeight:1.75, color:"var(--gray-600)", flex:1, margin:0 }}>{c.desc}</p>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{c.duration}  ·  {c.included}</div>
+                <a href="tel:2508601968" className="btn btn-outline" data-cursor="link" style={{ alignSelf:"flex-start" }}>Book by phone <ArrowRight /></a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="section section-pad bg-black">
+        <div className="container-wide">
+          <div className="reveal" style={{ marginBottom:64 }}>
+            <div className="section-label" style={{ color:"var(--gray-300)" }}>Calendar  /  N°02</div>
+            <h2 className="display-xl">What is<br/><span className="serif-italic">coming up.</span></h2>
+          </div>
+          <div style={{ borderTop:"1px solid var(--hairline-light)" }}>
+            {EVENTS.map((e, i) => (
+              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"80px 1fr auto", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"start" }}>
+                <div>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:6 }}>{e.month}</div>
+                  <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.15)", color:"rgba(255,255,255,0.6)", fontSize:9 }}>{e.tag}</span>
+                </div>
+                <div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(18px,2vw,24px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:10 }}>{e.name}</div>
+                  <p style={{ fontSize:14, color:"var(--gray-300)", lineHeight:1.7, margin:0 }}>{e.desc}</p>
+                </div>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", whiteSpace:"nowrap", paddingTop:4 }}>{e.cta}</div>
+              </div>
+            ))}
+          </div>
+          <div className="reveal" style={{ marginTop:56, display:"flex", gap:16, flexWrap:"wrap" }}>
+            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener" className="btn btn-outline-light" data-cursor="link">Follow on Instagram <ArrowRight /></a>
+            <button className="btn btn-light" data-cursor="link" onClick={() => window.cl.go("contact")}>Ask about a custom clinic <ArrowRight /></button>
+          </div>
+        </div>
+      </section>
+      <section className="section section-pad bg-paper">
+        <div className="container-narrow" style={{ textAlign:"center" }}>
+          <div className="reveal">
+            <div className="section-label" style={{ justifyContent:"center", marginBottom:24 }}>Trail Conditions</div>
+            <h3 className="display-l" style={{ marginBottom:20 }}>Check before<br/><span className="serif-italic">you ride.</span></h3>
+            <p style={{ fontSize:15, color:"var(--gray-500)", marginBottom:36, lineHeight:1.7 }}>Real-time conditions for Knox, Crawford, Black Mountain, and all Kelowna-area trails — updated by the trail community on Trailforks.</p>
+            <div style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
+              <a href="https://www.trailforks.com/region/kelowna/" target="_blank" rel="noopener" className="btn" data-cursor="link">Kelowna on Trailforks <ArrowRight /></a>
+              <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("trails")}>Our Trail Guide <ArrowRight /></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+window.EventsPage = EventsPage;

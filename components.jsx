@@ -419,7 +419,8 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("tune") || l.includes("drivetrain") || l.includes("suspension") || l.includes("wheel") || l.includes("custom") || l.includes("service pricing")) return ["services", null];
     // Explore
     if (l.includes("social")) return ["social", null];
-    if (l.includes("ride") || l.includes("clinic") || l.includes("event")) return ["rides", null];
+    if (l.includes("clinic") || l.includes("event") || l.includes("skill")) return ["events", null];
+    if (l.includes("ride")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
     if (l === "about") return ["about", null];
     if (l === "contact") return ["contact", null];
@@ -686,8 +687,12 @@ const MobileNav = ({ open, onClose }) => {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             <div style={{ paddingRight:16 }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Rides & Events</div>
-              {["Group Rides","Skill Clinics","Events"].map(it => (
-                <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("rides")); }}>{it}</a>
+              {[
+                { label:"Group Rides",   route:"rides"  },
+                { label:"Skill Clinics", route:"events" },
+                { label:"Events",        route:"events" },
+              ].map(it => (
+                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14, marginTop:24 }}>Community</div>
               {[
