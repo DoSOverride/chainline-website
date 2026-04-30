@@ -69,7 +69,7 @@ const Hero = ({ variant }) => {
           <div style={{ maxWidth: 420, opacity: 0, animation: "splitIn 1s 1.4s forwards ease", transform: "translateY(20px)" }} key={"s-" + variant}>
             <div style={{ fontSize: 16, lineHeight: 1.5, color: "var(--gray-300)" }}>{v.sub}</div>
           </div>
-          <div style={{ display: "flex", gap: 16, opacity: 0, animation: "splitIn 1s 1.6s forwards ease", transform: "translateY(20px)" }}>
+          <div className="hero-ctas" style={{ display: "flex", gap: 16, opacity: 0, animation: "splitIn 1s 1.6s forwards ease", transform: "translateY(20px)" }}>
             <button className="btn btn-light" data-cursor="link" onClick={() => window.cl.go("shop")}>Shop Bikes <ArrowRight /></button>
             <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Service <ArrowRight /></button>
           </div>
@@ -475,14 +475,14 @@ const LocalStory = () => (
 // Parts horizontal scroll
 const GearHScroll = () => {
   const cats = [
-    { name: "Helmets & Protection", count: "84 products" },
-    { name: "Apparel", count: "212 products" },
-    { name: "Components", count: "1,408 products" },
-    { name: "Tools & Maintenance", count: "326 products" },
-    { name: "Bags & Racks", count: "97 products" },
-    { name: "Lights & Safety", count: "112 products" },
-    { name: "Shoes", count: "68 products" },
-    { name: "Nutrition", count: "44 products" },
+    { name: "Helmets & Protection", tab: "fit",          img: `${WORKER_URL}/r2/shop/interior-surly.jpg` },
+    { name: "Apparel & Clothing",   tab: "fit",          img: null },
+    { name: "Components",           tab: "drivetrain",   img: `${WORKER_URL}/r2/shop/interior-parts.jpg` },
+    { name: "Tools & Maintenance",  tab: "tools",        img: null },
+    { name: "Bags & Racks",         tab: "accessories",  img: null },
+    { name: "Lights & Computers",   tab: "accessories",  img: null },
+    { name: "Wheels & Tires",       tab: "wheels",       img: `${WORKER_URL}/r2/shop/interior-tires.jpg` },
+    { name: "Suspension",           tab: "suspension",   img: null },
   ];
   return (
     <section className="section section-pad bg-white" data-screen-label="08 Gear" style={{ paddingBottom: 80 }}>
@@ -492,22 +492,28 @@ const GearHScroll = () => {
             <div className="section-label">Gear Up  /  N°05</div>
             <h2 className="display-xl">Parts &<br/><span className="serif-italic">accessories.</span></h2>
           </div>
-          <div style={{ display: "flex", gap: 12, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)" }}>
-            <span>Scroll →</span>
-          </div>
+          <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("parts")}>
+            Browse All Parts <ArrowRight />
+          </button>
         </div>
       </div>
       <div className="hscroll" style={{ overflowX: "auto", paddingLeft: 40, paddingRight: 40, scrollSnapType: "x mandatory" }}>
         <div style={{ display: "flex", gap: 24, paddingBottom: 24 }}>
           {cats.map((c, i) => (
-            <a key={i} href="#" data-cursor="link" style={{ flex: "0 0 360px", scrollSnapAlign: "start" }}>
-              <div className="ph ph-corners" style={{ aspectRatio: "3/4", position: "relative" }}>
-                <span className="ph-label">PHOTO  /  3:4  /  B&W</span>
-                <div style={{ position: "absolute", top: 20, left: 20, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)" }}>{String(i + 1).padStart(2, "0")}</div>
+            <a key={i} href="#" data-cursor="link" style={{ flex: "0 0 280px", scrollSnapAlign: "start" }}
+               onClick={e => { e.preventDefault(); window.cl.go("parts", { tab: c.tab }); }}>
+              <div className={c.img ? "" : "ph ph-corners"} style={{ aspectRatio: "3/4", position: "relative", overflow: "hidden",
+                background: c.img ? "var(--near-black)" : undefined }}>
+                {c.img
+                  ? <img src={c.img} alt={c.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", opacity:.75 }} />
+                  : <span className="ph-label">PARTS  ·  {c.name.toUpperCase()}</span>
+                }
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }} />
+                <div style={{ position: "absolute", top: 20, left: 20, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>{String(i + 1).padStart(2, "0")}</div>
                 <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "var(--white)" }}>
-                  <div className="display-m" style={{ marginBottom: 8 }}>{c.name}</div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-                    <span>{c.count}</span>
+                  <div className="display-s" style={{ marginBottom: 10 }}>{c.name}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)" }}>
+                    <span>Shop now</span>
                     <ArrowRight />
                   </div>
                 </div>
@@ -697,7 +703,7 @@ const Testimonials = () => {
       <div className="container-wide">
         <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:64, gap:24, flexWrap:"wrap" }}>
           <div>
-            <div className="section-label">Customer Reviews  /  N°06</div>
+            <div className="section-label">Customer Reviews  /  N°09</div>
             <h2 className="display-l">What riders<br/><span className="serif-italic">say about us.</span></h2>
           </div>
           <a href="https://search.google.com/local/writereview?placeid=ChIJbbM4_V7zfVMRmOhSjhXRP9o&source=g.page.m._" target="_blank" rel="noopener"

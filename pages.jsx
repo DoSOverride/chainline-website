@@ -2112,11 +2112,23 @@ const PartsPage = () => {
 
   return (
     <div className="page-fade">
-      <section style={{ background:"var(--white)", paddingTop:100, minHeight:"100vh" }}>
-        <div style={{ display:"grid", gridTemplateColumns:"200px 1fr", minHeight:"80vh" }}>
+      <section className="parts-page-section" style={{ background:"var(--white)", paddingTop:100, minHeight:"100vh" }}>
 
-          {/* ── Sidebar ── */}
-          <div style={{ borderRight:"1px solid var(--hairline)", paddingTop:40, position:"sticky", top:80, alignSelf:"start", height:"calc(100vh - 80px)", overflowY:"auto" }}>
+        {/* ── Mobile tab strip (hidden on desktop) ── */}
+        <div className="parts-mobile-tabs">
+          {PART_TABS.map(t => (
+            <button key={t.id} className={"parts-mobile-tab " + (cat === t.id && !search ? "active" : "")}
+              onClick={() => switchCat(t.id)}>
+              <span style={{ fontSize:14 }}>{t.emoji}</span>
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="parts-layout">
+
+          {/* ── Sidebar (desktop only) ── */}
+          <div className="parts-sidebar">
             <div style={{ padding:"0 16px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Categories</div>
             {PART_TABS.map(t => {
               const cached = window.CL_LS?.tabCache?.[t.id];

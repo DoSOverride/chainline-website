@@ -1365,6 +1365,83 @@ img {
 }
 
 /* ============================================================
+   PARTS PAGE
+   ============================================================ */
+.parts-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 80vh;
+}
+
+.parts-sidebar {
+  border-right: 1px solid var(--hairline);
+  padding-top: 40px;
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+/* Mobile tab strip — hidden on desktop */
+.parts-mobile-tabs {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .parts-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .parts-sidebar {
+    display: none !important;
+  }
+  .parts-page-section {
+    padding-top: 136px !important;
+  }
+  .parts-mobile-tabs {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-bottom: 2px solid var(--hairline);
+    background: var(--white);
+    position: sticky;
+    top: 136px;
+    z-index: 40;
+  }
+  .parts-mobile-tabs::-webkit-scrollbar { display: none; }
+  .parts-mobile-tab {
+    flex-shrink: 0;
+    padding: 13px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color .15s, border-color .15s;
+  }
+  .parts-mobile-tab.active {
+    color: var(--black);
+    border-bottom-color: var(--black);
+  }
+  /* Stats: 4th and 5th items don't need a left border when they wrap */
+  .home-stats-grid > *:nth-child(4),
+  .home-stats-grid > *:nth-child(5) {
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+}
+
+/* ============================================================
    MOBILE — comprehensive responsive overrides
    ============================================================ */
 @media (max-width: 768px) {
@@ -1431,6 +1508,10 @@ img {
   /* ── Touch scroll ── */
   .h-scroll { -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
   .h-scroll > * { scroll-snap-align: start; }
+
+  /* ── Hero CTAs — stack on mobile ── */
+  .hero-ctas { flex-direction: column !important; gap: 12px !important; }
+  .hero-ctas .btn { width: 100% !important; justify-content: center !important; }
 
   /* ── Home grids ── */
   .home-featured-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
