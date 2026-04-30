@@ -349,10 +349,10 @@ const ServiceCard = ({ s }) => (
           <span>Hover for details</span><span>↻</span>
         </div>
       </div>
-      <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", background: "var(--white)", color: "var(--black)", padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-        <div className="eyebrow">{s.n}  ·  STARTING AT</div>
+      <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", background: "#111", border: "1px solid var(--hairline-light)", color: "var(--white)", padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div className="eyebrow eyebrow-light">{s.n}  ·  STARTING AT</div>
         <div className="display-l" style={{ fontSize: 56 }}>{s.price}</div>
-        <button className="btn" data-cursor="link" style={{ alignSelf: "flex-start" }} onClick={() => window.cl.go("book")}>Book Now <ArrowRight /></button>
+        <button className="btn btn-light" data-cursor="link" style={{ alignSelf: "flex-start" }} onClick={() => window.cl.go("book")}>Book Now <ArrowRight /></button>
       </div>
     </div>
   </div>
@@ -479,8 +479,8 @@ const GearHScroll = () => {
     { name: "Helmets & Protection", tab: "fit",          img: `${R2}/shop/interior-surly.jpg` },
     { name: "Apparel & Clothing",   tab: "fit",          img: `${R2}/lifestyle/rides-group.jpg` },
     { name: "Components",           tab: "drivetrain",   img: `${R2}/shop/interior-parts.jpg` },
-    { name: "Tools & Maintenance",  tab: "tools",        img: `${R2}/shop/shop-interior.jpg` },
-    { name: "Bags & Racks",         tab: "accessories",  img: `${R2}/lifestyle/trail-action.jpg` },
+    { name: "Tools & Maintenance",  tab: "tools",        img: `${R2}/parts/tools-hero.jpg` },
+    { name: "Bags & Racks",         tab: "accessories",  img: `${R2}/lifestyle/rides-social.jpg` },
     { name: "Lights & Computers",   tab: "accessories",  img: `${R2}/lifestyle/trail-forest.jpg` },
     { name: "Wheels & Tires",       tab: "wheels",       img: `${R2}/shop/interior-tires.jpg` },
     { name: "Suspension",           tab: "suspension",   img: `${R2}/lifestyle/trail-pines.jpg` },
@@ -618,7 +618,7 @@ const TrailSpotlight = () => {
             {trails.slice(1).map((t, i) => (
               <a key={i} href="#" data-cursor="link" className="reveal reveal-d-2" onClick={e => { e.preventDefault(); window.cl.go("trails"); }}
                 style={{ position: "relative", minHeight: 220, overflow: "hidden", display: "block" }}>
-                <img src={`${WORKER_URL}/r2/lifestyle/${i === 0 ? "trail-action.jpg" : "trail-pines.jpg"}`} alt={t.name}
+                <img src={`${WORKER_URL}/r2/lifestyle/${i === 0 ? "trail-forest.jpg" : "trail-action.jpg"}`} alt={t.name}
                   style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", position: "absolute", inset: 0 }} />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)" }} />
                 <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "var(--white)" }}>
