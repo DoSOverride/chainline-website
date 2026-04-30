@@ -124,6 +124,13 @@
 /* Pill / tag chips */
 [data-theme="dark"] .pill { background: var(--gray-100) !important; border-color: var(--gray-200) !important; }
 
+/* Parts add-to-cart button — idle state inverts in dark mode, needs explicit dark bg */
+[data-theme="dark"] .part-cart-btn[data-state="idle"] {
+  background: rgba(255,255,255,0.14) !important;
+  color: #f0f0ee !important;
+  outline: 1px solid rgba(255,255,255,0.2);
+}
+
 /* Bike images — keep as-is (white bg bikes look fine on dark paper background) */
 [data-theme="dark"] img.bike-img {
   mix-blend-mode: normal !important;

@@ -1899,8 +1899,8 @@ const PartCartBtn = ({ item, compact }) => {
   const labels = { idle: compact ? '+' : 'Add to Cart', adding: '…', added: '✓', unavailable: 'Contact Us' };
   const bgs    = { idle: 'var(--black)', adding: 'var(--gray-500)', added: '#1a6e3c', unavailable: 'var(--gray-500)' };
   return (
-    <button data-cursor="link" onClick={add} title={state === 'idle' ? 'Add to cart' : undefined}
-      style={{ padding: compact ? "6px 10px" : "7px 14px", background: bgs[state], color:"#fff", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap", transition:"background .2s", flexShrink:0 }}>
+    <button className="part-cart-btn" data-state={state} data-cursor="link" onClick={add} title={state === 'idle' ? 'Add to cart' : undefined}
+      style={{ padding: compact ? "6px 10px" : "7px 14px", background: bgs[state], color:"#fff", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap", transition:"background .2s, color .2s", flexShrink:0 }}>
       {labels[state]}
     </button>
   );
