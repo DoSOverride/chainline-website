@@ -3024,42 +3024,59 @@ const StorePage = () => {
   const resultsRef = React.useRef(null);
 
   const ALL_TABS = ['drivetrain','brakes','wheels','cockpit','suspension','fit','tools','accessories'];
-  const TAB_PAGE = (id) => ['fit','tools','accessories'].includes(id) ? 'accessories' : ['wheels'].includes(id) ? 'parts' : 'components';
+  const TAB_PAGE = (id) => ['fit','tools','accessories'].includes(id) ? 'accessories' : id === 'wheels' ? 'parts' : 'components';
+  const tabEmoji = (id) => PART_TABS.find(t => t.id === id)?.emoji || '📦';
+  const tabLabel = (id) => PART_TABS.find(t => t.id === id)?.label || id;
 
-  // Pre-load all tabs in background on mount
   React.useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     Promise.all(ALL_TABS.map(id => window.lightspeedGetTab(id))).then(() => {
       if (!cancelled) { setLoadedTabs(ALL_TABS); setLoading(false); }
     });
     return () => { cancelled = true; };
   }, []);
 
-  // Live search across all cached tabs
-  React.useEffect(() => {
-    const term = q.trim().toLowerCase();
-    if (term.length < 2) { setResults([]); return; }
+  const searchAll = (term) => {
+    const t = term.trim().toLowerCase();
+    if (t.length < 2) return [];
     const cache = window.CL_LS?.tabCache || {};
     const hits = [];
     for (const tabId of ALL_TABS) {
-      const items = cache[tabId] || [];
-      for (const item of items) {
-        const name = (item.name || '').toLowerCase();
-        const dept = (item.department || '').toLowerCase();
-        const sku  = (item.sku  || '').toLowerCase();
-        if (name.includes(term) || dept.includes(term) || sku.includes(term)) {
-          hits.push({ ...item, _tab: tabId });
-          if (hits.length >= 30) break;
-        }
+      for (const item of (cache[tabId] || [])) {
+        const n = (item.name || '').toLowerCase();
+        const d = (item.department || '').toLowerCase();
+        const s = (item.sku || '').toLowerCase();
+        if (n.includes(t) || d.includes(t) || s.includes(t)) hits.push({ ...item, _tab: tabId });
       }
-      if (hits.length >= 30) break;
     }
-    setResults(hits.slice(0, 30));
-  }, [q, loadedTabs]);
+    return hits.sort((a, b) => (a.price || 0) - (b.price || 0));
+  };
 
-  const goToItem = (item) => window.cl.go(TAB_PAGE(item._tab), { tab: item._tab, search: item.name });
-  const tabEmoji = (id) => PART_TABS.find(t => t.id === id)?.emoji || '📦';
+  // Live preview (top 8)
+  React.useEffect(() => {
+    if (submitted) { setPreview([]); return; }
+    setPreview(q.length >= 2 ? searchAll(q).slice(0, 8) : []);
+  }, [q, loadedTabs, submitted]);
+
+  const runSearch = () => {
+    const term = q.trim();
+    if (term.length < 2) return;
+    setAllResults(searchAll(term));
+    setSubmitted(term);
+    setPreview([]);
+    setTimeout(() => resultsRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 50);
+  };
+
+  const clearSearch = () => { setQ(''); setSubmitted(''); setAllResults([]); setPreview([]); inputRef.current?.focus(); };
+
+  const grouped = React.useMemo(() => {
+    const g = {};
+    for (const item of allResults) {
+      if (!g[item._tab]) g[item._tab] = [];
+      g[item._tab].push(item);
+    }
+    return ALL_TABS.filter(id => g[id]?.length).map(id => ({ id, label: tabLabel(id), emoji: tabEmoji(id), items: g[id] }));
+  }, [allResults]);
 
   const cats = [
     { route:'components',  label:'Components',  emoji:'⚙️', desc:'Drivetrain, brakes, suspension, cockpit' },
@@ -3069,55 +3086,112 @@ const StorePage = () => {
 
   return (
     <div className="page-fade">
-      {/* Hero search section */}
-      <section style={{ background:'var(--black)', padding:'120px 0 80px', color:'var(--white)' }}>
-        <div className="container-wide" style={{ maxWidth:720, margin:'0 auto' }}>
-          <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(255,255,255,0.45)', marginBottom:16 }}>Store  /  Live Inventory</div>
-          <h1 className="display-xl" style={{ marginBottom:40, color:'var(--white)' }}>
-            Find what you need.<br/><span className="serif-italic">In stock, right now.</span>
-          </h1>
+      {/* ── Search hero ── */}
+      <section style={{ background:'var(--black)', padding: submitted ? '72px 0 28px' : '120px 0 80px', color:'var(--white)', transition:'padding .35s ease' }}>
+        <div className="container-wide" style={{ maxWidth:760, margin:'0 auto' }}>
+          {!submitted && (
+            <>
+              <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.18em', textTransform:'uppercase', color:'rgba(255,255,255,0.45)', marginBottom:16 }}>Store  /  Live Inventory</div>
+              <h1 className="display-xl" style={{ marginBottom:40, color:'var(--white)' }}>
+                Find what you need.<br/><span className="serif-italic">In stock, right now.</span>
+              </h1>
+            </>
+          )}
+          {submitted && (
+            <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:20 }}>
+              <button onClick={clearSearch} data-cursor="link" style={{ background:'none', border:'none', color:'rgba(255,255,255,0.5)', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', padding:0 }}>← Back</button>
+              <span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.35)' }}>
+                {allResults.length} result{allResults.length !== 1 ? 's' : ''} for "{submitted}"
+              </span>
+            </div>
+          )}
           {/* Search bar */}
-          <div style={{ display:'flex', background:'var(--white)', position:'relative' }}>
-            <span style={{ position:'absolute', left:20, top:'50%', transform:'translateY(-50%)', fontSize:18, color:'var(--gray-400)', pointerEvents:'none' }}>⌕</span>
-            <input ref={inputRef} value={q} onChange={e=>setQ(e.target.value)} autoFocus
+          <div style={{ display:'flex', background:'var(--white)' }}>
+            <span style={{ display:'flex', alignItems:'center', padding:'0 4px 0 20px', fontSize:18, color:'var(--gray-400)', flexShrink:0, pointerEvents:'none' }}>⌕</span>
+            <input ref={inputRef} value={q} autoFocus
+              onChange={e => { setQ(e.target.value); if (submitted) setSubmitted(''); }}
+              onKeyDown={e => e.key === 'Enter' && runSearch()}
               placeholder="Search chains, brake pads, helmets, tubes…"
-              style={{ flex:1, padding:'20px 20px 20px 52px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:17, background:'transparent', color:'var(--black)' }} />
-            {loading && q.length === 0 && (
-              <span style={{ position:'absolute', right:20, top:'50%', transform:'translateY(-50%)', fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)' }}>Loading inventory…</span>
-            )}
-            {q && <button onClick={()=>setQ('')} style={{ padding:'0 20px', background:'none', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.1em', textTransform:'uppercase' }}>✕ Clear</button>}
+              style={{ flex:1, padding:'20px 12px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:17, background:'transparent', color:'var(--black)' }} />
+            {loading && !q && <span style={{ display:'flex', alignItems:'center', padding:'0 16px', fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.1em', textTransform:'uppercase', flexShrink:0 }}>Loading…</span>}
+            {q && <button onClick={clearSearch} style={{ padding:'0 14px', background:'none', border:'none', borderRight:'1px solid var(--hairline)', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)', flexShrink:0 }}>✕</button>}
+            <button onClick={runSearch} disabled={q.trim().length < 2} data-cursor="link"
+              style={{ padding:'0 28px', background: q.trim().length >= 2 ? 'var(--black)' : 'var(--gray-200)', color: q.trim().length >= 2 ? 'var(--white)' : 'var(--gray-400)', border:'none', cursor: q.trim().length >= 2 ? 'pointer' : 'default', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0, transition:'background .15s, color .15s' }}>
+              Search
+            </button>
           </div>
-          {/* Live results */}
-          {q.length >= 2 && (
-            <div style={{ background:'var(--white)', marginTop:2, maxHeight:400, overflowY:'auto' }}>
-              {results.length === 0 ? (
-                <div style={{ padding:'20px 24px', fontFamily:'var(--mono)', fontSize:11, color:'var(--gray-400)', letterSpacing:'.1em', textTransform:'uppercase' }}>
-                  {loading ? 'Loading inventory…' : `No results for "${q}"`}
-                </div>
-              ) : results.map((item, i) => (
-                <button key={i} onClick={()=>goToItem(item)} data-cursor="link"
-                  style={{ width:'100%', display:'grid', gridTemplateColumns:'24px 1fr auto auto', gap:'0 14px', alignItems:'center', padding:'12px 20px', background:'none', border:'none', borderBottom:'1px solid var(--hairline)', cursor:'pointer', textAlign:'left' }}
+          {/* Live preview dropdown */}
+          {!submitted && preview.length > 0 && (
+            <div style={{ background:'var(--white)', marginTop:2 }}>
+              {preview.map((item, i) => (
+                <button key={i} onClick={() => { setQ(item.name); runSearch(); }} data-cursor="link"
+                  style={{ width:'100%', display:'grid', gridTemplateColumns:'22px 1fr auto auto', gap:'0 14px', alignItems:'center', padding:'11px 20px', background:'none', border:'none', borderBottom:'1px solid var(--hairline)', cursor:'pointer', textAlign:'left' }}
                   onMouseEnter={e=>e.currentTarget.style.background='var(--paper)'}
                   onMouseLeave={e=>e.currentTarget.style.background='none'}>
-                  <span style={{ fontSize:13, textAlign:'center', opacity:.6 }}>{tabEmoji(item._tab)}</span>
+                  <span style={{ fontSize:12, textAlign:'center', opacity:.5 }}>{tabEmoji(item._tab)}</span>
                   <div>
-                    <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em' }}>{item.name}</div>
-                    <div style={{ fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.08em', textTransform:'uppercase', marginTop:2 }}>{item.department}</div>
+                    <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)' }}>{item.name}</div>
+                    <div style={{ fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.08em', textTransform:'uppercase', marginTop:1 }}>{item.department}</div>
                   </div>
                   {item.qty > 0 && item.qty <= 3 && <span style={{ fontFamily:'var(--mono)', fontSize:9, color:'#b45309', letterSpacing:'.08em', textTransform:'uppercase' }}>{item.qty} left</span>}
-                  {item.price > 0 && <span style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:600, whiteSpace:'nowrap' }}>${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}</span>}
+                  {item.price > 0 && <span style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:600, color:'var(--black)', whiteSpace:'nowrap' }}>${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}</span>}
                 </button>
               ))}
-              {results.length === 30 && (
-                <div style={{ padding:'10px 20px', fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.1em', textTransform:'uppercase' }}>Showing first 30 — refine your search for more</div>
-              )}
+              <button onClick={runSearch} data-cursor="link"
+                style={{ width:'100%', padding:'13px 20px', background:'var(--paper)', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--black)' }}>
+                <span>See all results for "{q}"</span><ArrowRight size={10} />
+              </button>
+            </div>
+          )}
+          {!submitted && q.length >= 2 && preview.length === 0 && (
+            <div style={{ background:'var(--white)', padding:'16px 20px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)' }}>
+              {loading ? 'Loading inventory…' : `No results for "${q}"`}
             </div>
           )}
         </div>
       </section>
 
-      {/* Category tiles */}
-      {q.length < 2 && (
+      {/* ── Full results list ── */}
+      {submitted && (
+        <section ref={resultsRef} style={{ background:'var(--white)', minHeight:'60vh', paddingBottom:100 }}>
+          <div className="container-wide" style={{ maxWidth:900, margin:'0 auto', paddingTop:48 }}>
+            {allResults.length === 0 ? (
+              <div style={{ textAlign:'center', padding:'80px 0' }}>
+                <div className="display-s" style={{ marginBottom:12 }}>No results for "{submitted}"</div>
+                <p style={{ color:'var(--gray-500)', marginBottom:24 }}>Try a different search, or browse a category.</p>
+                <button className="btn btn-outline" onClick={clearSearch}>← Browse Categories</button>
+              </div>
+            ) : grouped.map(group => (
+              <div key={group.id} style={{ marginBottom:48 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:12, paddingBottom:12, borderBottom:'2px solid var(--black)', marginBottom:0 }}>
+                  <span style={{ fontSize:18 }}>{group.emoji}</span>
+                  <span style={{ fontFamily:'var(--display)', fontSize:16, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em' }}>{group.label}</span>
+                  <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginLeft:'auto' }}>{group.items.length} item{group.items.length !== 1 ? 's' : ''}</span>
+                </div>
+                {group.items.map((item, i) => (
+                  <div key={i} style={{ display:'grid', gridTemplateColumns:'22px 1fr auto', gap:'0 16px', alignItems:'center', padding:'11px 4px', borderBottom:'1px solid var(--hairline)', transition:'background .12s' }}
+                    onMouseEnter={e=>e.currentTarget.style.background='var(--paper)'}
+                    onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                    <span style={{ fontSize:13, textAlign:'center', opacity:.4 }}>{group.emoji}</span>
+                    <div style={{ minWidth:0 }}>
+                      <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.name}</div>
+                      <div style={{ fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.08em', textTransform:'uppercase', marginTop:2 }}>{item.department}{item.sku ? ` · ${item.sku}` : ''}</div>
+                    </div>
+                    <div style={{ display:'flex', alignItems:'center', gap:12, flexShrink:0 }}>
+                      {item.qty > 0 && item.qty <= 3 && <span style={{ fontFamily:'var(--mono)', fontSize:9, color:'#b45309', letterSpacing:'.08em', textTransform:'uppercase' }}>{item.qty} left</span>}
+                      {item.price > 0 && <span style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:600, minWidth:52, textAlign:'right' }}>${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}</span>}
+                      <PartCartBtn item={item} compact />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── Category tiles (when no search) ── */}
+      {!submitted && (
         <section style={{ background:'var(--white)', padding:'0 0 100px' }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:2 }}>
             {cats.map(c => (
@@ -3129,9 +3203,7 @@ const StorePage = () => {
                 <div style={{ position:'relative', zIndex:1 }}>
                   <div className="display-m" style={{ marginBottom:8, textAlign:'left' }}>{c.label}</div>
                   <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, marginBottom:20 }}>{c.desc}</div>
-                  <div style={{ display:'inline-flex', alignItems:'center', gap:8, fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase' }}>
-                    Browse <ArrowRight size={10} />
-                  </div>
+                  <div style={{ display:'inline-flex', alignItems:'center', gap:8, fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase' }}>Browse <ArrowRight size={10} /></div>
                 </div>
               </button>
             ))}
