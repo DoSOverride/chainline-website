@@ -1940,6 +1940,43 @@ const PART_TABS = [
 const BIKE_EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
 const isBikeDept = (dept) => BIKE_EXCLUDE.some(x => (dept||'').toLowerCase().includes(x));
 
+// Dept-level emoji — more specific than tab emoji
+const DEPT_EMOJI = {
+  // Drivetrain
+  'cassette':'🎡','chains':'🔗','chain retention':'🔗','chainrings':'⚙️',
+  'cranks':'🔧','bottom brackets':'⚙️','derailleur front':'⚙️','derailleur rear':'⚙️',
+  'deraileur hangers':'🔩','free hub body':'⚙️','freewheel':'🎡',
+  'shifters mtb':'🎛️','shifters - road':'🎛️','cables':'〰️',
+  // Brakes
+  'brake':'🛑','brake pads':'🛑','brake parts':'🛑',
+  'brake lever u':'🛑','brake lever v':'🛑','brake adapter disc':'🔩',
+  // Wheels & Tires
+  'wheels':'⭕','wheelset (fr+rr)':'⭕','rims':'⭕','hubs':'⭕','hub parts':'🔩',
+  'spokes':'📐','skewers qr':'🔩','axle':'🔩',
+  'tires 29"':'🔘','tires 700c':'🔘','tires 26"':'🔘',
+  'tires 27" & 26x1&1/4 etc...':'🔘','tires 24"':'🔘',
+  'tires 12, 16, 20':'🔘','tires fatbike':'🔘','tires tubular':'🔘',
+  'tubes':'🫧','tire sealant':'🫙','tire protection':'🛡️',
+  // Cockpit
+  'handlebar':'🎯','stem':'🔩','grips':'✊','bar tape':'🌀',
+  'aerobar':'✈️','saddles':'💺','seat post':'💺',
+  'headsets':'🔵','spacers':'🔩','bearings':'⚪',
+  // Suspension
+  'forks':'🔩','fork parts':'🔩','fork oil':'🛢️','rear shock':'🌀','seals':'🫙',
+  // Clothing & Helmets
+  'helmet':'⛑️','gloves':'🧤','shoes mountain':'👟','shoes road':'👟',
+  'cleats':'🔩','clothing':'👕','arm warmers':'🧣','leg warmers':'🧣',
+  'socks':'🧦','pant clips':'📎','sunglasses':'🕶️','armour':'🛡️',
+  // Tools & Maintenance
+  'tools':'🔧','pumps':'💨','lube':'🫙','trainers':'🚲',
+  // Accessories
+  'lights':'💡','locks':'🔒','computers':'📡','bags':'🎒','packs':'🎒',
+  'car racks':'🚗','bike racks':'🚗','fenders':'🛡️','kickstands':'📍',
+  'water bottle':'🍶','water bottle cage':'🫙','hydration ':'💧',
+  'bells':'🔔','mirrors':'🪞','misc. accessories':'📦','basket':'🧺',
+};
+const deptEmoji = (dept, fallback) => DEPT_EMOJI[(dept||'').toLowerCase().trim()] || fallback;
+
 // Dept name → tab ID for categorising items
 const deptToTabId = (() => {
   const map = {};
@@ -1987,7 +2024,7 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
       onMouseEnter={e => e.currentTarget.style.background = 'var(--paper)'}
       onMouseLeave={e => e.currentTarget.style.background = 'var(--white)'}>
       {/* Icon */}
-      <div className="parts-row-icon" style={{ fontSize:14, textAlign:"center", opacity:.6, userSelect:"none" }}>{tabEmoji}</div>
+      <div className="parts-row-icon" style={{ fontSize:14, textAlign:"center", opacity:.6, userSelect:"none" }}>{deptEmoji(dept, tabEmoji)}</div>
       {/* Name + dept */}
       <div style={{ minWidth:0 }}>
         <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{item.name}</div>
