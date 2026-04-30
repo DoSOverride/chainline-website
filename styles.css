@@ -134,6 +134,17 @@
 /* Pill / tag chips */
 [data-theme="dark"] .pill { background: var(--gray-100) !important; border-color: var(--gray-200) !important; }
 
+/* Pills inside always-dark sections — the dark mode override above forces a LIGHT bg
+   (because bg-black locks --gray-100 to #ececea), making white inherited text invisible.
+   Override with a frosted white tint so they're readable on dark backgrounds. */
+[data-theme="dark"] .bg-black .pill,
+[data-theme="dark"] .hero-section .pill,
+[data-theme="dark"] .mobile-nav .pill {
+  background: rgba(255,255,255,0.12) !important;
+  border-color: rgba(255,255,255,0.28) !important;
+  color: rgba(255,255,255,0.9) !important;
+}
+
 /* Parts add-to-cart button — idle state inverts in dark mode, needs explicit dark bg */
 [data-theme="dark"] .part-cart-btn[data-state="idle"] {
   background: rgba(255,255,255,0.14) !important;
