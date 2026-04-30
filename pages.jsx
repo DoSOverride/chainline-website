@@ -619,10 +619,13 @@ const ShopPage = () => {
             const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br && b.inStock !== false).length;
             if (cnt === 0) return null;
             const active = brand === br;
+            const inactiveColor = "var(--gray-600)";
             return (
               <button key={br} data-cursor="link"
                 onClick={() => { setBrand(active ? "All" : br); setType("All"); }}
-                style={{ ...tabStyle(active), color: active ? "var(--black)" : "var(--gray-500)", display:"flex", alignItems:"center", gap:5 }}>
+                onMouseEnter={e => { e.currentTarget.style.color = "var(--black)"; e.currentTarget.style.borderBottomColor = "var(--gray-400)"; }}
+                onMouseLeave={e => { e.currentTarget.style.color = active ? "var(--black)" : inactiveColor; e.currentTarget.style.borderBottomColor = active ? "var(--black)" : "transparent"; }}
+                style={{ ...tabStyle(active), color: active ? "var(--black)" : inactiveColor, display:"flex", alignItems:"center", gap:5 }}>
                 {br}
                 <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.5 }}>{cnt}</span>
               </button>
@@ -1514,6 +1517,12 @@ const AboutPage = () => (
           ))}
         </div>
       </div>
+    </section>
+
+    {/* Shop interior */}
+    <section className="section bg-white" style={{ padding:0 }}>
+      <img src="shop-interior.jpg" alt="ChainLine Cycle — 1139 Ellis St, Kelowna"
+        style={{ width:"100%", height:"clamp(280px,45vw,600px)", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
     </section>
 
     {/* Visit us */}
