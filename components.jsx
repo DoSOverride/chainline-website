@@ -541,6 +541,7 @@ const MobileNav = ({ open, onClose }) => {
   const dismiss = (fn) => { onClose(); fn && fn(); };
 
   const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
+  const TYPES  = ["All Bikes","Mountain","Gravel","Road","E-Bike","Commuter","Comfort","Kids"];
   const COMP_CATS = [
     { label:"Drivetrain", tab:"drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
     { label:"Brakes",     tab:"brakes",     items:["Brake pads","Brake Levers","Brake Parts"] },
@@ -586,12 +587,20 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'shop' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
-          <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
-            <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Shop By Brand</div>
-            {BRANDS.map(br => (
-              <a key={br} href="#" style={{ ...subA, fontSize:22, padding:"10px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
-            ))}
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:20, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:16 }}>
+            <div style={{ paddingRight:16 }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Style</div>
+              {TYPES.map(t => (
+                <a key={t} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
+              ))}
+            </div>
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Brand</div>
+              {BRANDS.map(br => (
+                <a key={br} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
