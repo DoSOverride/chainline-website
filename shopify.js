@@ -95,17 +95,24 @@ window.shopifyCart = {
     }
   },
 
-  // Redirect to Shopify checkout with all cart items
-  checkout() {
+  // Redirect to Shopify checkout via worker (bypasses storefront password protection)
+  async checkout() {
     if (this.items.length === 0) return;
+    try {
+      const res = await fetch('https://still-term-f1ec.taocaruso77.workers.dev/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: this.items.map(i => ({ variantId: i.variantId, qty: i.qty || 1 })),
+          ...(window._gcRecipientEmail && { recipientEmail: window._gcRecipientEmail }),
+        }),
+      });
+      const { url } = await res.json();
+      if (url) { window.location.href = url; return; }
+    } catch(e) {}
+    // Fallback to direct cart URL if worker fails
     const itemStr = this.items.map(i => `${i.variantId}:${i.qty}`).join(',');
-    let url = `https://${window.CL_SHOP.domain}/cart/${itemStr}`;
-    // If a gift card recipient email was captured, pass it as a cart attribute
-    // so the orders/paid webhook can read it from order.note_attributes
-    if (window._gcRecipientEmail) {
-      url += `?attributes[Recipient+Email]=${encodeURIComponent(window._gcRecipientEmail)}`;
-    }
-    window.location.href = url;
+    window.location.href = `https://${window.CL_SHOP.domain}/cart/${itemStr}`;
   },
 };
 
