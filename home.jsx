@@ -52,15 +52,6 @@ const Hero = ({ variant }) => {
   return (
     <section className="hero hero-section" data-screen-label="01 Hero" style={{ position: "relative", height: "100vh", minHeight: 720, color: "var(--white)", overflow: "hidden", background: "var(--black)" }}>
       <HeroBg />
-      <style>{`
-        @media(max-width:768px){
-          .hero-content{padding-top:190px!important;padding-bottom:60px!important;justify-content:flex-start!important}
-          .hero-section{height:100svh!important;min-height:600px!important}
-        }
-        [data-theme='dark'] .hero-gradient-overlay{
-          background:linear-gradient(to bottom,rgba(10,10,10,0.15) 0%,rgba(10,10,10,0.02) 38%,rgba(10,10,10,0.45) 100%)!important
-        }
-      `}</style>
       <div className="container-wide hero-content" style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(80px,14vh,180px)", paddingTop: 80 }}>
         <div className="eyebrow eyebrow-light hero-edge-label" style={{ marginBottom: 12, opacity: 0.5, fontSize: 10, letterSpacing: ".18em" }}>
           N°01  /  THE LINEUP  ·  2026
@@ -92,7 +83,6 @@ const Hero = ({ variant }) => {
           <div style={{ position: "absolute", top: -40, left: 0, width: 1, height: 40, background: "var(--white)", animation: "scrollDrip 2.4s ease-in-out infinite" }} />
         </div>
       </div>
-      <style>{`@keyframes scrollDrip { 0% { top: -40px; } 100% { top: 80px; } }`}</style>
 
     </section>
   );
@@ -168,7 +158,6 @@ const BikeCard = ({ b, idx }) => (
       </div>
       <div style={{ fontFamily: "var(--display)", fontSize: "clamp(13px,1.3vw,16px)", fontWeight: 500, whiteSpace: "nowrap", paddingTop: 2 }}>${b.price.toLocaleString()}</div>
     </div>
-    <style>{`a:hover .bike-hover { transform: translateY(0); }`}</style>
   </a>
 );
 
@@ -308,7 +297,6 @@ const BrandsGrid = () => {
             </a>
           ))}
         </div>
-        <style>{`.brand-tile:hover { background: var(--black); color: var(--white); }`}</style>
       </div>
     </section>
   );
@@ -343,7 +331,6 @@ const ServiceCard = ({ s }) => (
         <button className="btn" data-cursor="link" style={{ alignSelf: "flex-start" }} onClick={() => window.cl.go("book")}>Book Now <ArrowRight /></button>
       </div>
     </div>
-    <style>{`.svc-card:hover .svc-inner { transform: rotateY(180deg); }`}</style>
   </div>
 );
 

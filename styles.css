@@ -130,13 +130,52 @@
   filter: brightness(1.05) contrast(1.05) !important;
 }
 
-/* Buttons on light-bg sections in dark mode */
-[data-theme="dark"] .btn-outline {
-  border-color: var(--black);
-  color: var(--black);
+/* Buttons in dark mode */
+[data-theme="dark"] .btn {
+  background: #1c1c1c;
+  color: #f0f0ee;
+  border-color: #1c1c1c;
 }
-[data-theme="dark"] .btn-outline::before { background: var(--black); }
-[data-theme="dark"] .btn-outline:hover { color: var(--white); }
+[data-theme="dark"] .btn-outline {
+  background: transparent;
+  color: #f0f0ee;
+  border-color: rgba(255,255,255,0.25);
+}
+[data-theme="dark"] .btn-outline::before { background: rgba(255,255,255,0.08); }
+[data-theme="dark"] .btn-outline:hover { color: #f0f0ee; background: rgba(255,255,255,0.08); }
+[data-theme="dark"] .btn-light {
+  background: rgba(255,255,255,0.1);
+  color: #f0f0ee;
+  border-color: rgba(255,255,255,0.2);
+}
+[data-theme="dark"] .btn-outline-light {
+  border-color: rgba(255,255,255,0.3);
+  color: #f0f0ee;
+}
+
+/* Dark mode — chat widget */
+[data-theme="dark"] .chat-toggle-btn {
+  background: #1c1c1c !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  color: #f0f0ee !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+}
+[data-theme="dark"] .chat-popup {
+  background: #161616 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+/* Dark mode — sticky CTA */
+[data-theme="dark"] .sticky-cta .btn {
+  background: #1c1c1c;
+  color: #f0f0ee;
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Dark mode — hero gradient overlay */
+[data-theme="dark"] .hero-gradient-overlay {
+  background: linear-gradient(to bottom, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.02) 38%, rgba(10,10,10,0.45) 100%) !important;
+}
 
 /* Sub-hero (always dark bg) */
 [data-theme="dark"] .sub-hero-title { color: #f0f0ee !important; }
@@ -1296,7 +1335,7 @@ img {
   .section-pad-sm { padding: 36px 0; }
 
   /* ── Hero ── */
-  .hero-section { min-height: 100svh !important; height: 100svh !important; }
+  .hero-section { min-height: 600px !important; height: 100svh !important; }
   /* Push content to TOP on mobile — removes the gap between nav and headline */
   .hero-content { justify-content: flex-start !important; padding-top: 190px !important; padding-bottom: 60px !important; }
   .hero-ctas { flex-direction: column; gap: 12px !important; }
@@ -1304,12 +1343,19 @@ img {
   .hero-scroll-indicator { display: none !important; }
   /* Hero headline + italic — smaller on mobile */
   .built-for-kelowna { font-size: 16px !important; line-height: 1.45 !important; }
-  .hero-italic { font-size: clamp(16px, 4.5vw, 28px) !important; }
-  .display-xxl { font-size: clamp(32px, 10vw, 80px) !important; }
+  .hero-italic { font-size: clamp(18px, 5.5vw, 40px) !important; }
   /* Section label top overlay in hero */
   .hero-edge-label { display: none !important; }
   /* Book page step headings — smaller on mobile */
   .book-step-h { font-size: clamp(20px, 5vw, 28px) !important; }
+
+  /* ── Display typography — mobile sizes ── */
+  .display-xxl { font-size: clamp(30px, 9vw, 52px) !important; line-height: 1.0 !important; }
+  .display-xl  { font-size: clamp(26px, 7.5vw, 42px) !important; }
+  .display-l   { font-size: clamp(22px, 6vw, 34px) !important; }
+  .display-m   { font-size: clamp(18px, 5vw, 26px) !important; }
+  .display-s   { font-size: clamp(15px, 4.5vw, 21px) !important; }
+  .serif-italic { font-size: clamp(18px, 5.5vw, 32px) !important; }
 
   /* Bike detail back bar — mobile header is 36px announce + 64px nav = 100px */
   .bike-back-bar { top: 100px !important; }
@@ -1384,14 +1430,75 @@ img {
   .brand-tile { font-size: 11px !important; }
 }
 
+/* ── Touch & interaction optimizations ─────────────────────── */
+
+/* Eliminate 300ms tap delay on all tappable elements */
+button, a, input, select, textarea, [data-cursor="link"] {
+  touch-action: manipulation;
+}
+
+/* Prevent scroll bleed-through on overlays */
+.mobile-nav, .drawer, .drawer-backdrop { overscroll-behavior: none; }
+
+/* ── iOS safe area insets ───────────────────────────────────── */
+
+/* Cart drawer: clear the home indicator */
+.drawer {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Sticky CTA and chat button: lift above home indicator */
+.sticky-cta {
+  bottom: max(32px, calc(20px + env(safe-area-inset-bottom, 0px)));
+}
+
+.chat-toggle-btn {
+  bottom: max(32px, calc(20px + env(safe-area-inset-bottom, 0px))) !important;
+}
+
+@media (max-width: 768px) {
+  .sticky-cta {
+    bottom: max(16px, calc(12px + env(safe-area-inset-bottom, 0px)));
+  }
+  .chat-toggle-btn {
+    bottom: max(16px, calc(12px + env(safe-area-inset-bottom, 0px))) !important;
+  }
+}
+
+/* ── Hover states (extracted from inline JSX styles) ────────── */
+a:hover .bike-hover { transform: translateY(0); }
+.brand-tile:hover   { background: var(--black); color: var(--white); }
+.svc-card:hover .svc-inner { transform: rotateY(180deg); }
+
+/* ── Keyframes (extracted from inline JSX styles) ──────────── */
+@keyframes scrollDrip {
+  0%   { top: -40px; }
+  100% { top:  80px; }
+}
+
+@keyframes chatDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1);   opacity: 1;   }
+}
+
+/* ── Sub-hero ──────────────────────────────────────────────── */
+.sub-hero { background: var(--black); color: var(--white); padding: clamp(80px,12vw,140px) 0 clamp(56px,8vw,96px); }
+
+/* ── Performance: composited layers for heavy animations ────── */
+.mob-panel, .mobile-nav, .drawer, .mega { will-change: transform; }
+/* Remove will-change once animation settles */
+.mob-panel-active { will-change: auto; }
+
+/* ── Bike page — ensure back bar doesn't overlap on non-mobile ─ */
+@media (min-width: 769px) {
+  .bike-back-bar { top: 146px !important; }
+}
+
 @media (max-width: 400px) {
   .shop-grid { grid-template-columns: 1fr !important; }
-  .display-xxl { font-size: clamp(28px, 10vw, 60px) !important; }
-  .display-xl  { font-size: clamp(24px, 9vw, 56px) !important; }
-  .display-l   { font-size: clamp(22px, 7vw, 44px) !important; }
-  .hero-italic { font-size: clamp(16px, 5vw, 32px) !important; }
-
-  .booking-types {
-    grid-template-columns: 1fr !important;
-  }
+  .display-xxl { font-size: clamp(26px, 9vw, 46px) !important; }
+  .display-xl  { font-size: clamp(22px, 8vw, 38px) !important; }
+  .display-l   { font-size: clamp(20px, 7vw, 32px) !important; }
+  .hero-italic { font-size: clamp(16px, 5vw, 28px) !important; }
+  .booking-types { grid-template-columns: 1fr !important; }
 }

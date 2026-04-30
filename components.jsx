@@ -194,57 +194,6 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
 
   return (
     <header className={"header " + (scrolled ? (page === "home" ? "solid" : "light") : "")} data-screen-label="00 Header">
-      {/* Global mobile typography + dark mode button overrides */}
-      <style>{`
-        @media(max-width:768px){
-          .display-xxl{font-size:clamp(30px,9vw,52px)!important;line-height:1.0!important}
-          .display-xl{font-size:clamp(26px,7.5vw,42px)!important}
-          .display-l{font-size:clamp(22px,6vw,34px)!important}
-          .display-m{font-size:clamp(18px,5vw,26px)!important}
-          .display-s{font-size:clamp(15px,4.5vw,21px)!important}
-          .serif-italic{font-size:clamp(18px,5.5vw,32px)!important}
-          .hero-italic{font-size:clamp(18px,5.5vw,40px)!important}
-          .page-contact-grid{grid-template-columns:1fr!important}
-          .bike-page-layout{grid-template-columns:1fr!important;gap:32px!important}
-        }
-        [data-theme='dark'] .chat-toggle-btn{
-          background:#1c1c1c!important;
-          border-color:rgba(255,255,255,0.18)!important;
-          color:#f0f0ee!important;
-          box-shadow:0 4px 20px rgba(0,0,0,0.6)!important;
-        }
-        [data-theme='dark'] .chat-popup{
-          background:#161616!important;
-          border-color:rgba(255,255,255,0.1)!important;
-        }
-        [data-theme='dark'] .sticky-cta .btn{
-          background:#1c1c1c!important;
-          color:#f0f0ee!important;
-          border:1px solid rgba(255,255,255,0.2)!important;
-        }
-        [data-theme='dark'] .btn-light{
-          background:rgba(255,255,255,0.1)!important;
-          color:#f0f0ee!important;
-          border-color:rgba(255,255,255,0.2)!important;
-        }
-        [data-theme='dark'] .btn-outline-light{
-          border-color:rgba(255,255,255,0.3)!important;
-          color:#f0f0ee!important;
-        }
-        [data-theme='dark'] .btn{
-          background:#1c1c1c!important;
-          color:#f0f0ee!important;
-          border-color:#1c1c1c!important;
-        }
-        [data-theme='dark'] .btn-outline{
-          background:transparent!important;
-          color:#f0f0ee!important;
-          border-color:rgba(255,255,255,0.25)!important;
-        }
-        [data-theme='dark'] .btn-outline:hover{
-          background:rgba(255,255,255,0.08)!important;
-        }
-      `}</style>
       <Announce />
       <ContactBar />
       <div className="container-wide">
@@ -1035,7 +984,6 @@ const ChatWidget = () => {
               </div>
             )}
             <div ref={bottomRef} />
-            <style>{`@keyframes chatDot { 0%,80%,100%{transform:scale(0.6);opacity:.4} 40%{transform:scale(1);opacity:1} }`}</style>
           </div>
           <div style={{ padding: "10px 14px", borderTop: "1px solid var(--hairline)", display: "flex", gap: 8, alignItems: "center" }}>
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
