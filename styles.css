@@ -1630,6 +1630,7 @@ img {
   .home-rides-row .home-rides-pill,
   .home-rides-row .home-rides-arrow { display: none !important; }
   .home-trail-grid       { grid-template-columns: 1fr !important; }
+  .trails-grid           { grid-template-columns: 1fr !important; gap: 40px !important; }
   .home-testimonials-grid{ grid-template-columns: 1fr !important; }
   .home-newsletter-grid  { grid-template-columns: 1fr !important; gap: 32px !important; }
   .social-links-grid     { grid-template-columns: repeat(2,1fr) !important; }

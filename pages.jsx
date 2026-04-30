@@ -1658,84 +1658,124 @@ const RidesPage = () => {
 
 // TRAILS PAGE
 const TrailsPage = () => {
-  const trails = [
-    { name: "Knox Mountain Park", dots: 3, km: "18", gain: "520", type: "MTB · Singletrack", season: "Spring–Fall", note: "The best urban trail system in the Okanagan. Don't miss Antenna.", tf: "https://www.trailforks.com/region/knox-mountain-park/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-knox.jpg" },
-    { name: "Bear Creek Provincial Park", dots: 2, km: "14", gain: "380", type: "MTB · Mixed", season: "Year-round", note: "Family-friendly with options to push deeper if you want.", tf: "https://www.trailforks.com/region/bear-creek-provincial-park/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-forest.jpg" },
-    { name: "Okanagan Mountain Park", dots: 5, km: "42", gain: "1,200", type: "MTB · Hike", season: "Summer", note: "Big day. Bring food, bring tools, bring a friend.", tf: "https://www.trailforks.com/region/okanagan-mountain-park/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-pines.jpg" },
-    { name: "Myra Canyon Trestles", dots: 1, km: "24", gain: "180", type: "Rail Trail", season: "Spring–Fall", note: "Wooden trestles, lake views, easy day.", tf: "https://www.trailforks.com/region/kelowna/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-action.jpg" },
-    { name: "McDougall Rim", dots: 3, km: "22", gain: "640", type: "Hike · Gravel", season: "Spring–Fall", note: "Best sunrise loop in the valley.", tf: "https://www.trailforks.com/region/kelowna/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-knox.jpg" },
-    { name: "Rose Valley", dots: 2, km: "16", gain: "320", type: "MTB", season: "Year-round", note: "A bit of everything. Good for shaking down a new bike.", tf: "https://www.trailforks.com/region/rose-valley-regional-park/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-forest.jpg" },
-    { name: "Black Mountain", dots: 5, km: "32", gain: "920", type: "MTB · Advanced", season: "Summer–Fall", note: "If you have to ask, it isn't for you.", tf: "https://www.trailforks.com/region/black-mountain/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-pines.jpg" },
-    { name: "Kelowna Bike Park", dots: 4, km: "—", gain: "—", type: "Skills Park", season: "May–Oct", note: "All levels, all features. Free, every day.", tf: "https://www.trailforks.com/region/kelowna-bike-park/", img: "https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-action.jpg" },
+  const R2 = "https://still-term-f1ec.taocaruso77.workers.dev/r2";
+  const featured = [
+    { name:"Knox Mountain Park", dots:3, km:"20+",  gain:"550",   type:"MTB · Singletrack",   season:"Spring–Fall",  tf:"https://www.trailforks.com/region/knox-mountain-park/",        img:`${R2}/lifestyle/trail-knox.jpg`,   note:"Kelowna's backyard. Antenna, Doc Willoughby, Dirty Bastard — classics all. Best urban trail system in the Interior." },
+    { name:"Smith Creek",         dots:4, km:"30+",  gain:"700",   type:"MTB · All-Mountain",  season:"Year-round",   tf:"https://www.trailforks.com/region/smith-creek/",               img:`${R2}/lifestyle/trail-action.jpg`, note:"28 trails in West Kelowna with more being added every season. Feel The Love is worth the drive alone." },
+    { name:"Crawford Trails",     dots:3, km:"100+", gain:"600",   type:"MTB · XC to Tech",    season:"Spring–Fall",  tf:"https://www.trailforks.com/region/crawford-trails/",           img:`${R2}/lifestyle/trail-forest.jpg`, note:"Where we run our Friday night rides. Over 100 trails from green to double black. Never gets old." },
+    { name:"Rose Valley",         dots:2, km:"15",   gain:"320",   type:"MTB · Family",        season:"Year-round",   tf:"https://www.trailforks.com/region/rose-valley-regional-park/", img:`${R2}/lifestyle/trail-pines.jpg`,  note:"West Kelowna's most accessible network. Excellent for newer riders, and a perfect shake-down loop." },
+    { name:"Angel Springs",       dots:4, km:"8",    gain:"400",   type:"MTB · Singletrack",   season:"Spring–Fall",  tf:"https://www.trailforks.com/trails/angel-springs-trail/",       img:`${R2}/lifestyle/trail-forest.jpg`, note:"Built by high school students, restored by the MTB community. Cedar forest, a natural spring, and proper trail." },
+    { name:"Gillard",             dots:4, km:"40+",  gain:"800",   type:"MTB · Enduro",        season:"Spring–Fall",  tf:"https://www.trailforks.com/region/gillard/",                   img:`${R2}/lifestyle/trail-pines.jpg`,  note:"Kelowna's grassroots enduro home. 63 trails, Dr. No rated 4.7/5. Less crowded, more raw." },
   ];
+
+  const more = [
+    { name:"Okanagan Mountain Park",    type:"MTB · Epic",       dots:5, tf:"https://www.trailforks.com/region/okanagan-mountain-park/" },
+    { name:"Black Mountain",             type:"MTB · Advanced",   dots:5, tf:"https://www.trailforks.com/region/black-mountain/" },
+    { name:"Kelowna Bike Park",          type:"Skills Park",      dots:4, tf:"https://www.trailforks.com/region/kelowna-bike-park/" },
+    { name:"Bear Creek Provincial Park", type:"MTB · Mixed",      dots:2, tf:"https://www.trailforks.com/region/bear-creek-provincial-park/" },
+    { name:"Myra Canyon Trestles",       type:"Rail Trail",       dots:1, tf:"https://www.trailforks.com/trails/myra-canyon-trestles/" },
+    { name:"McDougall Rim",              type:"Hike · Gravel",    dots:3, tf:"https://www.trailforks.com/region/kelowna/" },
+    { name:"Silver Star (Vernon)",       type:"Resort · XC/DH",  dots:4, tf:"https://www.trailforks.com/region/silver-star-mountain/" },
+    { name:"Penticton / Skaha Bluffs",   type:"MTB · Enduro",    dots:4, tf:"https://www.trailforks.com/region/penticton/" },
+  ];
+
   const Dots = ({ n }) => <span className="pill-dots">{[1,2,3,4,5].map(i => <i key={i} className={i <= n ? "on" : ""} />)}</span>;
+
   return (
     <div className="page-fade" data-screen-label="P07 Trails">
       <SubHero eyebrow="Field Notes  /  N°01" title="Know your backyard." italic="Curated by riders." />
+
+      {/* ── 6 featured trail areas ── */}
       <section className="section section-pad bg-white">
         <div className="container-wide">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
-            {trails.map((t, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i % 3 + 1)}>
-                <div style={{ aspectRatio: "4/3", marginBottom: 20, overflow:"hidden", position:"relative" }}>
+          <div className="section-label" style={{ marginBottom:48 }}>Kelowna &amp; Area Trails</div>
+          <div className="trails-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
+            {featured.map((t, i) => (
+              <a key={i} href={t.tf} target="_blank" rel="noopener" data-cursor="link"
+                className={"reveal reveal-d-" + (i % 3 + 1)}
+                style={{ display:"block", textDecoration:"none", color:"inherit" }}>
+                <div style={{ aspectRatio:"4/3", marginBottom:18, overflow:"hidden", position:"relative" }}>
                   <img src={t.img} alt={t.name}
                     style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", transition:"transform .5s ease" }}
-                    onMouseEnter={e => e.currentTarget.style.transform = "scale(1.03)"}
-                    onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"} />
+                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.04)"}
+                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
+                  <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 55%)" }} />
                 </div>
-                <div className="display-s" style={{ marginBottom: 12 }}>{t.name}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <div className="display-s" style={{ marginBottom:10 }}>{t.name}</div>
+                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
                   <Dots n={t.dots} />
-                  <span className="eyebrow">{t.dots <= 2 ? "Beginner" : t.dots <= 3 ? "Intermediate" : "Advanced"}</span>
+                  <span className="eyebrow">{t.dots <= 2 ? "Beginner" : t.dots <= 3 ? "Intermediate" : t.dots <= 4 ? "Advanced" : "Expert"}</span>
                 </div>
-                <div style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)", marginBottom: 12 }}>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>
                   {t.km} km · {t.gain} m · {t.type} · {t.season}
                 </div>
-                <p className="serif-italic" style={{ fontSize: 16, lineHeight: 1.5, color: "var(--gray-600)", marginBottom: 16 }}>"{t.note}"</p>
-                <a href={t.tf} target="_blank" rel="noopener" data-cursor="link"
-                  style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)", display: "inline-flex", alignItems: "center", gap: 6 }}>
-                  View on Trailforks →
-                </a>
-              </div>
+                <p className="serif-italic" style={{ fontSize:15, lineHeight:1.6, color:"var(--gray-600)", marginBottom:14 }}>"{t.note}"</p>
+                <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", display:"inline-flex", alignItems:"center", gap:6 }}>
+                  View on Trailforks <ArrowRight size={9} />
+                </span>
+              </a>
             ))}
           </div>
         </div>
       </section>
+
+      {/* ── More in the Okanagan ── */}
+      <section className="section section-pad bg-paper">
+        <div className="container-wide">
+          <div className="reveal" style={{ marginBottom:48 }}>
+            <div className="section-label">More in the Okanagan</div>
+            <h3 className="display-l">Bigger<br/><span className="serif-italic">backyard.</span></h3>
+          </div>
+          <div style={{ borderTop:"1px solid var(--hairline)" }}>
+            {more.map((t, i) => (
+              <a key={i} href={t.tf} target="_blank" rel="noopener" data-cursor="link"
+                className="reveal"
+                style={{ display:"grid", gridTemplateColumns:"1fr auto auto auto", alignItems:"center", gap:24, padding:"18px 0", borderBottom:"1px solid var(--hairline)", textDecoration:"none", color:"inherit" }}>
+                <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{t.name}</div>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", whiteSpace:"nowrap" }}>{t.type}</div>
+                <Dots n={t.dots} />
+                <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", display:"flex", alignItems:"center", gap:4, whiteSpace:"nowrap" }}>Trailforks <ArrowRight size={9} /></span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Conditions (link to live Trailforks) ── */}
       <section className="section section-pad bg-black">
         <div className="container-wide">
-          <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 40, flexWrap: "wrap", gap: 16 }}>
+          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:40, flexWrap:"wrap", gap:16 }}>
             <div>
-              <div className="section-label" style={{ color: "var(--gray-300)" }}>Current Conditions</div>
-              <h3 className="display-l">Updated by<br/><span className="serif-italic">our trail crew.</span></h3>
+              <div className="section-label" style={{ color:"var(--gray-300)" }}>Trail Conditions</div>
+              <h3 className="display-l">Check before<br/><span className="serif-italic">you ride.</span></h3>
             </div>
-            <div className="eyebrow eyebrow-light">Last sync · 2 hrs ago</div>
+            <a href="https://www.trailforks.com/region/kelowna/status/" target="_blank" rel="noopener"
+              className="btn btn-outline-light" data-cursor="link">Live Status on Trailforks <ArrowRight /></a>
           </div>
-          <div style={{ borderTop: "1px solid var(--hairline-light)" }}>
+          <div style={{ borderTop:"1px solid var(--hairline-light)" }}>
             {[
-              ["Knox Mountain", "Open", "Apr 26"],
-              ["Bear Creek", "Open · Tacky", "Apr 26"],
-              ["Black Mountain", "Open · Dry", "Apr 25"],
-              ["Smith Creek", "Muddy", "Apr 24"],
-              ["Crawford", "Closed · Bear activity", "Apr 22"],
-            ].map(([n, s, d], i) => (
-              <div key={n} className="reveal" style={{ display: "grid", gridTemplateColumns: "2fr 2fr 1fr", padding: "20px 0", borderBottom: "1px solid var(--hairline-light)", alignItems: "center" }}>
+              ["Knox Mountain",  "https://www.trailforks.com/region/knox-mountain-park/status/"],
+              ["Smith Creek",    "https://www.trailforks.com/region/smith-creek/status/"],
+              ["Crawford",       "https://www.trailforks.com/region/crawford-trails/status/"],
+              ["Rose Valley",    "https://www.trailforks.com/region/rose-valley-regional-park/status/"],
+              ["Angel Springs",  "https://www.trailforks.com/trails/angel-springs-trail/"],
+              ["Gillard",        "https://www.trailforks.com/region/gillard/status/"],
+            ].map(([n, url]) => (
+              <a key={n} href={url} target="_blank" rel="noopener" data-cursor="link" className="reveal"
+                style={{ display:"grid", gridTemplateColumns:"1fr auto", padding:"18px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"center", textDecoration:"none", color:"inherit" }}>
                 <div className="display-s">{n}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: s.startsWith("Closed") ? "var(--gray-300)" : s.includes("Muddy") ? "var(--gray-400)" : "var(--white)" }} />
-                  <span className="eyebrow eyebrow-light">{s}</span>
-                </div>
-                <div className="eyebrow eyebrow-light" style={{ textAlign: "right" }}>{d}</div>
-              </div>
+                <span className="eyebrow eyebrow-light" style={{ display:"flex", alignItems:"center", gap:6 }}>Check Trailforks <ArrowRight size={9} /></span>
+              </a>
             ))}
           </div>
         </div>
       </section>
-      <section className="section section-pad-sm bg-paper" style={{ padding: "60px 0" }}>
+
+      <section className="section section-pad-sm bg-paper" style={{ padding:"60px 0" }}>
         <div className="container-wide">
-          <div className="reveal" style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="https://www.trailforks.com/region/kelowna/" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">View on Trailforks <ArrowRight /></a>
-            <a href="https://www.komoot.com/guide/3437" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">View on Komoot <ArrowRight /></a>
-            <a href="https://www.strava.com/segments/explore#4.32/49.888/-119.496" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">View on Strava <ArrowRight /></a>
+          <div className="reveal" style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
+            <a href="https://www.trailforks.com/region/central-okanagan/" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Central Okanagan on Trailforks <ArrowRight /></a>
+            <a href="https://www.trailforks.com/region/kelowna/status/" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Live Trail Status <ArrowRight /></a>
           </div>
         </div>
       </section>
