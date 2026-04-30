@@ -1786,7 +1786,30 @@ const ContactPage = () => (
   </div>
 );
 
-// GIFT CARDS
+// GIFT CARDS — email domain typo detection
+const GC_DOMAINS = ['gmail.com','hotmail.com','yahoo.com','outlook.com','icloud.com','live.com','me.com','msn.com','shaw.ca','telus.net','yahoo.ca','hotmail.ca','rogers.com','protonmail.com','googlemail.com'];
+
+function _lev(a, b) {
+  const dp = Array.from({length:a.length+1}, (_,i) => Array.from({length:b.length+1}, (_,j) => i===0?j:j===0?i:0));
+  for (let i=1;i<=a.length;i++) for (let j=1;j<=b.length;j++)
+    dp[i][j] = a[i-1]===b[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[a.length][b.length];
+}
+
+function suggestEmailFix(email) {
+  const at = email.lastIndexOf('@');
+  if (at < 1) return null;
+  const domain = email.slice(at+1).toLowerCase();
+  if (domain.length < 2) return null;
+  if (GC_DOMAINS.includes(domain)) return null;
+  let best = null, bestDist = Infinity;
+  for (const d of GC_DOMAINS) {
+    const dist = _lev(domain, d);
+    if (dist < bestDist) { bestDist = dist; best = d; }
+  }
+  return bestDist <= 3 ? best : null;
+}
+
 const GiftCardsPage = () => {
   const WORKER   = 'https://still-term-f1ec.taocaruso77.workers.dev';
   const PRESETS  = [50, 75, 100, 150];
@@ -1809,10 +1832,16 @@ const GiftCardsPage = () => {
       .catch(() => {});
   }, []);
 
-  const amount  = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
-  const varId   = variantMap[amount] || null;
-  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
-  const canAdd  = amount >= 10 && varId && validEmail;
+  const amount      = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
+  const varId       = variantMap[amount] || null;
+  const validEmail  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
+  const domainSuggestion = recipientEmail.includes('@') ? suggestEmailFix(recipientEmail) : null;
+  const canAdd      = amount >= 10 && varId && validEmail && !domainSuggestion;
+
+  const applyDomainFix = () => {
+    const at = recipientEmail.lastIndexOf('@');
+    setRecipientEmail(recipientEmail.slice(0, at+1) + domainSuggestion);
+  };
 
   const addToCart = () => {
     if (!canAdd) return;
@@ -1873,16 +1902,26 @@ const GiftCardsPage = () => {
               placeholder="Send gift card code to..."
               value={recipientEmail}
               onChange={e => setRecipientEmail(e.target.value)}
-              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(validEmail?"var(--black)":recipientEmail.length>3?"#e05c3a":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
+              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(domainSuggestion?"#e05c3a":validEmail?"var(--black)":recipientEmail.length>3?"#e05c3a":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
             />
-            {recipientEmail.length > 3 && !validEmail && (
-              <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"#e05c3a" }}>
-                Double-check the email address — the gift card code gets sent here
+            {domainSuggestion && (
+              <div style={{ marginTop:10, display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+                <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"#e05c3a" }}>
+                  Did you mean @{domainSuggestion}?
+                </span>
+                <button onClick={applyDomainFix} style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", background:"var(--black)", color:"var(--white)", border:"none", padding:"4px 10px", cursor:"pointer" }}>
+                  Fix it →
+                </button>
               </div>
             )}
-            {validEmail && (
+            {!domainSuggestion && recipientEmail.length > 3 && !validEmail && (
+              <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"#e05c3a" }}>
+                Double-check the email — the gift card code gets sent here
+              </div>
+            )}
+            {!domainSuggestion && validEmail && (
               <div style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"var(--stock-green)" }}>
-                ✓ Gift card code will be sent to {recipientEmail}
+                ✓ Code will be sent to {recipientEmail}
               </div>
             )}
           </div>
