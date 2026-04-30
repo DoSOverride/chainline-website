@@ -1818,41 +1818,23 @@ const GiftCardsPage = () => {
     const isCustom = selected === 'custom';
     const amount   = isCustom ? parseFloat(customAmt) : selected?.price;
     const varId    = isCustom ? null : selected?.variantId;
-    if (!amount || amount < 10 || !form.recipientEmail) return;
+    if (!amount || amount < 10 || !varId) return;
 
-    if (varId && window.shopifyCart) {
-      try {
-        const props = {
-          'Recipient Email': form.recipientEmail,
-          'Recipient Name':  form.recipientName  || '',
-          'Message':         form.message        || '',
-          'Sender Name':     form.senderName     || '',
-          '__shopify_send_gift_card_to_recipient': '1',
-        };
-        window.shopifyCart.add(varId, `Gift Card $${amount}`, amount * 100, null, qty, props);
-        window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: window.shopifyCart.items || [] } }));
-        setAdded(true); setTimeout(() => setAdded(false), 3000);
-        return;
-      } catch(e) {}
-    }
+    const props = {
+      ...(form.recipientEmail && { 'Recipient Email': form.recipientEmail }),
+      ...(form.recipientName  && { 'Recipient Name':  form.recipientName  }),
+      ...(form.message        && { 'Message':          form.message        }),
+      ...(form.senderName     && { 'Sender Name':      form.senderName     }),
+      '__shopify_send_gift_card_to_recipient': form.recipientEmail ? '1' : '0',
+    };
 
-    // No Shopify gift card product set up yet — email request to process manually
-    const subject = encodeURIComponent(`Gift Card Request — $${amount} CAD`);
-    const body = encodeURIComponent(
-      `Gift Card Order Request\n\n` +
-      `Amount: $${amount} CAD\n` +
-      `Quantity: ${qty}\n\n` +
-      `Recipient Name: ${form.recipientName || '–'}\n` +
-      `Recipient Email: ${form.recipientEmail}\n` +
-      `Sender Name: ${form.senderName || '–'}\n` +
-      `Message: ${form.message || '–'}\n\n` +
-      `Please process this gift card and email the code to the recipient.`
-    );
-    window.location.href = `mailto:bikes@chainline.ca?subject=${subject}&body=${body}`;
-    setAdded(true); setTimeout(() => setAdded(false), 4000);
+    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, qty, props);
+    window.dispatchEvent(new CustomEvent('cart:open'));
+    setAdded(true);
+    setTimeout(() => setAdded(false), 4000);
   };
 
-  const canSend = selected && form.recipientEmail && (selected !== 'custom' || parseFloat(customAmt) >= 10);
+  const canSend = selected && selected !== 'custom' ? !!selected?.variantId : parseFloat(customAmt) >= 10;
   const s = { padding:"20px 12px", cursor:"pointer", transition:"all .15s", fontFamily:"var(--display)", fontSize:26, fontWeight:500 };
 
   return (
@@ -1919,18 +1901,13 @@ const GiftCardsPage = () => {
             </div>
             <button className="btn" data-cursor="link" disabled={!canSend||adding} onClick={sendRequest}
               style={{ flex:1, justifyContent:"center", minWidth:180, opacity: canSend?1:0.4 }}>
-              {added?"Request Sent ✓":adding?"Sending…":"Order Gift Card"} {!adding&&!added&&<ArrowRight/>}
+              {added?"Added to Cart ✓":adding?"Adding…":"Add to Cart"} {!adding&&!added&&<ArrowRight/>}
             </button>
           </div>
-          {selected && !form.recipientEmail && (
-            <p style={{ marginTop:10, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)" }}>
-              Recipient email required
-            </p>
-          )}
 
           <div style={{ marginTop:32, padding:"18px 24px", background:"var(--paper)", borderLeft:"3px solid var(--hairline)" }}>
             <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", margin:0 }}>
-              No expiry · Valid in-store and online · We'll email the gift card code within a few hours · Custom amounts — call (250) 860-1968
+              No expiry · Valid in-store and online · Gift card code emailed after purchase · Custom amounts — call (250) 860-1968
             </p>
           </div>
         </div>

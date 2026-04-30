@@ -100,6 +100,12 @@ const App = () => {
     window.addEventListener('cart:updated', onCartUpdate);
     return () => window.removeEventListener('cart:updated', onCartUpdate);
   }, []);
+
+  React.useEffect(() => {
+    const onCartOpen = () => setCartOpen(true);
+    window.addEventListener('cart:open', onCartOpen);
+    return () => window.removeEventListener('cart:open', onCartOpen);
+  }, []);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
 
   // Apply tweaks
