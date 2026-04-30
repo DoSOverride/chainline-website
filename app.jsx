@@ -170,7 +170,14 @@ const App = () => {
   React.useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 80);
-      setShowSticky(page !== "book");
+      if (page === "book") {
+        setShowSticky(false);
+      } else if (page === "home") {
+        // Hide while the hero CTA is still on screen (~100vh hero); appear once it's gone
+        setShowSticky(window.scrollY > window.innerHeight * 0.82);
+      } else {
+        setShowSticky(window.scrollY > 80);
+      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

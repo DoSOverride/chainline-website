@@ -1173,13 +1173,14 @@ img {
 /* Sticky CTA */
 .sticky-cta {
   position: fixed;
-  bottom: 32px;
-  right: 32px;
+  /* Match the hero CTA's vertical position — hero has clamp(80px,14vh,180px) bottom padding */
+  bottom: clamp(80px, 14vh, 180px);
+  right: 40px;
   z-index: 90;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(12px);
   pointer-events: none;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.45s cubic-bezier(0.2,0.8,0.2,1), transform 0.45s cubic-bezier(0.2,0.8,0.2,1);
 }
 
 .sticky-cta.show {
@@ -1501,8 +1502,7 @@ img {
   /* ── Cart ── */
   .drawer { width: 100vw !important; }
 
-  /* ── Sticky CTA ── */
-  .sticky-cta { bottom: 16px; right: 16px; }
+  /* ── Sticky CTA — compact on mobile ── */
   .sticky-cta .btn { padding: 14px 20px; font-size: 11px; }
 
   /* ── Touch scroll ── */
@@ -1585,18 +1585,16 @@ button, a, input, select, textarea, [data-cursor="link"] {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Sticky CTA and chat button: lift above home indicator */
-.sticky-cta {
-  bottom: max(32px, calc(20px + env(safe-area-inset-bottom, 0px)));
-}
-
+/* Chat button: lift above iOS home indicator */
 .chat-toggle-btn {
   bottom: max(32px, calc(20px + env(safe-area-inset-bottom, 0px))) !important;
 }
 
 @media (max-width: 768px) {
+  /* On mobile: sticky CTA drops to bottom-right corner + safe area */
   .sticky-cta {
-    bottom: max(16px, calc(12px + env(safe-area-inset-bottom, 0px)));
+    bottom: max(20px, calc(16px + env(safe-area-inset-bottom, 0px)));
+    right: 16px;
   }
   .chat-toggle-btn {
     bottom: max(16px, calc(12px + env(safe-area-inset-bottom, 0px))) !important;
