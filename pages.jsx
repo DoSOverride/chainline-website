@@ -1662,20 +1662,20 @@ const TrailsPage = () => {
   const featured = [
     { name:"Knox Mountain Park", dots:3, km:"20+",  gain:"550",   type:"MTB · Singletrack",   season:"Spring–Fall",  tf:"https://www.trailforks.com/region/knox-mountain-park/",        img:`${R2}/lifestyle/trail-knox.jpg`,   note:"Kelowna's backyard. Antenna, Doc Willoughby, Dirty Bastard — classics all. Best urban trail system in the Interior." },
     { name:"Smith Creek",         dots:4, km:"30+",  gain:"700",   type:"MTB · All-Mountain",  season:"Year-round",   tf:"https://www.trailforks.com/region/smith-creek/",               img:`${R2}/lifestyle/trail-action.jpg`, note:"28 trails in West Kelowna with more being added every season. Feel The Love is worth the drive alone." },
-    { name:"Crawford Trails",     dots:3, km:"100+", gain:"600",   type:"MTB · XC to Tech",    season:"Spring–Fall",  tf:"https://www.trailforks.com/region/crawford-trails/",           img:`${R2}/lifestyle/trail-forest.jpg`, note:"Where we run our Friday night rides. Over 100 trails from green to double black. Never gets old." },
-    { name:"Rose Valley",         dots:2, km:"15",   gain:"320",   type:"MTB · Family",        season:"Year-round",   tf:"https://www.trailforks.com/region/rose-valley-regional-park/", img:`${R2}/lifestyle/trail-pines.jpg`,  note:"West Kelowna's most accessible network. Excellent for newer riders, and a perfect shake-down loop." },
+    { name:"Crawford",            dots:3, km:"100+", gain:"600",   type:"MTB · XC to Tech",    season:"Spring–Fall",  tf:"https://www.trailforks.com/region/crawford-trails/",           img:`${R2}/lifestyle/trail-forest.jpg`, note:"Where we run our Friday night rides. Over 100 trails from green to double black. Never gets old." },
+    { name:"Rose Valley",         dots:2, km:"15",   gain:"320",   type:"MTB · Family",        season:"Year-round",   tf:"https://www.trailforks.com/region/rose-valley/",               img:`${R2}/lifestyle/trail-pines.jpg`,  note:"West Kelowna's most accessible network. Excellent for newer riders, and a perfect shake-down loop." },
     { name:"Angel Springs",       dots:4, km:"8",    gain:"400",   type:"MTB · Singletrack",   season:"Spring–Fall",  tf:"https://www.trailforks.com/trails/angel-springs-trail/",       img:`${R2}/lifestyle/trail-forest.jpg`, note:"Built by high school students, restored by the MTB community. Cedar forest, a natural spring, and proper trail." },
     { name:"Gillard",             dots:4, km:"40+",  gain:"800",   type:"MTB · Enduro",        season:"Spring–Fall",  tf:"https://www.trailforks.com/region/gillard/",                   img:`${R2}/lifestyle/trail-pines.jpg`,  note:"Kelowna's grassroots enduro home. 63 trails, Dr. No rated 4.7/5. Less crowded, more raw." },
   ];
 
   const more = [
     { name:"Okanagan Mountain Park",    type:"MTB · Epic",       dots:5, tf:"https://www.trailforks.com/region/okanagan-mountain-park/" },
-    { name:"Black Mountain",             type:"MTB · Advanced",   dots:5, tf:"https://www.trailforks.com/region/black-mountain/" },
-    { name:"Kelowna Bike Park",          type:"Skills Park",      dots:4, tf:"https://www.trailforks.com/region/kelowna-bike-park/" },
-    { name:"Bear Creek Provincial Park", type:"MTB · Mixed",      dots:2, tf:"https://www.trailforks.com/region/bear-creek-provincial-park/" },
-    { name:"Myra Canyon Trestles",       type:"Rail Trail",       dots:1, tf:"https://www.trailforks.com/trails/myra-canyon-trestles/" },
+    { name:"Black Mountain",             type:"MTB · Advanced",   dots:5, tf:"https://www.trailforks.com/region/black-mountain-regional-park-45252/" },
+    { name:"Kelowna Bike Park",          type:"Skills Park",      dots:4, tf:"https://www.trailforks.com/skillpark/kelowna-mountain-bike-skills-park/" },
+    { name:"Bear Creek Provincial Park", type:"MTB · Mixed",      dots:2, tf:"https://www.trailforks.com/region/bear-creek-provincial-park-63783/" },
+    { name:"KVR / Myra Canyon",          type:"Rail Trail",       dots:1, tf:"https://www.trailforks.com/trails/kvr-tct-myra-canyon/" },
     { name:"McDougall Rim",              type:"Hike · Gravel",    dots:3, tf:"https://www.trailforks.com/region/kelowna/" },
-    { name:"Silver Star (Vernon)",       type:"Resort · XC/DH",  dots:4, tf:"https://www.trailforks.com/region/silver-star-mountain/" },
+    { name:"Silver Star (Vernon)",       type:"Resort · XC/DH",  dots:4, tf:"https://www.trailforks.com/region/silver-star-bike-park-1081/" },
     { name:"Penticton / Skaha Bluffs",   type:"MTB · Enduro",    dots:4, tf:"https://www.trailforks.com/region/penticton/" },
   ];
 
@@ -1757,7 +1757,7 @@ const TrailsPage = () => {
               ["Knox Mountain",  "https://www.trailforks.com/region/knox-mountain-park/status/"],
               ["Smith Creek",    "https://www.trailforks.com/region/smith-creek/status/"],
               ["Crawford",       "https://www.trailforks.com/region/crawford-trails/status/"],
-              ["Rose Valley",    "https://www.trailforks.com/region/rose-valley-regional-park/status/"],
+              ["Rose Valley",    "https://www.trailforks.com/region/rose-valley/status/"],
               ["Angel Springs",  "https://www.trailforks.com/trails/angel-springs-trail/"],
               ["Gillard",        "https://www.trailforks.com/region/gillard/status/"],
             ].map(([n, url]) => (
