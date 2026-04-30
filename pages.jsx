@@ -2183,8 +2183,10 @@ const PartsPage = () => {
 
   const sideStyle = (active) => ({
     width:"100%", display:"flex", alignItems:"center", gap:10, padding:"11px 16px",
-    border:"none", cursor:"pointer", textAlign:"left", background: active ? "var(--black)" : "transparent",
-    color: active ? "var(--white)" : "var(--black)", transition:"background .15s, color .15s",
+    border:"none", cursor:"pointer", textAlign:"left",
+    background: active ? "var(--black)" : "transparent",
+    color: active ? "var(--white)" : "var(--gray-600)",
+    transition:"background .15s, color .15s",
     fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase",
     borderRadius:0,
   });
@@ -2212,7 +2214,7 @@ const PartsPage = () => {
             {PART_TABS.map(t => {
               const cached = window.CL_LS?.tabCache?.[t.id];
               return (
-                <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)} style={sideStyle(cat === t.id && !search)}>
+                <button key={t.id} className={"parts-sidebar-btn " + (cat === t.id && !search ? "active" : "")} data-cursor="link" onClick={() => switchCat(t.id)} style={sideStyle(cat === t.id && !search)}>
                   <span style={{ fontSize:15, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
                   <span style={{ flex:1, lineHeight:1.3 }}>{t.label}</span>
                   {cached && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity: cat === t.id && !search ? .7 : .45, flexShrink:0 }}>{cached.length}</span>}
@@ -2235,18 +2237,18 @@ const PartsPage = () => {
                 ? <div style={{ position:"relative", height:160, overflow:"hidden", marginBottom:0 }}>
                     <img src={activeTab.img} alt={activeTab.label}
                       style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
-                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)" }} />
+                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(to right, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 100%)" }} />
                     <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", padding:"0 32px", gap:16 }}>
                       <div>
-                        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"var(--white)", lineHeight:1.1 }}>{activeTab.label}</div>
-                        <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.6)", marginTop:6 }}>{activeTab.sub}</div>
+                        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"#fafafa", lineHeight:1.1 }}>{activeTab.label}</div>
+                        <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.65)", marginTop:6 }}>{activeTab.sub}</div>
                       </div>
                     </div>
                   </div>
-                : <div style={{ height:120, background:"var(--black)", display:"flex", alignItems:"center", padding:"0 32px", gap:16, marginBottom:0 }}>
+                : <div style={{ height:120, background:"#0a0a0a", display:"flex", alignItems:"center", padding:"0 32px", gap:16, marginBottom:0 }}>
                     <div style={{ fontSize:28, lineHeight:1 }}>{activeTab.emoji}</div>
                     <div>
-                      <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"var(--white)", lineHeight:1.1 }}>{activeTab.label}</div>
+                      <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"#fafafa", lineHeight:1.1 }}>{activeTab.label}</div>
                       <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:6 }}>{activeTab.sub}</div>
                     </div>
                   </div>

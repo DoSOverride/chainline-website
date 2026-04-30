@@ -141,6 +141,12 @@
   outline: 1px solid rgba(255,255,255,0.2);
 }
 
+/* Parts sidebar active tab — var(--black) inverts to near-white in dark mode */
+[data-theme="dark"] .parts-sidebar-btn.active {
+  background: rgba(255,255,255,0.12) !important;
+  color: #fafafa !important;
+}
+
 /* Bike images — keep as-is (white bg bikes look fine on dark paper background) */
 [data-theme="dark"] img.bike-img {
   mix-blend-mode: normal !important;
