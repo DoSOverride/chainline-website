@@ -2028,7 +2028,7 @@ const PartCartBtn = ({ item, compact }) => {
 
   return (
     <button className="part-cart-btn" data-cursor="link" onClick={addOne}
-      style={{ padding: compact ? "6px 10px" : "7px 14px", background:"var(--black)", color:"#fff", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap", transition:"background .2s", flexShrink:0 }}>
+      style={{ padding: compact ? "5px 9px" : "7px 14px", background:"transparent", color:"var(--black)", fontFamily:"var(--mono)", fontSize:compact ? 14 : 9, fontWeight:600, letterSpacing: compact ? 0 : ".08em", textTransform:"uppercase", border:"1px solid var(--black)", cursor:"pointer", whiteSpace:"nowrap", transition:"all .2s", flexShrink:0, lineHeight:1 }}>
       {loading ? "…" : compact ? "+" : "Add to Cart"}
     </button>
   );
