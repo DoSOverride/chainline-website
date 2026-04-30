@@ -941,7 +941,7 @@ const ChatWidget = () => {
   const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
   const [open, setOpen] = React.useState(false);
   const [msgs, setMsgs] = React.useState([
-    { role: "bot", text: "Hey, I'm Jake — head mechanic at ChainLine. Ask me anything about bikes, service, or what we've got in stock." }
+    { role: "bot", text: "Hey — ChainLine here. Ask me anything about bikes, service, or what we've got in stock." }
   ]);
   const [input, setInput] = React.useState("");
   const [thinking, setThinking] = React.useState(false);
