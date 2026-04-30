@@ -93,7 +93,7 @@ const FEATURED_BIKES = [
   {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"img":"https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg","handle":"transition-sentinel"},
   {"brand":"Pivot",     "name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"img":"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
   {"brand":"Transition","name":"Regulator CX Eagle 90","type":"E-Bike","rawType":"Electric Bike","price":13000,"img":"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif","handle":"transition-regulator-cx-eagle-90"},
-  {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"img":"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
+  {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg","handle":"marin-pine-mountain-1-29"},
   {"brand":"Surly",     "name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"img":"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946","handle":"surly-bridge-club"},
   {"brand":"Pivot",     "name":"Shuttle AM Ride Eagle 70/90","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
   {"brand":"Knolly",    "name":"Fugitive","type":"Mountain","rawType":"Mountain Bike","price":4550,"img":"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351","handle":"knolly-fugitive"},
@@ -439,7 +439,7 @@ const LocalStory = () => (
     <div className="container-wide">
       <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
         <div className="reveal" style={{ aspectRatio: "4/5", position: "relative", overflow: "hidden" }}>
-          <img src="interior-tires.jpg" alt="ChainLine Cycle — Kelowna's bike shop since 2009"
+          <img src="https://still-term-f1ec.taocaruso77.workers.dev/r2/shop/interior-tires.jpg" alt="ChainLine Cycle — Kelowna's bike shop since 2009"
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
           <div style={{ position: "absolute", top: 24, left: 24, padding: "8px 14px", background: "var(--black)", color: "var(--white)", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase" }}>EST. 2009</div>
         </div>
