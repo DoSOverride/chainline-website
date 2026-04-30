@@ -1788,54 +1788,39 @@ const ContactPage = () => (
 
 // GIFT CARDS
 const GiftCardsPage = () => {
-  const WORKER = 'https://still-term-f1ec.taocaruso77.workers.dev';
-  const FALLBACK = [
-    { price:50, variantId:null }, { price:75, variantId:null },
-    { price:100, variantId:null }, { price:150, variantId:null },
-  ];
-  const [variants,  setVariants]  = React.useState(FALLBACK);
-  const [selected,  setSelected]  = React.useState(null);
-  const [customAmt, setCustomAmt] = React.useState('');
-  const [form, setForm]           = React.useState({ recipientEmail:'', recipientName:'', message:'', senderName:'' });
-  const [qty,       setQty]       = React.useState(1);
-  const [adding,    setAdding]    = React.useState(false);
-  const [added,     setAdded]     = React.useState(false);
-  const upd = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const WORKER   = 'https://still-term-f1ec.taocaruso77.workers.dev';
+  const PRESETS  = [50, 75, 100, 150];
+  // variantMap: price → Shopify variantId, populated from API
+  const [variantMap, setVariantMap] = React.useState({});
+  const [selectedAmt, setSelectedAmt] = React.useState(null);
+  const [customAmt,   setCustomAmt]   = React.useState('');
+  const [added, setAdded] = React.useState(false);
 
   React.useEffect(() => {
     fetch(`${WORKER}/api/gift-card-product`)
       .then(r => r.json())
       .then(d => {
-        const prod = d.products?.[0];
-        if (prod?.variants?.length) setVariants(prod.variants.map(v => ({ price: v.price, variantId: v.id })));
+        const variants = d.products?.[0]?.variants || [];
+        const map = {};
+        variants.forEach(v => { map[Number(v.price)] = v.id; });
+        setVariantMap(map);
       })
       .catch(() => {});
   }, []);
 
-  const inp = { width:'100%', padding:'12px 0', border:'none', borderBottom:'1px solid var(--hairline)', fontSize:15, fontFamily:'var(--body)', background:'transparent', outline:'none', color:'var(--black)', marginBottom:20 };
+  const amount  = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
+  const varId   = variantMap[amount] || null;
+  const canAdd  = amount >= 10 && varId;
 
-  const sendRequest = () => {
-    const isCustom = selected === 'custom';
-    const amount   = isCustom ? parseFloat(customAmt) : selected?.price;
-    const varId    = isCustom ? null : selected?.variantId;
-    if (!amount || amount < 10 || !varId) return;
-
-    const props = {
-      ...(form.recipientEmail && { 'Recipient Email': form.recipientEmail }),
-      ...(form.recipientName  && { 'Recipient Name':  form.recipientName  }),
-      ...(form.message        && { 'Message':          form.message        }),
-      ...(form.senderName     && { 'Sender Name':      form.senderName     }),
-      '__shopify_send_gift_card_to_recipient': form.recipientEmail ? '1' : '0',
-    };
-
-    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, qty, props);
+  const addToCart = () => {
+    if (!canAdd) return;
+    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, null);
     window.dispatchEvent(new CustomEvent('cart:open'));
     setAdded(true);
-    setTimeout(() => setAdded(false), 4000);
+    setTimeout(() => setAdded(false), 3000);
   };
 
-  const canSend = selected && selected !== 'custom' ? !!selected?.variantId : parseFloat(customAmt) >= 10;
-  const s = { padding:"20px 12px", cursor:"pointer", transition:"all .15s", fontFamily:"var(--display)", fontSize:26, fontWeight:500 };
+  const btnStyle = { padding:"20px 20px", cursor:"pointer", transition:"all .15s", fontFamily:"var(--display)", fontSize:26, fontWeight:500, minWidth:100 };
 
   return (
     <div className="page-fade">
@@ -1843,71 +1828,51 @@ const GiftCardsPage = () => {
       <section className="section section-pad bg-white">
         <div className="container-narrow">
           <p style={{ fontSize:16, color:"var(--gray-500)", lineHeight:1.75, marginBottom:48, maxWidth:520 }}>
-            Good for bikes, parts, accessories, and services. Redeemable in-store and online. No expiry.
+            Good for bikes, parts, accessories, and services. Valid in-store and online. No expiry.
           </p>
 
-          <div className="eyebrow" style={{ marginBottom:14 }}>Choose the gift card amount</div>
-          <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
-            {variants.map((v, i) => (
-              <button key={i} data-cursor="link" onClick={() => { setSelected(v); setCustomAmt(''); }}
-                style={{ ...s, border:"2px solid " + (selected === v ? "var(--black)" : "var(--hairline)"), background: selected===v?"var(--black)":"transparent", color: selected===v?"var(--white)":"var(--black)", minWidth:100 }}>
-                ${v.price}
-              </button>
-            ))}
-            <button data-cursor="link" onClick={() => setSelected('custom')}
-              style={{ ...s, border:"2px solid " + (selected==='custom'?"var(--black)":"var(--hairline)"), background:selected==='custom'?"var(--black)":"transparent", color:selected==='custom'?"var(--white)":"var(--black)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", minWidth:100 }}>
-              Your Amount
+          <div className="eyebrow" style={{ marginBottom:14 }}>Choose amount</div>
+          <div style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:24 }}>
+            {PRESETS.map(p => {
+              const active = selectedAmt === p;
+              return (
+                <button key={p} data-cursor="link" onClick={() => { setSelectedAmt(p); setCustomAmt(''); }}
+                  style={{ ...btnStyle, border:"2px solid "+(active?"var(--black)":"var(--hairline)"), background:active?"var(--black)":"transparent", color:active?"var(--white)":"var(--black)" }}>
+                  ${p}
+                </button>
+              );
+            })}
+            <button data-cursor="link" onClick={() => setSelectedAmt('custom')}
+              style={{ ...btnStyle, border:"2px solid "+(selectedAmt==='custom'?"var(--black)":"var(--hairline)"), background:selectedAmt==='custom'?"var(--black)":"transparent", color:selectedAmt==='custom'?"var(--white)":"var(--black)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase" }}>
+              Custom
             </button>
           </div>
 
-          {selected === 'custom' && (
-            <div style={{ marginBottom:24, maxWidth:200 }}>
-              <div className="eyebrow" style={{ marginBottom:8 }}>Amount (CAD)</div>
+          {selectedAmt === 'custom' && (
+            <div style={{ marginBottom:32, maxWidth:200 }}>
               <div style={{ display:"flex", alignItems:"center", borderBottom:"2px solid var(--black)" }}>
-                <span style={{ fontFamily:"var(--display)", fontSize:24, fontWeight:500, paddingBottom:8 }}>$</span>
-                <input type="number" min="10" step="5" placeholder="0" value={customAmt} onChange={e=>setCustomAmt(e.target.value)}
-                  style={{ flex:1, border:"none", outline:"none", fontFamily:"var(--display)", fontSize:24, fontWeight:500, background:"transparent", paddingBottom:8, color:"var(--black)" }} />
+                <span style={{ fontFamily:"var(--display)", fontSize:28, fontWeight:500, paddingBottom:8 }}>$</span>
+                <input type="number" min="10" step="5" placeholder="0" value={customAmt}
+                  onChange={e => setCustomAmt(e.target.value)} autoFocus
+                  style={{ flex:1, border:"none", outline:"none", fontFamily:"var(--display)", fontSize:28, fontWeight:500, background:"transparent", paddingBottom:8, color:"var(--black)" }} />
               </div>
+              {amount > 0 && !varId && (
+                <p style={{ marginTop:8, fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+                  Custom amounts — call (250) 860-1968
+                </p>
+              )}
             </div>
           )}
 
-          <div style={{ marginTop:40, paddingTop:32, borderTop:"1px solid var(--hairline)" }}>
-            <div className="eyebrow" style={{ marginBottom:24 }}>Send to someone special</div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 32px" }}>
-              <div>
-                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Recipient email address *</div>
-                <input type="email" placeholder="john@email.com" value={form.recipientEmail} onChange={e=>upd('recipientEmail',e.target.value)} style={inp} />
-              </div>
-              <div>
-                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Recipient name</div>
-                <input type="text" placeholder="John" value={form.recipientName} onChange={e=>upd('recipientName',e.target.value)} style={inp} />
-              </div>
-              <div>
-                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Sender name</div>
-                <input type="text" placeholder="Jane" value={form.senderName} onChange={e=>upd('senderName',e.target.value)} style={inp} />
-              </div>
-              <div>
-                <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Personal message</div>
-                <input type="text" placeholder={'"Enjoy the gift!"'} value={form.message} onChange={e=>upd('message',e.target.value)} style={inp} />
-              </div>
-            </div>
-          </div>
+          <button className="btn" data-cursor="link"
+            disabled={!canAdd} onClick={addToCart}
+            style={{ marginTop:8, minWidth:220, justifyContent:"center", opacity: canAdd ? 1 : 0.4 }}>
+            {added ? "Added to Cart ✓" : <>Add to Cart <ArrowRight /></>}
+          </button>
 
-          <div style={{ display:"flex", alignItems:"center", gap:20, marginTop:28, flexWrap:"wrap" }}>
-            <div style={{ display:"flex", alignItems:"center", border:"1px solid var(--hairline)" }}>
-              <button onClick={()=>setQty(q=>Math.max(1,q-1))} style={{ width:40,height:44,border:"none",background:"none",cursor:"pointer",fontSize:18,fontFamily:"var(--display)" }}>−</button>
-              <span style={{ width:36,textAlign:"center",fontFamily:"var(--display)",fontSize:16,fontWeight:500 }}>{qty}</span>
-              <button onClick={()=>setQty(q=>q+1)} style={{ width:40,height:44,border:"none",background:"none",cursor:"pointer",fontSize:18,fontFamily:"var(--display)" }}>+</button>
-            </div>
-            <button className="btn" data-cursor="link" disabled={!canSend||adding} onClick={sendRequest}
-              style={{ flex:1, justifyContent:"center", minWidth:180, opacity: canSend?1:0.4 }}>
-              {added?"Added to Cart ✓":adding?"Adding…":"Add to Cart"} {!adding&&!added&&<ArrowRight/>}
-            </button>
-          </div>
-
-          <div style={{ marginTop:32, padding:"18px 24px", background:"var(--paper)", borderLeft:"3px solid var(--hairline)" }}>
-            <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", margin:0 }}>
-              No expiry · Valid in-store and online · Gift card code emailed after purchase · Custom amounts — call (250) 860-1968
+          <div style={{ marginTop:40, padding:"18px 24px", background:"var(--paper)", borderLeft:"3px solid var(--hairline)" }}>
+            <p style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", margin:0, lineHeight:1.9 }}>
+              No expiry · Valid in-store + online · Gift card code emailed after checkout · Enter recipient details at checkout
             </p>
           </div>
         </div>
