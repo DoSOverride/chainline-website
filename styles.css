@@ -1583,6 +1583,7 @@ img {
   .home-trail-grid       { grid-template-columns: 1fr !important; }
   .home-testimonials-grid{ grid-template-columns: 1fr !important; }
   .home-newsletter-grid  { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .social-links-grid     { grid-template-columns: repeat(2,1fr) !important; }
 
   /* ── Services / pages ── */
   .services-row { grid-template-columns: 1fr !important; gap: 12px !important; }
@@ -1661,6 +1662,7 @@ button, a, input, select, textarea, [data-cursor="link"] {
 a:hover .bike-hover { transform: translateY(0); }
 .brand-tile:hover   { background: var(--black); color: var(--white); }
 .svc-card:hover .svc-inner { transform: rotateY(180deg); }
+.social-link-tile:hover { border-color: transparent !important; }
 
 /* ── Keyframes (extracted from inline JSX styles) ──────────── */
 @keyframes scrollDrip {

@@ -2889,6 +2889,17 @@ const StoragePage = () => {
 
 const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
 
+const SOCIAL_LINKS = [
+  { name:"Instagram", handle:"@ChainLineCycle",           url:"https://instagram.com/ChainLineCycle",                      desc:"Bikes, builds & Kelowna trails" },
+  { name:"TikTok",    handle:"@ChainLineCycle",           url:"https://tiktok.com/@ChainLineCycle",                        desc:"Short clips from the shop & trails" },
+  { name:"Facebook",  handle:"ChainLine Cycle",           url:"https://facebook.com/ChainLineCycle",                       desc:"Events, news & community" },
+  { name:"Threads",   handle:"@ChainLineCycle",           url:"https://threads.net/@ChainLineCycle",                       desc:"Quick updates & conversation" },
+  { name:"X",         handle:"@ChainLineCycle",           url:"https://x.com/ChainLineCycle",                              desc:"Trail conditions & quick takes" },
+  { name:"Bluesky",   handle:"@ChainLineCycle.bsky.social",url:"https://bsky.app/profile/ChainLineCycle.bsky.social",     desc:"The fediverse side of ChainLine" },
+  { name:"Snapchat",  handle:"ChainLineCycle",            url:"https://snapchat.com/add/ChainLineCycle",                   desc:"Behind-the-scenes from the shop" },
+  { name:"Pinkbike",  handle:"ChainLineCycle",            url:"https://www.pinkbike.com/u/ChainLineCycle/buysell/",        desc:"Buy, sell & classifieds" },
+];
+
 const SocialPage = () => {
   const [videos, setVideos] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -2915,10 +2926,37 @@ const SocialPage = () => {
 
   return (
     <div style={{ minHeight:"80vh" }}>
-      <SubHero title="Social" eyebrow="ChainLine" sub="Rides, builds, shop life, and Kelowna trails — straight from our YouTube." />
+      <SubHero title="Social" eyebrow="ChainLine" sub="Follow along — rides, builds, shop life, and Kelowna trails." />
 
-      <section style={{ padding:"64px 0 96px" }}>
+      {/* ── Social links grid ── */}
+      <section style={{ padding:"64px 0 0", background:"var(--white)" }}>
         <div className="container-wide">
+          <div className="section-label" style={{ marginBottom:40 }}>Follow Us</div>
+          <div className="social-links-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:2 }}>
+            {SOCIAL_LINKS.map((s, i) => (
+              <a key={s.name} href={s.url} target="_blank" rel="noopener" data-cursor="link"
+                className="social-link-tile"
+                style={{ display:"flex", flexDirection:"column", justifyContent:"space-between", padding:"28px 24px", border:"1px solid var(--hairline)", textDecoration:"none", color:"var(--black)", background:"var(--white)", transition:"background .2s, color .2s", minHeight:140 }}
+                onMouseEnter={e => { e.currentTarget.style.background="var(--black)"; e.currentTarget.style.color="var(--white)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background="var(--white)"; e.currentTarget.style.color="var(--black)"; }}>
+                <div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(18px,1.8vw,26px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1, marginBottom:8 }}>{s.name}</div>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"inherit", opacity:.55, lineHeight:1.5 }}>{s.desc}</div>
+                </div>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20 }}>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", opacity:.6 }}>{s.handle}</div>
+                  <ArrowRight size={10} />
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── YouTube ── */}
+      <section style={{ padding:"80px 0 96px", background:"var(--white)" }}>
+        <div className="container-wide">
+          <div className="section-label" style={{ marginBottom:40 }}>YouTube</div>
 
           {loading && (
             <div style={{ textAlign:"center", padding:"80px 0", color:"var(--gray-400)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}>
@@ -3001,6 +3039,58 @@ const SocialPage = () => {
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// ── Parts Landing Page ────────────────────────────────────────────────────────
+const PartsLandingPage = () => {
+  const [q, setQ] = React.useState('');
+  const cats = [
+    { id:'wheels',    label:'Tires & Tubes',      emoji:'🔘', desc:'Road, MTB, gravel, fat bike tires — all sizes. Tubes, sealant, tire protection' },
+    { id:'drivetrain',label:'Chains & Cables',    emoji:'🔗', desc:'Drive chains, shift cables, housing, derailleur hangers, freewheels' },
+    { id:'brakes',    label:'Brake Pads & Parts', emoji:'🛑', desc:'Hydraulic & mechanical pads, brake parts, rotor adapters' },
+    { id:'cockpit',   label:'Tape & Grips',       emoji:'🌀', desc:'Bar tape, cork tape, MTB grips, lock-on grips, spacers' },
+    { id:'tools',     label:'Lube & Maintenance', emoji:'🫙', desc:'Chain lube, grease, degreaser, assembly paste, fork oil, cleaners' },
+  ];
+  const go = (id) => window.cl.go('parts', { tab: id });
+  const search = () => { if (q.trim().length >= 2) window.cl.go('parts', { tab: 'wheels', search: q.trim() }); };
+  return (
+    <div className="page-fade">
+      <SubHero eyebrow="Parts  /  In Stock" title="Parts." italic="Keep it rolling." />
+      <section style={{ background:'var(--white)', padding:'60px 0 100px' }}>
+        <div className="container-wide">
+          <div style={{ maxWidth:600, margin:'0 auto 64px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
+            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
+              placeholder="Search tires, tubes, chains, brake pads…"
+              style={{ flex:1, padding:'16px 20px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:15, background:'transparent', color:'var(--black)' }} />
+            <button onClick={search} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
+            {cats.map(c => (
+              <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
+                style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
+                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                <span style={{ fontSize:36, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:6, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                  <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
+                </div>
+                <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
+              </button>
+            ))}
+          </div>
+          <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
+            <div className="eyebrow" style={{ marginBottom:12 }}>Need something specific?</div>
+            <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock consumables for all major brands. If we don't have it, we can order it.</p>
+            <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
+              <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
+              <button className="btn" data-cursor="link" onClick={()=>window.cl.go('contact')}>Contact Us <ArrowRight /></button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
