@@ -421,6 +421,7 @@ const BikeScroller = () => {
 
   const BikeItem = ({ b }) => (
     <div onClick={() => window.cl.go("bike", { bike: b })}
+      className="bike-scroller-item"
       style={{ flexShrink:0, width:200, height:148, marginRight:20, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
       <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
         onError={e => { e.target.parentElement.style.display = 'none'; }} />

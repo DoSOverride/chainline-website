@@ -183,6 +183,16 @@
 /* eyebrow-light always on dark bg — keep visible */
 .eyebrow-light { color: rgba(255,255,255,0.45); }
 
+/* Bike scroller — white-bg product photos on dark mode:
+   multiply blend × light-gray container = white bg disappears into gray,
+   bike colors survive (slightly muted but clearly colored, no inversion) */
+[data-theme="dark"] .bike-scroller-item {
+  background: #d0d0d0 !important;
+}
+[data-theme="dark"] .bike-scroller-item img {
+  mix-blend-mode: multiply !important;
+}
+
 /* Sticky nav bars — hardcoded rgba(250,250,250) backgrounds turn white in dark mode */
 [data-theme="dark"] .shop-filter-sticky {
   background: rgba(12,12,12,0.97) !important;
