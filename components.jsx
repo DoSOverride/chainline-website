@@ -181,6 +181,7 @@ const ContactBar = () => {
 // Header / Nav
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
+    { id: "shop",     label: "Bikes",    panel: "shop",     route: "shop" },
     { id: "store",    label: "Store",    panel: "store",    route: "store" },
     { id: "services", label: "Services", panel: "services", route: "services" },
     { id: "explore",  label: "Explore",  panel: "explore",  route: "rides" },
@@ -330,12 +331,16 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
   const BIKE_BRANDS  = ["Marin", "Transition", "Surly", "Pivot", "Salsa"];
   const BIKE_BRANDS2 = ["Bianchi", "Moots", "Knolly", "Revel"];
   const data = {
+    shop: {
+      styleCol: ["Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"],
+      brandCol:  BIKE_BRANDS,
+      brandCol2: BIKE_BRANDS2,
+    },
     store: {
       storeCols: [
-        { h: "Bikes", route: "shop", items: ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids", ...BIKE_BRANDS, ...BIKE_BRANDS2] },
-        { h: "Components", route: "components", items: ["Drivetrain", "Brakes", "Suspension", "Cockpit", "Wheelsets", "Rims", "Hubs"] },
-        { h: "Parts", route: "parts", items: ["Tires", "Tubes", "Chains", "Cables", "Brake pads", "Bar tape", "Grips", "Lube"] },
-        { h: "Accessories", route: "accessories", items: ["Helmets", "Clothing", "Lights", "Locks", "Bags", "Computers", "Tools", "Pumps"] },
+        { h: "Components", route: "components", items: ["Drivetrain", "Brakes", "Suspension", "Cockpit", "Wheelsets", "Rims", "Hubs", "Headsets"] },
+        { h: "Parts",       route: "parts",       items: ["Tires", "Tubes", "Chains", "Cables", "Brake pads", "Bar tape", "Grips", "Lube"] },
+        { h: "Accessories", route: "accessories", items: ["Helmets", "Gloves", "Clothing", "Lights", "Locks", "Bags", "Computers", "Tools"] },
       ],
     },
     services: {
@@ -418,9 +423,27 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Store panel: 4 cols — Bikes | Components | Parts | Accessories */}
-          {d.storeCols ? (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:40 }}>
+          {/* Bikes panel: By Style | Brands col1 | Brands col2 */}
+          {d.styleCol ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:48 }}>
+              <div className="mega-col">
+                <h4>By Style</h4>
+                <ul>
+                  <li><a href="#" data-cursor="link" onClick={(e) => handleClick(e, "All Bikes")}>All Bikes</a></li>
+                  {d.styleCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
+                </ul>
+              </div>
+              <div className="mega-col">
+                <h4>By Brand</h4>
+                <ul>{d.brandCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+              </div>
+              <div className="mega-col">
+                <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+              </div>
+            </div>
+          ) : /* Store panel: 3 cols — Components | Parts | Accessories */
+          d.storeCols ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:48 }}>
               {d.storeCols.map((col, ci) => (
                 <div key={ci} className="mega-col">
                   <h4 style={{ cursor:"pointer" }} onClick={() => { onClose(); window.cl.go(col.route); }}>{col.h}</h4>
@@ -519,6 +542,7 @@ const MobileNav = ({ open, onClose }) => {
         style={{ pointerEvents: panel === 'main' ? 'all' : 'none' }}>
         {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
+          <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('store')}>Store <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('explore')}>Explore <ChevR /></div>
@@ -530,12 +554,33 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'shop' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:20, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:16 }}>
+            <div style={{ paddingRight:16 }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Brand</div>
+              {BRANDS.map(br => (
+                <a key={br} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
+              ))}
+            </div>
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Style</div>
+              {TYPES.map(t => (
+                <a key={t} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Panel 3: Store ── */}
+      <div className={"mob-panel " + (panel === 'store' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
           <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("store")); }}>Shop the Store</a>
           {[
-            { label:"Bikes",        route:"shop",        sub:"Mountain, Gravel, E-Bike, Commuter" },
-            { label:"Components",   route:"components",  sub:"Drivetrain, Brakes, Suspension, Cockpit" },
-            { label:"Parts",        route:"parts",       sub:"Tires, Tubes, Chains, Cables, Brake Pads" },
-            { label:"Accessories",  route:"accessories", sub:"Helmets, Lights, Bags, Clothing, Tools" },
+            { label:"Components",  route:"components", sub:"Drivetrain, Brakes, Suspension, Cockpit" },
+            { label:"Parts",       route:"parts",      sub:"Tires, Tubes, Chains, Cables, Brake Pads" },
+            { label:"Accessories", route:"accessories",sub:"Helmets, Lights, Bags, Clothing, Tools" },
           ].map(it => (
             <a key={it.label} href="#" onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}
               style={{ ...linkA, flexDirection:"column", alignItems:"flex-start", gap:2, paddingRight:40, position:"relative" }}>
@@ -547,7 +592,7 @@ const MobileNav = ({ open, onClose }) => {
         </div>
       </div>
 
-      {/* ── Panel 3: Services ── */}
+      {/* ── Panel 4: Services ── */}
       <div className={"mob-panel " + (panel === 'services' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>

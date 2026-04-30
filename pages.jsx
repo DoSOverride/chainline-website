@@ -3014,22 +3014,21 @@ const SocialPage = () => {
 // ── Store Landing Page ────────────────────────────────────────────────────────
 const StorePage = () => {
   const cats = [
-    { route:'shop',        label:'Bikes',        emoji:'🚲', desc:'Mountain, Gravel, E-Bike, Commuter, Comfort, Kids — all brands in stock', cta:'Shop Bikes' },
-    { route:'components',  label:'Components',   emoji:'⚙️', desc:'Drivetrain, brakes, suspension, cockpit — mechanical assemblies and upgrades', cta:'Shop Components' },
-    { route:'parts',       label:'Parts',        emoji:'🔗', desc:'Tires, tubes, chains, cables, brake pads, bar tape, lube — consumables & replacements', cta:'Shop Parts' },
-    { route:'accessories', label:'Accessories',  emoji:'🎒', desc:'Helmets, clothing, lights, locks, bags, computers, tools & more', cta:'Shop Accessories' },
+    { route:'components',  label:'Components',  emoji:'⚙️', desc:'Drivetrain, brakes, suspension, cockpit — mechanical assemblies and upgrades', cta:'Shop Components' },
+    { route:'parts',       label:'Parts',       emoji:'🔗', desc:'Tires, tubes, chains, cables, brake pads, bar tape, lube — consumables & replacements', cta:'Shop Parts' },
+    { route:'accessories', label:'Accessories', emoji:'🎒', desc:'Helmets, clothing, lights, locks, bags, computers, tools & more', cta:'Shop Accessories' },
   ];
   return (
     <div className="page-fade">
-      <SubHero eyebrow="Store  /  Live Inventory" title="The Store." italic="Everything we carry." />
+      <SubHero eyebrow="Store  /  Live Inventory" title="The Store." italic="Components, parts & accessories." />
       <section style={{ background:'var(--white)', padding:'0 0 100px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:2 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:2 }}>
           {cats.map(c => (
             <button key={c.route} onClick={()=>window.cl.go(c.route)} data-cursor="link"
-              style={{ position:'relative', aspectRatio:'4/3', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'40px 40px 36px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', overflow:'hidden', transition:'background .2s' }}
+              style={{ position:'relative', aspectRatio:'3/4', display:'flex', flexDirection:'column', justifyContent:'flex-end', padding:'40px 32px 36px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', overflow:'hidden', transition:'background .2s' }}
               onMouseEnter={e=>e.currentTarget.style.background='var(--black)'}
               onMouseLeave={e=>e.currentTarget.style.background='var(--paper)'}>
-              <div style={{ position:'absolute', top:36, left:40, fontSize:48, lineHeight:1 }}>{c.emoji}</div>
+              <div style={{ position:'absolute', top:32, left:32, fontSize:48, lineHeight:1 }}>{c.emoji}</div>
               <div style={{ position:'relative', zIndex:1 }}>
                 <div className="display-m" style={{ marginBottom:10, textAlign:'left' }}>{c.label}</div>
                 <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, marginBottom:20 }}>{c.desc}</div>
