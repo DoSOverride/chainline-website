@@ -156,7 +156,7 @@ const ContactBar = () => {
   const ls = { display:"flex", alignItems:"center", gap:"clamp(4px,1vw,7px)", fontFamily:"var(--mono)", fontSize:"clamp(8px,2.2vw,10px)", letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-600)", textDecoration:"none", whiteSpace:"nowrap" };
   const ic = { flexShrink:0 };
   return (
-    <div style={{ background:"var(--paper)", borderBottom:"1px solid var(--hairline)", padding:"6px 0", overflow:"hidden" }}>
+    <div className="contact-bar" style={{ background:"var(--paper)", borderBottom:"1px solid var(--hairline)", padding:"6px 0", overflow:"hidden" }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:"clamp(8px,2.5vw,40px)", flexWrap:"nowrap", padding:"0 clamp(6px,2vw,24px)" }}>
         <a href="tel:2508601968" data-cursor="link" style={ls}>
           <svg style={ic} width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2.5A1.5 1.5 0 013.5 1h1.376a1 1 0 01.984.821l.53 2.646a1 1 0 01-.29.98L4.97 6.568a11.04 11.04 0 005.46 5.46l1.12-1.13a1 1 0 01.981-.291l2.646.53A1 1 0 0115 12.124V13.5A1.5 1.5 0 0113.5 15C6.596 15 1 9.404 1 2.5z"/></svg>

@@ -1732,16 +1732,17 @@ const TrailsPage = () => {
 const ContactPage = () => (
   <div className="page-fade" data-screen-label="P08 Contact">
     <section className="page-contact-grid" style={{ paddingTop: 120, minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-      <div className="ph ph-corners" style={{ minHeight: 600, position: "relative" }}>
-        <span className="ph-label">STOREFRONT  /  B&W</span>
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(10,10,10,0.6))" }} />
-        <div style={{ position: "absolute", left: 48, right: 48, bottom: 48, color: "var(--white)" }}>
-          <h1 className="display-xl" style={{ marginBottom: 32 }}>Come<br/><span className="serif-italic">find us.</span></h1>
-          <div style={{ borderTop: "1px solid var(--hairline-light)", paddingTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Address</div><a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" style={{ color: "inherit" }}>1139 Ellis St<br/>Kelowna, BC V1Y 1Z5</a></div>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Hours</div>Mon–Sat  10–6<br/>Sun  11–5</div>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Phone</div>(250) 860-1968</div>
-            <div><div className="eyebrow eyebrow-light" style={{ marginBottom: 6 }}>Email</div>bikes@chainline.ca</div>
+      <div style={{ minHeight: 600, position: "relative", overflow: "hidden", background: "#0a0a0a" }}>
+        <img src="https://still-term-f1ec.taocaruso77.workers.dev/r2/shop/shop-interior.jpg" alt="ChainLine Cycle — Kelowna"
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", opacity: 0.65 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.7) 100%)" }} />
+        <div style={{ position: "absolute", left: 48, right: 48, bottom: 48, color: "#fafafa" }}>
+          <h1 className="display-xl" style={{ marginBottom: 32, color: "#fafafa" }}>Come<br/><span className="serif-italic">find us.</span></h1>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", color: "rgba(255,255,255,0.65)" }}>
+            <div><div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", color:"rgba(255,255,255,0.4)", marginBottom:6, textTransform:"uppercase" }}>Address</div><a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" style={{ color: "inherit" }}>1139 Ellis St<br/>Kelowna, BC V1Y 1Z5</a></div>
+            <div><div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", color:"rgba(255,255,255,0.4)", marginBottom:6, textTransform:"uppercase" }}>Hours</div>Mon 10–5<br/>Tue–Fri 9:30–5:30<br/>Sat 10–4 · Sun closed</div>
+            <div><div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", color:"rgba(255,255,255,0.4)", marginBottom:6, textTransform:"uppercase" }}>Phone</div><a href="tel:2508601968" style={{ color:"inherit" }}>(250) 860-1968</a></div>
+            <div><div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", color:"rgba(255,255,255,0.4)", marginBottom:6, textTransform:"uppercase" }}>Email</div><a href="mailto:bikes@chainline.ca" style={{ color:"inherit" }}>bikes@chainline.ca</a></div>
           </div>
         </div>
       </div>
