@@ -3020,6 +3020,7 @@ const StorePage = () => {
   const [allResults, setAllResults] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [loadedTabs, setLoadedTabs] = React.useState([]);
+  const [pendingSearch, setPendingSearch] = React.useState('');
   const inputRef = React.useRef(null);
   const resultsRef = React.useRef(null);
 
@@ -3035,6 +3036,28 @@ const StorePage = () => {
     });
     return () => { cancelled = true; };
   }, []);
+
+  // Read search intent from nav clicks (e.g. clicking "Tubes" in Store mega menu)
+  React.useEffect(() => {
+    const intent = window.cl?.intent;
+    if (intent?.search) {
+      const term = String(intent.search);
+      window.cl.intent = null;
+      setQ(term);
+      setPendingSearch(term); // will auto-run once tabs load
+    }
+  }, []);
+
+  // Auto-run pending search once inventory has loaded
+  React.useEffect(() => {
+    if (!loading && pendingSearch) {
+      const hits = searchAll(pendingSearch);
+      setAllResults(hits);
+      setSubmitted(pendingSearch);
+      setPendingSearch('');
+      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+    }
+  }, [loading, pendingSearch]);
 
   const searchAll = (term) => {
     const t = term.trim().toLowerCase();

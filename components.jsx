@@ -453,7 +453,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
               {d.storeCols.map((col, ci) => (
                 <div key={ci} className="mega-col">
                   <h4 style={{ cursor:"pointer" }} onClick={() => { onClose(); window.cl.go(col.route); }}>{col.h}</h4>
-                  <ul>{col.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                  <ul>{col.items.map(it => (
+                    <li key={it}><a href="#" data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go('store', { search: it }); }}>{it}</a></li>
+                  ))}</ul>
                 </div>
               ))}
             </div>
