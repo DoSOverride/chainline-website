@@ -333,7 +333,7 @@ const SERVICES = [
   { n: "03", name: "Professional Bike Fitting", desc: "Power-meter ready, video gait analysis included.", price: "FROM $200" },
   { n: "04", name: "Bike Storage Program", desc: "Dry, secure, climate-controlled. Spring-ready return.", price: "FROM $180" },
   { n: "05", name: "Wheel Building", desc: "Hand-laced, tensioned, trued. Lifetime true-up included.", price: "FROM $260" },
-  { n: "06", name: "Warranty & Recall Service", desc: "We handle the paperwork. Authorized for all our brands.", price: "NO CHARGE" },
+  { n: "06", name: "Warranty & Recall Service", desc: "We handle the paperwork. Authorized for all our brands.", price: "FROM $45" },
 ];
 
 const ServiceCard = ({ s }) => (
