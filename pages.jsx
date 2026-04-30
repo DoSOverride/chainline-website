@@ -616,7 +616,7 @@ const ShopPage = () => {
         {/* Row 3: brand chips */}
         <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"2px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
           {ALL_BRANDS.map(br => {
-            const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br).length;
+            const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br && b.inStock !== false).length;
             if (cnt === 0) return null;
             const active = brand === br;
             return (
