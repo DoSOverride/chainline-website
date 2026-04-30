@@ -79,7 +79,13 @@ window.shopifyCart = {
   checkout() {
     if (this.items.length === 0) return;
     const itemStr = this.items.map(i => `${i.variantId}:${i.qty}`).join(',');
-    window.location.href = `https://${window.CL_SHOP.domain}/cart/${itemStr}`;
+    let url = `https://${window.CL_SHOP.domain}/cart/${itemStr}`;
+    // If a gift card recipient email was captured, pass it as a cart attribute
+    // so the orders/paid webhook can read it from order.note_attributes
+    if (window._gcRecipientEmail) {
+      url += `?attributes[Recipient+Email]=${encodeURIComponent(window._gcRecipientEmail)}`;
+    }
+    window.location.href = url;
   },
 };
 

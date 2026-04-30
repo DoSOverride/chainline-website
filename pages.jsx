@@ -1880,7 +1880,10 @@ const GiftCardsPage = () => {
 
   const addToCart = () => {
     if (!canAdd) return;
-    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, { 'Recipient Email': recipientEmail });
+    // variant stored as display string — CartDrawer renders it as text
+    // recipient email stored separately so checkout() can append it to the Shopify URL
+    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, `Send to: ${recipientEmail}`);
+    window._gcRecipientEmail = recipientEmail;
     window.dispatchEvent(new CustomEvent('cart:open'));
     setAdded(true);
     setTimeout(() => setAdded(false), 3000);
