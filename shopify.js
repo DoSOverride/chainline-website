@@ -51,12 +51,12 @@ window.shopifyCart = {
     window.CL_SHOP.cart = this.items;
   },
 
-  add(variantId, name, price, image, qty = 1, variant = null) {
+  add(variantId, name, price, image, qty = 1, variant = null, sku = null) {
     const existing = this.items.find(i => i.variantId === variantId);
     if (existing) {
       existing.qty += qty;
     } else {
-      this.items.push({ variantId, name, price, image, qty, variant });
+      this.items.push({ variantId, name, price, image, qty, variant, sku });
     }
     this._save();
     const count = this.items.reduce((s, i) => s + i.qty, 0);
@@ -73,6 +73,26 @@ window.shopifyCart = {
 
   count() {
     return this.items.reduce((s, i) => s + i.qty, 0);
+  },
+
+  qtyBySku(sku) {
+    if (!sku) return 0;
+    const found = this.items.find(i => i.sku === sku || i.variantId === sku);
+    return found?.qty || 0;
+  },
+
+  decrementBySku(sku) {
+    if (!sku) return;
+    const found = this.items.find(i => i.sku === sku || i.variantId === sku);
+    if (!found) return;
+    if (found.qty <= 1) {
+      this.remove(found.variantId);
+    } else {
+      found.qty -= 1;
+      this._save();
+      const count = this.count();
+      window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: this.items, count } }));
+    }
   },
 
   // Redirect to Shopify checkout with all cart items
@@ -101,7 +121,7 @@ window.clAddToCart = async function(handle, name, price, image, sku, variant) {
   // 1. SKU direct lookup (most reliable for Lightspeed bikes)
   if (sku && variantMap[sku]) {
     const variantId = variantMap[sku];
-    window.shopifyCart.add(variantId, name, price, image, 1, variant || null);
+    window.shopifyCart.add(variantId, name, price, image, 1, variant || null, sku);
     return { variantId, name, price, image };
   }
 
@@ -111,7 +131,7 @@ window.clAddToCart = async function(handle, name, price, image, sku, variant) {
     p.title.toLowerCase() === (name || '').toLowerCase()
   );
   if (match?.variantId) {
-    window.shopifyCart.add(match.variantId, match.title, match.price, match.image, 1, variant || null);
+    window.shopifyCart.add(match.variantId, match.title, match.price, match.image, 1, variant || null, sku || handle);
     return match;
   }
 

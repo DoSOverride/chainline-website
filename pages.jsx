@@ -113,6 +113,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const [adding, setAdding]  = React.useState(false);
   const [added,  setAdded]   = React.useState(false);
   const [enriched, setEnriched] = React.useState(null);
+  const [cartQty, setCartQty] = React.useState(0);
 
   React.useEffect(() => {
     const d = (bike?.variants||[]).filter(v=>v.inStock)[0] || (bike?.variants||[])[0];
@@ -160,9 +161,20 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const [activeImg, setActiveImg] = React.useState(0);
   React.useEffect(() => setActiveImg(0), [selected?.sku]);
 
-  const selInStock = selected ? selected.inStock : b.inStock !== false;
-  const selPrice   = selected?.price || b.price || 0;
-  const selSku     = selected?.sku || b.sku;
+  const selInStock  = selected ? selected.inStock : b.inStock !== false;
+  const selPrice    = selected?.price || b.price || 0;
+  const selSku      = selected?.sku || b.sku;
+  const availableQty = selected?.qty ?? b?.qty ?? 1;
+
+  // Track how many of this bike are in the cart
+  React.useEffect(() => {
+    const update = () => setCartQty(window.shopifyCart?.qtyBySku(selSku) || 0);
+    update();
+    window.addEventListener('cart:updated', update);
+    return () => window.removeEventListener('cart:updated', update);
+  }, [selSku]);
+
+  const atMaxQty = availableQty > 0 && cartQty >= availableQty;
 
   const handleAdd = async () => {
     setAdding(true);
@@ -318,9 +330,11 @@ const BikePage = ({ bike, onBack, onCart }) => {
           <p className="reveal" style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--gray-600)', marginBottom: 40, maxWidth: 480 }}>{desc}</p>
 
           <div className="reveal" style={{ display: 'flex', gap: 12, marginBottom: 48, flexWrap: 'wrap' }}>
-            <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding} style={{ flex: '1 1 200px', justifyContent: 'center' }}>
-              {added ? 'Added to Cart ✓' : adding ? 'Adding…' : 'Add to Cart'}
-              {!adding && !added && <ArrowRight />}
+            <button className="btn" data-cursor="link" onClick={handleAdd}
+              disabled={adding || atMaxQty}
+              style={{ flex: '1 1 200px', justifyContent: 'center', opacity: atMaxQty ? 0.5 : 1 }}>
+              {atMaxQty ? `In Cart${availableQty > 1 ? ` (${cartQty}/${availableQty})` : ''}` : added ? 'Added ✓' : adding ? 'Adding…' : 'Add to Cart'}
+              {!adding && !added && !atMaxQty && <ArrowRight />}
             </button>
             <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go('book')} style={{ flex: '1 1 160px', justifyContent: 'center' }}>
               Book a Test Ride
@@ -1919,23 +1933,46 @@ const GiftCardsPage = () => {
 
 // PARTS & ACCESSORIES PAGE — Live Lightspeed inventory
 const PartCartBtn = ({ item, compact }) => {
-  const [state, setState] = React.useState('idle');
-  const add = async () => {
-    if (state !== 'idle') return;
-    setState('adding');
-    const result = await window.clAddToCart(item.sku, item.name, item.price, null, item.sku);
-    setState(result ? 'added' : 'unavailable');
-    setTimeout(() => setState('idle'), result ? 2000 : 3000);
-  };
+  const [loading, setLoading] = React.useState(false);
+  const [cartQty, setCartQty] = React.useState(() => window.shopifyCart?.qtyBySku(item.sku) || 0);
+
+  React.useEffect(() => {
+    const update = () => setCartQty(window.shopifyCart?.qtyBySku(item.sku) || 0);
+    window.addEventListener('cart:updated', update);
+    return () => window.removeEventListener('cart:updated', update);
+  }, [item.sku]);
+
   if (!item.inStock && item.qty === 0) {
     return <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".08em", textTransform:"uppercase", color:"var(--gray-400)" }}>Out of stock</span>;
   }
-  const labels = { idle: compact ? '+' : 'Add to Cart', adding: '…', added: '✓', unavailable: 'Contact Us' };
-  const bgs    = { idle: 'var(--black)', adding: 'var(--gray-500)', added: '#1a6e3c', unavailable: 'var(--gray-500)' };
+
+  const maxQty = item.qty > 0 ? item.qty : 99;
+  const atMax  = cartQty >= maxQty;
+
+  const addOne = async () => {
+    if (loading || atMax) return;
+    setLoading(true);
+    await window.clAddToCart(item.sku, item.name, item.price, null, item.sku);
+    setLoading(false);
+  };
+
+  const removeOne = () => window.shopifyCart?.decrementBySku(item.sku);
+
+  if (cartQty > 0) {
+    const btnBase = { height:26, fontFamily:"var(--mono)", fontSize:12, border:"1px solid var(--hairline)", cursor:"pointer", flexShrink:0, transition:"background .15s" };
+    return (
+      <div style={{ display:"flex", alignItems:"center" }}>
+        <button onClick={removeOne} style={{ ...btnBase, width:26, background:"var(--paper)", color:"var(--black)", borderRight:"none" }}>−</button>
+        <span style={{ width:28, height:26, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".06em", border:"1px solid var(--hairline)", borderLeft:"none", borderRight:"none", color:"var(--black)" }}>{cartQty}</span>
+        <button onClick={addOne} disabled={atMax || loading} style={{ ...btnBase, width:26, background: atMax ? "var(--paper)" : "var(--black)", color: atMax ? "var(--gray-400)" : "var(--white)", borderLeft:"none", cursor: atMax ? "default" : "pointer" }}>{loading ? "…" : "+"}</button>
+      </div>
+    );
+  }
+
   return (
-    <button className="part-cart-btn" data-state={state} data-cursor="link" onClick={add} title={state === 'idle' ? 'Add to cart' : undefined}
-      style={{ padding: compact ? "6px 10px" : "7px 14px", background: bgs[state], color:"#fff", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap", transition:"background .2s, color .2s", flexShrink:0 }}>
-      {labels[state]}
+    <button className="part-cart-btn" data-cursor="link" onClick={addOne}
+      style={{ padding: compact ? "6px 10px" : "7px 14px", background:"var(--black)", color:"#fff", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".08em", textTransform:"uppercase", border:"none", cursor:"pointer", whiteSpace:"nowrap", transition:"background .2s", flexShrink:0 }}>
+      {loading ? "…" : compact ? "+" : "Add to Cart"}
     </button>
   );
 };
