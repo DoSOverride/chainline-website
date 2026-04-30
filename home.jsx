@@ -474,15 +474,16 @@ const LocalStory = () => (
 
 // Parts horizontal scroll
 const GearHScroll = () => {
+  const R2 = `${WORKER_URL}/r2`;
   const cats = [
-    { name: "Helmets & Protection", tab: "fit",          img: `${WORKER_URL}/r2/shop/interior-surly.jpg` },
-    { name: "Apparel & Clothing",   tab: "fit",          img: null },
-    { name: "Components",           tab: "drivetrain",   img: `${WORKER_URL}/r2/shop/interior-parts.jpg` },
-    { name: "Tools & Maintenance",  tab: "tools",        img: null },
-    { name: "Bags & Racks",         tab: "accessories",  img: null },
-    { name: "Lights & Computers",   tab: "accessories",  img: null },
-    { name: "Wheels & Tires",       tab: "wheels",       img: `${WORKER_URL}/r2/shop/interior-tires.jpg` },
-    { name: "Suspension",           tab: "suspension",   img: null },
+    { name: "Helmets & Protection", tab: "fit",          img: `${R2}/shop/interior-surly.jpg` },
+    { name: "Apparel & Clothing",   tab: "fit",          img: `${R2}/lifestyle/rides-group.jpg` },
+    { name: "Components",           tab: "drivetrain",   img: `${R2}/shop/interior-parts.jpg` },
+    { name: "Tools & Maintenance",  tab: "tools",        img: `${R2}/shop/shop-interior.jpg` },
+    { name: "Bags & Racks",         tab: "accessories",  img: `${R2}/lifestyle/trail-action.jpg` },
+    { name: "Lights & Computers",   tab: "accessories",  img: `${R2}/lifestyle/trail-forest.jpg` },
+    { name: "Wheels & Tires",       tab: "wheels",       img: `${R2}/shop/interior-tires.jpg` },
+    { name: "Suspension",           tab: "suspension",   img: `${R2}/lifestyle/trail-pines.jpg` },
   ];
   return (
     <section className="section section-pad bg-white" data-screen-label="08 Gear" style={{ paddingBottom: 80 }}>
@@ -544,8 +545,10 @@ const GroupRidesTeaser = () => {
     <section className="section section-pad bg-black" data-screen-label="09 Group Rides">
       <div className="container-wide">
         <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, alignItems: "center" }}>
-          <div className="reveal ph ph-corners" style={{ aspectRatio: "5/4" }}>
-            <span className="ph-label">GROUP RIDE  /  B&W  /  5:4</span>
+          <div className="reveal" style={{ aspectRatio: "5/4", position: "relative", overflow: "hidden" }}>
+            <img src={`${WORKER_URL}/r2/lifestyle/rides-group.jpg`} alt="ChainLine group ride"
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />
           </div>
           <div className="reveal reveal-d-2">
             <div className="section-label" style={{ color: "var(--gray-300)" }}>Community  /  N°06</div>
@@ -595,8 +598,11 @@ const TrailSpotlight = () => {
           <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("trails")}>Explore Kelowna Trails <ArrowRight /></button>
         </div>
         <div className="home-trail-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 32 }}>
-          <a href="#" data-cursor="link" className="reveal ph ph-corners" style={{ aspectRatio: "16/10", position: "relative" }}>
-            <span className="ph-label">HERO TRAIL  /  KNOX MOUNTAIN  /  16:10</span>
+          <a href="#" data-cursor="link" className="reveal" onClick={e => { e.preventDefault(); window.cl.go("trails"); }}
+            style={{ aspectRatio: "16/10", position: "relative", overflow: "hidden", display: "block" }}>
+            <img src={`${WORKER_URL}/r2/lifestyle/trail-knox.jpg`} alt="Knox Mountain trails"
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", display: "block" }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)" }} />
             <div style={{ position: "absolute", left: 32, right: 32, bottom: 32, color: "var(--white)" }}>
               <div className="eyebrow eyebrow-light" style={{ marginBottom: 12 }}>Featured  ·  Spring–Fall</div>
               <div className="display-l" style={{ marginBottom: 16 }}>{trails[0].name}</div>
@@ -610,8 +616,11 @@ const TrailSpotlight = () => {
           </a>
           <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 32 }}>
             {trails.slice(1).map((t, i) => (
-              <a key={i} href="#" data-cursor="link" className="reveal reveal-d-2 ph ph-corners" style={{ position: "relative", minHeight: 220 }}>
-                <span className="ph-label">TRAIL  /  {t.name.toUpperCase()}</span>
+              <a key={i} href="#" data-cursor="link" className="reveal reveal-d-2" onClick={e => { e.preventDefault(); window.cl.go("trails"); }}
+                style={{ position: "relative", minHeight: 220, overflow: "hidden", display: "block" }}>
+                <img src={`${WORKER_URL}/r2/lifestyle/${i === 0 ? "trail-action.jpg" : "trail-pines.jpg"}`} alt={t.name}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", position: "absolute", inset: 0 }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)" }} />
                 <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "var(--white)" }}>
                   <div className="display-m" style={{ marginBottom: 8 }}>{t.name}</div>
                   <div style={{ display: "flex", gap: 16, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", alignItems: "center" }}>
