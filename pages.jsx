@@ -355,7 +355,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
             {/* Loading state */}
             {varLoading && (
               <div style={{ display:'flex', gap:8, marginBottom:14 }}>
-                {[1,2,3].map(i => <div key={i} style={{ height:36, width:64+i*12, background:'var(--paper)', borderRadius:2, animation:'pulse 1.5s ease-in-out infinite', animationDelay:`${i*0.15}s` }} />)}
+                {[76,92,68].map((w,i) => <div key={i} className="ph" style={{ height:36, width:w, borderRadius:2 }} />)}
               </div>
             )}
             {/* Single variant — show as info tags */}
@@ -366,7 +366,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
                 {variants[0].color && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{variants[0].color}</span>}
               </div>
             )}
-            {!varLoading && (
+            {!varLoading && (<>
               {hasWheels && (
                 <div style={{ marginBottom:14 }}>
                   <div className="eyebrow" style={{ marginBottom:8 }}>Wheel Size</div>
@@ -415,10 +415,16 @@ const BikePage = ({ bike, onBack, onCart }) => {
                   </div>
                 </div>
               )}
+            </>}
+          </div>
+
+          {desc ? (
+            <p className="reveal" style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--gray-600)', marginBottom: 40, maxWidth: 480 }}>{desc}</p>
+          ) : (
+            <div className="reveal" style={{ marginBottom:40, maxWidth:480 }}>
+              {[1,0.8,0.6].map((w,i) => <div key={i} className="ph" style={{ height:14, width:`${w*100}%`, marginBottom:10, borderRadius:2 }} />)}
             </div>
           )}
-
-          <p className="reveal" style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--gray-600)', marginBottom: 40, maxWidth: 480 }}>{desc}</p>
 
           <div className="reveal" style={{ display: 'flex', gap: 12, marginBottom: 48, flexWrap: 'wrap' }}>
             <button className="btn" data-cursor="link" onClick={handleAdd}
