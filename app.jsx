@@ -27,7 +27,7 @@ function pathToRoute(pathname) {
   }
   if (s1 === 'components') return { page: 'components', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (s1 === 'accessories') return { page: 'accessories', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
-  if (s1 === 'parts') { const tab = s2 && _PART_TABS.includes(s2) ? s2 : null; return { page: partPageFor(tab || ''), intent: tab ? { tab } : null }; }
+  if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (_PAGES.includes(s1)) return { page: s1, intent: null };
   return { page: 'home', intent: null };
 }
@@ -44,6 +44,7 @@ function routeToPath(page, intent) {
     return h ? `/bike/${h}` : '/bikes';
   }
   if (page === 'components')  return intent?.tab ? `/components/${intent.tab}`  : '/components';
+  if (page === 'parts')       return intent?.tab ? `/parts/${intent.tab}`       : '/parts';
   if (page === 'accessories') return intent?.tab ? `/accessories/${intent.tab}` : '/accessories';
   return `/${page}`;
 }
@@ -138,8 +139,7 @@ const App = () => {
     let _fromCode = false;
 
     window.cl.go = (p, intent) => {
-      // Map "parts" to components/accessories based on tab
-      if (p === 'parts') p = intent?.tab ? partPageFor(intent.tab) : 'components';
+      // "parts" is now its own page again
       const cur = window.cl.currentPage;
       if (cur && cur !== p) window.cl.history.push({ page: cur, intent: window.cl.intent });
       if (window.cl.history.length > 20) window.cl.history.shift();
@@ -247,6 +247,7 @@ const App = () => {
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
         {page === "components"  && (window.cl.intent?.tab ? <PartsPage /> : <ComponentsLandingPage />)}
+        {page === "parts"       && (window.cl.intent?.tab ? <PartsPage /> : <PartsLandingPage />)}
         {page === "accessories" && (window.cl.intent?.tab ? <PartsPage /> : <AccessoriesLandingPage />)}
         {page === "classifieds" && <ClassifiedsPage />}
         {page === "brands" && <BrandPage />}

@@ -182,8 +182,9 @@ const ContactBar = () => {
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
     { id: "shop",        label: "Bikes",        panel: "shop",        route: "shop" },
-    { id: "components",  label: "Components",   panel: "components",  route: "components",  intent: { tab: "drivetrain" } },
-    { id: "accessories", label: "Accessories",  panel: "accessories", route: "accessories", intent: { tab: "accessories" } },
+    { id: "components",  label: "Components",   panel: "components",  route: "components" },
+    { id: "parts",       label: "Parts",        panel: "parts",       route: "parts" },
+    { id: "accessories", label: "Accessories",  panel: "accessories", route: "accessories" },
     { id: "services",    label: "Services",     panel: "services",    route: "services" },
     { id: "explore",     label: "Explore",      panel: "explore",     route: "rides" },
     { id: "more",        label: "More",         panel: "more",        route: "about" },
@@ -333,27 +334,32 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
   const BIKE_BRANDS2 = ["Bianchi", "Moots", "Knolly", "Revel"];
   const data = {
     shop: {
+      styleCol: ["Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"],
       brandCol:  BIKE_BRANDS,
       brandCol2: BIKE_BRANDS2,
-      cols: [
-        { h: "Components & Accessories", items: ["Helmets & Protection", "Apparel", "Drivetrain", "Tools", "Bags & Racks", "Lights"] },
-        { h: "More", items: ["Sale", "Gift Cards", "Pinkbike"] },
-      ],
     },
     components: {
       cols: [
-        { h: "Drivetrain", items: ["Cassette", "Chains", "Chainrings", "Cranks", "Derailleurs", "Shifters", "Bottom Brackets", "Cables"] },
-        { h: "Brakes & Wheels", items: ["Brake pads", "Brake Levers", "Rims", "Hubs", "Spokes", "Wheelsets", "Skewers"] },
-        { h: "Suspension & Cockpit", items: ["Forks", "Rear Shock", "Handlebar", "Stem", "Grips", "Bar tape", "Headsets", "Seat post", "Saddles"] },
-        { h: "Tires & Tubes", items: ['Tires 29"', 'Tires 700C', 'Tires 27.5"', 'Tires 26"', "Fat Bike Tires", "Tubes", "Tire Sealant", "Tire Protection"] },
+        { h: "Drivetrain", items: ["Cassette", "Chains", "Chainrings", "Cranks", "Derailleurs", "Shifters", "Bottom Brackets"] },
+        { h: "Brakes", items: ["Brake pads", "Brake Levers", "Wheelsets", "Rims", "Hubs", "Spokes"] },
+        { h: "Suspension", items: ["Forks", "Rear Shock", "Fork Parts", "Seals"] },
+        { h: "Cockpit", items: ["Handlebar", "Stem", "Grips", "Bar tape", "Headsets", "Seat post", "Saddles"] },
+      ],
+    },
+    parts: {
+      cols: [
+        { h: "Tires", items: ['Tires 29"', 'Tires 700C', 'Tires 27.5"', 'Tires 26"', "Fat Bike Tires"] },
+        { h: "Tubes & Sealant", items: ["Tubes", "Tire Sealant", "Tire Protection"] },
+        { h: "Drivetrain Parts", items: ["Chains", "Cables", "Brake pads", "Bar tape", "Grips"] },
+        { h: "Maintenance", items: ["Pumps", "Lube", "Tools"] },
       ],
     },
     accessories: {
       cols: [
-        { h: "Protection", items: ["Helmets", "Armour", "Gloves", "Sunglasses"] },
-        { h: "Bags & Lighting", items: ["Bags", "Packs", "Hydration", "Lights", "Computers"] },
-        { h: "Apparel", items: ["Clothing", "Socks", "Arm Warmers", "Leg Warmers", "Shoes", "Cleats"] },
-        { h: "Tools & More", items: ["Pumps", "Tools", "Locks", "Fenders", "Bells", "Kickstands", "Bike Racks", "Water Bottles"] },
+        { h: "Protection & Apparel", items: ["Helmets", "Armour", "Gloves", "Sunglasses", "Clothing", "Socks", "Shoes"] },
+        { h: "Lights & Electronics", items: ["Lights", "Computers", "Locks"] },
+        { h: "Bags & Carrying", items: ["Bags", "Packs", "Hydration", "Bike Racks", "Fenders"] },
+        { h: "Extras", items: ["Bells", "Kickstands", "Water Bottles", "Trainers"] },
       ],
     },
     services: {
@@ -432,26 +438,23 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Shop panel: brands col1 | brands col2 | parts | more */}
-          {d.brandCol ? (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:48 }}>
+          {/* Shop panel: By Style | Brands col1 | Brands col2 */}
+          {d.styleCol ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:48 }}>
+              <div className="mega-col">
+                <h4>By Style</h4>
+                <ul>
+                  <li><a href="#" data-cursor="link" onClick={(e) => handleClick(e, "All Bikes")}>All Bikes</a></li>
+                  {d.styleCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
+                </ul>
+              </div>
               <div className="mega-col">
                 <h4>By Brand</h4>
                 <ul>{d.brandCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
               <div className="mega-col">
-                {d.brandCol2 ? (
-                  <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-                ) : d.typeCol ? (
-                  <><h4>By Style</h4><ul>{d.typeCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul></>
-                ) : null}
+                <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
-              {d.cols.map((c, i) => (
-                <div key={i} className="mega-col">
-                  <h4>{c.h}</h4>
-                  <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-                </div>
-              ))}
             </div>
           ) : d.cols ? (
             /* Components / Accessories: 4-col grid */
@@ -546,6 +549,7 @@ const MobileNav = ({ open, onClose }) => {
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
           <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('parts')}>Parts <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('accessories')}>Accessories <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('explore')}>Explore <ChevR /></div>
@@ -560,15 +564,15 @@ const MobileNav = ({ open, onClose }) => {
           <a href="#" style={{ ...linkA, fontSize:28, marginBottom:20, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:16 }}>
             <div style={{ paddingRight:16 }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Style</div>
-              {TYPES.map(t => (
-                <a key={t} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
-              ))}
-            </div>
-            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Brand</div>
               {BRANDS.map(br => (
                 <a key={br} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
+              ))}
+            </div>
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Style</div>
+              {TYPES.map(t => (
+                <a key={t} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
               ))}
             </div>
           </div>
@@ -607,7 +611,37 @@ const MobileNav = ({ open, onClose }) => {
         </div>
       </div>
 
-      {/* ── Panel 4: Accessories ── */}
+      {/* ── Panel 4: Parts ── */}
+      <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts")); }}>All Parts</a>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
+            <div style={{ paddingRight:16 }}>
+              {[
+                { label:"Tires",        route:"parts", tab:"wheels"    },
+                { label:"Tubes",        route:"parts", tab:"wheels"    },
+                { label:"Chains",       route:"parts", tab:"drivetrain"},
+                { label:"Cables",       route:"parts", tab:"drivetrain"},
+              ].map(it => (
+                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route, { tab: it.tab, dept: it.label })); }}>{it.label}</a>
+              ))}
+            </div>
+            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
+              {[
+                { label:"Brake Pads",   route:"parts", tab:"brakes"    },
+                { label:"Bar Tape",     route:"parts", tab:"cockpit"   },
+                { label:"Grips",        route:"parts", tab:"cockpit"   },
+                { label:"Lube",         route:"parts", tab:"tools"     },
+              ].map(it => (
+                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route, { tab: it.tab, dept: it.label })); }}>{it.label}</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Panel 5: Accessories ── */}
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
