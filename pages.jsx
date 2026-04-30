@@ -3565,11 +3565,18 @@ const EventsPage = () => {
       url: "https://mcgeecycle.com/skills-camp",
     },
   ];
-  const EVENTS = [
-    { month:"May", tag:"Demo Day",   name:"Transition + Pivot Spring Demo", desc:"Try before you buy. Full fleet of 2026 Transition and Pivot bikes for half-day Knox laps. Register in store — spots fill fast.",           cta:"Register in store" },
-    { month:"Jun", tag:"Group Ride", name:"Solstice Lap — Knox Mountain",   desc:"Annual summer solstice group ride. Longest day of the year, longest lap we can muster. All abilities welcome. Potluck at the trailhead after.", cta:"Show up" },
-    { month:"Oct", tag:"Shop Event", name:"Bike Swap & Service Day",        desc:"Sell your old gear, pick something new up. Discounted tune-ups all day. Live music and food trucks in the parking lot. Free to attend.",       cta:"Free entry" },
-  ];
+  const nextDate = (dow) => {
+    const DAYS = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+    const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+    const today = new Date();
+    const diff = ((dow - today.getDay()) % 7 + 7) % 7 || 7;
+    const d = new Date(today); d.setDate(today.getDate() + diff);
+    return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  };
+  const RIDES = [
+    { dow:4, name:"Thursday Night Shuttle / Pedal", meta:"MTB · Shuttle or Pedal", time:"6:00 PM Sharp", meet:"ChainLine Cycle — 1139 Ellis St", level:"All levels",  desc:"Meet at the shop and we'll pick where to go. Shuttle or pedal, decided on the night. All levels welcome." },
+    { dow:5, name:"Friday Night Pedal Ride",        meta:"MTB · Crawford",          time:"6:00 PM Sharp", meet:"Crawford Power Lines",            level:"All paces",   desc:"Weekly pedal night at Crawford. Meet at the power lines and we roll from there. Good vibes, all paces." },
+  ].map(r => ({ ...r, date: nextDate(r.dow) }));
   return (
     <div className="page-fade" data-screen-label="P Events">
       <SubHero eyebrow="Community  /  N°02" title="Events &" italic="Clinics." sub="Skills clinics, demo days, group rides, and shop events — all year in Kelowna." />
@@ -3610,28 +3617,27 @@ const EventsPage = () => {
       </section>
       <section className="section section-pad bg-black">
         <div className="container-wide">
-          <div className="reveal" style={{ marginBottom:64 }}>
-            <div className="section-label" style={{ color:"var(--gray-300)" }}>Calendar  /  N°02</div>
-            <h2 className="display-xl">What is<br/><span className="serif-italic">coming up.</span></h2>
+          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:24 }}>
+            <div>
+              <div className="section-label" style={{ color:"var(--gray-300)" }}>Group Rides  /  N°02</div>
+              <h2 className="display-xl">Ride <span className="serif-italic">with us.</span></h2>
+            </div>
+            <p style={{ maxWidth:360, fontSize:15, color:"var(--gray-300)", lineHeight:1.6 }}>Two rides every week, all year. Show up, clip in, leave faster than you came.</p>
           </div>
           <div style={{ borderTop:"1px solid var(--hairline-light)" }}>
-            {EVENTS.map((e, i) => (
-              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"80px 1fr auto", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"start" }}>
+            {RIDES.map((r, i) => (
+              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"120px 1fr auto", gap:32, padding:"28px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"center" }}>
+                <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)" }}>{r.date}</div>
                 <div>
-                  <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:6 }}>{e.month}</div>
-                  <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.15)", color:"rgba(255,255,255,0.6)", fontSize:9 }}>{e.tag}</span>
+                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(17px,2vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:6 }}>{r.name}</div>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{r.meta}  ·  {r.time}  ·  {r.meet}</div>
                 </div>
-                <div>
-                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(18px,2vw,24px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:10 }}>{e.name}</div>
-                  <p style={{ fontSize:14, color:"var(--gray-300)", lineHeight:1.7, margin:0 }}>{e.desc}</p>
-                </div>
-                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", whiteSpace:"nowrap", paddingTop:4 }}>{e.cta}</div>
+                <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.7)", fontSize:9, whiteSpace:"nowrap" }}>{r.level}</span>
               </div>
             ))}
           </div>
-          <div className="reveal" style={{ marginTop:56, display:"flex", gap:16, flexWrap:"wrap" }}>
-            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener" className="btn btn-outline-light" data-cursor="link">Follow on Instagram <ArrowRight /></a>
-            <button className="btn btn-light" data-cursor="link" onClick={() => window.cl.go("contact")}>Ask about a custom clinic <ArrowRight /></button>
+          <div className="reveal" style={{ marginTop:40 }}>
+            <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("rides")}>View All Rides <ArrowRight /></button>
           </div>
         </div>
       </section>
