@@ -181,12 +181,12 @@ const ContactBar = () => {
 // Header / Nav
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
-    { id: "shop",        label: "Bikes",        panel: "shop" },
-    { id: "components",  label: "Components",   panel: "components" },
-    { id: "accessories", label: "Accessories",  panel: "accessories" },
-    { id: "services",    label: "Services",     panel: "services" },
-    { id: "explore",     label: "Explore",      panel: "explore" },
-    { id: "more",        label: "More",         panel: "more" },
+    { id: "shop",        label: "Bikes",        panel: "shop",        route: "shop" },
+    { id: "components",  label: "Components",   panel: "components",  route: "parts",    intent: { tab: "drivetrain" } },
+    { id: "accessories", label: "Accessories",  panel: "accessories", route: "parts",    intent: { tab: "accessories" } },
+    { id: "services",    label: "Services",     panel: "services",    route: "services" },
+    { id: "explore",     label: "Explore",      panel: "explore",     route: "rides" },
+    { id: "more",        label: "More",         panel: "more",        route: "about" },
   ];
 
   const closeTimer = React.useRef(null);
@@ -216,7 +216,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
                 className={"nav-link " + (page === it.id || (it.route && page === it.route) ? "active" : "")}
                 data-cursor="link"
                 onMouseEnter={() => it.panel ? openMega(it.panel) : openMega(null)}
-                onClick={() => it.route && window.cl.go(it.route)}
+                onClick={() => { if (it.route) { onMega(null); window.cl.go(it.route, it.intent || null); } }}
               >
                 {it.label}
                 {it.panel && <span className="chev" />}
