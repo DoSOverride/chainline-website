@@ -367,7 +367,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
                 {variants[0].color && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{variants[0].color}</span>}
               </div>
             )}
-            {!varLoading && (<>
+            {!varLoading && <>
               {hasWheels && (
                 <div style={{ marginBottom:14 }}>
                   <div className="eyebrow" style={{ marginBottom:8 }}>Wheel Size</div>
