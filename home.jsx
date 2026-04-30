@@ -244,23 +244,30 @@ const StatsBar = () => (
   </section>
 );
 
-// Brand logos grid — tiles flip on hover to show a representative bike/shop image
-const BRAND_FLIP_IMAGES = {
-  "MARIN":       "https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935",
-  "TRANSITION":  "https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg",
-  "SURLY":       "interior-surly.jpg",
-  "SALSA":       "interior-tires.jpg",
-  "PIVOT":       "https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg",
-  "BIANCHI":     "interior-parts.jpg",
-  "MOOTS":       "interior-parts.jpg",
-  "KNOLLY":      "https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351",
-  "REVEL":       "interior-parts.jpg",
+// Brand logos grid — tiles flip on hover to show each brand's actual logo
+const BRAND_LOGOS = {
+  // Marin: no static CDN URL found (JS-rendered) — text fallback used
+  "MARIN":       null,
+  "TRANSITION":  "https://www.transitionbikes.com/images/Nav_TransitionLogoTopLeftCornerShadow2.png",
+  "SURLY":       "https://surlybikes.com/cdn/shop/files/Surly-Logo-White.svg?v=1741038664&width=600",
+  "SALSA":       "https://www.salsacycles.com/cdn/shop/files/Salsa-Logo.svg?v=1740002630&width=600",
+  "PIVOT":       "https://cdn.shopify.com/oxygen-v2/29487/77993/161582/3468523/assets/pvt-logo-C6F70W5d.svg",
+  "BIANCHI":     "https://www.bianchi.com/wp-content/themes/bianchi/inc/assets/images/logo-bianchi-black.svg",
+  "MOOTS":       "https://moots.com/cdn/shop/files/image_1.png?v=1758088868&width=600",
+  "KNOLLY":      "https://knollybikes.com/cdn/shop/files/logo-knolly-white.svg?v=1687721502&width=180",
+  "REVEL":       "https://revelbikes.com/cdn/shop/files/high-resolation-logo.png?v=1764233115&width=600",
 };
+
+// Which logos are dark (need white background) vs white (need dark background)
+const LOGO_ON_DARK = { "SURLY": true, "KNOLLY": true };
 
 const BrandTile = ({ b, i }) => {
   const [flipped, setFlipped] = React.useState(false);
-  const img = BRAND_FLIP_IMAGES[b];
+  const [logoFailed, setLogoFailed] = React.useState(false);
+  const logo = BRAND_LOGOS[b];
+  const darkBg = LOGO_ON_DARK[b];
   const brandName = b.charAt(0) + b.slice(1).toLowerCase();
+
   return (
     <div
       data-cursor="link"
@@ -276,15 +283,23 @@ const BrandTile = ({ b, i }) => {
         transition: "transform 0.55s cubic-bezier(.2,.8,.2,1)",
         transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
       }}>
-        {/* Front: brand name */}
+        {/* Front: brand name text */}
         <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", display: "grid", placeItems: "center", background: "var(--white)", fontFamily: "var(--display)", fontSize: "clamp(9px,1vw,14px)", fontWeight: 600, letterSpacing: ".14em", color: "var(--black)" }}>
           {b}
         </div>
-        {/* Back: bike/shop image */}
-        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", overflow: "hidden", background: "var(--black)" }}>
-          {img && <img src={img} alt={b} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", opacity: 0.85 }} />}
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)" }} />
-          <span style={{ position: "absolute", bottom: 10, left: 0, right: 0, textAlign: "center", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--white)" }}>{b}</span>
+        {/* Back: brand logo on clean background */}
+        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: darkBg ? "#0a0a0a" : "#fff", padding: "16%" }}>
+          {logo && !logoFailed ? (
+            <img
+              src={logo}
+              alt={b + " logo"}
+              onError={() => setLogoFailed(true)}
+              style={{ width: "100%", maxHeight: "100%", objectFit: "contain", display: "block",
+                filter: darkBg ? "none" : "none" }}
+            />
+          ) : (
+            <span style={{ fontFamily: "var(--display)", fontSize: "clamp(14px,2vw,22px)", fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: darkBg ? "#fff" : "#0a0a0a", textAlign: "center" }}>{b}</span>
+          )}
         </div>
       </div>
     </div>
