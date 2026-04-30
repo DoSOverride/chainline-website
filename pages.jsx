@@ -1794,6 +1794,7 @@ const GiftCardsPage = () => {
   const [variantMap, setVariantMap] = React.useState({});
   const [selectedAmt, setSelectedAmt] = React.useState(null);
   const [customAmt,   setCustomAmt]   = React.useState('');
+  const [recipientEmail, setRecipientEmail] = React.useState('');
   const [added, setAdded] = React.useState(false);
 
   React.useEffect(() => {
@@ -1810,11 +1811,12 @@ const GiftCardsPage = () => {
 
   const amount  = selectedAmt === 'custom' ? parseFloat(customAmt) || 0 : (selectedAmt || 0);
   const varId   = variantMap[amount] || null;
-  const canAdd  = amount >= 10 && varId;
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
+  const canAdd  = amount >= 10 && varId && validEmail;
 
   const addToCart = () => {
     if (!canAdd) return;
-    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, null);
+    window.shopifyCart.add(varId, `ChainLine Gift Card — $${amount}`, amount, null, 1, { 'Recipient Email': recipientEmail });
     window.dispatchEvent(new CustomEvent('cart:open'));
     setAdded(true);
     setTimeout(() => setAdded(false), 3000);
@@ -1864,9 +1866,20 @@ const GiftCardsPage = () => {
             </div>
           )}
 
+          <div style={{ marginTop:32, marginBottom:8, maxWidth:420 }}>
+            <div className="eyebrow" style={{ marginBottom:10 }}>Recipient email <span style={{ color:"var(--gray-400)" }}>*</span></div>
+            <input
+              type="email"
+              placeholder="Send gift card code to..."
+              value={recipientEmail}
+              onChange={e => setRecipientEmail(e.target.value)}
+              style={{ width:"100%", padding:"14px 0", border:"none", borderBottom:"2px solid "+(validEmail?"var(--black)":"var(--hairline)"), fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", transition:"border-color .2s" }}
+            />
+          </div>
+
           <button className="btn" data-cursor="link"
             disabled={!canAdd} onClick={addToCart}
-            style={{ marginTop:8, minWidth:220, justifyContent:"center", opacity: canAdd ? 1 : 0.4 }}>
+            style={{ marginTop:16, minWidth:220, justifyContent:"center", opacity: canAdd ? 1 : 0.4 }}>
             {added ? "Added to Cart ✓" : <>Add to Cart <ArrowRight /></>}
           </button>
 
