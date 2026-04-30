@@ -76,21 +76,29 @@ window.lightspeedGetBikes = function() {
         return type !== null; // null only returned for frame departments
       })
       .filter(p => p.inStock)
-      .map(p => ({
-        id:     p.id,
-        name:   p.name,
-        brand:  (p.name || '').split(' ')[0] || '',
-        vendor: (p.name || '').split(' ')[0] || '',
-        sku:    p.sku,
-        type:   deptToType(p.department) || nameToType(p.name),
-        price:  p.price,
-        img:    (window.CL_LS.skuImageMap || {})[p.sku] || null,
-        tags:   p.department,
-        handle: p.sku || String(p.id),
-        fromLightspeed: true,
-        qty:     typeof p.qty === 'number' ? p.qty : null,
-        inStock: true,
-      }));
+      .map(p => {
+        const type = deptToType(p.department) || nameToType(p.name);
+        const { size, color } = parseNameParts(p.name);
+        const wheelSize = guessWheelSize(p.name, type);
+        return {
+          id:     p.id,
+          name:   p.name,
+          brand:  (p.name || '').split(' ')[0] || '',
+          vendor: (p.name || '').split(' ')[0] || '',
+          sku:    p.sku,
+          type,
+          price:  p.price,
+          img:    (window.CL_LS.skuImageMap || {})[p.sku] || null,
+          tags:   p.department,
+          handle: p.sku || String(p.id),
+          fromLightspeed: true,
+          qty:     typeof p.qty === 'number' ? p.qty : null,
+          inStock: true,
+          parsedSize:  size,
+          parsedColor: color,
+          wheelSize,
+        };
+      });
   }
   // Fallback: filter from general products list
   const bikeKeywords = ['mountain', 'road', 'gravel', 'electric', 'e-bike', 'commut', 'kid', 'junior', 'cruiser', 'comfort', 'hybrid', 'touring', 'fat', 'cross', 'bmx'];
@@ -134,6 +142,42 @@ function nameToType(name) {
   if (n.includes('bridge club') || n.includes('warbird') || n.includes('cutthroat') || n.includes('journeyman') || n.includes('gestalt') || n.includes('nicasio') || n.includes('grappler')) return 'Gravel';
   if (n.includes('fairfax') || n.includes('kentfield') || n.includes('san anselmo')) return 'Commuter';
   return 'Mountain';
+}
+
+// ── Parse size + color from a Lightspeed product name ─────────
+// e.g. "Surly Bridge Club XS Juniper Green" → { size:"XS", color:"Juniper Green" }
+// e.g. "Marin Bobcat Trail 4 LG Gloss Blue" → { size:"L", color:"Gloss Blue" }
+function parseNameParts(fullName) {
+  if (!fullName) return { size: null, color: null };
+  // Multi-char abbreviations first (most specific, least ambiguous)
+  const MULTI  = /\b(XXL|XS\/S|S\/M|M\/L|L\/XL|XL|XS|SM|MD|LG)\b/;
+  // Single S/M/L only if followed by a colour word (capital) or end of string
+  const SINGLE = /\b(S|M|L)\b(?=\s+[A-Z]|\s*$)/;
+  // Road bike cm sizes 49–63
+  const ROAD   = /\b([4-6][0-9])\s*cm\b/i;
+  const m = fullName.match(MULTI) || fullName.match(ROAD) || fullName.match(SINGLE);
+  if (!m) return { size: null, color: null };
+  const token = (m[1] || m[0]).trim();
+  const idx   = fullName.indexOf(token);
+  const after = fullName.slice(idx + token.length).trim();
+  const NORM  = { SM:'S', MD:'M', LG:'L' };
+  return { size: NORM[token] || token.toUpperCase(), color: after || null };
+}
+
+// ── Guess wheel size from name + type ─────────────────────────
+function guessWheelSize(name, type) {
+  const n = (name || '').toLowerCase();
+  if (n.includes('700c') || n.includes('700 c'))          return '700C';
+  if (n.includes('650b') || n.includes('650 b'))          return '650B';
+  if (n.includes('27.5'))                                  return '27.5"';
+  if (n.includes('29er') || /\b29\b/.test(n))             return '29"';
+  if (/\b26\b/.test(n))                                    return '26"';
+  if (/\b24\b/.test(n))                                    return '24"';
+  if (/\b20\b/.test(n))                                    return '20"';
+  if (type === 'Road' || type === 'Gravel' || type === 'Commuter') return '700C';
+  if (type === 'Mountain' || type === 'E-Bike')            return '29"';
+  if (type === 'Kids')                                     return '24"';
+  return null;
 }
 
 // ── Get all departments with item counts ──────────────────────

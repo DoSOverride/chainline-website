@@ -74,12 +74,13 @@ const getBikeSpecs = (b) => {
     ];
   }
   return [
-    { label: 'Brand',     value: b.brand || b.vendor || '' },
-    { label: 'Type',      value: b.type || '' },
-    { label: 'Wheel Size',value: ws },
-    
-    { label: 'Warranty',  value: '2-year frame & fork, 1-year components' },
-  ];
+    { label: 'Brand',      value: b.brand || b.vendor || '' },
+    { label: 'Type',       value: b.type || '' },
+    { label: 'Wheel Size', value: b.wheelSize || ws },
+    b.parsedSize  ? { label: 'Frame Size', value: b.parsedSize  } : null,
+    b.parsedColor ? { label: 'Colour',     value: b.parsedColor } : null,
+    { label: 'Warranty',   value: '2-year frame & fork, 1-year components' },
+  ].filter(Boolean);
 };
 
 const getBikeDescription = (b) => {
@@ -253,9 +254,16 @@ const BikePage = ({ bike, onBack, onCart }) => {
             )}
           </div>
 
-          {/* Variant selectors */}
-          {variants.length > 1 && (
+          {/* Variant selectors — or static info tags for single-variant Lightspeed bikes */}
+          {(variants.length > 1 || bike?.parsedSize || bike?.parsedColor || bike?.wheelSize) && (
             <div className="reveal" style={{ marginBottom:24 }}>
+              {variants.length <= 1 && (bike?.parsedSize || bike?.parsedColor || bike?.wheelSize) && (
+                <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
+                  {bike.wheelSize && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-500)' }}>{bike.wheelSize} Wheels</span>}
+                  {bike.parsedSize && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--black)', background:'var(--black)', color:'var(--white)' }}>{bike.parsedSize}</span>}
+                  {bike.parsedColor && <span style={{ padding:'7px 14px', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', border:'1.5px solid var(--hairline)', color:'var(--gray-600)' }}>{bike.parsedColor}</span>}
+                </div>
+              )}
               {hasWheels && (
                 <div style={{ marginBottom:14 }}>
                   <div className="eyebrow" style={{ marginBottom:8 }}>Wheel Size</div>
