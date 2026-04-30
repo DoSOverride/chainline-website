@@ -111,7 +111,7 @@ const BikeCard = ({ b, idx }) => (
         <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
       )}
       {b.badge && (
-        <div style={{ position: "absolute", top: 16, right: 16, padding: "4px 10px", border: "1px solid var(--black)", color: "var(--black)", background: "rgba(255,255,255,0.85)", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", zIndex: 2 }}>{b.badge}</div>
+        <div style={{ position: "absolute", top: 16, right: 16, padding: "4px 10px", background: "var(--black)", color: "var(--white)", fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", zIndex: 2 }}>{b.badge}</div>
       )}
       <div className="bike-hover" style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: 20, background: "linear-gradient(to top, rgba(0,0,0,0.85), transparent)", color: "var(--white)", transform: "translateY(100%)", transition: "transform .5s cubic-bezier(.2,.8,.2,1)", display: "flex", justifyContent: "space-between", alignItems: "center", zIndex: 3 }}>
         <span style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>View Bike</span>
@@ -288,7 +288,7 @@ const BrandTile = ({ b, i }) => {
           {b}
         </div>
         {/* Back: brand logo on clean background */}
-        <div style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: darkBg ? "#0a0a0a" : "#fff", padding: "16%" }}>
+        <div className={darkBg ? "" : "brand-tile-back-light"} style={{ position: "absolute", inset: 0, backfaceVisibility: "hidden", transform: "rotateY(180deg)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: darkBg ? "#0a0a0a" : "#fff", padding: "16%" }}>
           {logo && !logoFailed ? (
             <img
               src={logo}

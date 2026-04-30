@@ -183,6 +183,43 @@
 /* eyebrow-light always on dark bg — keep visible */
 .eyebrow-light { color: rgba(255,255,255,0.45); }
 
+/* Sticky nav bars — hardcoded rgba(250,250,250) backgrounds turn white in dark mode */
+[data-theme="dark"] .shop-filter-sticky {
+  background: rgba(12,12,12,0.97) !important;
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+[data-theme="dark"] .bike-back-bar {
+  background: rgba(12,12,12,0.97) !important;
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+
+/* Brand flip card — light-bg variant: go dark + invert logos to white */
+[data-theme="dark"] .brand-tile-back-light {
+  background: #141414 !important;
+}
+[data-theme="dark"] .brand-tile-back-light img {
+  filter: invert(1) !important;
+}
+[data-theme="dark"] .brand-tile-back-light span {
+  color: #f0f0ee !important;
+}
+
+/* Grain overlay — multiply is invisible on dark; switch to screen */
+[data-theme="dark"] .grain {
+  mix-blend-mode: screen;
+  opacity: 0.06;
+}
+
+/* Native <select> elements — dark chrome for the browser dropdown popup */
+[data-theme="dark"] select {
+  color-scheme: dark;
+}
+
+/* Mega feature panel */
+[data-theme="dark"] .mega-feature {
+  background: var(--gray-100) !important;
+}
+
 
 /* ── Blinking stock indicator ── */
 @keyframes stockPulse {
