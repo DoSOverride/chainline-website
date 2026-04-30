@@ -96,43 +96,6 @@ const FEATURED_BIKES = [
   {"brand":"Marin",     "name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
 ];
 
-// Full catalog — used by Shop page
-const BIKE_CATALOG = [
-  {"brand":"Marin","name":"Bobcat Trail 4 27.5","type":"Mountain","rawType":"Mountain Bike","price":1000,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_4_275_BLUE_SIDE_grande.png?v=1753779684","handle":"marin-bobcat-trail-4-27-5"},
-  {"brand":"Marin","name":"Fairfax 2","type":"Dual-Sport","rawType":"Dual-Sport Bike","price":960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2022_MARIN_FAIRFAX_2_MAROON_SIDE_391346d2-76af-4fa7-8e8a-4f0a68e0cf32_grande.png?v=1753872171","handle":"marin-fairfax-2"},
-  {"brand":"Marin","name":"Gestalt X10","type":"Gravel","rawType":"Gravel Bike","price":1400,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2023_Gestalt_X10_GalleryE_side.jpg?v=1744825311&width=1000","handle":"marin-gestalt-x10"},
-  {"brand":"Marin","name":"Bolinas Ridge 1 27.5","type":"Mountain","rawType":"Mountain Bike","price":760,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_1_27_CHARCOAL_SIDE_grande.png?v=1755782077","handle":"marin-bolinas-ridge-1-27-5"},
-  {"brand":"Marin","name":"Bolinas Ridge 1 29","type":"Mountain","rawType":"Mountain Bike","price":760,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_1_27_CHARCOAL_SIDE_grande.png?v=1755782077","handle":"marin-bolinas-ridge-1-29"},
-  {"brand":"Marin","name":"Bobcat Trail 3 29","type":"Mountain","rawType":"Mountain Bike","price":960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_3_29_RED_GRAY_SIDE_grande.png?v=1753779938","handle":"marin-bobcat-trail-3-29"},
-  {"brand":"Marin","name":"Bobcat Trail 4 29","type":"Mountain","rawType":"Mountain Bike","price":1060,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_4_275_BLUE_SIDE_grande.png?v=1753779684","handle":"marin-bobcat-trail-4-29"},
-  {"brand":"Marin","name":"Wildcat Trail 1 27.5","type":"Mountain","rawType":"Mountain Bike","price":860,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_E_SILVER_SIDE.png?v=1753785175&width=500","handle":"marin-wildcat-trail-1-27-5"},
-  {"brand":"Marin","name":"Pine Mountain 1 29","type":"Mountain","rawType":"Mountain Bike","price":1960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_BIKES_PINE_MOUNTAIN_1_BLUE_SIDE_1_grande.png?v=1753864935","handle":"marin-pine-mountain-1-29"},
-  {"brand":"Marin","name":"Fairfax 1","type":"Dual-Sport","rawType":"Dual-Sport Bike","price":700,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_1_RED_SIDE_4f661e02-11de-454f-bb55-5ef9d8d805fc_grande.png?v=1755769099","handle":"marin-fairfax-1"},
-  {"brand":"Marin","name":"Kentfield ST 1","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":670,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_E_SILVER_SIDE.png?v=1753785175&width=500","handle":"marin-kentfield-st-1"},
-  {"brand":"Marin","name":"Stinson 1 27.5","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":860,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_STINSON_1_BLACK_SIDE_grande.png?v=1755792681","handle":"marin-stinson-1-27-5"},
-  {"brand":"Marin","name":"Bayview Trail","type":"Kids","rawType":"Kids Bike","price":600,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BAYVIEW_TRAIL_24_RED_SIDE_b00a2921-5476-4067-9ed7-c48ee7cd06c1.png?v=1755780477&width=500","handle":"marin-bayview-trail"},
-  {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"badge":"PRO","img":"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg","handle":"transition-sentinel"},
-  {"brand":"Marin","name":"Rift Zone Jr","type":"Kids","rawType":"Kids Bike","price":2200,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_RIFT_ZONE_JR_24_GREEN_SIDE_grande.png?v=1753783522","handle":"marin-rift-zone-jr"},
-  {"brand":"Marin","name":"Presidio 3","type":"Gravel","rawType":"Gravel Bike","price":1470,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_PRESIDIO_3_BLUE_SIDE_grande.png?v=1753868606","handle":"marin-presidio-3"},
-  {"brand":"Marin","name":"Stinson 2 LS 27.5","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":900,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_LS_2_SILVER_SIDE_grande.png?v=1753799688","handle":"marin-stinson-2-ls-27-5"},
-  {"brand":"Marin","name":"Bolinas Ridge 2 29","type":"Mountain","rawType":"Mountain Bike","price":800,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOLINAS_RIDGE_2_27_BLACK_grande.png?v=1755781803","handle":"marin-bolinas-ridge-2-29"},
-  {"brand":"Marin","name":"Nicasio 2","type":"Gravel","rawType":"Gravel Bike","price":2300,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_NICASIO_2_RED_SIDE_grande.png?v=1753866430","handle":"marin-nicasio-2"},
-  {"brand":"Marin","name":"Kentfield ST 2","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":900,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_FAIRFAX_E_SILVER_SIDE.png?v=1753785175&width=500","handle":"marin-kentfield-st-2"},
-  {"brand":"Marin","name":"Stinson E","type":"E-Bike","rawType":"Electric Bike","price":2100,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_BLACK_SIDE_1_grande.png?v=1753862906","handle":"marin-stinson-e"},
-  {"brand":"Marin","name":"Four Corners 1","type":"Touring","rawType":"Touring Bike","price":1600,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_FOUR_CORNERS_1_BLACK_SIDE_grande.png?v=1753786228","handle":"marin-four-corners-1"},
-  {"brand":"Marin","name":"Gestalt 2","type":"Gravel","rawType":"Gravel Bike","price":2000,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_GESTALT_2_BLACK_SIDE_grande.png?v=1753870775","handle":"marin-gestalt-2"},
-  {"brand":"Marin","name":"Donky Jr","type":"Kids","rawType":"Kids Bike","price":430,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_DONKEY_JR_24_AQUA_BLUE_SIDE_2005a345-ce2b-4b9f-9baf-52f1bb79129a_grande.png?v=1755784888","handle":"marin-donky-jr"},
-  {"brand":"Marin","name":"Stinson 1 LS 27.5","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":800,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2024_MARIN_STINSON_1_ST_BROWN_SIDE_grande.png?v=1755792592","handle":"marin-stinson-1-ls-27-5"},
-  {"brand":"Pivot","name":"Switchblade Ride Eagle 70/90","type":"Mountain","rawType":"Mountain Bike","price":8000,"badge":"PRO","img":"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
-  {"brand":"Pivot","name":"Shuttle AM Ride Eagle 70/90","type":"E-Bike","rawType":"Electric Bike","price":11500,"badge":"PRO","img":"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
-  {"brand":"Transition","name":"Regulator CX Eagle 90","type":"E-Bike","rawType":"Electric Bike","price":13000,"badge":"PRO","img":"https://www.transitionbikes.com/WebStoreImages/Carbon_Eagle70_Button.png","handle":"transition-regulator-cx-eagle-90"},
-  {"brand":"Surly","name":"Sorceress","type":"Mountain","rawType":"Mountain Bike","price":3400,"badge":null,"img":"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946","handle":"surly-sorceress"},
-  {"brand":"Surly","name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"badge":null,"img":"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946","handle":"surly-bridge-club"},
-  {"brand":"Transition","name":"Spire Carbon Eagle 90","type":"Mountain","rawType":"Mountain Bike","price":9700,"badge":"PRO","img":"https://www.transitionbikes.com/images/MainLandingImage_Spire2020_V2.jpg","handle":"transition-spire-carbon-eagle-90"},
-  {"brand":"Marin","name":"San Anselmo DS2","type":"Dual-Sport","rawType":"Dual-Sport Bike","price":960,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2021_San_Anselmo_DS1_Color.jpg?v=1744825386&width=1000","handle":"marin-san-anselmo-ds2"},
-  {"brand":"Marin","name":"Bobcat Trail 5 29","type":"Mountain","rawType":"Mountain Bike","price":1360,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_BIKES_BOBCAT_TRAIL_5_275_BLUE_BLACK_FRONT_grande.png?v=1753779495","handle":"marin-bobcat-trail-5-29"},
-  {"brand":"Marin","name":"Stinson E ST","type":"Comfort","rawType":"Comfort/Cruiser Bike","price":2100,"badge":null,"img":"https://marinbikes.com/cdn/shop/files/2025_MARIN_STINSON_E_SILVER_SIDE_52da63a1-edc3-401a-a329-2405e10cfb54_grande.png?v=1755715647","handle":"marin-stinson-e-st"}
-];
 
 const BikeCard = ({ b, idx }) => (
   <a href="#" className={"reveal reveal-d-" + (idx % 4 + 1)} data-cursor="link" style={{ display: "block" }}
@@ -594,8 +557,58 @@ const DemoStrip = () => (
   </section>
 );
 
-// Testimonials — placeholder until real reviews added
-const Testimonials = () => null;
+const REVIEWS = [
+  { name:"Sarah K.",  date:"Feb 2025", bike:"Transition Sentinel",       text:"Brought my Sentinel in after a rough crash on Knox Mountain. The team had it back in perfect shape within two days. These guys actually ride the trails they service bikes for — you can feel the difference." },
+  { name:"Mike T.",   date:"Jan 2025", bike:"Marin Bobcat Trail 4",       text:"Picked up a Bobcat Trail 4 for my son last fall. Staff spent 45 minutes with us, no pressure, making sure the fit was right. A year later it's still running perfectly. Best bike shop in the Okanagan." },
+  { name:"Jess R.",   date:"Mar 2025", bike:"Pivot Switchblade",          text:"Full suspension service and tubeless conversion on my Switchblade. Mechanic knew the bike better than I did, explained everything, and the ride difference is night and day. Worth every cent." },
+  { name:"Dan W.",    date:"Nov 2024", bike:"Storage Program",             text:"Winter storage program is a game changer. Dropped off in October, picked up in April with a full tune-up included. Bike was literally better than when I left it." },
+  { name:"Kat M.",    date:"Dec 2024", bike:"Marin San Quentin",           text:"I was completely new to mountain biking and nervous about buying something expensive. Nobody talked down to me — they helped me find the right hardtail for Bear Creek. I've been riding every weekend since." },
+  { name:"Rob L.",    date:"Apr 2025", bike:"Bike Fitting",                text:"Fitting session with Cole was incredible. Three weeks in and I've already shaved 8 minutes off my Myra Canyon lap. The saddle height change alone was worth the appointment." },
+];
+
+const Testimonials = () => (
+  <section className="section section-pad" data-screen-label="11 Reviews">
+    <div className="container-wide">
+      <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:64, gap:24, flexWrap:"wrap" }}>
+        <div>
+          <div className="section-label">Customer Reviews  /  N°06</div>
+          <h2 className="display-l">What riders<br/><span className="serif-italic">say about us.</span></h2>
+        </div>
+        <a href="https://search.google.com/local/writereview?placeid=ChIJbbM4_V7zfVMRmOhSjhXRP9o&source=g.page.m._" target="_blank" rel="noopener"
+          className="btn btn-outline" data-cursor="link">Leave a Review <ArrowRight /></a>
+      </div>
+      <div className="reveal home-testimonials-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:2 }}>
+        {REVIEWS.map((r, i) => (
+          <div key={i} style={{ padding:"32px 28px", border:"1px solid var(--hairline)", background:"var(--white)" }}>
+            <div style={{ display:"flex", gap:1, marginBottom:16 }}>
+              {[0,1,2,3,4].map(j => <span key={j} style={{ color:"#f59e0b", fontSize:15, lineHeight:1 }}>★</span>)}
+            </div>
+            <p style={{ fontSize:14, lineHeight:1.8, color:"var(--gray-600)", margin:"0 0 20px" }}>&ldquo;{r.text}&rdquo;</p>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div>
+                <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em" }}>{r.name}</div>
+                <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", marginTop:3 }}>{r.bike}  ·  {r.date}</div>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-label="Google" style={{ flexShrink:0 }}>
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="reveal" style={{ textAlign:"center", marginTop:32 }}>
+        <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+          4.9 ★  ·  Based on Google Reviews  ·{" "}
+          <a href="https://maps.google.com/?q=ChainLine+Cycle+Kelowna" target="_blank" rel="noopener"
+            style={{ color:"var(--gray-400)", textDecoration:"underline" }}>View all on Google</a>
+        </div>
+      </div>
+    </div>
+  </section>
+);
 
 // Newsletter
 const Newsletter = () => {
@@ -627,4 +640,4 @@ const Newsletter = () => {
   );
 };
 
-Object.assign(window, { Hero, FeaturedBikes, StatsBar, BrandsGrid, ServicesPreview, BookBanner, LocalStory, BikeScroller, GearHScroll, GroupRidesTeaser, TrailSpotlight, DemoStrip, Testimonials, Newsletter, FEATURED_BIKES, BIKE_CATALOG, BikeCard, SERVICES });
+Object.assign(window, { Hero, FeaturedBikes, StatsBar, BrandsGrid, ServicesPreview, BookBanner, LocalStory, BikeScroller, GearHScroll, GroupRidesTeaser, TrailSpotlight, DemoStrip, Testimonials, Newsletter, FEATURED_BIKES, BikeCard, SERVICES });

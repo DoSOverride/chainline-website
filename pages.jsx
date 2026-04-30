@@ -725,9 +725,9 @@ const BikeCardLarge = ({ b, idx }) => {
   const isInStock   = (v) => variants.some(vv => (!hasWheels || vv.wheel === v.wheel) && (!hasColors || vv.color === v.color) && (!hasSizes || vv.size === v.size) && vv.inStock);
 
   const chipStyle = (active, avail) => ({
-    padding:"3px 9px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase",
+    padding:"6px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase",
     border:"1px solid", cursor:"pointer", borderRadius:2, background:"none",
-    borderColor: active ? "var(--black)" : avail ? "var(--hairline)" : "var(--hairline)",
+    borderColor: active ? "var(--black)" : "var(--hairline)",
     color: active ? "var(--black)" : avail ? "var(--gray-600)" : "var(--gray-300)",
     opacity: avail ? 1 : 0.4,
   });

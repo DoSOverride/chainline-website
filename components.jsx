@@ -691,16 +691,18 @@ const StickyCTA = ({ show }) => (
 
 // Cart drawer
 const CartDrawer = ({ open, onClose, items, onRemove }) => {
-  const subtotal = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
+  const totalQty  = items.reduce((s, i) => s + (i.qty || 1), 0);
+  const subtotal  = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
   return (
     <>
       <div className={"drawer-backdrop " + (open ? "open" : "")} onClick={onClose} />
       <aside className={"drawer " + (open ? "open" : "")}>
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "28px", borderBottom: "1px solid var(--hairline)" }}>
-          <div className="display-s">Cart  /  {items.length}</div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px 28px", borderBottom: "1px solid var(--hairline)", flexShrink: 0 }}>
+          <div className="display-s">Cart  {totalQty > 0 ? `/ ${totalQty}` : ""}</div>
           <button onClick={onClose} className="link-underline" data-cursor="link" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" }}>Close</button>
         </div>
-        <div style={{ padding: "24px 28px", flex: 1, overflowY: "auto" }}>
+
+        <div style={{ padding: "0 28px", flex: 1, overflowY: "auto" }}>
           {items.length === 0 && (
             <div style={{ textAlign: "center", padding: "60px 0" }}>
               <div className="display-s" style={{ marginBottom: 12 }}>Cart is empty</div>
@@ -708,28 +710,46 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
               <button className="btn btn-outline" onClick={() => { onClose(); window.cl.go("shop"); }} data-cursor="link">Shop Bikes <ArrowRight /></button>
             </div>
           )}
-          {items.map((it, idx) => (
-            <div key={idx} style={{ display: "grid", gridTemplateColumns: "80px 1fr auto", gap: 16, padding: "16px 0", borderBottom: "1px solid var(--hairline)" }}>
-              {it.image
-                ? <img src={it.image} alt={it.name} style={{ width: 80, height: 80, objectFit: "contain", background: "var(--paper)", padding: 4 }} />
-                : <div className="ph" style={{ width: 80, height: 80 }} />
-              }
-              <div>
-                <div className="eyebrow" style={{ fontSize: 10, marginBottom: 4 }}>{it.brand}</div>
-                <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", marginBottom: it.variant ? 3 : 8, lineHeight: 1.3 }}>{it.name}</div>
-                {it.variant && <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:8 }}>{it.variant}</div>}
-                <button className="link-underline" onClick={() => { window.shopifyCart.remove(it.variantId); onRemove(idx); }} style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--gray-500)", letterSpacing: ".1em", textTransform: "uppercase" }}>Remove</button>
+          {items.map((it, idx) => {
+            const qty       = it.qty || 1;
+            const lineTotal = (it.price || 0) * qty;
+            return (
+              <div key={idx} style={{ display: "grid", gridTemplateColumns: "72px 1fr", gap: 14, padding: "16px 0", borderBottom: "1px solid var(--hairline)" }}>
+                {it.image
+                  ? <img src={it.image} alt={it.name} style={{ width: 72, height: 72, objectFit: "contain", background: "var(--paper)", padding: 4 }} />
+                  : <div className="ph" style={{ width: 72, height: 72 }} />
+                }
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 2 }}>
+                    <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", lineHeight: 1.3 }}>{it.name}</div>
+                    <div style={{ fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0 }}>${lineTotal.toLocaleString()}</div>
+                  </div>
+                  {it.variant && <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:4 }}>{it.variant}</div>}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      {qty > 1 && (
+                        <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", background:"var(--gray-100)", padding:"2px 6px" }}>×{qty}</span>
+                      )}
+                      <button className="link-underline" onClick={() => { window.shopifyCart?.remove(it.variantId); onRemove(idx); }}
+                        style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>Remove</button>
+                    </div>
+                    {qty > 1 && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>${(it.price||0).toLocaleString()} ea</div>}
+                  </div>
+                </div>
               </div>
-              <div style={{ fontFamily: "var(--display)", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}>${(it.price || 0).toLocaleString()}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-        <div style={{ padding: "24px 28px", borderTop: "1px solid var(--hairline)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, fontFamily: "var(--display)", fontSize: 16, textTransform: "uppercase", letterSpacing: "-.01em" }}>
+
+        <div style={{ padding: "20px 28px", borderTop: "1px solid var(--hairline)", flexShrink: 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14, fontFamily: "var(--display)", fontSize: 16, textTransform: "uppercase", letterSpacing: "-.01em" }}>
             <span>Subtotal</span><span>${subtotal.toLocaleString()}</span>
           </div>
-          <button className="btn" style={{ width: "100%", justifyContent: "center" }} data-cursor="link" onClick={() => window.shopifyCart.checkout()}>Checkout <ArrowRight /></button>
-          <div style={{ marginTop: 12, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)", textAlign: "center" }}>Free shipping over $150</div>
+          <button className="btn" style={{ width: "100%", justifyContent: "center" }} data-cursor="link"
+            disabled={items.length === 0} onClick={() => window.shopifyCart?.checkout()}>
+            Checkout <ArrowRight />
+          </button>
+          <div style={{ marginTop: 10, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-500)", textAlign: "center" }}>Free shipping over $250</div>
         </div>
       </aside>
     </>
