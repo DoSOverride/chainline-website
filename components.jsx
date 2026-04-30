@@ -181,13 +181,10 @@ const ContactBar = () => {
 // Header / Nav
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
-    { id: "shop",        label: "Bikes",        panel: "shop",        route: "shop" },
-    { id: "components",  label: "Components",   panel: "components",  route: "components" },
-    { id: "parts",       label: "Parts",        panel: "parts",       route: "parts" },
-    { id: "accessories", label: "Accessories",  panel: "accessories", route: "accessories" },
-    { id: "services",    label: "Services",     panel: "services",    route: "services" },
-    { id: "explore",     label: "Explore",      panel: "explore",     route: "rides" },
-    { id: "more",        label: "More",         panel: "more",        route: "about" },
+    { id: "store",    label: "Store",    panel: "store",    route: "store" },
+    { id: "services", label: "Services", panel: "services", route: "services" },
+    { id: "explore",  label: "Explore",  panel: "explore",  route: "rides" },
+    { id: "more",     label: "More",     panel: "more",     route: "about" },
   ];
 
   const closeTimer = React.useRef(null);
@@ -333,33 +330,12 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
   const BIKE_BRANDS  = ["Marin", "Transition", "Surly", "Pivot", "Salsa"];
   const BIKE_BRANDS2 = ["Bianchi", "Moots", "Knolly", "Revel"];
   const data = {
-    shop: {
-      styleCol: ["Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids"],
-      brandCol:  BIKE_BRANDS,
-      brandCol2: BIKE_BRANDS2,
-    },
-    components: {
-      cols: [
-        { h: "Drivetrain", items: ["Cassette", "Chains", "Chainrings", "Cranks", "Derailleurs", "Shifters", "Bottom Brackets"] },
-        { h: "Brakes", items: ["Brake pads", "Brake Levers", "Wheelsets", "Rims", "Hubs", "Spokes"] },
-        { h: "Suspension", items: ["Forks", "Rear Shock", "Fork Parts", "Seals"] },
-        { h: "Cockpit", items: ["Handlebar", "Stem", "Grips", "Bar tape", "Headsets", "Seat post", "Saddles"] },
-      ],
-    },
-    parts: {
-      cols: [
-        { h: "Tires", items: ['Tires 29"', 'Tires 700C', 'Tires 27.5"', 'Tires 26"', "Fat Bike Tires"] },
-        { h: "Tubes & Sealant", items: ["Tubes", "Tire Sealant", "Tire Protection"] },
-        { h: "Drivetrain Parts", items: ["Chains", "Cables", "Brake pads", "Bar tape", "Grips"] },
-        { h: "Maintenance", items: ["Pumps", "Lube", "Tools"] },
-      ],
-    },
-    accessories: {
-      cols: [
-        { h: "Protection & Apparel", items: ["Helmets", "Armour", "Gloves", "Sunglasses", "Clothing", "Socks", "Shoes"] },
-        { h: "Lights & Electronics", items: ["Lights", "Computers", "Locks"] },
-        { h: "Bags & Carrying", items: ["Bags", "Packs", "Hydration", "Bike Racks", "Fenders"] },
-        { h: "Extras", items: ["Bells", "Kickstands", "Water Bottles", "Trainers"] },
+    store: {
+      storeCols: [
+        { h: "Bikes", route: "shop", items: ["All Bikes", "Mountain", "Gravel", "E-Bike", "Commuter", "Comfort", "Kids", ...BIKE_BRANDS, ...BIKE_BRANDS2] },
+        { h: "Components", route: "components", items: ["Drivetrain", "Brakes", "Suspension", "Cockpit", "Wheelsets", "Rims", "Hubs"] },
+        { h: "Parts", route: "parts", items: ["Tires", "Tubes", "Chains", "Cables", "Brake pads", "Bar tape", "Grips", "Lube"] },
+        { h: "Accessories", route: "accessories", items: ["Helmets", "Clothing", "Lights", "Locks", "Bags", "Computers", "Tools", "Pumps"] },
       ],
     },
     services: {
@@ -405,8 +381,11 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (pMatch) return [tabPage(pMatch.tab), pMatch];
     if (l.includes("helmet") || l.includes("protection") || l.includes("apparel")) return ["accessories",{tab:"fit"}];
     if (l.includes("bags & rack") || l.includes("bags and rack")) return ["accessories",{tab:"accessories"}];
+    if (l === "all bikes" || l === "bikes") return ["shop", null];
+    if (l === "tires") return ["parts",{tab:"wheels"}];
     if (l.includes("component")) return ["components",{tab:"drivetrain"}];
     if (l.includes("accessor")) return ["accessories",{tab:"accessories"}];
+    if (l === "store") return ["store", null];
     if (l.includes("gift")) return ["giftcards", null];
     if (l.includes("classified") || l.includes("pinkbike")) return ["classifieds", null];
     if (l.includes("sale")) return ["shop", null];
@@ -439,23 +418,15 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Shop panel: By Style | Brands col1 | Brands col2 */}
-          {d.styleCol ? (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:48 }}>
-              <div className="mega-col">
-                <h4>By Style</h4>
-                <ul>
-                  <li><a href="#" data-cursor="link" onClick={(e) => handleClick(e, "All Bikes")}>All Bikes</a></li>
-                  {d.styleCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
-                </ul>
-              </div>
-              <div className="mega-col">
-                <h4>By Brand</h4>
-                <ul>{d.brandCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-              </div>
-              <div className="mega-col">
-                <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
-              </div>
+          {/* Store panel: 4 cols — Bikes | Components | Parts | Accessories */}
+          {d.storeCols ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:40 }}>
+              {d.storeCols.map((col, ci) => (
+                <div key={ci} className="mega-col">
+                  <h4 style={{ cursor:"pointer" }} onClick={() => { onClose(); window.cl.go(col.route); }}>{col.h}</h4>
+                  <ul>{col.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                </div>
+              ))}
             </div>
           ) : d.cols ? (
             /* Components / Accessories: 4-col grid */
@@ -548,10 +519,7 @@ const MobileNav = ({ open, onClose }) => {
         style={{ pointerEvents: panel === 'main' ? 'all' : 'none' }}>
         {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
-          <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
-          <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
-          <div style={linkA} onClick={() => setPanel('parts')}>Parts <ChevR /></div>
-          <div style={linkA} onClick={() => setPanel('accessories')}>Accessories <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('store')}>Store <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('explore')}>Explore <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('more')}>More <ChevR /></div>
@@ -562,105 +530,24 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'shop' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:20, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:16 }}>
-            <div style={{ paddingRight:16 }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Brand</div>
-              {BRANDS.map(br => (
-                <a key={br} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
-              ))}
-            </div>
-            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Style</div>
-              {TYPES.map(t => (
-                <a key={t} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
-              ))}
-            </div>
-          </div>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("store")); }}>Shop the Store</a>
+          {[
+            { label:"Bikes",        route:"shop",        sub:"Mountain, Gravel, E-Bike, Commuter" },
+            { label:"Components",   route:"components",  sub:"Drivetrain, Brakes, Suspension, Cockpit" },
+            { label:"Parts",        route:"parts",       sub:"Tires, Tubes, Chains, Cables, Brake Pads" },
+            { label:"Accessories",  route:"accessories", sub:"Helmets, Lights, Bags, Clothing, Tools" },
+          ].map(it => (
+            <a key={it.label} href="#" onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}
+              style={{ ...linkA, flexDirection:"column", alignItems:"flex-start", gap:2, paddingRight:40, position:"relative" }}>
+              {it.label}
+              <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)", fontWeight:400 }}>{it.sub}</span>
+              <span style={{ position:"absolute", right:0, top:"50%", transform:"translateY(-50%)" }}><ChevR /></span>
+            </a>
+          ))}
         </div>
       </div>
 
-      {/* ── Panel 3: Components ── */}
-      <div className={"mob-panel " + (panel === 'components' ? "mob-panel-active" : "mob-panel-right")}>
-        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab:"drivetrain" })); }}>All Components</a>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
-            {/* Left col: Drivetrain + Tires & Tubes + Suspension */}
-            <div style={{ paddingRight:16 }}>
-              {COMP_CATS.filter(c => ["drivetrain","suspension"].includes(c.tab) || c.label === "Tires & Tubes").map(cat => (
-                <div key={cat.label} style={{ marginBottom:20 }}>
-                  <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
-                  {cat.items.map(it => (
-                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(mobPage(cat.tab), { tab: cat.tab, dept: it })); }}>{it}</a>
-                  ))}
-                </div>
-              ))}
-            </div>
-            {/* Right col: Brakes + Wheels + Cockpit */}
-            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
-              {COMP_CATS.filter(c => !["drivetrain","suspension"].includes(c.tab) && c.label !== "Tires & Tubes").map(cat => (
-                <div key={cat.label} style={{ marginBottom:20 }}>
-                  <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
-                  {cat.items.map(it => (
-                    <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(mobPage(cat.tab), { tab: cat.tab, dept: it })); }}>{it}</a>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Panel 4: Parts ── */}
-      <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
-        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts")); }}>All Parts</a>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
-            <div style={{ paddingRight:16 }}>
-              {[
-                { label:"Tires",        route:"parts", tab:"wheels"    },
-                { label:"Tubes",        route:"parts", tab:"wheels"    },
-                { label:"Chains",       route:"parts", tab:"drivetrain"},
-                { label:"Cables",       route:"parts", tab:"drivetrain"},
-              ].map(it => (
-                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route, { tab: it.tab, dept: it.label })); }}>{it.label}</a>
-              ))}
-            </div>
-            <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
-              {[
-                { label:"Brake Pads",   route:"parts", tab:"brakes"    },
-                { label:"Bar Tape",     route:"parts", tab:"cockpit"   },
-                { label:"Grips",        route:"parts", tab:"cockpit"   },
-                { label:"Lube",         route:"parts", tab:"tools"     },
-              ].map(it => (
-                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route, { tab: it.tab, dept: it.label })); }}>{it.label}</a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Panel 5: Accessories ── */}
-      <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
-        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab:"fit" })); }}>All Accessories</a>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
-            {ACC_CATS.map((cat, ci) => (
-              <div key={cat.label} style={{ paddingRight: ci===0?16:0, paddingLeft: ci>0?16:0, borderLeft: ci>0?"1px solid rgba(255,255,255,0.1)":"none" }}>
-                <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:10 }}>{cat.label}</div>
-                {cat.items.map(it => (
-                  <a key={it} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab: cat.tab, dept: it })); }}>{it}</a>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Panel 5: Services ── */}
+      {/* ── Panel 3: Services ── */}
       <div className={"mob-panel " + (panel === 'services' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
@@ -857,7 +744,7 @@ const Footer = () => (
         <div className="footer-col">
           <h4>Shop</h4>
           <ul>
-            {[["Bikes","shop"],["Components","components",{tab:"drivetrain"}],["Accessories","accessories",{tab:"accessories"}],["Gift Cards","giftcards"],["Sale","shop"],["Our Brands","brands"]].map(([label,route,intent]) => (
+            {[["Store","store"],["Bikes","shop"],["Components","components"],["Parts","parts"],["Accessories","accessories"],["Gift Cards","giftcards"]].map(([label,route,intent]) => (
               <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent||null);}}>{label}</a></li>
             ))}
           </ul>

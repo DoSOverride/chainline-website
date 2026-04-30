@@ -25,6 +25,7 @@ function pathToRoute(pathname) {
     const bike = (window.SHOP_BIKES || []).find(b => b.handle === s2);
     return bike ? { page: 'bike', intent: { bike } } : { page: 'shop', intent: null };
   }
+  if (s1 === 'store') return { page: 'store', intent: null };
   if (s1 === 'components') return { page: 'components', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (s1 === 'accessories') return { page: 'accessories', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
@@ -43,6 +44,7 @@ function routeToPath(page, intent) {
     const h = intent?.bike?.handle;
     return h ? `/bike/${h}` : '/bikes';
   }
+  if (page === 'store')       return '/store';
   if (page === 'components')  return intent?.tab ? `/components/${intent.tab}`  : '/components';
   if (page === 'parts')       return intent?.tab ? `/parts/${intent.tab}`       : '/parts';
   if (page === 'accessories') return intent?.tab ? `/accessories/${intent.tab}` : '/accessories';
@@ -246,6 +248,7 @@ const App = () => {
         {page === "trails" && <TrailsPage />}
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
+        {page === "store"       && <StorePage />}
         {page === "components"  && (window.cl.intent?.tab ? <PartsPage /> : <ComponentsLandingPage />)}
         {page === "parts"       && (window.cl.intent?.tab ? <PartsPage /> : <PartsLandingPage />)}
         {page === "accessories" && (window.cl.intent?.tab ? <PartsPage /> : <AccessoriesLandingPage />)}
