@@ -399,7 +399,7 @@ const BookBanner = () => (
       </p>
       <div className="reveal" style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
         <button className="btn" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Service <ArrowRight /></button>
-        <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Fitting <ArrowRight /></button>
+        <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("fitting")}>Book a Fitting <ArrowRight /></button>
       </div>
     </div>
   </section>

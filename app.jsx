@@ -3,7 +3,7 @@
 // ── URL hash routing ──────────────────────────────────────────
 const _BRANDS    = ["marin","transition","surly","pivot","salsa","bianchi","moots","knolly","revel"];
 const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","kids"];
-const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools"];
+const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","fit","tools","accessories"];
 const _PAGES     = ["services","book","about","contact","rides","trails","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social"];
 
 function pathToRoute(pathname) {
@@ -212,6 +212,8 @@ const App = () => {
             <GroupRidesTeaser />
             <TrailSpotlight />
             <DemoStrip />
+            <Testimonials />
+            <Newsletter />
           </>
         )}
         {page === "shop" && <ShopPage />}

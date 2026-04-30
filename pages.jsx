@@ -1992,7 +1992,7 @@ const PART_TABS = [
     depts:['Tools','Pumps','Lube','Trainers'] },
   { id:'accessories', label:'Accessories',        emoji:'🎒',  img: `${R2}/shop/shop-interior.jpg`,
     sub: "Lights, locks, computers, bags, racks, fenders",
-    depts:['Lights','Locks','Computers','Bags','Packs','Car Racks','Bike Racks','Fenders','Kickstands','Water Bottle','Water Bottle cage','Hydration ','Bells','Mirrors','Misc. Accessories','Basket'] },
+    depts:['Lights','Locks','Computers','Bags','Packs','Car Racks','Bike Racks','Fenders','Kickstands','Water Bottle','Water Bottle cage','Hydration','Bells','Mirrors','Misc. Accessories','Basket'] },
 ];
 
 const BIKE_EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
