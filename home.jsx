@@ -522,11 +522,19 @@ const GearHScroll = () => {
 
 // Group rides teaser
 const GroupRidesTeaser = () => {
+  const nextDate = (dow) => {
+    const DAYS = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+    const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+    const today = new Date();
+    const diff = ((dow - today.getDay()) % 7 + 7) % 7 || 7;
+    const d = new Date(today); d.setDate(today.getDate() + diff);
+    return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  };
   const rides = [
-    { date: "MON 28 APR", name: "Knox Mountain Monday", meta: "MTB · 22km · 650m", level: "Intermediate" },
-    { date: "WED 30 APR", name: "Lunch Loop", meta: "Road · 35km · Flat", level: "All abilities" },
-    { date: "SAT 03 MAY", name: "Gravel Sundays", meta: "Gravel · 75km · Backcountry", level: "Advanced" },
-  ];
+    { dow: 1, name: "Knox Mountain Monday", meta: "MTB · 22km · 650m", level: "Intermediate" },
+    { dow: 3, name: "Lunch Loop",           meta: "Road · 35km · Flat", level: "All abilities" },
+    { dow: 6, name: "Gravel Sundays",       meta: "Gravel · 75km · Backcountry", level: "Advanced" },
+  ].map(r => ({ ...r, date: nextDate(r.dow) }));
   return (
     <section className="section section-pad bg-black" data-screen-label="09 Group Rides">
       <div className="container-wide">

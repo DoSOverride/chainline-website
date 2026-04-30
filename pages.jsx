@@ -1565,24 +1565,49 @@ const AboutPage = () => (
 const RidesPage = () => {
   const rides = [
     {
-      day: "Thursday",
+      day: "Monday", dow: 1,
+      name: "Knox Mountain Monday",
+      time: "5:30 PM",
+      meet: "Knox Mountain — Bottom Parking Lot",
+      desc: "Weekly MTB night on Knox. Show up at the bottom lot and we ride together. Intermediate pace — you should be comfortable on tech singletrack.",
+      type: "MTB", meta: "22km · 650m gain", level: "Intermediate",
+      loc: "Knox Mountain Park, Kelowna, BC",
+    },
+    {
+      day: "Wednesday", dow: 3,
+      name: "Lunch Loop",
+      time: "12:00 PM",
+      meet: "ChainLine Cycle — 1139 Ellis St",
+      desc: "Midweek road spin out of the shop. 35km, flat, quick. Back in under 90 minutes. All abilities — if you can hold a conversation you're fine.",
+      type: "Road", meta: "35km · Flat", level: "All abilities",
+      loc: "ChainLine Cycle, 1139 Ellis St, Kelowna, BC",
+    },
+    {
+      day: "Thursday", dow: 4,
       name: "Thursday Night Shuttle / Pedal",
       time: "6:00 PM Sharp",
       meet: "ChainLine Cycle — 1139 Ellis St",
       desc: "Meet at the shop and we'll pick where to go. Shuttle or pedal, decided on the night. All levels welcome.",
-      type: "MTB",
-      calDay: "THU",
+      type: "MTB", meta: "Varies", level: "All levels",
       loc: "ChainLine Cycle, 1139 Ellis St, Kelowna, BC",
     },
     {
-      day: "Friday",
+      day: "Friday", dow: 5,
       name: "Friday Night Pedal Ride",
       time: "6:00 PM Sharp",
       meet: "Crawford Power Lines",
       desc: "Weekly pedal night at Crawford. Meet at the power lines and we roll from there. Good vibes, all paces.",
-      type: "MTB",
-      calDay: "FRI",
+      type: "MTB", meta: "~20km · Trail", level: "All paces",
       loc: "Crawford Power Lines, Kelowna, BC",
+    },
+    {
+      day: "Saturday", dow: 6,
+      name: "Gravel Sundays",
+      time: "8:00 AM",
+      meet: "ChainLine Cycle — 1139 Ellis St",
+      desc: "Longer backcountry gravel loop out of the shop. 75km, mixed surfaces, some climbing. Advanced riders — come fuelled up and ready to work.",
+      type: "Gravel", meta: "75km · Backcountry", level: "Advanced",
+      loc: "ChainLine Cycle, 1139 Ellis St, Kelowna, BC",
     },
   ];
 
@@ -1595,23 +1620,26 @@ const RidesPage = () => {
       </section>
       <section className="section section-pad bg-white">
         <div className="container-wide">
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:32 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(340px, 1fr))", gap:28 }}>
             {rides.map((r, i) => (
-              <div key={i} className={"reveal reveal-d-" + (i + 1)} style={{ padding:48, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:20 }}>
-                <div className="eyebrow">{r.day}  ·  Weekly  ·  {r.type}</div>
-                <div style={{ fontFamily:"var(--display)", fontSize:"clamp(24px,3vw,36px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1 }}>{r.name}</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}>
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2.5 2.5"/></svg>
+              <div key={i} className={"reveal reveal-d-" + (i + 1)} style={{ padding:40, border:"1px solid var(--hairline)", display:"flex", flexDirection:"column", gap:16 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+                  <div className="eyebrow">{r.day}  ·  {r.type}</div>
+                  <span className="pill">{r.level}</span>
+                </div>
+                <div style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.1 }}>{r.name}</div>
+                <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>{r.meta}</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase" }}>
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2.5 2.5"/></svg>
                     {r.time}
                   </div>
-                  <div style={{ display:"flex", alignItems:"center", gap:10, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)" }}>
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1a5 5 0 00-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 00-5-5z"/><circle cx="8" cy="6" r="1.5"/></svg>
                     {r.meet}
                   </div>
                 </div>
-                <p style={{ fontSize:15, lineHeight:1.7, color:"var(--gray-600)", margin:0 }}>{r.desc}</p>
-                <div style={{ flex:1 }} />
+                <p style={{ fontSize:14, lineHeight:1.7, color:"var(--gray-600)", margin:0, flex:1 }}>{r.desc}</p>
                 <button className="btn btn-outline" data-cursor="link" onClick={() => {
                   const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("ChainLine · "+r.name)}&recur=RRULE:FREQ%3DWEEKLY&details=${encodeURIComponent(r.desc+"\n\nQuestions? bikes@chainline.ca · (250) 860-1968")}&location=${encodeURIComponent(r.loc)}`;
                   window.open(url, "_blank");
