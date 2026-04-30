@@ -336,7 +336,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
       brandCol:  BIKE_BRANDS,
       brandCol2: BIKE_BRANDS2,
       cols: [
-        { h: "Parts & Accessories", items: ["Helmets & Protection", "Apparel", "Components", "Tools", "Bags & Racks", "Lights"] },
+        { h: "Components & Accessories", items: ["Helmets & Protection", "Apparel", "Drivetrain", "Tools", "Bags & Racks", "Lights"] },
         { h: "More", items: ["Sale", "Gift Cards", "Pinkbike"] },
       ],
     },
@@ -812,8 +812,8 @@ const Footer = () => (
         <div className="footer-col">
           <h4>Shop</h4>
           <ul>
-            {[["Bikes","shop"],["Parts & Accessories","parts"],["Gift Cards","giftcards"],["Sale","shop"],["Pinkbike","classifieds"],["Our Brands","brands"]].map(([label,route]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
+            {[["Bikes","shop"],["Components","parts",{tab:"drivetrain"}],["Accessories","parts",{tab:"accessories"}],["Gift Cards","giftcards"],["Sale","shop"],["Our Brands","brands"]].map(([label,route,intent]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent||null);}}>{label}</a></li>
             ))}
           </ul>
         </div>
@@ -821,7 +821,7 @@ const Footer = () => (
           <h4>Services</h4>
           <ul>
             {[["Book a Service","book"],["Book a Demo","demo"],["Bike Fitting","fitting"],["Custom Builds","services"],["Storage Program","storage"],["Warranty","warranty"]].map(([label,route]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route);}}>{label}</a></li>
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent||null);}}>{label}</a></li>
             ))}
           </ul>
         </div>
@@ -1102,7 +1102,7 @@ const SearchModal = ({ onClose }) => {
 
         {partResults.length > 0 && (
           <div>
-            <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Parts &amp; Accessories</div>
+            <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Components &amp; Accessories</div>
             {partResults.map((p, i) => (
               <button key={i} onClick={() => { const tab = (window.PART_TABS||[]).find(t=>t.depts.some(d=>d===(p.department||"")));  window.cl.go("parts",{dept:p.department,tab:tab?.id}); onClose(); }} data-cursor="link" style={rowStyle}>
                 <div style={{ flex:1 }}>
@@ -1114,7 +1114,7 @@ const SearchModal = ({ onClose }) => {
             ))}
             <button onClick={() => { window.cl.go("parts"); onClose(); }} data-cursor="link"
               style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 0", background:"none", border:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>
-              Browse all parts <ArrowRight size={10} />
+              Browse all components &amp; accessories <ArrowRight size={10} />
             </button>
           </div>
         )}

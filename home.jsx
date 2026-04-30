@@ -491,10 +491,10 @@ const GearHScroll = () => {
         <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, gap: 40, flexWrap: "wrap" }}>
           <div>
             <div className="section-label">Gear Up  /  N°05</div>
-            <h2 className="display-xl">Parts &<br/><span className="serif-italic">accessories.</span></h2>
+            <h2 className="display-xl">Components &<br/><span className="serif-italic">accessories.</span></h2>
           </div>
           <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("parts")}>
-            Browse All Parts <ArrowRight />
+            Browse All <ArrowRight />
           </button>
         </div>
       </div>
