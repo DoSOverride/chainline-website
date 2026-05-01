@@ -190,6 +190,26 @@ const BRAND_URLS = {
   Revel: 'https://revelbikes.com',
 };
 
+// Fuzzy match: find best colorImages key for the selected Lightspeed color name
+const findColorImgs = (colorImages, selColor) => {
+  if (!selColor || !colorImages) return null;
+  if (colorImages[selColor]) return colorImages[selColor];
+  const sel = selColor.toLowerCase();
+  // Substring match: one contains the other
+  for (const [key, imgs] of Object.entries(colorImages)) {
+    const k = key.toLowerCase();
+    if (sel.includes(k) || k.includes(sel)) return imgs;
+  }
+  // Word-overlap scoring
+  const selWords = new Set(sel.split(/[\s\/\-]+/).filter(w => w.length > 2));
+  let best = null, bestScore = 0;
+  for (const [key, imgs] of Object.entries(colorImages)) {
+    const score = key.toLowerCase().split(/[\s\/\-]+/).filter(w => w.length > 2 && selWords.has(w)).length;
+    if (score > bestScore) { bestScore = score; best = imgs; }
+  }
+  return bestScore > 0 ? best : null;
+};
+
 // ── Bike Detail Page ──────────────────────────────────────────
 const BikePage = ({ bike, onBack, onCart }) => {
   const { variants, varLoading } = useBikeVariants(bike);
@@ -265,8 +285,9 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const allImgs = (() => {
     const colorImages = data.colorImages || {};
     const colorPrimaries = new Set(Object.values(colorImages).map(a => a[0]).filter(Boolean));
-    if (selColor && colorImages[selColor]) {
-      const colorImgs = colorImages[selColor];
+    const _selColorImgs = findColorImgs(colorImages, selColor);
+    if (selColor && _selColorImgs) {
+      const colorImgs = _selColorImgs;
       const extras = (data.images || []).filter(u => u && !colorImgs.includes(u) && !colorPrimaries.has(u));
       return [...colorImgs, ...extras];
     }
@@ -972,7 +993,8 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const allBikeImgs = bikeData.images || [];
 
   const primaryImgResolved = (() => {
-    if (selColor && colorImages[selColor]) return colorImages[selColor][0];
+    const _ci = findColorImgs(colorImages, selColor);
+    if (selColor && _ci) return _ci[0];
     return resolveImage(selected ? { ...b, sku: selected.sku } : b) || resolveImage(b);
   })();
   const primaryImg = imgFallback ? (b.img || primaryImgResolved) : primaryImgResolved;
@@ -980,7 +1002,8 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   React.useEffect(() => setImgFallback(false), [primaryImgResolved]);
 
   const hoverImg = (() => {
-    if (selColor && colorImages[selColor]?.[1]) return colorImages[selColor][1];
+    const _ci = findColorImgs(colorImages, selColor);
+    if (selColor && _ci?.[1]) return _ci[1];
     if (!primaryImg) return null;
     const colorPrimaries = new Set(Object.values(colorImages).map(a => a[0]).filter(Boolean));
     return allBikeImgs.find(u => u && u !== primaryImg && !colorPrimaries.has(u))
@@ -2515,6 +2538,30 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
   );
 });
 
+const cleanDept = (d) => {
+  const MAP = {
+    'tires 27" & 26x1&1/4 etc...':"Tires 27.5\" & 26\"",
+    'tires 700c':'Tires 700C','tires 29"':'Tires 29"',
+    'tires 26"':'Tires 26"','tires 12, 16, 20':'Tires 12–20"',
+    'tires fatbike':'Fat Bike Tires','tires tubular':'Tubular Tires',
+    'brake pads':'Brake Pads','brake parts':'Brake Parts',
+    'derailleur rear':'Rear Derailleur','derailleur front':'Front Derailleur',
+    'deraileur hangers':'Derailleur Hangers','bottom brackets':'Bottom Brackets',
+    'free hub body':'Free Hub Body','chain retention':'Chain Retention',
+    'wheelset (fr+rr)':'Wheelsets','skewers qr':'QR Skewers',
+    'misc. accessories':'Misc Accessories','water bottle cage':'Bottle Cages',
+    'water bottle':'Water Bottles','arm warmers':'Arm Warmers',
+    'leg warmers':'Leg Warmers','pant clips':'Pant Clips',
+    'bar tape':'Bar Tape','brake lever u':'Brake Lever (U)','brake lever v':'Brake Lever (V)',
+    'brake adapter disc':'Disc Brake Adapter','shifters mtb':'MTB Shifters',
+    'shifters - road':'Road Shifters','hub parts':'Hub Parts',
+    'fork parts':'Fork Parts','fork oil':'Fork Oil',
+    'seat post':'Seatpost','tires 24"':'Tires 24"',
+    'tire sealant':'Tire Sealant','tire protection':'Tire Protection',
+  };
+  return MAP[d.toLowerCase()] || d.charAt(0).toUpperCase() + d.slice(1);
+};
+
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
 const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
@@ -2708,7 +2755,7 @@ const PartsPage = ({ pageType = 'components' }) => {
             )}
 
             {/* Sticky search bar */}
-            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:177, zIndex:10 }}>
+            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:64, zIndex:10 }}>
               <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
@@ -2760,7 +2807,7 @@ const PartsPage = ({ pageType = 'components' }) => {
                   <div key={dept}>
                     <div style={{ padding:"10px 20px 8px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".16em", textTransform:"uppercase", color:"var(--gray-400)", background:"var(--paper)", borderBottom:"1px solid var(--hairline)", borderTop:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:8 }}>
                       <span>{deptEmoji(dept, activeTab.emoji)}</span>
-                      <span style={{ flex:1 }}>{dept}</span>
+                      <span style={{ flex:1 }}>{cleanDept(dept)}</span>
                       <span style={{ opacity:.45 }}>{deptItems.length}</span>
                     </div>
                     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>

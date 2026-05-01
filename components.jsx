@@ -1130,14 +1130,14 @@ const ChatWidget = () => {
   return (
     <>
       <button onClick={() => setOpen(o => !o)} data-cursor="link" className="chat-toggle-btn"
-        style={{ position: "fixed", right: chatRight, bottom: chatBottom, zIndex: 90, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
+        style={{ position: "fixed", left: 16, bottom: chatBottom, zIndex: 90, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
         {open
           ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2l12 12M14 2L2 14"/></svg>
           : <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4h16v10H8l-4 3v-3H2z"/></svg>
         }
       </button>
       {open && (
-        <div className="chat-popup" style={{ position: "fixed", right: chatRight, bottom: chatBottom + 64, zIndex: 90, width: "min(320px, calc(100vw - 32px))", background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: "min(440px, calc(100vh - 200px))" }}>
+        <div className="chat-popup" style={{ position: "fixed", left: 16, bottom: chatBottom + 64, zIndex: 90, width: "min(320px, calc(100vw - 32px))", background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: "min(440px, calc(100vh - 200px))" }}>
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
             <div>
               <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine Support</div>
