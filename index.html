@@ -197,7 +197,7 @@
 <script type="text/babel" src="/pages.jsx?v=19"></script>
 <script>
 // Landing page components — plain JS, no Babel/JSX, no special chars
-var _lp = function(tag, props, children) { return React.createElement(tag, props, children); };
+var _lp = function() { return React.createElement.apply(React, arguments); };
 var _sec = { background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" };
 window.BrandLandingPage = function(p) {
   return _lp("div", {className:"page-fade"},
