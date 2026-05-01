@@ -53,19 +53,19 @@ window.lightspeedGetDept = async function(deptName) {
 // ── Fetch in-stock items for one parts tab (cached) ───────────
 window.lightspeedGetTab = async function(tabId) {
   if (!window.CL_LS.tabCache) window.CL_LS.tabCache = {};
-  if (window.CL_LS.tabCache[tabId]) return window.CL_LS.tabCache[tabId];
+  if (tabId in window.CL_LS.tabCache) return window.CL_LS.tabCache[tabId];
   try {
     const res  = await fetch(`${window.CL_LS.workerUrl}/api/parts?tab=${tabId}`);
     const data = await res.json();
-    const items = data.items || [];
-    window.CL_LS.tabCache[tabId] = items;
+    const items = data.error ? [] : (data.items || []);
+    if (!data.error) window.CL_LS.tabCache[tabId] = items;
     return items;
   } catch { return []; }
 };
 
 // ── Warm cache: silently preload tabs with small delays ───────
 window.lightspeedWarmCache = async function(tabs) {
-  if (!tabs) tabs = ['drivetrain','brakes','wheels','cockpit','suspension','fit','tools','accessories'];
+  if (!tabs) tabs = ['drivetrain','brakes','wheels','cockpit','suspension','fit','tools','bags','lights','locks','racks'];
   for (const tab of tabs) {
     if (!window.CL_LS.tabCache?.[tab]) {
       await window.lightspeedGetTab(tab);

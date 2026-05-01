@@ -2154,12 +2154,13 @@ const categoriseItem = (item) => {
 // ── useTabInventory hook ──────────────────────────────────────────────────
 // Per-tab loading: fetches only in-stock items for the active tab, caches per tab
 const useTabInventory = (tabId) => {
-  const [items,   setItems]   = React.useState(() => window.CL_LS?.tabCache?.[tabId] || []);
-  const [loading, setLoading] = React.useState(!window.CL_LS?.tabCache?.[tabId]);
+  const cached = window.CL_LS?.tabCache;
+  const [items,   setItems]   = React.useState(() => cached && tabId in cached ? cached[tabId] : []);
+  const [loading, setLoading] = React.useState(!(cached && tabId in cached));
 
   React.useEffect(() => {
-    const cached = window.CL_LS?.tabCache?.[tabId];
-    if (cached) { setItems(cached); setLoading(false); return; }
+    const c = window.CL_LS?.tabCache;
+    if (c && tabId in c) { setItems(c[tabId]); setLoading(false); return; }
     setLoading(true);
     setItems([]);
     window.lightspeedGetTab(tabId).then(result => {
@@ -2172,25 +2173,28 @@ const useTabInventory = (tabId) => {
 };
 
 // ── PartRow ───────────────────────────────────────────────────────────────
-const PartRow = React.memo(({ item, tabEmoji }) => {
-  const dept = item.department || '';
+const PartRow = React.memo(({ item }) => {
+  const price = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
+  const lowStock = item.qty > 0 && item.qty <= 5;
   return (
-    <div className="parts-row parts-row-grid" style={{ display:"grid", gridTemplateColumns:"28px 1fr auto", gap:"0 12px", alignItems:"center", padding:"10px 14px", borderBottom:"1px solid var(--hairline)", background:"var(--white)", transition:"background .15s" }}
+    <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"0 16px", alignItems:"center",
+      padding:"13px 20px", borderBottom:"1px solid var(--hairline)",
+      background:"var(--white)", transition:"background .12s" }}
       onMouseEnter={e => e.currentTarget.style.background = 'var(--paper)'}
       onMouseLeave={e => e.currentTarget.style.background = 'var(--white)'}>
-      {/* Icon */}
-      <div className="parts-row-icon" style={{ fontSize:14, textAlign:"center", opacity:.6, userSelect:"none" }}>{deptEmoji(dept, tabEmoji)}</div>
-      {/* Name + dept */}
+      {/* Name + meta */}
       <div style={{ minWidth:0 }}>
-        <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.3, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{item.name}</div>
-        <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".08em", textTransform:"uppercase", marginTop:2 }}>{dept}{item.sku ? ` · ${item.sku}` : ''}</div>
+        <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:500, textTransform:"uppercase",
+          letterSpacing:"-.01em", lineHeight:1.25, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
+          color:"var(--black)" }}>{item.name}</div>
+        <div style={{ display:"flex", alignItems:"center", gap:10, marginTop:3 }}>
+          {item.sku && <span style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".08em", textTransform:"uppercase" }}>{item.sku}</span>}
+          {lowStock && <span style={{ fontFamily:"var(--mono)", fontSize:9, color:"#c2410c", letterSpacing:".08em", textTransform:"uppercase", fontWeight:600 }}>Only {item.qty} left</span>}
+        </div>
       </div>
-      {/* Price + action */}
+      {/* Price + cart */}
       <div style={{ display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
-        {item.qty > 0 && item.qty <= 3 && (
-          <span style={{ fontFamily:"var(--mono)", fontSize:9, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase" }}>{item.qty} left</span>
-        )}
-        {item.price > 0 && <span style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:600, minWidth:52, textAlign:"right" }}>${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}</span>}
+        {price && <span style={{ fontFamily:"var(--display)", fontSize:15, fontWeight:600, color:"var(--black)", whiteSpace:"nowrap" }}>{price}</span>}
         <PartCartBtn item={item} compact />
       </div>
     </div>
@@ -2202,7 +2206,7 @@ const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
 const ACC_TAB_IDS  = ['fit','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
-  const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
+  const defaultTab = pageType === 'accessories' ? 'fit' : 'drivetrain';
   const [cat,    setCat]    = React.useState(defaultTab);
   const [search, setSearch] = React.useState('');
   const [pg,     setPg]     = React.useState(0);
@@ -3342,8 +3346,9 @@ const useTabCounts = (tabIds) => {
   React.useEffect(() => {
     let cancelled = false;
     tabIds.forEach(id => {
-      if (window.CL_LS?.tabCache?.[id]) {
-        setCounts(c => ({ ...c, [id]: window.CL_LS.tabCache[id].length }));
+      const cache = window.CL_LS?.tabCache;
+      if (cache && id in cache) {
+        setCounts(c => ({ ...c, [id]: cache[id].length }));
       } else {
         window.lightspeedGetTab?.(id).then(items => {
           if (!cancelled) setCounts(c => ({ ...c, [id]: items.length }));
