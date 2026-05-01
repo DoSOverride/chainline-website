@@ -111,7 +111,7 @@ const useBikeVariants = (bike) => {
       setVariants(bike.variants); setVarLoading(false); return; // already hydrated
     }
 
-    const IMPORTANT_SHORT = new Set(['jr','sx','gx','cx','rs','sl','29','27','26','20','16']);
+    const IMPORTANT_SHORT = new Set(['jr','sx','gx','cx','rs','sl','29','27','26','20','16','e','st','ls']);
     const STOP = new Set(['the','and','for','with','ride','comp','elite','race','pro','base','alloy','carbon','plus','size']);
 
     const buildVariants = () => {
@@ -255,13 +255,19 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const availSizes  = (w,c) => [...new Set(variants.filter(v=>(!hasWheels||v.wheel===w)&&(!hasColors||v.color===c)).map(v=>v.size).filter(Boolean))];
   const wheels = [...new Set(variants.map(v=>v.wheel).filter(Boolean))];
   const allImgs = (() => {
+    const colorImages = data.colorImages || {};
+    if (selColor && colorImages[selColor]) {
+      const colorImgs = colorImages[selColor];
+      const extras = (data.images || []).filter(u => u && !colorImgs.includes(u));
+      return [...colorImgs, ...extras];
+    }
     const resolved = resolveImage(selected ? {...b, sku: selected.sku} : b) || resolveImage(b);
     const imgs = resolved ? [resolved] : [];
     (data.images || []).forEach(u => { if (u && !imgs.includes(u)) imgs.push(u); });
     return imgs;
   })();
   const [activeImg, setActiveImg] = React.useState(0);
-  React.useEffect(() => setActiveImg(0), [selected?.sku]);
+  React.useEffect(() => setActiveImg(0), [selected?.sku, selColor]);
 
   const selInStock  = selected ? selected.inStock : b.inStock !== false;
   const selPrice    = selected?.price || b.price || 0;
@@ -831,7 +837,7 @@ const ShopPage = () => {
                 </div>
               )}
               {filtered.length > 0 && (
-                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:40 }}>
+                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"48px 32px", alignItems:"start" }}>
                   {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} />)}
                 </div>
               )}
@@ -844,24 +850,41 @@ const ShopPage = () => {
   );
 };
 
+const COLOR_HEX = (c) => {
+  if (!c) return '#aaa';
+  const lc = c.toLowerCase();
+  const map = [
+    ['galactic black','#111'],['graphite','#444'],['black','#1a1a1a'],
+    ['glacier white','#eef3f7'],['cream','#f5f0e8'],['white','#f0f0f0'],
+    ['ultra violet','#6d28d9'],['violet','#7c3aed'],['purple','#7c3aed'],['elderberry','#5b2c8a'],
+    ['lingering cranberry','#9b1c2c'],['cranberry','#9b1c2c'],['red','#c0392b'],['wine','#722f37'],
+    ['whipped butter','#e8d99a'],['butter','#e8d99a'],['yellow','#d4a017'],['gold','#c8a415'],
+    ['teal','#14746f'],['sage','#7d9e7d'],['green','#1e6b3c'],['olive','#6b7a30'],
+    ['blue','#1d4f8c'],['navy','#14294b'],['sky','#3a7fc1'],['ocean','#0e6b8c'],
+    ['orange','#c05c1a'],['copper','#b5651d'],['brown','#6b3e26'],['tan','#c4a882'],
+    ['silver','#b0b8c1'],['grey','#6b7280'],['gray','#6b7280'],['charcoal','#374151'],
+    ['pink','#c2185b'],['rose','#be185d'],['coral','#db5f57'],
+  ];
+  for (const [k, v] of map) { if (lc.includes(k)) return v; }
+  return '#888';
+};
+
+const SIZE_ORDER = ['XS','S','SM','M','MD','L','LG','XL','XXL','XXXL'];
+
 const BikeCardLarge = React.memo(({ b, idx }) => {
   const variants = b.variants || [];
-  const inStockV = variants.filter(v => v.inStock);
-
-  // Derive available dimension values
   const wheels  = [...new Set(variants.map(v => v.wheel).filter(Boolean))];
   const colors  = [...new Set(variants.map(v => v.color).filter(Boolean))];
   const sizes   = [...new Set(variants.map(v => v.size).filter(Boolean))];
   const hasWheels = wheels.length > 1;
   const hasColors = colors.length > 1;
-  const hasSizes  = sizes.length > 1;
+  const hasSizes  = sizes.length > 0;
 
-  // Smart default: prefer 29" + Medium, fall back gracefully
   const pickDefault = (vs) => {
     const ins = vs.filter(v => v.inStock);
-    return ins.find(v => v.wheel === '29"' && v.size === 'Medium')
+    return ins.find(v => v.wheel === '29"' && v.size === 'M')
+      || ins.find(v => v.size === 'M')
       || ins.find(v => v.wheel === '29"')
-      || ins.find(v => v.size === 'Medium')
       || ins[0] || vs[0];
   };
   const defV = pickDefault(variants);
@@ -871,13 +894,11 @@ const BikeCardLarge = React.memo(({ b, idx }) => {
   const [adding,   setAdding] = React.useState(false);
   const [added,    setAdded]  = React.useState(false);
 
-  // Re-apply defaults when variants load asynchronously after mount
   React.useEffect(() => {
     const d = pickDefault(b.variants || []);
     if (d) { setWheel(d.wheel || null); setColor(d.color || null); setSize(d.size || null); }
   }, [b.handle, (b.variants || []).length]);
 
-  // Find the selected variant
   const selected = variants.find(v =>
     (!hasWheels || v.wheel === selWheel) &&
     (!hasColors || v.color === selColor) &&
@@ -886,25 +907,35 @@ const BikeCardLarge = React.memo(({ b, idx }) => {
 
   const name    = b.name  || b.title  || "";
   const brand   = b.brand || b.vendor || "";
-  const img     = resolveImage(selected ? { ...b, sku: selected.sku } : b) || resolveImage(b);
   const price   = selected?.price || b.price || 0;
   const inStock = selected ? selected.inStock : b.inStock !== false;
   const qty     = selected?.qty ?? b.qty ?? null;
-  const lowStock = qty !== null && qty > 0 && qty <= 3;
+  const lowStock = qty !== null && qty > 0 && qty <= 2;
 
-  // Which options are available given current selections
-  const availColors = (wheel) => [...new Set(variants.filter(v => !hasWheels || v.wheel === wheel).map(v => v.color).filter(Boolean))];
-  const availSizes  = (wheel, color) => [...new Set(variants.filter(v => (!hasWheels || v.wheel === wheel) && (!hasColors || v.color === color)).map(v => v.size).filter(Boolean))];
-  const isInStock   = (v) => variants.some(vv => (!hasWheels || vv.wheel === v.wheel) && (!hasColors || vv.color === v.color) && (!hasSizes || vv.size === v.size) && vv.inStock);
+  const bikeData    = window.BIKE_DATA?.[b.handle] || {};
+  const colorImages = bikeData.colorImages || {};
+  const allBikeImgs = bikeData.images || [];
 
-  const chipStyle = (active, avail) => ({
-    padding:"6px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase",
-    border:"1px solid", cursor:"pointer", borderRadius:2, background:"none",
-    borderColor: active ? "var(--black)" : "var(--hairline)",
-    color: active ? "var(--black)" : avail ? "var(--gray-600)" : "var(--gray-400)",
-    opacity: avail ? 1 : 0.45,
-  });
-  const chipClass = (active, avail) => "shop-chip" + (active ? " active" : avail ? "" : " unavail");
+  const primaryImg = (() => {
+    if (selColor && colorImages[selColor]) return colorImages[selColor][0];
+    return resolveImage(selected ? { ...b, sku: selected.sku } : b) || resolveImage(b);
+  })();
+
+  const hoverImg = (() => {
+    if (selColor && colorImages[selColor]?.[1]) return colorImages[selColor][1];
+    if (!primaryImg) return null;
+    const next = allBikeImgs.find(u => u && u !== primaryImg);
+    return next || null;
+  })();
+
+  const availColors = (w) => [...new Set(variants.filter(v => !hasWheels || v.wheel === w).map(v => v.color).filter(Boolean))];
+  const availSizes  = (w, c) => {
+    const raw = [...new Set(variants.filter(v => (!hasWheels||v.wheel===w) && (!hasColors||v.color===c)).map(v => v.size).filter(Boolean))];
+    return raw.sort((a, z) => {
+      const ai = SIZE_ORDER.indexOf(a), zi = SIZE_ORDER.indexOf(z);
+      return (ai < 0 ? 99 : ai) - (zi < 0 ? 99 : zi);
+    });
+  };
 
   const handleAdd = async (e) => {
     e.preventDefault(); e.stopPropagation();
@@ -912,115 +943,109 @@ const BikeCardLarge = React.memo(({ b, idx }) => {
     if (!inStock || !sku) return;
     setAdding(true);
     try {
-      const variantDesc = selected ? [selected.wheel, selected.color, selected.size].filter(Boolean).join(' · ') : null;
-      const result = await window.clAddToCart(sku, name, price, img, sku, variantDesc || null);
+      const variantDesc = [selected?.wheel, selected?.color, selected?.size].filter(Boolean).join(' · ');
+      const result = await window.clAddToCart(sku, name, price, primaryImg, sku, variantDesc || null);
       if (result) { setAdded(true); setTimeout(() => setAdded(false), 2000); window.dispatchEvent(new CustomEvent('cart:open')); }
     } catch(err) { console.warn(err); }
     setAdding(false);
   };
 
-  const goToBike = () => window.cl.go("bike", { bike: b });
-  const labelStyle = { fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:5 };
+  const szList = availSizes(selWheel, selColor);
+  const clrList = availColors(selWheel);
 
   return (
-    <div style={{ cursor:"pointer" }} onClick={goToBike}>
-      {/* Image */}
-      <div className="shop-bike-card-img" style={{ aspectRatio:"4/5", marginBottom:14, position:"relative", background:"var(--paper)", overflow:"hidden" }}>
-        {img ? (
-          <img src={img} alt={brand + " " + name} className="bike-img" loading="lazy" decoding="async"
-            style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply", transition:"transform .4s ease" }}
+    <div className="bike-card" onClick={() => window.cl.go("bike", { bike: b })}>
+
+      {/* ── Image ── */}
+      <div className="bike-card-img-wrap">
+        {primaryImg
+          ? <img src={primaryImg} alt={brand + " " + name} className="bike-card-img-primary bike-img"
+              loading={idx < 6 ? "eager" : "lazy"} decoding="async"
+              onError={e => { e.target.style.display='none'; }} />
+          : <div className="ph ph-corners" style={{ position:'absolute', inset:0 }}>
+              <span className="ph-label">{brand.toUpperCase()} · {b.type}</span>
+            </div>
+        }
+        {hoverImg && hoverImg !== primaryImg &&
+          <img src={hoverImg} alt="" className="bike-card-img-hover bike-img"
+            loading="lazy" decoding="async"
             onError={e => { e.target.style.display='none'; }} />
-        ) : (
-          <div className="ph ph-corners" style={{ position:"absolute", inset:0 }}>
-            <span className="ph-label">{brand.toUpperCase()}  ·  {b.type}</span>
+        }
+
+        {/* Stock badge */}
+        <div className="bike-card-badge">
+          <span className="stock-dot" style={{ width:6, height:6 }} />
+          <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
+        </div>
+        {b.badge && <div className="bike-card-model-badge">{b.badge}</div>}
+      </div>
+
+      {/* ── Info ── */}
+      <div className="bike-card-info">
+        <div className="bike-card-brand">{brand}</div>
+        <div className="bike-card-name">{name}</div>
+        <div className="bike-card-price">${price.toLocaleString()} <span style={{ fontFamily:'var(--mono)', fontSize:11, fontWeight:400, opacity:.5 }}>CAD</span></div>
+
+        {/* Color swatches */}
+        {hasColors && clrList.length > 0 && (
+          <div className="bike-card-colors" onClick={e => e.stopPropagation()}>
+            {clrList.map(c => {
+              const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && v.color===c && v.inStock);
+              return (
+                <button key={c} title={c}
+                  onClick={e => { e.stopPropagation(); setColor(c); const s = availSizes(selWheel,c); setSize(s.includes(selSize)?selSize:s[0]||null); }}
+                  className={"color-swatch" + (selColor===c?" active":"") + (!avail?" unavail":"")}
+                  style={{ background: COLOR_HEX(c) }} />
+              );
+            })}
+            {selColor && <span className="bike-card-color-label">{selColor}</span>}
           </div>
         )}
-        <div style={{ position:"absolute", top:10, left:10, display:"flex", alignItems:"center", gap:6, padding:"4px 9px", background:"rgba(0,0,0,0.72)", borderRadius:2, backdropFilter:"blur(4px)" }}>
-          <span className="stock-dot" />
-          <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#ffffff" }}>In Stock</span>
+
+        {/* Wheel chips */}
+        {hasWheels && (
+          <div className="bike-card-chips" onClick={e => e.stopPropagation()}>
+            {wheels.map(w => {
+              const avail = variants.some(v => v.wheel===w && v.inStock);
+              const active = selWheel===w;
+              return (
+                <button key={w} className={"bcc" + (active?" active":"") + (!avail?" dim":"")}
+                  onClick={e => { e.stopPropagation(); setWheel(w); const nc=availColors(w).includes(selColor)?selColor:availColors(w)[0]||null; setColor(nc); const s=availSizes(w,nc); setSize(s.includes(selSize)?selSize:s[0]||null); }}>
+                  {w}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Size chips */}
+        {hasSizes && szList.length > 0 && (
+          <div className="bike-card-chips" onClick={e => e.stopPropagation()}>
+            {szList.map(sz => {
+              const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && (!hasColors||v.color===selColor) && v.size===sz && v.inStock);
+              const active = selSize===sz;
+              return (
+                <button key={sz} className={"bcc" + (active?" active":"") + (!avail?" dim":"")}
+                  onClick={e => { e.stopPropagation(); if (avail) setSize(sz); }}>
+                  {sz}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="bike-card-actions" onClick={e => e.stopPropagation()}>
+          <button className="btn btn-outline" data-cursor="link"
+            onClick={e => { e.stopPropagation(); window.cl.go("bike", { bike: b }); }}
+            style={{ flex:'0 0 auto', padding:'10px 16px', fontSize:11 }}>
+            Details
+          </button>
+          <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
+            style={{ flex:1, justifyContent:'center', padding:'10px 8px', fontSize:11 }}>
+            {added ? "Added ✓" : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
+          </button>
         </div>
-        {b.badge && <div style={{ position:"absolute", top:10, right:10, padding:"4px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase" }}>{b.badge}</div>}
-        <div style={{ position:"absolute", inset:0, transition:"background .3s" }}
-          onMouseEnter={e => e.currentTarget.style.background='rgba(0,0,0,0.04)'}
-          onMouseLeave={e => e.currentTarget.style.background='transparent'} />
-      </div>
-
-      {/* Info */}
-      <div className="eyebrow" style={{ marginBottom:4 }}>{brand}  ·  {b.type}</div>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:10 }}>
-        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(15px,1.4vw,19px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.2 }}>{name}</div>
-        <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, flexShrink:0 }}>${price.toLocaleString()}</div>
-      </div>
-
-      {/* Variant selectors */}
-      {variants.length > 1 && (
-        <div style={{ marginBottom:12 }} onClick={e => e.stopPropagation()}>
-          {/* Wheel size */}
-          {hasWheels && (
-            <div style={{ marginBottom:8 }}>
-              <div style={labelStyle}>Wheel</div>
-              <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-                {wheels.map(w => {
-                  const avail = variants.some(v => v.wheel === w && v.inStock);
-                  return (
-                    <button key={w} className={chipClass(selWheel===w, avail)} style={chipStyle(selWheel===w, avail)} onClick={() => {
-                      setWheel(w);
-                      const avColors = availColors(w);
-                      const nc = avColors.includes(selColor) ? selColor : avColors[0] || null;
-                      setColor(nc);
-                      const avSizes = availSizes(w, nc);
-                      setSize(avSizes.includes(selSize) ? selSize : avSizes[0] || null);
-                    }}>{w}</button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {/* Color */}
-          {hasColors && (
-            <div style={{ marginBottom:8 }}>
-              <div style={labelStyle}>Color</div>
-              <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-                {availColors(selWheel).map(c => {
-                  const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && v.color===c && v.inStock);
-                  return (
-                    <button key={c} className={chipClass(selColor===c, avail)} style={chipStyle(selColor===c, avail)} onClick={() => {
-                      setColor(c);
-                      const avSizes = availSizes(selWheel, c);
-                      setSize(avSizes.includes(selSize) ? selSize : avSizes[0] || null);
-                    }}>{c}</button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {/* Frame size */}
-          {hasSizes && (
-            <div style={{ marginBottom:8 }}>
-              <div style={labelStyle}>Size</div>
-              <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-                {availSizes(selWheel, selColor).map(sz => {
-                  const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && (!hasColors||v.color===selColor) && v.size===sz && v.inStock);
-                  return (
-                    <button key={sz} className={chipClass(selSize===sz, avail)} style={chipStyle(selSize===sz, avail)} onClick={() => setSize(sz)}>{sz}</button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Actions */}
-      <div style={{ display:"flex", gap:8 }} onClick={e => e.stopPropagation()}>
-        <button className="btn btn-outline" data-cursor="link" onClick={goToBike}
-          style={{ flex:1, justifyContent:"center", padding:"11px 8px", fontSize:11 }}>
-          Details
-        </button>
-        <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
-          style={{ flex:1, justifyContent:"center", padding:"11px 8px", fontSize:11 }}>
-          {added ? "Added ✓" : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
-        </button>
       </div>
     </div>
   );

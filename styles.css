@@ -856,6 +856,182 @@ img {
   animation-duration: 22s;
 }
 
+/* ── Bike Card ────────────────────────────────────────────────── */
+.bike-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.bike-card-img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: var(--paper);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.bike-card-img-primary,
+.bike-card-img-hover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8%;
+  mix-blend-mode: multiply;
+  transition: opacity 0.45s ease, transform 0.6s ease;
+  will-change: opacity, transform;
+}
+
+.bike-card-img-primary { opacity: 1; z-index: 1; }
+.bike-card-img-hover   { opacity: 0; z-index: 2; transform: scale(1.04); }
+
+.bike-card:hover .bike-card-img-primary { opacity: 0; }
+.bike-card:hover .bike-card-img-hover   { opacity: 1; transform: scale(1); }
+
+.bike-card-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 9px;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(4px);
+  border-radius: 2px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #fff;
+  z-index: 3;
+}
+
+.bike-card-model-badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  padding: 4px 10px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  z-index: 3;
+}
+
+.bike-card-info { flex: 1; display: flex; flex-direction: column; }
+
+.bike-card-brand {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 5px;
+}
+
+.bike-card-name {
+  font-family: var(--display);
+  font-size: clamp(15px, 1.4vw, 20px);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--black);
+  margin-bottom: 6px;
+  flex: 1;
+}
+
+.bike-card-price {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--black);
+  margin-bottom: 14px;
+}
+
+/* Color swatches */
+.bike-card-colors {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+  outline: none;
+}
+.color-swatch:hover { transform: scale(1.25); }
+.color-swatch.active {
+  box-shadow: 0 0 0 2px var(--white), 0 0 0 3.5px var(--black);
+}
+.color-swatch.unavail { opacity: 0.35; }
+
+.bike-card-color-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+/* Wheel / size chips */
+.bike-card-chips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.bcc {
+  padding: 4px 9px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--gray-600);
+  cursor: pointer;
+  border-radius: 1px;
+  transition: all .15s;
+  line-height: 1;
+}
+.bcc:hover { border-color: var(--gray-400); color: var(--black); }
+.bcc.active { border-color: var(--black); background: var(--black); color: var(--white); }
+.bcc.dim { opacity: 0.35; }
+
+.bike-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .bike-card-img-primary,
+[data-theme="dark"] .bike-card-img-hover { mix-blend-mode: normal; }
+
+[data-theme="dark"] .bike-card-name,
+[data-theme="dark"] .bike-card-price { color: var(--white); }
+
+[data-theme="dark"] .bike-card-img-wrap { background: #1e1e1e; }
+
+[data-theme="dark"] .bcc {
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+}
+[data-theme="dark"] .bcc:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+[data-theme="dark"] .bcc.active { border-color: #fff; background: #fff; color: #000; }
+[data-theme="dark"] .color-swatch.active {
+  box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 3.5px #fff;
+}
+
 /* Sections */
 .section {
   position: relative;
