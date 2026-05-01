@@ -194,6 +194,34 @@ const App = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [page]);
 
+  // Per-route title + meta description
+  React.useEffect(() => {
+    const intent = window.cl?.intent;
+    const brand = intent?.brand;
+    const type = intent?.type;
+    const tab = intent?.tab;
+    const META = {
+      home:        ["ChainLine Cycle — Kelowna's Bike Shop. Since 2009.", "Kelowna's performance bike shop since 2009. Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots. Expert mechanics, bike fitting, storage."],
+      shop:        [brand ? `${brand} Bikes Kelowna | ChainLine Cycle` : type ? `${type} Bikes Kelowna | ChainLine Cycle` : "Bikes In Stock | ChainLine Cycle", brand ? `Shop ${brand} bikes in Kelowna. In-stock at ChainLine Cycle — expert assembly, full warranty support.` : "Shop bikes in stock at ChainLine Cycle, Kelowna. Mountain, gravel, road, e-bikes and kids bikes. Expert mechanics on site."],
+      services:    ["Bike Service Kelowna | ChainLine Cycle", "Expert bike service in Kelowna. Tune-ups, hydraulic brakes, suspension, custom builds, wheel building. Same-day turnaround available."],
+      book:        ["Book a Bike Service | ChainLine Cycle Kelowna", "Book your bike service online. Tune-ups, flat fixes, brake bleeds and more. Real availability, no phone tag."],
+      fitting:     ["Professional Bike Fitting Kelowna | ChainLine Cycle", "Expert bike fitting in Kelowna with video analysis. Road, mountain, gravel positions. From $80."],
+      storage:     ["Bike Storage Kelowna | ChainLine Cycle", "Secure, dry bike storage in Kelowna. Climate-controlled facility. Spring-ready return service included."],
+      demo:        ["Demo Fleet | ChainLine Cycle Kelowna", "Try before you buy. Demo our fleet of mountain, gravel and e-bikes on Kelowna's trails."],
+      components:  [tab ? `${tab.charAt(0).toUpperCase()+tab.slice(1)} Parts | ChainLine Cycle` : "Bike Components | ChainLine Cycle", "In-stock bike components in Kelowna. Drivetrain, brakes, suspension, cockpit and wheels."],
+      accessories: ["Bike Accessories Kelowna | ChainLine Cycle", "Helmets, gloves, shoes, lights, locks, bags and tools. In stock at ChainLine Cycle, Kelowna."],
+      trails:      ["Kelowna Mountain Bike Trails | ChainLine Cycle", "Trail guide for Knox Mountain, Bear Creek, Myra Canyon and Kelowna Bike Park. Conditions, maps and local knowledge."],
+      rides:       ["Group Rides Kelowna | ChainLine Cycle", "Join ChainLine's weekly group rides in Kelowna. All abilities welcome. Thursday and Friday evenings."],
+      about:       ["About ChainLine Cycle | Kelowna's Bike Shop Since 2009", "ChainLine Cycle — Kelowna's only full-service performance bike shop. Four dedicated mechanics, real riders."],
+      contact:     ["Contact ChainLine Cycle | 1139 Ellis St, Kelowna", "Get in touch with ChainLine Cycle. 1139 Ellis St, Kelowna BC. (250) 860-1968 · bikes@chainline.ca."],
+      giftcards:   ["Gift Cards | ChainLine Cycle Kelowna", "Give the gift of bikes. ChainLine Cycle gift cards — valid on bikes, parts, accessories and services."],
+    };
+    const [title, desc] = META[page] || META.home;
+    document.title = title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', desc);
+  }, [page]);
+
   // Silent background cache warmer — starts 4s after initial load
   React.useEffect(() => {
     const t = setTimeout(() => window.lightspeedWarmCache?.(), 4000);

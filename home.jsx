@@ -106,7 +106,7 @@ const BikeCard = ({ b, idx }) => (
      onClick={(e) => { e.preventDefault(); window.cl.go("bike", { bike: b }); }}>
     <div className="ph ph-corners" style={{ aspectRatio: "4/5", marginBottom: 20, position: "relative", background: "var(--paper)", overflow: "hidden" }}>
       {b.img ? (
-        <img src={b.img} alt={b.brand + " " + b.name} className="bike-img" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
+        <img src={b.img} alt={b.brand + " " + b.name} className="bike-img" loading="lazy" decoding="async" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", padding: "8%", mixBlendMode: "multiply" }} />
       ) : (
         <span className="ph-label">{b.brand.toUpperCase()}  ·  {(b.type || "").toUpperCase()}</span>
       )}
@@ -423,7 +423,7 @@ const BikeScroller = () => {
     <div onClick={() => window.cl.go("bike", { bike: b })}
       className="bike-scroller-item"
       style={{ flexShrink:0, width:200, height:148, marginRight:20, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
-      <img src={b.img} alt={b.name} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
+      <img src={b.img} alt={b.name} loading="lazy" decoding="async" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
         onError={e => { e.target.parentElement.style.display = 'none'; }} />
     </div>
   );
@@ -447,7 +447,7 @@ const LocalStory = () => (
       <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
         <div className="reveal" style={{ aspectRatio: "4/5", position: "relative", overflow: "hidden" }}>
           <img src="/shop-exterior.webp" alt="ChainLine Cycle — Kelowna's bike shop since 2009"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
+            loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
           <div style={{ position: "absolute", top: 24, left: 24, padding: "8px 14px", background: "var(--black)", color: "var(--white)", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase" }}>EST. 2009</div>
         </div>
         <div className="reveal reveal-d-2">
@@ -506,7 +506,7 @@ const GearHScroll = () => {
               <div className={c.img ? "" : "ph ph-corners"} style={{ aspectRatio: "3/4", position: "relative", overflow: "hidden",
                 background: c.img ? "var(--near-black)" : undefined }}>
                 {c.img
-                  ? <img src={c.img} alt={c.name} style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", opacity:.75 }} />
+                  ? <img src={c.img} alt={c.name} loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", opacity:.75 }} />
                   : <span className="ph-label">PARTS  ·  {c.name.toUpperCase()}</span>
                 }
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)" }} />
@@ -546,8 +546,8 @@ const GroupRidesTeaser = () => {
       <div className="container-wide">
         <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 80, alignItems: "center" }}>
           <div className="reveal" style={{ aspectRatio: "5/4", position: "relative", overflow: "hidden" }}>
-            <img src={`${WORKER_URL}/r2/lifestyle/rides-group.jpg`} alt="ChainLine group ride"
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
+            <img src={`${WORKER_URL}/r2/lifestyle/rides-group.jpg`} alt="ChainLine group ride — weekly rides from Kelowna's bike shop"
+              loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />
           </div>
           <div className="reveal reveal-d-2">
@@ -600,8 +600,8 @@ const TrailSpotlight = () => {
         <div className="home-trail-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 32 }}>
           <a href="#" data-cursor="link" className="reveal" onClick={e => { e.preventDefault(); window.cl.go("trails"); }}
             style={{ aspectRatio: "16/10", position: "relative", overflow: "hidden", display: "block" }}>
-            <img src={`${WORKER_URL}/r2/lifestyle/trail-knox.jpg`} alt="Knox Mountain trails"
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", display: "block" }} />
+            <img src={`${WORKER_URL}/r2/lifestyle/trail-knox.jpg`} alt="Knox Mountain trail — Kelowna mountain biking"
+              loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%", display: "block" }} />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)" }} />
             <div style={{ position: "absolute", left: 32, right: 32, bottom: 32, color: "#fff" }}>
               <div className="eyebrow eyebrow-light" style={{ marginBottom: 12 }}>Featured  ·  Spring–Fall</div>
@@ -618,8 +618,8 @@ const TrailSpotlight = () => {
             {trails.slice(1).map((t, i) => (
               <a key={i} href="#" data-cursor="link" className="reveal reveal-d-2" onClick={e => { e.preventDefault(); window.cl.go("trails"); }}
                 style={{ position: "relative", minHeight: 220, overflow: "hidden", display: "block" }}>
-                <img src={`${WORKER_URL}/r2/lifestyle/${i === 0 ? "trail-forest.jpg" : "trail-action.jpg"}`} alt={t.name}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", position: "absolute", inset: 0 }} />
+                <img src={`${WORKER_URL}/r2/lifestyle/${i === 0 ? "trail-forest.jpg" : "trail-action.jpg"}`} alt={`${t.name} — Kelowna trail riding`}
+                  loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", position: "absolute", inset: 0 }} />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)" }} />
                 <div style={{ position: "absolute", left: 24, right: 24, bottom: 24, color: "#fff" }}>
                   <div className="display-m" style={{ marginBottom: 8, textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>{t.name}</div>

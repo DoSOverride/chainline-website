@@ -6,11 +6,14 @@
 <meta name="color-scheme" content="light dark"/>
 <meta name="theme-color" content="#0a0a0a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
 <title>ChainLine Cycle — Kelowna's Bike Shop. Since 2009.</title>
 <meta name="description" content="Kelowna's performance bike shop since 2009. Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots. Expert mechanics, bike fitting, storage."/>
 <link rel="canonical" href="https://chainline.ca/"/>
-<meta name="mobile-web-app-capable" content="yes"/>
 
 <!-- Open Graph / social sharing -->
 <meta property="og:type"        content="website"/>
@@ -31,6 +34,8 @@
   "@context": "https://schema.org",
   "@type": ["LocalBusiness","BicycleStore"],
   "name": "ChainLine Cycle",
+  "image": "https://chainline.ca/hero/okanagan-panorama.png",
+  "logo": "https://chainline.ca/logo-dark.png",
   "description": "Kelowna's only full-service performance bike shop since 2009. Marin, Transition, Surly, Salsa, Pivot, Bianchi, Moots, Knolly, Revel.",
   "url": "https://chainline.ca",
   "telephone": "+1-250-860-1968",
@@ -71,6 +76,17 @@
 }
 </script>
 
+<!-- Service schema -->
+<script type="application/ld+json">
+[
+  {"@context":"https://schema.org","@type":"Service","name":"Bike Tune-Up","description":"Full bike tune-up including gear/brake adjustment, lubrication, safety inspection. Same-day turnaround available.","provider":{"@type":"LocalBusiness","name":"ChainLine Cycle"},"areaServed":{"@type":"City","name":"Kelowna"},"offers":{"@type":"Offer","price":"75","priceCurrency":"CAD"}},
+  {"@context":"https://schema.org","@type":"Service","name":"Professional Bike Fitting","description":"Expert bike fitting with video analysis. Road, mountain, gravel and triathlon positions.","provider":{"@type":"LocalBusiness","name":"ChainLine Cycle"},"areaServed":{"@type":"City","name":"Kelowna"},"offers":{"@type":"Offer","price":"80","priceCurrency":"CAD"}},
+  {"@context":"https://schema.org","@type":"Service","name":"Custom Bike Build","description":"Full custom bike builds from frame up. Hand-laced wheels, dialed cockpit, expert assembly.","provider":{"@type":"LocalBusiness","name":"ChainLine Cycle"},"areaServed":{"@type":"City","name":"Kelowna"},"offers":{"@type":"Offer","price":"450","priceCurrency":"CAD"}},
+  {"@context":"https://schema.org","@type":"Service","name":"Bike Storage","description":"Secure, dry, climate-controlled bike storage. Spring-ready return service available.","provider":{"@type":"LocalBusiness","name":"ChainLine Cycle"},"areaServed":{"@type":"City","name":"Kelowna"},"offers":{"@type":"Offer","price":"180","priceCurrency":"CAD"}},
+  {"@context":"https://schema.org","@type":"Service","name":"Wheel Building","description":"Hand-laced, tensioned and trued wheels. Lifetime true-up included.","provider":{"@type":"LocalBusiness","name":"ChainLine Cycle"},"areaServed":{"@type":"City","name":"Kelowna"},"offers":{"@type":"Offer","price":"260","priceCurrency":"CAD"}}
+]
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="dns-prefetch" href="https://still-term-f1ec.taocaruso77.workers.dev"/>
@@ -90,10 +106,10 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<script type="text/babel" src="tweaks-panel.jsx?v=12"></script>
-<script type="text/babel" src="components.jsx?v=12"></script>
-<script type="text/babel" src="home.jsx?v=12"></script>
-<script type="text/babel" src="pages.jsx?v=12"></script>
-<script type="text/babel" src="app.jsx?v=12"></script>
+<script type="text/babel" src="tweaks-panel.jsx?v=13"></script>
+<script type="text/babel" src="components.jsx?v=13"></script>
+<script type="text/babel" src="home.jsx?v=13"></script>
+<script type="text/babel" src="pages.jsx?v=13"></script>
+<script type="text/babel" src="app.jsx?v=13"></script>
 </body>
 </html>
