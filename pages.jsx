@@ -680,20 +680,36 @@ const ShopPage = () => {
       groups[key]._entries.push(s);
     });
 
+    // Pre-assign each live item to its BEST matching group (most specific / highest word count match)
+    // This prevents "Stinson 1" from stealing "Stinson 1 LS" variants due to short model words
+    const wordIn = (w, str) => new RegExp('(?:^|\\s)' + w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?:\\s|$)').test(str);
+    const bestGroup = new Map(); // sku → { key, score }
+    Object.entries(groups).forEach(([key, group]) => {
+      const sb = _norm(group.brand || '');
+      group._entries.forEach(s => {
+        const sWords = _norm(s.name).split(' ').filter(Boolean);
+        liveProducts.forEach(l => {
+          if (_norm((l.name||'').split(' ')[0]) !== sb) return;
+          const ln = _norm(l.name);
+          if (!sWords.every(w => wordIn(w, ln))) return;
+          const score = sWords.length;
+          const prev = bestGroup.get(l.sku);
+          if (!prev || score > prev.score) bestGroup.set(l.sku, { key, score });
+        });
+      });
+    });
+
     return Object.values(groups).map(group => {
       const sb = _norm(group.brand || '');
-      // Collect Lightspeed matches for ALL sub-entries (deduped by sku)
+      const key = `${group.brand}||${group.name}`;
+      // Only collect live items whose best match is this group
       const seen = new Set();
       const allMatches = [];
-      group._entries.forEach(s => {
-        const sKw = _norm(s.name).split(' ').filter(w => w.length >= 4);
-        const sNorm = _norm(s.name);
-        liveProducts.filter(l => {
-          const lb = _norm((l.name || '').split(' ')[0]);
-          if (lb !== sb) return false;
-          const ln = _norm(l.name);
-          return sKw.length > 0 ? sKw.every(w => ln.includes(w)) : ln.includes(sNorm);
-        }).forEach(m => { if (!seen.has(m.sku)) { seen.add(m.sku); allMatches.push(m); } });
+      liveProducts.forEach(l => {
+        if (_norm((l.name||'').split(' ')[0]) !== sb) return;
+        const claim = bestGroup.get(l.sku);
+        if (claim?.key !== key) return;
+        if (!seen.has(l.sku)) { seen.add(l.sku); allMatches.push(l); }
       });
 
       if (allMatches.length === 0) return { ...group, inStock: false };
