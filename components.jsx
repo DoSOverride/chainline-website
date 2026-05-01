@@ -490,7 +490,8 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     // Explore
     if (l.includes("social")) return ["social", null];
     if (l.includes("mtbco") || l.includes("mountain bike club")) return ["mtbco", null];
-    if (l.includes("clinic") || l.includes("event") || l.includes("skill")) return ["events", null];
+    if (l.includes("clinic") || l.includes("skill")) return ["clinics", null];
+    if (l.includes("event")) return ["events", null];
     if (l.includes("ride")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
     if (l === "about") return ["about", null];
@@ -755,7 +756,7 @@ const MobileNav = ({ open, onClose }) => {
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Rides & Events</div>
               {[
                 { label:"Group Rides",   route:"rides"  },
-                { label:"Skill Clinics", route:"events" },
+                { label:"Skill Clinics", route:"clinics" },
                 { label:"Events",        route:"events" },
               ].map(it => (
                 <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>

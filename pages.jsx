@@ -1409,7 +1409,7 @@ const ServicesPage = () => {
 
 // BOOK PAGE
 const BookPage = () => {
-  const [data,      setData]      = React.useState({});
+  const [data,      setData]      = React.useState({ service: "Tune-Up" });
   const [submitted, setSubmitted] = React.useState(false);
   const [submitting,setSubmitting]= React.useState(false);
   const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
@@ -1417,11 +1417,11 @@ const BookPage = () => {
   const SERVICES = [
     "Tune-Up", "Full Suspension Tune-Up", "E-Bike Tune-Up", "Complete Overhaul",
     "Fork Seal Service", "Shock Air Can Service", "Dropper Service", "Brake Bleed",
-    "Cable Package", "Wheel Build", "Tubeless Set Up", "Flat Fix", "Not Sure / Assessment",
+    "Cable Package", "Tubeless Set Up", "Flat Fix", "Not Sure / Assessment",
   ];
 
   const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
-  const inp = { width:"100%", padding:"12px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
+  const inp = { width:"100%", padding:"11px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)" };
 
   const canSubmit = data.name && data.phone && data.email && data.service && data.issue;
 
@@ -1433,7 +1433,7 @@ const BookPage = () => {
       fd.append("name",    data.name);
       fd.append("phone",   data.phone);
       fd.append("email",   data.email);
-      fd.append("bike",    `${data.bikeBrand||''} ${data.bikeModel||''} ${data.bikeYear||''}`.trim());
+      fd.append("bike",    `${data.bikeBrand||''} ${data.bikeModel||''}`.trim());
       fd.append("service", data.service);
       fd.append("date",    data.date || 'Flexible');
       fd.append("issue",   data.issue);
@@ -1461,7 +1461,7 @@ const BookPage = () => {
             </p>
           </div>
           <div style={{ display:"flex", gap:12 }}>
-            <button className="btn btn-outline" onClick={() => { setData({}); setSubmitted(false); }}>Book another</button>
+            <button className="btn btn-outline" onClick={() => { setData({ service:"Tune-Up" }); setSubmitted(false); }}>Book another</button>
             <button className="btn" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
           </div>
         </div>
@@ -1474,82 +1474,77 @@ const BookPage = () => {
       <SubHero eyebrow="Booking  /  N°01" title="Book a service." italic="Drop it off, we'll handle the rest." />
       <section className="section section-pad bg-white">
         <div className="container-narrow">
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 32px" }}>
 
-            {/* Left col — contact + bike */}
-            <div>
-              <div className="eyebrow" style={{ marginBottom:24 }}>Your details</div>
-              <div style={{ marginBottom:20 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Name *</div>
-                <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>upd("name",e.target.value)} style={inp} />
-              </div>
-              <div style={{ marginBottom:20 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Phone *</div>
-                <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>upd("phone",e.target.value)} style={inp} />
-              </div>
-              <div style={{ marginBottom:40 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Email *</div>
-                <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>upd("email",e.target.value)} style={inp} />
-              </div>
-
-              <div className="eyebrow" style={{ marginBottom:24 }}>Your bike</div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 16px" }}>
-                <div style={{ marginBottom:20 }}>
-                  <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Brand</div>
-                  <input type="text" placeholder="Transition" value={data.bikeBrand||""} onChange={e=>upd("bikeBrand",e.target.value)} style={inp} />
-                </div>
-                <div style={{ marginBottom:20 }}>
-                  <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Model</div>
-                  <input type="text" placeholder="Sentinel" value={data.bikeModel||""} onChange={e=>upd("bikeModel",e.target.value)} style={inp} />
-                </div>
-              </div>
-              <div style={{ marginBottom:20 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Year</div>
-                <input type="text" placeholder="2024" value={data.bikeYear||""} onChange={e=>upd("bikeYear",e.target.value)} style={inp} />
-              </div>
-              <div style={{ marginBottom:40 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Preferred drop-off date</div>
-                <input type="text" placeholder="e.g. May 10, or Flexible" value={data.date||""} onChange={e=>upd("date",e.target.value)} style={inp} />
-              </div>
-            </div>
-
-            {/* Right col — service + notes */}
-            <div>
-              <div className="eyebrow" style={{ marginBottom:24 }}>Service needed *</div>
-              <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:32 }}>
-                {SERVICES.map(s => (
-                  <button key={s} data-cursor="link" onClick={() => upd("service", s)}
-                    style={{ padding:"13px 18px", border:"1.5px solid "+(data.service===s?"var(--black)":"var(--hairline)"), background:data.service===s?"var(--black)":"transparent", color:data.service===s?"var(--white)":"var(--black)", textAlign:"left", fontFamily:"var(--display)", fontSize:14, fontWeight:500, textTransform:"uppercase", cursor:"pointer", transition:"all .15s" }}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ marginBottom:24 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Describe the issue *</div>
-                <textarea rows={5} placeholder="What's going on? e.g. front brake spongy, rear derailleur skipping, full tune-up needed…" value={data.issue||""} onChange={e=>upd("issue",e.target.value)}
-                  style={{ ...inp, borderBottom:"none", border:"1px solid var(--hairline)", padding:14, resize:"vertical", fontSize:14 }} />
-              </div>
-
-              <div style={{ marginBottom:24 }}>
-                <div className="eyebrow" style={{ marginBottom:8, fontSize:9 }}>Photo of your bike (optional)</div>
-                <label style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 18px", border:"1.5px dashed var(--hairline)", cursor:"pointer", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                  {data.photoName || "Upload or take a photo"}
-                  <input type="file" accept="image/*" capture="environment" style={{ display:"none" }}
-                    onChange={e => { const f=e.target.files[0]; if(f){upd("photoName",f.name);upd("photoFile",f);} }} />
-                </label>
-              </div>
-
-              <button className="btn" data-cursor="link" disabled={!canSubmit || submitting} onClick={submit}
-                style={{ width:"100%", justifyContent:"center" }}>
-                {submitting ? "Sending…" : "Send Booking Request"} {!submitting && <ArrowRight />}
-              </button>
-              <p style={{ marginTop:12, fontSize:12, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".08em", textTransform:"uppercase" }}>
-                Sends to bikes@chainline.ca · We confirm within 24 hrs
-              </p>
+          {/* 1 — Service (pre-selected: Tune-Up) */}
+          <div style={{ marginBottom:40 }}>
+            <div className="eyebrow" style={{ marginBottom:16 }}>Select a service *</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+              {SERVICES.map(s => (
+                <button key={s} data-cursor="link" onClick={() => upd("service", s)}
+                  style={{ padding:"12px 16px", border:"1.5px solid "+(data.service===s?"var(--black)":"var(--hairline)"), background:data.service===s?"var(--black)":"transparent", color:data.service===s?"var(--white)":"var(--black)", textAlign:"left", fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", cursor:"pointer", transition:"all .15s" }}>
+                  {s}
+                </button>
+              ))}
             </div>
           </div>
+
+          {/* 2 — Contact */}
+          <div className="eyebrow" style={{ marginBottom:16 }}>Your details *</div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 24px", marginBottom:16 }}>
+            <div style={{ marginBottom:16 }}>
+              <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Full Name *</div>
+              <input type="text" placeholder="Jane Smith" value={data.name||""} onChange={e=>upd("name",e.target.value)} style={inp} />
+            </div>
+            <div style={{ marginBottom:16 }}>
+              <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Phone *</div>
+              <input type="tel" placeholder="(250) 555-0100" value={data.phone||""} onChange={e=>upd("phone",e.target.value)} style={inp} />
+            </div>
+          </div>
+          <div style={{ marginBottom:32 }}>
+            <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Email *</div>
+            <input type="email" placeholder="jane@example.com" value={data.email||""} onChange={e=>upd("email",e.target.value)} style={inp} />
+          </div>
+
+          {/* 3 — Bike (optional) */}
+          <div className="eyebrow" style={{ marginBottom:16 }}>Your bike <span style={{ opacity:.5, textTransform:"none", letterSpacing:0 }}>(optional)</span></div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0 24px", marginBottom:32 }}>
+            <div>
+              <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Brand</div>
+              <input type="text" placeholder="Transition" value={data.bikeBrand||""} onChange={e=>upd("bikeBrand",e.target.value)} style={inp} />
+            </div>
+            <div>
+              <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Model</div>
+              <input type="text" placeholder="Sentinel" value={data.bikeModel||""} onChange={e=>upd("bikeModel",e.target.value)} style={inp} />
+            </div>
+          </div>
+
+          {/* 4 — Date + issue */}
+          <div style={{ marginBottom:16 }}>
+            <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Preferred drop-off date</div>
+            <input type="text" placeholder="e.g. May 15, or Flexible" value={data.date||""} onChange={e=>upd("date",e.target.value)} style={inp} />
+          </div>
+          <div style={{ marginBottom:20 }}>
+            <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Describe the issue *</div>
+            <textarea rows={4} placeholder="What's going on? e.g. front brake spongy, skipping gears, ready for a tune-up…" value={data.issue||""} onChange={e=>upd("issue",e.target.value)}
+              style={{ ...inp, borderBottom:"none", border:"1px solid var(--hairline)", padding:14, resize:"vertical", fontSize:14 }} />
+          </div>
+          <div style={{ marginBottom:32 }}>
+            <div className="eyebrow" style={{ marginBottom:6, fontSize:9 }}>Photo <span style={{ opacity:.5, textTransform:"none", letterSpacing:0 }}>(optional)</span></div>
+            <label style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", border:"1.5px dashed var(--hairline)", cursor:"pointer", color:"var(--gray-500)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              {data.photoName || "Upload or take a photo"}
+              <input type="file" accept="image/*" capture="environment" style={{ display:"none" }}
+                onChange={e => { const f=e.target.files[0]; if(f){upd("photoName",f.name);upd("photoFile",f);} }} />
+            </label>
+          </div>
+
+          <button className="btn" data-cursor="link" disabled={!canSubmit || submitting} onClick={submit}
+            style={{ width:"100%", justifyContent:"center", padding:"16px" }}>
+            {submitting ? "Sending…" : "Send Booking Request"} {!submitting && <ArrowRight />}
+          </button>
+          <p style={{ marginTop:12, fontSize:12, color:"var(--gray-400)", fontFamily:"var(--mono)", letterSpacing:".08em", textTransform:"uppercase" }}>
+            Sends to bikes@chainline.ca · We confirm within 24 hrs
+          </p>
         </div>
       </section>
       <FAQs />
@@ -3798,16 +3793,6 @@ Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, 
 // EVENTS & CLINICS PAGE
 const EventsPage = () => {
   const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
-
-  const MCGEE_CLINICS = [
-    { tag:"Adult · All Levels", name:"Adult Skills Clinic",
-      desc:"Six progressive sessions covering descending, jumping, climbing, cornering, and bike maintenance. Runs July and August across Knox, Crawford, Gillard, SilverStar, and more. All levels welcome — beginner to advanced.",
-      details:"6 sessions · $600 · Drop-ins available", url:"https://mcgeecycle.com/adultskillclinic" },
-    { tag:"Youth · Ages 7–14", name:"Skills Camp",
-      desc:"Mon–Fri summer camp led by PMBIA-certified coaches including pro rider Will Curry. Skill sessions, trail exploration, games, and bike maintenance workshops. Small coach-to-rider ratios. Six weeks July and August.",
-      details:"Mon–Fri · 10 AM–3:30 PM · Drop-ins available", url:"https://mcgeecycle.com/skills-camp" },
-  ];
-
   const STATIC_EVENTS = [
     { title:"Smith Creek Enduro", dateLabel:"Summer 2026", tag:"Race", location:"Smith Creek, West Kelowna",
       desc:"ChainLine-supported enduro race at Smith Creek. Timed stages through some of the best trails in the area. Registration details coming — follow our Instagram for updates.", url:"https://instagram.com/ChainLineCycle" },
@@ -3826,14 +3811,66 @@ const EventsPage = () => {
 
   return (
     <div className="page-fade" data-screen-label="P Events">
-      <SubHero eyebrow="Community  /  N°02" title="Events &" italic="Clinics." sub="Skill clinics with McGee Cycle and upcoming ChainLine events." />
+      <SubHero eyebrow="Community  /  N°02" title="Upcoming" italic="Events." />
+      <section className="section section-pad bg-black">
+        <div className="container-wide">
+          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:56, flexWrap:"wrap", gap:24 }}>
+            <div>
+              <div className="section-label" style={{ color:"var(--gray-300)" }}>On the Calendar  /  N°01</div>
+              <h2 className="display-xl">What's<br/><span className="serif-italic">coming up.</span></h2>
+            </div>
+            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener"
+              className="btn btn-outline-light" data-cursor="link">Follow for updates <ArrowRight /></a>
+          </div>
+          <div style={{ borderTop:"1px solid var(--hairline-light)" }}>
+            {events.map((e, i) => (
+              <a key={i} href={e.url || "#"} target={e.url ? "_blank" : undefined} rel="noopener" data-cursor="link"
+                className="reveal"
+                style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"start", textDecoration:"none", color:"inherit" }}>
+                <div>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)", marginBottom:8 }}>{e.dateLabel}</div>
+                  <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.65)", fontSize:9 }}>{e.tag}</span>
+                </div>
+                <div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{e.title}</div>
+                  {e.location && <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:10 }}>{e.location}</div>}
+                  <p style={{ fontSize:14, color:"var(--gray-300)", lineHeight:1.75, margin:0 }}>{e.desc}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="reveal" style={{ marginTop:48, paddingTop:40, borderTop:"1px solid var(--hairline-light)", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 }}>
+            <div>
+              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".16em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:6 }}>Looking for skill clinics?</div>
+              <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase" }}>McGee Cycle coaching programs</div>
+            </div>
+            <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("clinics")}>View Skill Clinics <ArrowRight /></button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+window.EventsPage = EventsPage;
 
-      {/* ── McGee Cycle clinics ── */}
+// CLINICS PAGE (McGee Cycle skill clinics — separate from calendar events)
+const ClinicsPage = () => {
+  const MCGEE_CLINICS = [
+    { tag:"Adult · All Levels", name:"Adult Skills Clinic",
+      desc:"Six progressive sessions covering descending, jumping, climbing, cornering, and bike maintenance. Runs July and August across Knox, Crawford, Gillard, SilverStar, and more. All levels welcome — beginner to advanced.",
+      details:"6 sessions · $600 · Drop-ins available", url:"https://mcgeecycle.com/adultskillclinic" },
+    { tag:"Youth · Ages 7–14", name:"Skills Camp",
+      desc:"Mon–Fri summer camp led by PMBIA-certified coaches including pro rider Will Curry. Skill sessions, trail exploration, games, and bike maintenance workshops. Small coach-to-rider ratios. Six weeks July and August.",
+      details:"Mon–Fri · 10 AM–3:30 PM · Drop-ins available", url:"https://mcgeecycle.com/skills-camp" },
+  ];
+  return (
+    <div className="page-fade" data-screen-label="P Clinics">
+      <SubHero eyebrow="Community  /  N°03" title="Skill" italic="Clinics." />
       <section className="section section-pad bg-white">
         <div className="container-wide">
           <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:64, flexWrap:"wrap", gap:24 }}>
             <div>
-              <div className="section-label">Skill Clinics  /  N°01</div>
+              <div className="section-label">McGee Cycle  /  N°01</div>
               <h2 className="display-xl">Learn to<br/><span className="serif-italic">ride better.</span></h2>
             </div>
             <p style={{ maxWidth:400, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>
@@ -3866,41 +3903,10 @@ const EventsPage = () => {
           </div>
         </div>
       </section>
-
-      {/* ── Upcoming events (synced from Google Calendar) ── */}
-      <section className="section section-pad bg-black">
-        <div className="container-wide">
-          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:56, flexWrap:"wrap", gap:24 }}>
-            <div>
-              <div className="section-label" style={{ color:"var(--gray-300)" }}>Upcoming Events  /  N°02</div>
-              <h2 className="display-xl">What's<br/><span className="serif-italic">coming up.</span></h2>
-            </div>
-            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener"
-              className="btn btn-outline-light" data-cursor="link">Follow for updates <ArrowRight /></a>
-          </div>
-          <div style={{ borderTop:"1px solid var(--hairline-light)" }}>
-            {events.map((e, i) => (
-              <a key={i} href={e.url || "#"} target={e.url ? "_blank" : undefined} rel="noopener" data-cursor="link"
-                className="reveal"
-                style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"start", textDecoration:"none", color:"inherit" }}>
-                <div>
-                  <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)", marginBottom:8 }}>{e.dateLabel}</div>
-                  <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.65)", fontSize:9 }}>{e.tag}</span>
-                </div>
-                <div>
-                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{e.title}</div>
-                  {e.location && <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:10 }}>{e.location}</div>}
-                  <p style={{ fontSize:14, color:"var(--gray-300)", lineHeight:1.75, margin:0 }}>{e.desc}</p>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
-window.EventsPage = EventsPage;
+window.ClinicsPage = ClinicsPage;
 
 // MTBCO PAGE
 const MTBCOPage = () => {

@@ -6,7 +6,7 @@ const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","ki
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
 const _COMP_TABS = ["drivetrain","brakes","wheels","cockpit","suspension"];
 const _ACC_TABS  = ["helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
-const _PAGES     = ["services","book","about","contact","rides","trails","events","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social","mtbco"];
+const _PAGES     = ["services","book","about","contact","rides","trails","events","clinics","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social","mtbco"];
 const partPageFor = (tab) => _ACC_TABS.includes(tab) ? "accessories" : "components";
 
 function pathToRoute(pathname) {
@@ -245,7 +245,8 @@ const App = () => {
       parts:       [tab ? `${tab.charAt(0).toUpperCase()+tab.slice(1)} | ChainLine Cycle Kelowna` : "Bike Parts Kelowna | ChainLine Cycle", "In-stock bike parts in Kelowna. Drivetrain, brakes, wheels, suspension, cockpit and more."],
       trails:      ["Kelowna Mountain Bike Trails | ChainLine Cycle", "Trail guide for Knox Mountain, Bear Creek, Myra Canyon and Kelowna Bike Park. Conditions, maps and local knowledge."],
       rides:       ["Group Rides Kelowna | ChainLine Cycle", "Join ChainLine's weekly group rides in Kelowna. All abilities welcome. Thursday and Friday evenings."],
-      events:      ["Bike Events Kelowna | ChainLine Cycle", "Upcoming mountain bike events, skill clinics and races near Kelowna. McGee Cycle clinics, Marin Wildside Enduro and more."],
+      events:      ["Bike Events Kelowna | ChainLine Cycle", "Upcoming mountain bike events, races and rides near Kelowna. Marin Wildside Enduro, Smith Creek Enduro and more."],
+      clinics:     ["MTB Skill Clinics Kelowna | ChainLine Cycle", "Mountain bike skill clinics in Kelowna with McGee Cycle. PMBIA-certified coaches, adult and youth programs, Knox Mountain and Gillard trails."],
       about:       ["About ChainLine Cycle | Kelowna's Bike Shop Since 2009", "ChainLine Cycle — Kelowna's only full-service performance bike shop. Four dedicated mechanics, real riders."],
       contact:     ["Contact ChainLine Cycle | 1139 Ellis St, Kelowna", "Get in touch with ChainLine Cycle. 1139 Ellis St, Kelowna BC. (250) 860-1968 · bikes@chainline.ca."],
       giftcards:   ["Gift Cards | ChainLine Cycle Kelowna", "Give the gift of bikes. ChainLine Cycle gift cards — valid on bikes, parts, accessories and services."],
@@ -393,6 +394,7 @@ const App = () => {
         {page === "fitting" && <FittingPage />}
         {page === "storage" && <StoragePage />}
         {page === "events" && <EventsPage />}
+        {page === "clinics" && <ClinicsPage />}
         {page === "social" && <SocialPage />}
         {page === "mtbco" && <MTBCOPage />}
         {page === "brand-landing"   && window.BrandLandingPage   && React.createElement(window.BrandLandingPage,   { brand:   intentState?.brand })}
