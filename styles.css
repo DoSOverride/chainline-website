@@ -943,8 +943,8 @@ img {
 .bike-card-img-primary { opacity: 1; z-index: 1; }
 .bike-card-img-hover   { opacity: 0; z-index: 2; transform: scale(1.04); }
 
-.bike-card:hover .bike-card-img-primary { opacity: 0; }
-.bike-card:hover .bike-card-img-hover   { opacity: 1; transform: scale(1); }
+.bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-primary { opacity: 0; }
+.bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-hover   { opacity: 1; transform: scale(1); }
 
 .bike-card-badge {
   position: absolute;
@@ -1079,16 +1079,21 @@ img {
 }
 
 /* Dark mode */
-[data-theme="dark"] .bike-card-img-primary,
-[data-theme="dark"] .bike-card-img-hover { mix-blend-mode: normal; }
-
 [data-theme="dark"] .bike-card-name,
 [data-theme="dark"] .bike-card-price { color: var(--white); }
 
-[data-theme="dark"] .bike-card-img-wrap { background: #1e1e1e; }
+[data-theme="dark"] .bike-card-img-wrap { background: #d8d8d6; }
+[data-theme="dark"] .bike-card-img-wrap .bike-img {
+  mix-blend-mode: multiply !important;
+  filter: none !important;
+}
+
 [data-theme="dark"] .bike-card-featured { border-color: rgba(255,255,255,0.08); }
-[data-theme="dark"] .bike-card-featured-img { background: #1e1e1e; }
-[data-theme="dark"] .bike-card-featured-img .bike-img { mix-blend-mode: normal; }
+[data-theme="dark"] .bike-card-featured-img { background: #d8d8d6; }
+[data-theme="dark"] .bike-card-featured-img .bike-img {
+  mix-blend-mode: multiply !important;
+  filter: none !important;
+}
 [data-theme="dark"] .bike-card-featured-info { border-left-color: rgba(255,255,255,0.08); }
 [data-theme="dark"] .bike-card-type-pill { background: rgba(30,30,30,0.85); color: rgba(255,255,255,0.75) !important; }
 

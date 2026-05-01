@@ -256,14 +256,15 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const wheels = [...new Set(variants.map(v=>v.wheel).filter(Boolean))];
   const allImgs = (() => {
     const colorImages = data.colorImages || {};
+    const colorPrimaries = new Set(Object.values(colorImages).map(a => a[0]).filter(Boolean));
     if (selColor && colorImages[selColor]) {
       const colorImgs = colorImages[selColor];
-      const extras = (data.images || []).filter(u => u && !colorImgs.includes(u));
+      const extras = (data.images || []).filter(u => u && !colorImgs.includes(u) && !colorPrimaries.has(u));
       return [...colorImgs, ...extras];
     }
     const resolved = resolveImage(selected ? {...b, sku: selected.sku} : b) || resolveImage(b);
     const imgs = resolved ? [resolved] : [];
-    (data.images || []).forEach(u => { if (u && !imgs.includes(u)) imgs.push(u); });
+    (data.images || []).forEach(u => { if (u && !imgs.includes(u) && !colorPrimaries.has(u)) imgs.push(u); });
     return imgs;
   })();
   const [activeImg, setActiveImg] = React.useState(0);
@@ -519,8 +520,8 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Wildcat Trail 1 27.5",handle:"marin-wildcat-trail-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels, Women's", price:860, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-wildcat-trail-1-275.png" },
   { brand:"Marin", name:"Pine Mountain 1 29",  handle:"marin-pine-mountain-1-29",  type:"Adventure", tags:"Adventure Bike, Bikepacking, 29\"", price:1960, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg" },
   { brand:"Transition", name:"Sentinel",             handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg" },
-  { brand:"Transition", name:"Spire Carbon Eagle 90",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://www.transitionbikes.com/WebStoreImages/SB-Spire-AlloyE70-UltraViolet.avif" },
-  { brand:"Pivot", name:"Switchblade Ride Eagle 70/90", handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg" },
+  { brand:"Transition", name:"Spire Carbon", handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://www.transitionbikes.com/WebStoreImages/SB-Spire-AlloyE70-UltraViolet.avif" },
+  { brand:"Pivot", name:"Switchblade", handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg" },
   { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Hardtail, Trail", price:3400, img:"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946" },
   { brand:"Marin", name:"Gestalt 2",   handle:"marin-gestalt-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-gestalt-2.jpg" },
   { brand:"Marin", name:"Gestalt X10", handle:"marin-gestalt-x10",  type:"Gravel",   tags:"Gravel Bike, 700c",        price:1400, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-gestalt-x10.jpg" },
@@ -530,8 +531,8 @@ const SHOP_BIKES = [
   { brand:"Surly", name:"Bridge Club", handle:"surly-bridge-club",  type:"Adventure", tags:"Bikepacking, Touring, Adventure", price:1850, img:"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946" },
   { brand:"Marin", name:"Stinson E",    handle:"marin-stinson-e",    type:"E-Bike",  tags:"Electric Bike, City",      price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e.jpg" },
   { brand:"Marin", name:"Stinson E ST", handle:"marin-stinson-e-st", type:"E-Bike",  tags:"Electric Bike, Step-Through", price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e-st.jpg" },
-  { brand:"Pivot",      name:"Shuttle AM Ride Eagle 70/90",handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg" },
-  { brand:"Transition", name:"Regulator CX Eagle 90",      handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
+  { brand:"Pivot",      name:"Shuttle AM", handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg" },
+  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
   { brand:"Marin", name:"Fairfax 1",       handle:"marin-fairfax-1",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:700,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-1.jpg" },
   { brand:"Marin", name:"Fairfax 2",       handle:"marin-fairfax-2",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-2.jpg" },
   { brand:"Marin", name:"San Anselmo DS2", handle:"marin-san-anselmo-ds2",type:"Commuter", tags:"Dual-Sport, Women's",     price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-anselmo-ds2.jpg" },
@@ -558,9 +559,9 @@ const SHOP_BIKES = [
   // ── Knolly ────────────────────────────────────────────────────
   { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, img:"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351" },
   // ── Salsa ─────────────────────────────────────────────────────
-  { brand:"Salsa", name:"Timberjack GX Eagle",  handle:"salsa-timberjack-gx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",          price:3500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-timberjack-gx-eagle.png" },
-  { brand:"Salsa", name:"Spearfish C GX Eagle", handle:"salsa-spearfish-c-gx-eagle", type:"Mountain", tags:"Mountain Bike, Full Suspension, 29\"",    price:5800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-spearfish-c-gx-eagle.png" },
-  { brand:"Salsa", name:"Timberjack SX Eagle",  handle:"salsa-timberjack-sx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",          price:2800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-timberjack-sx-eagle.png" },
+  { brand:"Salsa", name:"Timberjack GX",  handle:"salsa-timberjack-gx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",       price:3500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-timberjack-gx-eagle.png" },
+  { brand:"Salsa", name:"Spearfish C",   handle:"salsa-spearfish-c-gx-eagle", type:"Mountain", tags:"Mountain Bike, Full Suspension, 29\"", price:5800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-spearfish-c-gx-eagle.png" },
+  { brand:"Salsa", name:"Timberjack SX", handle:"salsa-timberjack-sx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",       price:2800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-timberjack-sx-eagle.png" },
   { brand:"Salsa", name:"Journeyman Sora 700c", handle:"salsa-journeyman-sora",      type:"Adventure", tags:"Adventure Bike, Bikepacking, 700c",      price:1350, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-journeyman-sora.png" },
   { brand:"Salsa", name:"Cutthroat GRX",        handle:"salsa-cutthroat-grx",        type:"Adventure", tags:"Bikepacking, Drop Bar, Adventure Gravel", price:4500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-cutthroat-grx.png" },
   { brand:"Salsa", name:"Warbird GRX 600",      handle:"salsa-warbird-grx-600",      type:"Gravel",   tags:"Gravel Bike, Race, 700c",                price:3200, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-warbird-grx-600.png" },
@@ -573,12 +574,12 @@ const SHOP_BIKES = [
   // ── Moots ─────────────────────────────────────────────────────
   { brand:"Moots", name:"Routt RSL GRX",     handle:"moots-routt-rsl-grx",     type:"Gravel",   tags:"Gravel Bike, Titanium, 700c",              price:9500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/moots-routt-rsl-grx.jpg" },
   { brand:"Moots", name:"Baxter GRX",        handle:"moots-baxter-grx",        type:"Adventure", tags:"Bikepacking, Titanium, Adventure Gravel",  price:7500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/moots-baxter-grx.png" },
-  { brand:"Moots", name:"Highline GX Eagle", handle:"moots-highline-gx-eagle", type:"Mountain", tags:"Mountain Bike, Hardtail, Titanium, 29\"", price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/moots-highline-gx-eagle.jpg" },
-  { brand:"Moots", name:"Ybb SL GX Eagle",   handle:"moots-ybb-sl-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Full Suspension, Titanium", price:8500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/moots-ybb-sl-gx-eagle.jpg" },
+  { brand:"Moots", name:"Highline GX", handle:"moots-highline-gx-eagle", type:"Mountain", tags:"Mountain Bike, Hardtail, Titanium, 29\"", price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/moots-highline-gx-eagle.jpg" },
+  { brand:"Moots", name:"Ybb SL GX",  handle:"moots-ybb-sl-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Full Suspension, Titanium", price:8500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/moots-ybb-sl-gx-eagle.jpg" },
   // ── Revel ─────────────────────────────────────────────────────
-  { brand:"Revel", name:"Ranger GX Eagle",   handle:"revel-ranger-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension, 29\"", price:5800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-ranger-gx-eagle.jpg" },
-  { brand:"Revel", name:"Rascal GX Eagle",   handle:"revel-rascal-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension",        price:5200, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-rascal-gx-eagle.png" },
-  { brand:"Revel", name:"Rail GX Eagle",     handle:"revel-rail-gx-eagle",     type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension, 29\"", price:6200, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-rail-gx-eagle.jpg" },
+  { brand:"Revel", name:"Ranger GX", handle:"revel-ranger-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension, 29\"", price:5800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-ranger-gx-eagle.jpg" },
+  { brand:"Revel", name:"Rascal GX", handle:"revel-rascal-gx-eagle",   type:"Mountain", tags:"Mountain Bike, Trail, Full Suspension",        price:5200, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-rascal-gx-eagle.png" },
+  { brand:"Revel", name:"Rail GX",   handle:"revel-rail-gx-eagle",     type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension, 29\"", price:6200, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-rail-gx-eagle.jpg" },
 ];
 
 // SHOP
@@ -945,8 +946,10 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const hoverImg = (() => {
     if (selColor && colorImages[selColor]?.[1]) return colorImages[selColor][1];
     if (!primaryImg) return null;
-    const next = allBikeImgs.find(u => u && u !== primaryImg);
-    return next || null;
+    const colorPrimaries = new Set(Object.values(colorImages).map(a => a[0]).filter(Boolean));
+    return allBikeImgs.find(u => u && u !== primaryImg && !colorPrimaries.has(u))
+      || allBikeImgs.find(u => u && u !== primaryImg)
+      || null;
   })();
 
   const availColors = (w) => [...new Set(variants.filter(v => !hasWheels || v.wheel === w).map(v => v.color).filter(Boolean))];
@@ -1050,7 +1053,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
     <div className="bike-card" onClick={() => window.cl.go("bike", { bike: b })}>
 
       {/* ── Image ── */}
-      <div className="bike-card-img-wrap">
+      <div className={"bike-card-img-wrap" + (hoverImg && hoverImg !== primaryImg ? " has-hover" : "")}>
         {primaryImg
           ? <img src={primaryImg} alt={brand + " " + name} className="bike-card-img-primary bike-img"
               loading={idx < 6 ? "eager" : "lazy"} decoding="async"
