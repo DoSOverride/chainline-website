@@ -861,14 +861,70 @@ img {
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  transition: transform .28s ease, box-shadow .28s ease;
+}
+.bike-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 56px rgba(0,0,0,0.10);
 }
 
 .bike-card-img-wrap {
   position: relative;
   aspect-ratio: 4 / 5;
-  background: var(--paper);
+  background: #ede9e2;
   overflow: hidden;
   margin-bottom: 16px;
+}
+
+/* Type pill — sport colour badge bottom-right of image */
+.bike-card-type-pill {
+  position: absolute;
+  bottom: 10px; right: 10px;
+  padding: 3px 9px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  font-weight: 600;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(6px);
+  z-index: 3;
+}
+
+/* Featured hero card */
+.bike-card-featured {
+  grid-column: 1 / -1;
+  display: flex;
+  min-height: 460px;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .3s ease;
+}
+.bike-card-featured:hover { box-shadow: 0 24px 72px rgba(0,0,0,0.10); }
+.bike-card-featured-img {
+  flex: 0 0 58%;
+  position: relative;
+  background: #ede9e2;
+  overflow: hidden;
+}
+.bike-card-featured-img .bike-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: 8%;
+  mix-blend-mode: multiply;
+  transition: transform .7s ease;
+}
+.bike-card-featured:hover .bike-card-featured-img .bike-img { transform: scale(1.04); }
+.bike-card-featured-info {
+  flex: 1;
+  padding: clamp(28px, 5%, 52px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 1px solid var(--hairline);
 }
 
 .bike-card-img-primary,
@@ -1021,6 +1077,11 @@ img {
 [data-theme="dark"] .bike-card-price { color: var(--white); }
 
 [data-theme="dark"] .bike-card-img-wrap { background: #1e1e1e; }
+[data-theme="dark"] .bike-card-featured { border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .bike-card-featured-img { background: #1e1e1e; }
+[data-theme="dark"] .bike-card-featured-img .bike-img { mix-blend-mode: normal; }
+[data-theme="dark"] .bike-card-featured-info { border-left-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .bike-card-type-pill { background: rgba(30,30,30,0.85); color: rgba(255,255,255,0.75) !important; }
 
 [data-theme="dark"] .bcc {
   border-color: rgba(255,255,255,0.15);

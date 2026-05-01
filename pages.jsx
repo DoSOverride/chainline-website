@@ -759,7 +759,7 @@ const ShopPage = () => {
 
   return (
     <div className="page-fade">
-      <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." />
+      <SubHero eyebrow="Shop  /  All Bikes" title="The Bikes." italic="Performance for every terrain." bg="https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/trail-action.jpg" />
 
       {/* ── Filter + sort bar ── */}
       <div className="shop-filter-sticky" style={{ position:"sticky", top:132, zIndex:50, background:"rgba(250,250,250,0.97)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--hairline)" }}>
@@ -837,8 +837,8 @@ const ShopPage = () => {
                 </div>
               )}
               {filtered.length > 0 && (
-                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"48px 32px", alignItems:"start" }}>
-                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} />)}
+                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"40px 28px", alignItems:"start" }}>
+                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3} />)}
                 </div>
               )}
             </>
@@ -871,7 +871,9 @@ const COLOR_HEX = (c) => {
 
 const SIZE_ORDER = ['XS','S','SM','M','MD','L','LG','XL','XXL','XXXL'];
 
-const BikeCardLarge = React.memo(({ b, idx }) => {
+const TYPE_ACCENTS = { Mountain:'#2e5f2e', Gravel:'#7a5c1a', Road:'#8b1e1e', 'E-Bike':'#1a4a7a', Commuter:'#3d3d5c', Kids:'#7a3d1a', Comfort:'#4a5c4a' };
+
+const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const variants = b.variants || [];
   const wheels  = [...new Set(variants.map(v => v.wheel).filter(Boolean))];
   const colors  = [...new Set(variants.map(v => v.color).filter(Boolean))];
@@ -952,6 +954,78 @@ const BikeCardLarge = React.memo(({ b, idx }) => {
 
   const szList = availSizes(selWheel, selColor);
   const clrList = availColors(selWheel);
+  const accentColor = TYPE_ACCENTS[b.type] || '#444';
+  const desc = bikeData.description || '';
+
+  const goToBike = () => window.cl.go("bike", { bike: b });
+
+  /* ── Featured hero card (first in grid, "All" filter) ── */
+  if (featured) {
+    return (
+      <div className="bike-card-featured" data-cursor="link" onClick={goToBike}>
+        <div className="bike-card-featured-img">
+          {primaryImg
+            ? <img src={primaryImg} alt={brand + " " + name} className="bike-img"
+                loading="eager" decoding="async"
+                onError={e => { e.target.style.display='none'; }} />
+            : <div className="ph ph-corners" style={{ position:'absolute', inset:0 }}><span className="ph-label">{brand.toUpperCase()} · {b.type}</span></div>
+          }
+          <div className="bike-card-badge" style={{ top:16, left:16 }}>
+            <span className="stock-dot" style={{ width:6, height:6 }} />
+            <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
+          </div>
+          {b.badge && <div className="bike-card-model-badge" style={{ top:16, right:16 }}>{b.badge}</div>}
+          <div className="bike-card-type-pill" style={{ bottom:16, left:16, right:'auto', color:accentColor }}>{b.type}</div>
+        </div>
+        <div className="bike-card-featured-info">
+          <div>
+            <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".22em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:14 }}>{brand} — Featured</div>
+            <div style={{ fontFamily:"var(--display)", fontSize:"clamp(30px,4.5vw,60px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.025em", lineHeight:.9, marginBottom:22 }}>{name}</div>
+            <div style={{ display:"flex", alignItems:"baseline", gap:12, marginBottom:24 }}>
+              <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.8vw,34px)", fontWeight:500 }}>${price.toLocaleString()} <span style={{ fontFamily:"var(--mono)", fontSize:12, fontWeight:400, opacity:.5 }}>CAD</span></div>
+              {lowStock && <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#b85c00" }}>Low Stock</span>}
+            </div>
+            {desc && <p style={{ fontSize:14, lineHeight:1.72, color:"var(--gray-500)", margin:0, maxWidth:380 }}>{desc.length > 210 ? desc.slice(0,210) + "…" : desc}</p>}
+          </div>
+          <div>
+            {clrList.length > 0 && (
+              <div className="bike-card-colors" style={{ marginTop:20, marginBottom:14 }} onClick={e => e.stopPropagation()}>
+                {clrList.map(c => {
+                  const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && v.color===c && v.inStock);
+                  return (
+                    <button key={c} title={c}
+                      onClick={e => { e.stopPropagation(); setColor(c); const s=availSizes(selWheel,c); setSize(s.includes(selSize)?selSize:s[0]||null); }}
+                      className={"color-swatch" + (selColor===c?" active":"") + (!avail?" unavail":"")}
+                      style={{ background: COLOR_HEX(c) }} />
+                  );
+                })}
+                {selColor && <span className="bike-card-color-label">{selColor}</span>}
+              </div>
+            )}
+            {szList.length > 0 && (
+              <div className="bike-card-chips" style={{ marginBottom:20 }} onClick={e => e.stopPropagation()}>
+                {szList.map(sz => {
+                  const avail = variants.some(v => (!hasWheels||v.wheel===selWheel) && (!hasColors||v.color===selColor) && v.size===sz && v.inStock);
+                  return (
+                    <button key={sz} className={"bcc" + (selSize===sz?" active":"") + (!avail?" dim":"")}
+                      onClick={e => { e.stopPropagation(); if(avail) setSize(sz); }}>{sz}</button>
+                  );
+                })}
+              </div>
+            )}
+            <div style={{ display:"flex", gap:10 }} onClick={e => e.stopPropagation()}>
+              <button className="btn btn-outline" data-cursor="link" onClick={e => { e.stopPropagation(); goToBike(); }}
+                style={{ flex:1, justifyContent:"center", padding:"13px 16px" }}>Explore Bike</button>
+              <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
+                style={{ flex:1, justifyContent:"center", padding:"13px 16px" }}>
+                {added ? "Added ✓" : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bike-card" onClick={() => window.cl.go("bike", { bike: b })}>
@@ -978,6 +1052,7 @@ const BikeCardLarge = React.memo(({ b, idx }) => {
           <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
         </div>
         {b.badge && <div className="bike-card-model-badge">{b.badge}</div>}
+        <div className="bike-card-type-pill" style={{ color: accentColor }}>{b.type}</div>
       </div>
 
       {/* ── Info ── */}
@@ -1052,10 +1127,13 @@ const BikeCardLarge = React.memo(({ b, idx }) => {
 });
 
 // SubHero
-const SubHero = ({ eyebrow, title, italic }) => (
+const SubHero = ({ eyebrow, title, italic, bg }) => (
   <section className="bg-black" style={{ paddingTop: 220, paddingBottom: 100, position: "relative", overflow: "hidden", color: "var(--white)" }}>
-    <div className="ph" style={{ position: "absolute", inset: 0, opacity: 0.5 }}><span className="ph-label">B&W  /  HERO</span></div>
-    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.6), rgba(10,10,10,0.95))" }} />
+    {bg
+      ? <img src={bg} alt="" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:.38, userSelect:"none", pointerEvents:"none" }} loading="eager" />
+      : <div className="ph" style={{ position: "absolute", inset: 0, opacity: 0.5 }}><span className="ph-label">B&W  /  HERO</span></div>
+    }
+    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(10,10,10,0.55), rgba(10,10,10,0.94))" }} />
     <div className="container-wide" style={{ position: "relative" }}>
       <div className="eyebrow eyebrow-light" style={{ marginBottom: 32 }}>{eyebrow}</div>
       <h1 className="display-xxl sub-hero-title"><SplitText delay={0.1}>{title}</SplitText></h1>
