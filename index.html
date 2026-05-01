@@ -195,53 +195,50 @@
 <script type="text/babel" src="/components.jsx?v=18"></script>
 <script type="text/babel" src="/home.jsx?v=17"></script>
 <script type="text/babel" src="/pages.jsx?v=18"></script>
-<script type="text/babel">
-window.BrandLandingPage = function BrandLandingPage({ brand }) {
-  return (
-    <div className="page-fade">
-      <section style={{ background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" }}>
-        <div className="container-wide">
-          <div className="section-label" style={{ color:"var(--gray-500)", marginBottom:20 }}>Authorized Dealer - Kelowna, BC</div>
-          <h1 className="display-2xl" style={{ color:"#fafafa", marginBottom:20 }}>{brand} Bikes in Kelowna</h1>
-          <p style={{ color:"var(--gray-400)", fontSize:"clamp(16px,1.8vw,20px)", maxWidth:540, lineHeight:1.65, marginBottom:40 }}>In-stock selection at ChainLine Cycle. Expert mechanics and warranty service.</p>
-          <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
-            <button className="btn btn-primary" onClick={() => window.cl.go("shop")}>Shop All Bikes</button>
-            <button className="btn btn-ghost-white" onClick={() => window.cl.go("book")}>Book a Service</button>
-          </div>
-        </div>
-      </section>
-    </div>
+<script>
+// Landing page components — plain JS, no Babel/JSX, no special chars
+var _lp = function(tag, props, children) { return React.createElement(tag, props, children); };
+var _sec = { background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" };
+window.BrandLandingPage = function(p) {
+  return _lp("div", {className:"page-fade"},
+    _lp("section", {style:_sec},
+      _lp("div", {className:"container-wide"},
+        _lp("div", {className:"section-label",style:{color:"#6b7280",marginBottom:20}}, "Authorized Dealer - Kelowna, BC"),
+        _lp("h1", {className:"display-2xl",style:{color:"#fafafa",marginBottom:20}}, p.brand + " Bikes in Kelowna"),
+        _lp("p", {style:{color:"#9ca3af",fontSize:"18px",maxWidth:540,lineHeight:1.65,marginBottom:40}}, "In-stock at ChainLine Cycle. Expert mechanics and warranty service."),
+        _lp("div", {style:{display:"flex",gap:16,flexWrap:"wrap"}},
+          _lp("button", {className:"btn btn-primary",onClick:function(){window.cl.go("shop");}}, "Shop All Bikes"),
+          _lp("button", {className:"btn btn-ghost-white",onClick:function(){window.cl.go("book");}}, "Book a Service")
+        )
+      )
+    )
   );
 };
-window.TypeLandingPage = function TypeLandingPage({ type }) {
-  return (
-    <div className="page-fade">
-      <section style={{ background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" }}>
-        <div className="container-wide">
-          <div className="section-label" style={{ color:"var(--gray-500)", marginBottom:20 }}>ChainLine Cycle - Kelowna, BC</div>
-          <h1 className="display-2xl" style={{ color:"#fafafa", marginBottom:20 }}>{type} Bikes in Kelowna</h1>
-          <p style={{ color:"var(--gray-400)", fontSize:"clamp(16px,1.8vw,20px)", maxWidth:540, lineHeight:1.65, marginBottom:40 }}>In-stock selection at ChainLine Cycle. Expert advice and professional fitting.</p>
-          <button className="btn btn-primary" onClick={() => window.cl.go("shop")}>Shop All Bikes</button>
-        </div>
-      </section>
-    </div>
+window.TypeLandingPage = function(p) {
+  return _lp("div", {className:"page-fade"},
+    _lp("section", {style:_sec},
+      _lp("div", {className:"container-wide"},
+        _lp("div", {className:"section-label",style:{color:"#6b7280",marginBottom:20}}, "ChainLine Cycle - Kelowna, BC"),
+        _lp("h1", {className:"display-2xl",style:{color:"#fafafa",marginBottom:20}}, p.type + " Bikes in Kelowna"),
+        _lp("p", {style:{color:"#9ca3af",fontSize:"18px",maxWidth:540,lineHeight:1.65,marginBottom:40}}, "In-stock at ChainLine Cycle. Expert advice and professional fitting."),
+        _lp("button", {className:"btn btn-primary",onClick:function(){window.cl.go("shop");}}, "Shop All Bikes")
+      )
+    )
   );
 };
-window.ServiceLandingPage = function ServiceLandingPage({ service }) {
-  return (
-    <div className="page-fade">
-      <section style={{ background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" }}>
-        <div className="container-wide">
-          <div className="section-label" style={{ color:"var(--gray-500)", marginBottom:20 }}>ChainLine Cycle - 1139 Ellis St, Kelowna</div>
-          <h1 className="display-2xl" style={{ color:"#fafafa", marginBottom:20 }}>Bike {service} in Kelowna</h1>
-          <p style={{ color:"var(--gray-400)", fontSize:"clamp(16px,1.8vw,20px)", maxWidth:540, lineHeight:1.65, marginBottom:40 }}>Expert service at ChainLine Cycle. Book online or call (250) 860-1968.</p>
-          <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
-            <button className="btn btn-primary" onClick={() => window.cl.go("book")}>Book a Service</button>
-            <button className="btn btn-ghost-white" onClick={() => window.cl.go("services")}>All Services</button>
-          </div>
-        </div>
-      </section>
-    </div>
+window.ServiceLandingPage = function(p) {
+  return _lp("div", {className:"page-fade"},
+    _lp("section", {style:_sec},
+      _lp("div", {className:"container-wide"},
+        _lp("div", {className:"section-label",style:{color:"#6b7280",marginBottom:20}}, "ChainLine Cycle - 1139 Ellis St, Kelowna"),
+        _lp("h1", {className:"display-2xl",style:{color:"#fafafa",marginBottom:20}}, "Bike " + p.service + " in Kelowna"),
+        _lp("p", {style:{color:"#9ca3af",fontSize:"18px",maxWidth:540,lineHeight:1.65,marginBottom:40}}, "Expert service at ChainLine Cycle. Book online or call (250) 860-1968."),
+        _lp("div", {style:{display:"flex",gap:16,flexWrap:"wrap"}},
+          _lp("button", {className:"btn btn-primary",onClick:function(){window.cl.go("book");}}, "Book a Service"),
+          _lp("button", {className:"btn btn-ghost-white",onClick:function(){window.cl.go("services");}}, "All Services")
+        )
+      )
+    )
   );
 };
 </script>
