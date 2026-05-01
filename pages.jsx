@@ -2342,7 +2342,7 @@ const PartRow = React.memo(({ item }) => {
       {/* Name + meta */}
       <div style={{ minWidth:0 }}>
         <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:500, textTransform:"uppercase",
-          letterSpacing:"-.01em", lineHeight:1.25, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
+          letterSpacing:"-.01em", lineHeight:1.25,
           color:"var(--black)" }}>{item.name}</div>
         <div style={{ display:"flex", alignItems:"center", gap:10, marginTop:3 }}>
           {item.sku && <span style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".08em", textTransform:"uppercase" }}>{item.sku}</span>}
@@ -2399,15 +2399,21 @@ const PartsPage = ({ pageType = 'components' }) => {
   const visibleTabs = PART_TABS.filter(t => validTabIds.includes(t.id));
   const activeTab = PART_TABS.find(t => t.id === safeCat) || visibleTabs[0];
 
+  const [searchIsGlobal, setSearchIsGlobal] = React.useState(false);
   const filtered = React.useMemo(() => {
     const q = search.trim();
-    const pool = q.length >= 2
-      ? items.filter(p => {
-          const hay = (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || '');
-          return window.fuzzyMatch ? window.fuzzyMatch(q, hay) : hay.toLowerCase().includes(q.toLowerCase());
-        })
-      : items;
-    return [...pool].sort((a, b) => (a.price||0) - (b.price||0));
+    if (q.length < 2) { setSearchIsGlobal(false); return [...items].sort((a, b) => (a.price||0) - (b.price||0)); }
+    // Search within current tab first
+    const tabPool = items.filter(p => {
+      const hay = (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || '');
+      return window.fuzzyMatch ? window.fuzzyMatch(q, hay) : hay.toLowerCase().includes(q.toLowerCase());
+    });
+    if (tabPool.length > 0) { setSearchIsGlobal(false); return [...tabPool].sort((a, b) => (a.price||0) - (b.price||0)); }
+    // Fallback: search all cached inventory (cross-tab / global)
+    const globalPool = (window.lightspeedSearch?.(q) || [])
+      .filter(p => !['labour','food','shop use','consignments','bikes'].some(x => (p.department||'').toLowerCase().includes(x)));
+    setSearchIsGlobal(globalPool.length > 0);
+    return [...globalPool].sort((a, b) => (a.price||0) - (b.price||0));
   }, [items, search]);
 
   const grouped = React.useMemo(() => {
@@ -2497,7 +2503,7 @@ const PartsPage = ({ pageType = 'components' }) => {
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
                 <span style={{ fontSize:13, color:"var(--gray-400)" }}>⌕</span>
-                <input ref={searchRef} type="text" placeholder={`Search ${activeTab.label.toLowerCase()}…`}
+                <input ref={searchRef} type="text" placeholder={`Search ${activeTab.label.toLowerCase()} — or anything…`}
                   value={search} onChange={e => { setSearch(e.target.value); setPg(0); }}
                   style={{ flex:1, padding:"9px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:14, background:"transparent", color:"var(--black)" }} />
                 {search && <button onClick={() => { setSearch(''); setPg(0); searchRef.current?.focus(); }}
@@ -2505,6 +2511,13 @@ const PartsPage = ({ pageType = 'components' }) => {
               </div>
               {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
             </div>
+
+            {/* Global search indicator */}
+            {searchIsGlobal && search && (
+              <div style={{ padding:"8px 20px", background:"#fef9c3", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"#92400e" }}>
+                No results in {activeTab.label} — showing all inventory
+              </div>
+            )}
 
             {/* Content */}
             {loading ? (
@@ -3690,34 +3703,34 @@ const ComponentsLandingPage = () => (
     sectionTabIds={['drivetrain','brakes','wheels','cockpit','suspension']}
     sections={[
       { heading:'Drivetrain', tiles:[
-        { label:'Cassettes',        emoji:'🎡', desc:'All speeds, all brands',                 page:'components', tab:'drivetrain' },
-        { label:'Chains',           emoji:'🔗', desc:'8–12 speed, KMC, Shimano, SRAM',         page:'components', tab:'drivetrain' },
-        { label:'Derailleurs',      emoji:'⚙️', desc:'Front & rear, electronic & mechanical',  page:'components', tab:'drivetrain' },
-        { label:'Cranks & BBs',     emoji:'🔧', desc:'Cranksets, bottom brackets, chainrings', page:'components', tab:'drivetrain' },
-        { label:'Shifters',         emoji:'🎛️', desc:'MTB & road, trigger & twist',           page:'components', tab:'drivetrain' },
-        { label:'Cables & Housing', emoji:'〰️', desc:'Shift & brake cables, housing kits',     page:'components', tab:'drivetrain' },
+        { label:'Cassettes',        emoji:'🎡', desc:'All speeds, all brands',                 page:'components', tab:'drivetrain', search:'Cassette' },
+        { label:'Chains',           emoji:'🔗', desc:'8–12 speed, KMC, Shimano, SRAM',         page:'components', tab:'drivetrain', search:'Chain' },
+        { label:'Derailleurs',      emoji:'⚙️', desc:'Front & rear, electronic & mechanical',  page:'components', tab:'drivetrain', search:'Derail' },
+        { label:'Cranks & BBs',     emoji:'🔧', desc:'Cranksets, bottom brackets, chainrings', page:'components', tab:'drivetrain', search:'Crank' },
+        { label:'Shifters',         emoji:'🎛️', desc:'MTB & road, trigger & twist',           page:'components', tab:'drivetrain', search:'Shift' },
+        { label:'Cables & Housing', emoji:'〰️', desc:'Shift & brake cables, housing kits',     page:'components', tab:'drivetrain', search:'Cable' },
       ]},
       { heading:'Brakes', tiles:[
         { label:'Brake Systems', emoji:'🛑', desc:'Hydraulic & mechanical disc brakes', page:'components', tab:'brakes' },
-        { label:'Brake Pads',    emoji:'🛑', desc:'All brands, organic & metallic',     page:'components', tab:'brakes' },
-        { label:'Brake Levers',  emoji:'🛑', desc:'MTB & road levers, U & V brake',     page:'components', tab:'brakes' },
+        { label:'Brake Pads',    emoji:'🛑', desc:'All brands, organic & metallic',     page:'components', tab:'brakes', search:'Brake pad' },
+        { label:'Brake Levers',  emoji:'🛑', desc:'MTB & road levers, U & V brake',     page:'components', tab:'brakes', search:'Brake Lever' },
       ]},
       { heading:'Wheels & Tires', tiles:[
-        { label:'Wheelsets',       emoji:'⭕', desc:'Complete sets, all standards',       page:'components', tab:'wheels' },
-        { label:'Rims & Hubs',     emoji:'⭕', desc:'Build your own, all axle standards', page:'components', tab:'wheels' },
-        { label:'Tires',           emoji:'🔘', desc:'29", 27.5", 700C, 26", fat bike',    page:'components', tab:'wheels' },
-        { label:'Tubes & Sealant', emoji:'🫧', desc:'All sizes, tubeless sealant & tape', page:'components', tab:'wheels' },
+        { label:'Wheelsets',       emoji:'⭕', desc:'Complete sets, all standards',       page:'components', tab:'wheels', search:'Wheel' },
+        { label:'Rims & Hubs',     emoji:'⭕', desc:'Build your own, all axle standards', page:'components', tab:'wheels', search:'Rim' },
+        { label:'Tires',           emoji:'🔘', desc:'29", 27.5", 700C, 26", fat bike',    page:'components', tab:'wheels', search:'Tire' },
+        { label:'Tubes & Sealant', emoji:'🫧', desc:'All sizes, tubeless sealant & tape', page:'components', tab:'wheels', search:'Tube' },
       ]},
       { heading:'Suspension', tiles:[
-        { label:'Forks',         emoji:'🔩', desc:'Trail, enduro, XC — all standards', page:'components', tab:'suspension' },
-        { label:'Rear Shocks',   emoji:'🌀', desc:'Air & coil shocks, all sizes',       page:'components', tab:'suspension' },
-        { label:'Service Parts', emoji:'🛢️', desc:'Seals, oil, bushings, foam rings',   page:'components', tab:'suspension' },
+        { label:'Forks',         emoji:'🔩', desc:'Trail, enduro, XC — all standards', page:'components', tab:'suspension', search:'Fork' },
+        { label:'Rear Shocks',   emoji:'🌀', desc:'Air & coil shocks, all sizes',       page:'components', tab:'suspension', search:'Shock' },
+        { label:'Service Parts', emoji:'🛢️', desc:'Seals, oil, bushings, foam rings',   page:'components', tab:'suspension', search:'Seal' },
       ]},
       { heading:'Cockpit', tiles:[
-        { label:'Handlebars & Stems',   emoji:'🎯', desc:'Rise bars, flat bars, road bars, stems',  page:'components', tab:'cockpit' },
-        { label:'Saddles & Seatposts',  emoji:'💺', desc:'MTB, road & gravel saddles & posts',       page:'components', tab:'cockpit' },
-        { label:'Grips & Bar Tape',     emoji:'✊', desc:'Lock-on grips, foam, cork bar tape',        page:'components', tab:'cockpit' },
-        { label:'Headsets & Bearings',  emoji:'🔵', desc:'All standards, loose & cartridge',          page:'components', tab:'cockpit' },
+        { label:'Handlebars & Stems',   emoji:'🎯', desc:'Rise bars, flat bars, road bars, stems',  page:'components', tab:'cockpit', search:'Handle' },
+        { label:'Saddles & Seatposts',  emoji:'💺', desc:'MTB, road & gravel saddles & posts',       page:'components', tab:'cockpit', search:'Saddle' },
+        { label:'Grips & Bar Tape',     emoji:'✊', desc:'Lock-on grips, foam, cork bar tape',        page:'components', tab:'cockpit', search:'Grip' },
+        { label:'Headsets & Bearings',  emoji:'🔵', desc:'All standards, loose & cartridge',          page:'components', tab:'cockpit', search:'Head' },
       ]},
     ]}
   />
@@ -3735,29 +3748,29 @@ const AccessoriesLandingPage = () => (
     sections={[
       { heading:'Helmets & Protection', tiles:[
         { label:'Helmets',         emoji:'⛑️', desc:'MTB, road, urban — Giro, POC, Bell',    page:'accessories', tab:'helmets' },
-        { label:'Gloves',          emoji:'🧤', desc:'Trail, XC, road — all seasons',          page:'accessories', tab:'protection' },
-        { label:'Armour & Pads',   emoji:'🛡️', desc:'Knee, elbow, back protection',           page:'accessories', tab:'protection' },
-        { label:'Sunglasses',      emoji:'🕶️', desc:'Sport eyewear, photochromic lenses',     page:'accessories', tab:'protection' },
+        { label:'Gloves',          emoji:'🧤', desc:'Trail, XC, road — all seasons',          page:'accessories', tab:'protection', search:'Glove' },
+        { label:'Armour & Pads',   emoji:'🛡️', desc:'Knee, elbow, back protection',           page:'accessories', tab:'protection', search:'Armour' },
+        { label:'Sunglasses',      emoji:'🕶️', desc:'Sport eyewear, photochromic lenses',     page:'accessories', tab:'protection', search:'Sunglass' },
       ]},
       { heading:'Clothing', tiles:[
-        { label:'Jerseys & Shorts',  emoji:'👕', desc:'MTB & road jerseys, bibs, shorts',       page:'accessories', tab:'clothing' },
-        { label:'Arm & Leg Warmers', emoji:'🧣', desc:'Wind jackets, arm & leg warmers',         page:'accessories', tab:'clothing' },
+        { label:'Jerseys & Shorts',  emoji:'👕', desc:'MTB & road jerseys, bibs, shorts',       page:'accessories', tab:'clothing', search:'Jersey' },
+        { label:'Arm & Leg Warmers', emoji:'🧣', desc:'Wind jackets, arm & leg warmers',         page:'accessories', tab:'clothing', search:'Warmer' },
         { label:'Shoes & Cleats',    emoji:'👟', desc:'Mountain & road shoes, SPD & road cleats',page:'accessories', tab:'shoes' },
-        { label:'Socks',             emoji:'🧦', desc:'Wool, synthetic — all lengths',           page:'accessories', tab:'clothing' },
+        { label:'Socks',             emoji:'🧦', desc:'Wool, synthetic — all lengths',           page:'accessories', tab:'clothing', search:'Sock' },
       ]},
       { heading:'Bags & Hydration', tiles:[
         { label:'Packs & Bags',      emoji:'🎒', desc:'Hydration packs, frame bags, saddle bags', page:'accessories', tab:'bags' },
-        { label:'Water Bottles',     emoji:'🍶', desc:'Cages, bottles, insulated options',         page:'accessories', tab:'bags' },
-        { label:'Hydration Systems', emoji:'💧', desc:'Bladders, hoses, bite valves',              page:'accessories', tab:'bags' },
+        { label:'Water Bottles',     emoji:'🍶', desc:'Cages, bottles, insulated options',         page:'accessories', tab:'bags', search:'Bottle' },
+        { label:'Hydration Systems', emoji:'💧', desc:'Bladders, hoses, bite valves',              page:'accessories', tab:'bags', search:'Hydrat' },
       ]},
       { heading:'Electronics & Security', tiles:[
-        { label:'Bike Lights',     emoji:'💡', desc:'Front & rear, trail lights, USB rechargeable', page:'accessories', tab:'lights' },
-        { label:'Computers & GPS', emoji:'📡', desc:'Cycling computers, GPS, sensors',             page:'accessories', tab:'lights' },
+        { label:'Bike Lights',     emoji:'💡', desc:'Front & rear, trail lights, USB rechargeable', page:'accessories', tab:'lights', search:'Light' },
+        { label:'Computers & GPS', emoji:'📡', desc:'Cycling computers, GPS, sensors',             page:'accessories', tab:'lights', search:'Comput' },
         { label:'Locks',           emoji:'🔒', desc:'Cable, U-lock, chain locks',                  page:'accessories', tab:'locks' },
       ]},
       { heading:'Racks, Fenders & Tools', tiles:[
         { label:'Racks & Fenders', emoji:'🚲', desc:'Rear racks, fenders, kickstands, bells', page:'accessories', tab:'racks' },
-        { label:'Pumps',           emoji:'💨', desc:'Floor pumps, mini pumps, CO₂',            page:'accessories', tab:'tools' },
+        { label:'Pumps',           emoji:'💨', desc:'Floor pumps, mini pumps, CO₂',            page:'accessories', tab:'tools', search:'Pump' },
         { label:'Tools & Lube',    emoji:'🔧', desc:'Workshop tools, chain lube, degreasers', page:'accessories', tab:'tools' },
       ]},
     ]}

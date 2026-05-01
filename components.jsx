@@ -860,18 +860,19 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 2 }}>
                     <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", lineHeight: 1.3 }}>{it.name}</div>
-                    <div style={{ fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0 }}>${lineTotal.toLocaleString()}</div>
+                    <div style={{ fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0 }}>${lineTotal % 1 === 0 ? lineTotal.toLocaleString() : lineTotal.toFixed(2)}</div>
                   </div>
                   {it.variant && <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:4 }}>{it.variant}</div>}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      {qty > 1 && (
-                        <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-500)", background:"var(--gray-100)", padding:"2px 6px" }}>×{qty}</span>
-                      )}
-                      <button className="link-underline" onClick={() => { window.shopifyCart?.remove(it.variantId); onRemove(idx); }}
-                        style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>Remove</button>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:8 }}>
+                    {/* Qty stepper */}
+                    <div style={{ display:"flex", alignItems:"center", gap:0, border:"1px solid var(--hairline)", background:"var(--paper)" }}>
+                      <button onClick={() => window.shopifyCart?.decrementBySku(it.variantId || it.sku)}
+                        style={{ width:30, height:28, border:"none", background:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:16, color:"var(--black)", display:"flex", alignItems:"center", justifyContent:"center", WebkitTapHighlightColor:"transparent" }}>−</button>
+                      <span style={{ minWidth:24, textAlign:"center", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".06em", color:"var(--black)", userSelect:"none" }}>{qty}</span>
+                      <button onClick={() => window.shopifyCart?.add(it.variantId, it.name, it.price, it.image, 1, it.variant, it.sku)}
+                        style={{ width:30, height:28, border:"none", background:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:16, color:"var(--black)", display:"flex", alignItems:"center", justifyContent:"center", WebkitTapHighlightColor:"transparent" }}>+</button>
                     </div>
-                    {qty > 1 && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>${(it.price||0).toLocaleString()} ea</div>}
+                    {qty > 1 && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>${(it.price||0) % 1 === 0 ? (it.price||0) : (it.price||0).toFixed(2)} ea</div>}
                   </div>
                 </div>
               </div>
@@ -1264,31 +1265,61 @@ const BikeIcon  = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="no
 const WrenchIcon= () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>;
 const BagIcon   = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>;
 
+const ShopIcon = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 12h6"/></svg>;
+
 const BottomNav = ({ page, cartCount, onSearch, onCart }) => {
+  const [shopOpen, setShopOpen] = React.useState(false);
+  React.useEffect(() => { setShopOpen(false); }, [page]);
+
+  const isPartPage = ['components','accessories','parts'].includes(page);
   const tabs = [
-    { id:'home',       label:'Home',   icon:<HomeIcon />,   action:() => window.cl.go('home') },
-    { id:'shop',       label:'Bikes',  icon:<BikeIcon />,   action:() => window.cl.go('shop') },
-    { id:'components', label:'Parts',  icon:<WrenchIcon />, action:() => window.cl.go('components') },
-    { id:'search',     label:'Search', icon:<SearchIcon />, action: onSearch },
-    { id:'cart',       label:'Cart',   icon:<BagIcon />,    action: onCart, badge: cartCount },
+    { id:'home',   label:'Home',   icon:<HomeIcon />,  action:() => window.cl.go('home') },
+    { id:'bikes',  label:'Bikes',  icon:<BikeIcon />,  action:() => window.cl.go('shop') },
+    { id:'shop',   label:'Shop',   icon:<ShopIcon />,  action:() => setShopOpen(o => !o) },
+    { id:'search', label:'Search', icon:<SearchIcon />,action: onSearch },
+    { id:'cart',   label:'Cart',   icon:<BagIcon />,   action: onCart, badge: cartCount },
   ];
   const isActive = (id) => {
-    if (id === 'home') return page === 'home';
-    if (id === 'shop') return page === 'shop' || page === 'bike';
-    if (id === 'components') return ['components','accessories','parts'].includes(page);
+    if (id === 'home')  return page === 'home';
+    if (id === 'bikes') return page === 'shop' || page === 'bike';
+    if (id === 'shop')  return isPartPage || shopOpen;
     return false;
   };
+  const shopSections = [
+    { label:'Components', sub:'Drivetrain · Brakes · Suspension',  route:'components', emoji:'⚙️' },
+    { label:'Parts',      sub:'Tires · Tubes · Chains · Lube',     route:'parts',      emoji:'🔩' },
+    { label:'Accessories',sub:'Helmets · Clothing · Bags · Lights', route:'accessories',emoji:'⛑️' },
+  ];
   return (
-    <nav className="bottom-nav" role="navigation" aria-label="Main navigation">
-      {tabs.map(t => (
-        <button key={t.id} className={"bottom-nav-btn" + (isActive(t.id) ? " active" : "")}
-          onClick={t.action} aria-label={t.label} data-cursor="link">
-          {t.icon}
-          <span className="bottom-nav-lbl">{t.label}</span>
-          {t.badge > 0 && <span className="bottom-nav-badge">{t.badge}</span>}
-        </button>
-      ))}
-    </nav>
+    <>
+      {shopOpen && <div onClick={() => setShopOpen(false)} style={{ position:'fixed', inset:0, zIndex:195, background:'rgba(0,0,0,0.3)', backdropFilter:'blur(2px)' }} />}
+      {shopOpen && (
+        <div style={{ position:'fixed', bottom:'calc(56px + env(safe-area-inset-bottom, 0px))', left:0, right:0, zIndex:196, background:'var(--white)', borderTop:'2px solid var(--black)', paddingBottom:4 }}>
+          <div style={{ padding:'12px 20px 4px', fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)' }}>Shop by section</div>
+          {shopSections.map(s => (
+            <button key={s.route} onClick={() => { window.cl.go(s.route); setShopOpen(false); }} data-cursor="link"
+              style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 20px', borderTop:'1px solid var(--hairline)', background:'none', border:'none', borderTop:'1px solid var(--hairline)', cursor:'pointer', width:'100%', textAlign:'left', WebkitTapHighlightColor:'transparent' }}>
+              <span style={{ fontSize:22, lineHeight:1, flexShrink:0 }}>{s.emoji}</span>
+              <div style={{ flex:1 }}>
+                <div style={{ fontFamily:'var(--display)', fontSize:17, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)' }}>{s.label}</div>
+                <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginTop:2 }}>{s.sub}</div>
+              </div>
+              <ArrowRight size={14} />
+            </button>
+          ))}
+        </div>
+      )}
+      <nav className="bottom-nav" role="navigation" aria-label="Main navigation">
+        {tabs.map(t => (
+          <button key={t.id} className={"bottom-nav-btn" + (isActive(t.id) ? " active" : "")}
+            onClick={t.action} aria-label={t.label} data-cursor="link">
+            {t.icon}
+            <span className="bottom-nav-lbl">{t.label}</span>
+            {t.badge > 0 && <span className="bottom-nav-badge">{t.badge}</span>}
+          </button>
+        ))}
+      </nav>
+    </>
   );
 };
 
