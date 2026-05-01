@@ -337,7 +337,7 @@ const App = () => {
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} onRemove={(i) => setCart(cart.filter((_, idx) => idx !== i))} />
       <StickyCTA show={showSticky} />
 
-      {pwaInstallable && !pwaDismissed && (
+      {pwaInstallable && !pwaDismissed && window.innerWidth < 768 && (
         <div style={{ position:"fixed", bottom:"calc(72px + env(safe-area-inset-bottom, 0px))", left:"50%", transform:"translateX(-50%)", zIndex:300, background:"var(--black)", color:"var(--white)", display:"flex", alignItems:"center", gap:16, padding:"14px 20px", boxShadow:"0 4px 32px rgba(0,0,0,0.5)", maxWidth:420, width:"calc(100% - 48px)" }}>
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, textTransform:"uppercase", letterSpacing:"-.01em" }}>Install ChainLine</div>
