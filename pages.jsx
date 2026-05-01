@@ -182,6 +182,14 @@ const useBikeVariants = (bike) => {
   return { variants, varLoading };
 };
 
+const BRAND_URLS = {
+  Marin: 'https://marinbikes.com', Transition: 'https://www.transitionbikes.com',
+  Pivot: 'https://pivotcycles.com', Surly: 'https://surlybikes.com',
+  Salsa: 'https://salsacycles.com', Bianchi: 'https://www.bianchi.com',
+  Moots: 'https://moots.com', Knolly: 'https://www.knollybikes.com',
+  Revel: 'https://revelbikes.com',
+};
+
 // ── Bike Detail Page ──────────────────────────────────────────
 const BikePage = ({ bike, onBack, onCart }) => {
   const { variants, varLoading } = useBikeVariants(bike);
@@ -336,7 +344,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
 
         {/* Image gallery */}
         <div style={{ position: 'sticky', top: 140, height: 'fit-content' }}>
-          <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
+          <div className="bike-page-img-wrap" style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={[(b.brand || b.vendor || ''), (b.name || b.title)].filter(Boolean).join(' ')}
                   className="bike-img" loading="lazy" decoding="async"
@@ -350,8 +358,8 @@ const BikePage = ({ bike, onBack, onCart }) => {
           {allImgs.length > 1 && (
             <div style={{ display: 'flex', gap: 8 }}>
               {allImgs.map((img, i) => (
-                <button key={i} onClick={() => setActiveImg(i)} data-cursor="link"
-                  style={{ flex: 1, aspectRatio: '1', background: 'var(--paper)', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
+                <button key={i} onClick={() => setActiveImg(i)} data-cursor="link" className="bike-page-thumb"
+                  style={{ flex: 1, aspectRatio: '1', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
                   <img src={img} alt="" className="bike-img" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} onError={e => e.target.style.display='none'} />
                 </button>
               ))}
@@ -486,6 +494,16 @@ const BikePage = ({ bike, onBack, onCart }) => {
             </div>
           )}
 
+          {/* Manufacturer link */}
+          {BRAND_URLS[b.brand || b.vendor] && (
+            <div className="reveal" style={{ marginTop: 24 }}>
+              <a href={BRAND_URLS[b.brand || b.vendor]} target="_blank" rel="noopener noreferrer"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gray-500)', textDecoration: 'none', borderBottom: '1px solid var(--hairline)', paddingBottom: 2 }}>
+                Full specs on {b.brand || b.vendor}.com <ArrowRight style={{ width: 12, height: 12 }} />
+              </a>
+            </div>
+          )}
+
           {/* Store info */}
           <div className="reveal" style={{ marginTop: 48, padding: 28, background: 'var(--paper)', borderTop: '2px solid var(--black)' }}>
             <div className="eyebrow" style={{ marginBottom: 12 }}>In-Store Expert Advice</div>
@@ -585,12 +603,16 @@ const SHOP_BIKES = [
 // SHOP
 const ShopPage = () => {
   const intent = window.cl?.intent || null;
-  const [brand, setBrand]       = React.useState(intent?.brand || "All");
-  const [type,  setType]        = React.useState("All");
-  const [sort, setSort]         = React.useState("featured");
+  const saved  = window.cl?.shopFilter || {};
+  const [brand, setBrand] = React.useState(intent?.brand || saved.brand || "All");
+  const [type,  setType]  = React.useState(intent?.type  || saved.type  || "All");
+  const [sort, setSort]   = React.useState("featured");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
+
+  // Persist filter state so back-nav restores it
+  React.useEffect(() => { window.cl = window.cl || {}; window.cl.shopFilter = { brand, type }; }, [brand, type]);
 
   // Apply intent from nav links (brand / type filter)
   React.useEffect(() => {
@@ -839,7 +861,7 @@ const ShopPage = () => {
               )}
               {filtered.length > 0 && (
                 <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"40px 28px", alignItems:"start" }}>
-                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3} />)}
+                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3 && window.innerWidth >= 768} />)}
                 </div>
               )}
             </>
@@ -898,8 +920,8 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const wheels  = [...new Set(variants.map(v => v.wheel).filter(Boolean))];
   const colors  = [...new Set(variants.map(v => v.color).filter(Boolean))];
   const sizes   = [...new Set(variants.map(v => v.size).filter(Boolean))];
-  const hasWheels = wheels.length > 1;
-  const hasColors = colors.length > 1;
+  const hasWheels = wheels.length > 0;
+  const hasColors = colors.length > 0;
   const hasSizes  = sizes.length > 0;
 
   const pickDefault = (vs) => {
@@ -916,6 +938,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const [adding,      setAdding]     = React.useState(false);
   const [added,       setAdded]      = React.useState(false);
   const [imgFallback, setImgFallback] = React.useState(false);
+  const [cartQty,     setCartQty]    = React.useState(0);
 
   React.useEffect(() => {
     const d = pickDefault(b.variants || []);
@@ -933,7 +956,16 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const price   = selected?.price || b.price || 0;
   const inStock = selected ? selected.inStock : b.inStock !== false;
   const qty     = selected?.qty ?? b.qty ?? null;
-  const lowStock = qty !== null && qty > 0 && qty <= 2;
+  const selSku  = selected?.sku || b.sku;
+  const lowStock  = qty !== null && qty > 0 && qty <= 2;
+  const atMaxQty  = qty > 0 && cartQty >= qty;
+
+  React.useEffect(() => {
+    const update = () => setCartQty(window.shopifyCart?.qtyBySku(selSku) || 0);
+    update();
+    window.addEventListener('cart:updated', update);
+    return () => window.removeEventListener('cart:updated', update);
+  }, [selSku]);
 
   const bikeData    = window.BIKE_DATA?.[b.handle] || {};
   const colorImages = bikeData.colorImages || {};
@@ -1148,9 +1180,10 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
             style={{ flex:'0 0 auto', padding:'10px 16px', fontSize:11 }}>
             Details
           </button>
-          <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
-            style={{ flex:1, justifyContent:'center', padding:'10px 8px', fontSize:11 }}>
-            {added ? "Added ✓" : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
+          <button className="btn" data-cursor="link" onClick={handleAdd}
+            disabled={adding || !inStock || atMaxQty}
+            style={{ flex:1, justifyContent:'center', padding:'10px 8px', fontSize:11, opacity: atMaxQty ? 0.5 : 1 }}>
+            {added ? "Added ✓" : atMaxQty ? `In Cart (${cartQty})` : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
           </button>
         </div>
       </div>

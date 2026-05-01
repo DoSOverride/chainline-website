@@ -277,6 +277,38 @@
   border: none !important;
 }
 
+/* Bike detail page image wrap — light bg so white-bg photos blend cleanly */
+.bike-page-img-wrap { background: var(--paper); }
+[data-theme="dark"] .bike-page-img-wrap { background: #d0cdc8 !important; }
+[data-theme="dark"] .bike-page-img-wrap .bike-img {
+  mix-blend-mode: multiply !important;
+  filter: none !important;
+}
+/* Thumbnail strip */
+[data-theme="dark"] .bike-page-thumb { background: #d0cdc8 !important; }
+
+/* Size / wheel chips — stronger contrast in dark mode */
+[data-theme="dark"] .bcc {
+  border-color: rgba(255,255,255,0.28) !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+[data-theme="dark"] .bcc:hover {
+  border-color: rgba(255,255,255,0.65) !important;
+  color: #fff !important;
+}
+[data-theme="dark"] .bcc.active {
+  border-color: #edebe7 !important;
+  background: #edebe7 !important;
+  color: #111 !important;
+}
+[data-theme="dark"] .bcc.dim { opacity: 0.3 !important; }
+
+/* Color swatch active ring in dark mode */
+[data-theme="dark"] .color-swatch.active {
+  box-shadow: 0 0 0 2px #111, 0 0 0 3.5px #edebe7 !important;
+}
+[data-theme="dark"] .bike-card-color-label { color: rgba(255,255,255,0.6) !important; }
+
 /* ── Sub-hero / hero ── */
 [data-theme="dark"] .sub-hero-title { color: #edebe7 !important; }
 [data-theme="dark"] .hero-gradient-overlay {
@@ -1797,6 +1829,7 @@ img {
   /* ── Shop ── */
   .shop-filter-sticky { top: 132px !important; }
   .shop-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+  .bike-card-featured { display: none !important; }
 
   /* ── Bike detail ── */
   .bike-page-layout {
