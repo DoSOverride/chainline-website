@@ -331,7 +331,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
           <div style={{ background: 'var(--paper)', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={(b.name || b.title) + ' ' + (activeImg+1)}
-                  className="bike-img" decoding="async"
+                  className="bike-img" loading="lazy" decoding="async"
                   style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
                   onError={e => { e.target.style.display='none'; }} />
               : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
@@ -1614,7 +1614,7 @@ const AboutPage = () => (
     {/* Shop interior */}
     <section className="section bg-white" style={{ padding:0 }}>
       <img src="shop-interior.jpg" alt="ChainLine Cycle — 1139 Ellis St, Kelowna"
-        style={{ width:"100%", height:"clamp(280px,45vw,600px)", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
+        loading="lazy" decoding="async" style={{ width:"100%", height:"clamp(280px,45vw,600px)", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
     </section>
 
     {/* Visit us */}
@@ -1662,7 +1662,7 @@ const RidesPage = () => {
       <SubHero eyebrow="Community  /  N°01" title="Ride with us." italic="Every week, all year." />
       <section className="section bg-white" style={{ padding:0 }}>
         <img src="https://still-term-f1ec.taocaruso77.workers.dev/r2/lifestyle/rides-group.jpg" alt="ChainLine group ride — Kelowna"
-          style={{ width:"100%", height:"clamp(220px,35vw,480px)", objectFit:"cover", objectPosition:"center 30%", display:"block" }} />
+          loading="lazy" decoding="async" style={{ width:"100%", height:"clamp(220px,35vw,480px)", objectFit:"cover", objectPosition:"center 30%", display:"block" }} />
       </section>
       <section className="section section-pad bg-white">
         <div className="container-wide">
@@ -1746,6 +1746,7 @@ const TrailsPage = () => {
                 style={{ display:"block", textDecoration:"none", color:"inherit" }}>
                 <div style={{ aspectRatio:"4/3", marginBottom:18, overflow:"hidden", position:"relative" }}>
                   <img src={t.img} alt={t.name}
+                    loading="lazy" decoding="async"
                     style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", transition:"transform .5s ease" }}
                     onMouseEnter={e => e.currentTarget.style.transform="scale(1.04)"}
                     onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
@@ -1839,7 +1840,7 @@ const ContactPage = () => (
     <section className="page-contact-grid" style={{ paddingTop: 120, minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr" }}>
       <div style={{ minHeight: 600, position: "relative", overflow: "hidden", background: "#0a0a0a" }}>
         <img src="https://still-term-f1ec.taocaruso77.workers.dev/r2/shop/shop-interior.jpg" alt="ChainLine Cycle — Kelowna"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", opacity: 0.65 }} />
+          loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", opacity: 0.65 }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.7) 100%)" }} />
         <div style={{ position: "absolute", left: 48, right: 48, bottom: 48, color: "#fafafa" }}>
           <h1 className="display-xl" style={{ marginBottom: 32, color: "#fafafa" }}>Come<br/><span className="serif-italic">find us.</span></h1>
@@ -2332,7 +2333,7 @@ const PartsPage = ({ pageType = 'components' }) => {
             {!search && (
               <div style={{ position:"relative", height:140, background:"#0a0a0a", overflow:"hidden" }}>
                 {activeTab.img && <img src={activeTab.img} alt={activeTab.label}
-                  style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.4 }} />}
+                  loading="lazy" decoding="async" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.4 }} />}
                 <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 100%)" }} />
                 <div style={{ position:"relative", height:"100%", display:"flex", alignItems:"center", padding:"0 28px", gap:16 }}>
                   <span style={{ fontSize:36, lineHeight:1 }}>{activeTab.emoji}</span>
@@ -2493,7 +2494,7 @@ const ClassifiedsPage = () => {
                     onMouseEnter={e=>e.currentTarget.style.borderColor='var(--black)'}
                     onMouseLeave={e=>e.currentTarget.style.borderColor='var(--hairline)'}>
                     {l.image
-                      ? <img src={l.image} alt={l.title} className="bike-img" style={{ width:"100%", aspectRatio:"4/3", objectFit:"cover" }} />
+                      ? <img src={l.image} alt={l.title} className="bike-img" loading="lazy" decoding="async" style={{ width:"100%", aspectRatio:"4/3", objectFit:"cover" }} />
                       : <div className="ph" style={{ aspectRatio:"4/3" }} />}
                     <div style={{ padding:"16px 20px 20px", flex:1, display:"flex", flexDirection:"column", gap:8 }}>
                       {l.condition && <span className="pill" style={{ color:"var(--gray-500)", alignSelf:"flex-start", fontSize:9 }}>{l.condition}</span>}
@@ -3077,7 +3078,7 @@ const SocialPage = () => {
                   style={{ cursor:"pointer", display:"flex", flexDirection:"column" }}>
                   <div style={{ position:"relative", aspectRatio:"16/9", overflow:"hidden", background:"var(--gray-100)", marginBottom:14 }}>
                     {v.thumbnail
-                      ? <img src={v.thumbnail} alt={v.title} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block", transition:"transform .4s ease" }}
+                      ? <img src={v.thumbnail} alt={v.title} loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block", transition:"transform .4s ease" }}
                           onMouseEnter={e => e.currentTarget.style.transform="scale(1.03)"}
                           onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
                       : <div style={{ width:"100%", height:"100%", background:"var(--gray-100)" }} />
@@ -3755,7 +3756,7 @@ const MTBCOPage = () => {
                 style={{ display:"block", textDecoration:"none", color:"inherit" }}>
                 <div style={{ aspectRatio:"4/3", marginBottom:20, overflow:"hidden", position:"relative" }}>
                   <img src={t.img} alt={t.name}
-                    style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .5s ease" }}
+                    loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .5s ease" }}
                     onMouseEnter={e => e.currentTarget.style.transform="scale(1.04)"}
                     onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
                   <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%)" }} />

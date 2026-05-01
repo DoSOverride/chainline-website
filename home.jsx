@@ -678,7 +678,7 @@ const ReviewCard = ({ author, text, time, photo, rating = 5 }) => (
     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
         {photo
-          ? <img src={photo} alt={author} style={{ width:28, height:28, borderRadius:"50%", objectFit:"cover" }} />
+          ? <img src={photo} alt={author} loading="lazy" decoding="async" style={{ width:28, height:28, borderRadius:"50%", objectFit:"cover" }} />
           : <div style={{ width:28, height:28, borderRadius:"50%", background:"var(--gray-200)", display:"grid", placeItems:"center", fontFamily:"var(--display)", fontSize:12, fontWeight:600, textTransform:"uppercase" }}>{author[0]}</div>
         }
         <div>

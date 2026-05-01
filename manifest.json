@@ -1,0 +1,24 @@
+{
+  "name": "ChainLine Cycle",
+  "short_name": "ChainLine",
+  "description": "Kelowna's performance bike shop since 2009. Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["shopping", "sports"],
+  "lang": "en-CA"
+}
