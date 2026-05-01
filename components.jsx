@@ -851,16 +851,25 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
           {items.map((it, idx) => {
             const qty       = it.qty || 1;
             const lineTotal = (it.price || 0) * qty;
+            // Look up available stock from Lightspeed by SKU (caps + button)
+            const lsBike  = it.sku ? (window.CL_LS?.bikes || []).find(b => b.sku === it.sku) : null;
+            const availQty = lsBike ? (lsBike.qty ?? 999) : 999;
+            const atMax    = availQty > 0 && qty >= availQty;
             return (
               <div key={idx} style={{ display: "grid", gridTemplateColumns: "72px 1fr", gap: 14, padding: "16px 0", borderBottom: "1px solid var(--hairline)" }}>
                 {it.image
-                  ? <img src={it.image} alt={it.name} style={{ width: 72, height: 72, objectFit: "contain", background: "var(--paper)", padding: 4 }} />
+                  ? <img src={it.image} alt={it.name} style={{ width: 72, height: 72, objectFit: "contain", background: "var(--paper)", padding: 4, mixBlendMode: "multiply" }} />
                   : <div className="ph" style={{ width: 72, height: 72 }} />
                 }
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 2 }}>
                     <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 500, textTransform: "uppercase", letterSpacing: "-.005em", lineHeight: 1.3 }}>{it.name}</div>
-                    <div style={{ fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap", flexShrink: 0 }}>${lineTotal % 1 === 0 ? lineTotal.toLocaleString() : lineTotal.toFixed(2)}</div>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 10, flexShrink: 0 }}>
+                      <div style={{ fontFamily: "var(--display)", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}>${lineTotal % 1 === 0 ? lineTotal.toLocaleString() : lineTotal.toFixed(2)}</div>
+                      <button onClick={() => window.shopifyCart?.remove(it.variantId)}
+                        title="Remove" data-cursor="link"
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--gray-400)", fontSize: 14, padding: 0, lineHeight: 1, marginTop: 1 }}>✕</button>
+                    </div>
                   </div>
                   {it.variant && <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:4 }}>{it.variant}</div>}
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:8 }}>
@@ -869,10 +878,13 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
                       <button onClick={() => window.shopifyCart?.decrementBySku(it.variantId || it.sku)}
                         style={{ width:30, height:28, border:"none", background:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:16, color:"var(--black)", display:"flex", alignItems:"center", justifyContent:"center", WebkitTapHighlightColor:"transparent" }}>−</button>
                       <span style={{ minWidth:24, textAlign:"center", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".06em", color:"var(--black)", userSelect:"none" }}>{qty}</span>
-                      <button onClick={() => window.shopifyCart?.add(it.variantId, it.name, it.price, it.image, 1, it.variant, it.sku)}
-                        style={{ width:30, height:28, border:"none", background:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:16, color:"var(--black)", display:"flex", alignItems:"center", justifyContent:"center", WebkitTapHighlightColor:"transparent" }}>+</button>
+                      <button onClick={() => { if (!atMax) window.shopifyCart?.add(it.variantId, it.name, it.price, it.image, 1, it.variant, it.sku); }}
+                        disabled={atMax}
+                        title={atMax ? `Max stock: ${availQty}` : undefined}
+                        style={{ width:30, height:28, border:"none", background:"none", cursor: atMax ? "default" : "pointer", fontFamily:"var(--mono)", fontSize:16, color:"var(--black)", display:"flex", alignItems:"center", justifyContent:"center", WebkitTapHighlightColor:"transparent", opacity: atMax ? 0.3 : 1 }}>+</button>
                     </div>
                     {qty > 1 && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>${(it.price||0) % 1 === 0 ? (it.price||0) : (it.price||0).toFixed(2)} ea</div>}
+                    {atMax && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".1em", textTransform:"uppercase" }}>Max stock</div>}
                   </div>
                 </div>
               </div>
