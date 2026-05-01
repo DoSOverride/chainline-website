@@ -517,7 +517,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
         <div className="container-wide">
           {/* Bikes panel: By Style | Brands col1 | Brands col2 */}
           {d.styleCol ? (
-            <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.storeCols.length}, 1fr)`, gap:48 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:48 }}>
               <div className="mega-col">
                 <h4>By Style</h4>
                 <ul>
