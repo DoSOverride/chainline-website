@@ -318,15 +318,15 @@ const AccountDropdown = ({ onClose }) => {
   return (
     <div style={{ position: "absolute", top: "calc(100% + 16px)", right: 0, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.12)", minWidth: 220, zIndex: 200, padding: "8px 0" }}
       onMouseLeave={onClose}>
-      <a href={`${SHOPIFY_STORE}/account/login`} target="_blank" rel="noopener" style={rowStyle} onClick={onClose}
+      <a href={`${SHOPIFY_STORE}/account/login?return_url=${encodeURIComponent("https://chainline.ca")}`} style={rowStyle} onClick={onClose}
         onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
         onMouseLeave={e => e.currentTarget.style.background=""}>Sign In</a>
       {divider}
-      <a href={`${SHOPIFY_STORE}/account/register`} target="_blank" rel="noopener" style={rowStyle} onClick={onClose}
+      <a href={`${SHOPIFY_STORE}/account/register?return_url=${encodeURIComponent("https://chainline.ca")}`} style={rowStyle} onClick={onClose}
         onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
         onMouseLeave={e => e.currentTarget.style.background=""}>Create Account</a>
       {divider}
-      <a href={`${SHOPIFY_STORE}/account`} target="_blank" rel="noopener" style={{ ...rowStyle, color: "var(--gray-500)" }} onClick={onClose}
+      <a href={`${SHOPIFY_STORE}/account`} style={{ ...rowStyle, color: "var(--gray-500)" }} onClick={onClose}
         onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
         onMouseLeave={e => e.currentTarget.style.background=""}>My Orders</a>
     </div>

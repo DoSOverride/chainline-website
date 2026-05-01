@@ -348,7 +348,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={[(b.brand || b.vendor || ''), (b.name || b.title)].filter(Boolean).join(' ')}
                   className="bike-img" loading="lazy" decoding="async"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%', mixBlendMode: 'multiply' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
                   onError={e => { e.target.style.display='none'; }} />
               : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
                   <span className="ph-label">{(b.brand||b.vendor||'').toUpperCase()}  ·  BIKE PHOTO</span>
@@ -360,7 +360,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
               {allImgs.map((img, i) => (
                 <button key={i} onClick={() => setActiveImg(i)} data-cursor="link" className="bike-page-thumb"
                   style={{ flex: 1, aspectRatio: '1', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
-                  <img src={img} alt="" className="bike-img" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} onError={e => e.target.style.display='none'} />
+                  <img src={img} alt="" className="bike-img" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
                 </button>
               ))}
             </div>
@@ -2047,28 +2047,27 @@ const ContactPage = () => (
         </div>
       </div>
     </section>
-    <section className="bg-black" style={{ height: 400, position: "relative" }}>
-      <div className="ph" style={{ position: "absolute", inset: 0 }}>
-        <span className="ph-label">MAP  /  DARK SATELLITE STYLE  /  STORE PIN</span>
-      </div>
-      <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-        <div style={{ width: 56, height: 56, borderRadius: "50%", background: "var(--white)", display: "grid", placeItems: "center", boxShadow: "0 0 0 8px rgba(255,255,255,0.15)" }}>
-          <ChainLogo size={24} color="#0a0a0a" />
-        </div>
-      </div>
+    <section style={{ height: 440, position: "relative", overflow: "hidden" }}>
+      <iframe
+        title="ChainLine Cycle location"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2569.8!2d-119.4960!3d49.8878!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x537df5efc38e336b%3A0x9afd17158d52e898!2sChainLine%20Cycle!5e0!3m2!1sen!2sca!4v1683000000000"
+        width="100%" height="100%"
+        style={{ border: 0, display: "block", filter: "grayscale(20%) contrast(1.05)" }}
+        allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+      />
     </section>
-    <section className="section section-pad-sm bg-paper" style={{ padding: "60px 0" }}>
+    <section className="section section-pad-sm bg-paper" style={{ padding: "48px 0" }}>
       <div className="container-wide">
-        <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+        <div className="reveal" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
           {[
             { t: "Call Us", v: "(250) 860-1968", href: "tel:2508601968" },
             { t: "Book a Service", v: "Online booking", route: "book" },
-            { t: "Get Directions", v: "Open in Maps", href: "https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC" },
+            { t: "Get Directions", v: "1139 Ellis St", href: "https://maps.google.com/?q=ChainLine+Cycle+1139+Ellis+St+Kelowna+BC" },
           ].map((a, i) => (
-            <button key={i} className="btn btn-outline" data-cursor="link" style={{ padding: "32px", justifyContent: "space-between", flexDirection: "column", alignItems: "flex-start", gap: 16, height: "auto" }}
-              onClick={() => a.route ? window.cl.go(a.route) : window.open(a.href)}>
+            <button key={i} className="btn btn-outline" data-cursor="link" style={{ padding: "24px 28px", justifyContent: "space-between", flexDirection: "column", alignItems: "flex-start", gap: 12, height: "auto" }}
+              onClick={() => a.route ? window.cl.go(a.route) : window.open(a.href, "_blank")}>
               <span className="eyebrow">{a.t}</span>
-              <span style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", fontSize: 18, fontFamily: "var(--display)", textTransform: "uppercase", letterSpacing: "-.005em" }}>
+              <span style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", fontSize: 17, fontFamily: "var(--display)", textTransform: "uppercase", letterSpacing: "-.005em" }}>
                 {a.v} <ArrowRight />
               </span>
             </button>
@@ -2377,29 +2376,34 @@ const useTabInventory = (tabId) => {
 };
 
 // ── PartRow ───────────────────────────────────────────────────────────────
-const PartRow = React.memo(({ item }) => {
+const DEPT_EMOJI = { Cassette:"⚙️", Chains:"🔗", Chainrings:"⭕", Cranks:"🔩", "Bottom Brackets":"🔘", "Derailleur Front":"🔀", "Derailleur Rear":"🔀", "Shifters MTB":"🎮", "Shifters - Road":"🎮", Cables:"〰️", Brake:"🛑", "Brake pads":"🛑", "Brake parts":"🛑", "Brake Lever U":"🛑", "Brake Lever V":"🛑", Wheels:"🔵", Wheelset:"🔵", Rims:"⭕", Hubs:"⚙️", Spokes:"📍", 'Tires 29"':"🟤", 'Tires 700C':"⚫", 'Tires 27"':"🟤", 'Tires 26"':"🟤", "Tires Fatbike":"🟤", Tubes:"🫧", "Tire Sealant":"🧴", "Tire Protection":"🛡️", Forks:"🍴", "Fork Parts":"⚙️", "Fork Oil":"🛢️", "Rear Shock":"🌀", Seals:"🔵", Handlebar:"🏋️", Stem:"🔧", Grips:"✊", "Bar tape":"📏", Saddles:"🪑", "Seat post":"⬆️", Headsets:"🔘", Helmet:"⛑️", Gloves:"🧤", Armour:"🛡️", Sunglasses:"🕶️", Clothing:"👕", Shoes:"👟", Tools:"🔧", Pumps:"💨", Lube:"🛢️", Trainers:"🚴", Bags:"🎒", Packs:"🎒", Lights:"💡", Computers:"📱", Locks:"🔒", "Car Racks":"🚗", "Bike Racks":"🚲", Fenders:"🛡️", Bells:"🔔" };
+
+const PartRow = React.memo(({ item, tabEmoji }) => {
   const price = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
   const lowStock = item.qty > 0 && item.qty <= 5;
+  const emoji = DEPT_EMOJI[item.department] || tabEmoji || "⚙️";
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"0 16px", alignItems:"center",
-      padding:"13px 20px", borderBottom:"1px solid var(--hairline)",
-      background:"var(--white)", transition:"background .12s" }}
-      onMouseEnter={e => e.currentTarget.style.background = 'var(--paper)'}
-      onMouseLeave={e => e.currentTarget.style.background = 'var(--white)'}>
-      {/* Name + meta */}
-      <div style={{ minWidth:0 }}>
-        <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:500, textTransform:"uppercase",
-          letterSpacing:"-.01em", lineHeight:1.25,
-          color:"var(--black)" }}>{item.name}</div>
-        <div style={{ display:"flex", alignItems:"center", gap:10, marginTop:3 }}>
-          {item.sku && <span style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".08em", textTransform:"uppercase" }}>{item.sku}</span>}
-          {lowStock && <span style={{ fontFamily:"var(--mono)", fontSize:9, color:"#c2410c", letterSpacing:".08em", textTransform:"uppercase", fontWeight:600 }}>Only {item.qty} left</span>}
-        </div>
+    <div className="part-card" style={{ display:"flex", flexDirection:"column", background:"var(--white)", border:"1px solid var(--hairline)", cursor:"default", transition:"box-shadow .15s, border-color .15s" }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor="var(--gray-300)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow="none"; e.currentTarget.style.borderColor="var(--hairline)"; }}>
+      {/* Image / icon area */}
+      <div style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:48, position:"relative" }}>
+        {item.image
+          ? <img src={item.image} alt={item.name} loading="lazy" decoding="async"
+              style={{ width:"100%", height:"100%", objectFit:"contain", padding:"16%", mixBlendMode:"multiply" }}
+              onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
+          : null}
+        <span style={{ display: item.image ? "none" : "flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", fontSize:40, opacity:0.35 }}>{emoji}</span>
+        {lowStock && <span style={{ position:"absolute", top:8, right:8, background:"#c2410c", color:"#fff", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", padding:"3px 7px", fontWeight:600 }}>Only {item.qty} left</span>}
       </div>
-      {/* Price + cart */}
-      <div style={{ display:"flex", alignItems:"center", gap:12, flexShrink:0 }}>
-        {price && <span style={{ fontFamily:"var(--display)", fontSize:15, fontWeight:600, color:"var(--black)", whiteSpace:"nowrap" }}>{price}</span>}
-        <PartCartBtn item={item} compact />
+      {/* Info */}
+      <div style={{ padding:"14px 16px 12px", flex:1, display:"flex", flexDirection:"column", gap:6 }}>
+        <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.25, color:"var(--black)", flex:1 }}>{item.name}</div>
+        {item.sku && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".08em", textTransform:"uppercase" }}>{item.sku}</div>}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:4 }}>
+          {price && <span style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:600, color:"var(--black)" }}>{price}</span>}
+          <PartCartBtn item={item} compact />
+        </div>
       </div>
     </div>
   );
@@ -2653,9 +2657,11 @@ const PartsPage = ({ pageType = 'components' }) => {
                       <span style={{ flex:1 }}>{dept}</span>
                       <span style={{ opacity:.45 }}>{deptItems.length}</span>
                     </div>
-                    {deptItems.map(item => (
-                      <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
-                    ))}
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>
+                      {deptItems.map(item => (
+                        <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
+                      ))}
+                    </div>
                   </div>
                 ))}
                 <div style={{ padding:"36px 20px 60px", borderTop:"1px solid var(--hairline)", marginTop:8 }}>
@@ -2672,9 +2678,11 @@ const PartsPage = ({ pageType = 'components' }) => {
                 <div style={{ padding:"10px 20px 8px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", background:"var(--paper)", borderBottom:"1px solid var(--hairline)" }}>
                   {filtered.length} results for "{search}"
                 </div>
-                {visible.map(item => (
-                  <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
-                ))}
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>
+                  {visible.map(item => (
+                    <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
+                  ))}
+                </div>
                 {hasMore && (
                   <div style={{ padding:"24px", textAlign:"center" }}>
                     <button data-cursor="link" onClick={() => setPg(p => p + 1)}

@@ -392,10 +392,10 @@ const BookBanner = () => (
         <span>Online Booking</span>
       </div>
       <h2 className="display-xl reveal" style={{ marginBottom: 24 }}>
-        Skip the wait.<br/><span className="serif-italic">Book online.</span>
+        Book a service.<br/><span className="serif-italic">We'll handle the rest.</span>
       </h2>
       <p className="reveal" style={{ fontSize: 18, color: "var(--gray-500)", maxWidth: 520, margin: "0 auto 48px" }}>
-        Reserve your service slot, demo ride, or bike fitting in minutes. Real availability, no phone tag.
+        Book online for service, fitting or a demo ride. We'll confirm within the day.
       </p>
       <div className="reveal" style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
         <button className="btn" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Service <ArrowRight /></button>
@@ -642,7 +642,7 @@ const DemoStrip = () => (
         Demo before<br/><span className="serif-italic">you buy.</span>
       </h2>
       <p className="reveal" style={{ fontSize: 18, color: "var(--gray-300)", maxWidth: 540, margin: "0 auto 40px", lineHeight: 1.6 }}>
-        Twelve bikes in our demo fleet. Try the trail before you commit to the bike.
+        Ride before you decide. We maintain a fleet of trail, gravel and e-bikes for demo rides on Kelowna's trails.
       </p>
       <button className="btn btn-light reveal" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Demo Ride <ArrowRight /></button>
     </div>

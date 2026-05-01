@@ -216,23 +216,28 @@
    White-bg product photos look terrible on dark backgrounds with
    normal blend. Solution: multiply blend on a warm mid-gray wrapper.
    multiply(#c8c4be, white) = #c8c4be — warm gray, not blinding white. */
-[data-theme="dark"] img.bike-img {
-  mix-blend-mode: multiply;
-  filter: none;
-}
-[data-theme="dark"] .bike-card-img-wrap      { background: #c8c4be !important; }
-[data-theme="dark"] .bike-card-featured-img  { background: #c8c4be !important; }
-[data-theme="dark"] .shop-bike-card-img      { background: #c8c4be !important; }
-[data-theme="dark"] .bike-scroller-item      { background: #c8c4be !important; }
-[data-theme="dark"] .bike-gallery-main,
-[data-theme="dark"] .bike-gallery-thumb      { background: #c8c4be !important; }
+/* Dark mode: only apply multiply blend to shop card grid images (white-bg studio shots)
+   NOT to the bike detail gallery which may have lifestyle/dark-bg images */
+[data-theme="dark"] .bike-card-img-wrap      { background: #d4d0cb !important; }
+[data-theme="dark"] .bike-card-featured-img  { background: #d4d0cb !important; }
+[data-theme="dark"] .shop-bike-card-img      { background: #d4d0cb !important; }
+[data-theme="dark"] .bike-scroller-item      { background: #d4d0cb !important; }
 
 [data-theme="dark"] .bike-card-img-primary,
 [data-theme="dark"] .bike-card-img-hover,
 [data-theme="dark"] .bike-card-featured-img .bike-img,
 [data-theme="dark"] .shop-bike-card-img .bike-img,
 [data-theme="dark"] .bike-scroller-item img {
-  mix-blend-mode: multiply !important;
+  mix-blend-mode: multiply;
+  filter: none;
+}
+
+/* Bike detail page gallery: NO blend mode — show images naturally */
+[data-theme="dark"] .bike-page-img-wrap { background: #1a1a1a !important; }
+[data-theme="dark"] .bike-page-thumb    { background: #1a1a1a !important; }
+[data-theme="dark"] .bike-page-img-wrap img,
+[data-theme="dark"] .bike-page-thumb img {
+  mix-blend-mode: normal !important;
   filter: none !important;
 }
 
