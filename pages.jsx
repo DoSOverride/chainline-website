@@ -295,7 +295,8 @@ const BikePage = ({ bike, onBack, onCart }) => {
       const result = await window.clAddToCart(sku, b.name || b.title, selPrice, allImgs[0], sku, variantDesc || null);
       if (result) {
         setAdded(true);
-        setTimeout(() => { setAdded(false); if (onCart) onCart(); }, 600);
+        window.dispatchEvent(new CustomEvent('cart:open'));
+        setTimeout(() => setAdded(false), 2000);
       }
     } catch(e) { console.warn(e); }
     setAdding(false);
@@ -332,7 +333,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={[(b.brand || b.vendor || ''), (b.name || b.title)].filter(Boolean).join(' ')}
                   className="bike-img" loading="lazy" decoding="async"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%', mixBlendMode: 'multiply' }}
                   onError={e => { e.target.style.display='none'; }} />
               : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
                   <span className="ph-label">{(b.brand||b.vendor||'').toUpperCase()}  ·  BIKE PHOTO</span>
@@ -344,7 +345,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
               {allImgs.map((img, i) => (
                 <button key={i} onClick={() => setActiveImg(i)} data-cursor="link"
                   style={{ flex: 1, aspectRatio: '1', background: 'var(--paper)', border: '2px solid ' + (i === activeImg ? 'var(--black)' : 'transparent'), overflow: 'hidden', padding: 4 }}>
-                  <img src={img} alt="" className="bike-img" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display='none'} />
+                  <img src={img} alt="" className="bike-img" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} onError={e => e.target.style.display='none'} />
                 </button>
               ))}
             </div>
@@ -843,7 +844,7 @@ const ShopPage = () => {
   );
 };
 
-const BikeCardLarge = ({ b, idx }) => {
+const BikeCardLarge = React.memo(({ b, idx }) => {
   const variants = b.variants || [];
   const inStockV = variants.filter(v => v.inStock);
 
@@ -1023,7 +1024,7 @@ const BikeCardLarge = ({ b, idx }) => {
       </div>
     </div>
   );
-};
+});
 
 // SubHero
 const SubHero = ({ eyebrow, title, italic }) => (
