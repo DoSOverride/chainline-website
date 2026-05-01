@@ -259,8 +259,8 @@ const BikePage = ({ bike, onBack, onCart }) => {
     (!hasSizes  || v.size  === selSize)
   ) || defV;
 
-  const availColors = (w) => [...new Set(variants.filter(v => !hasWheels||v.wheel===w).map(v=>v.color).filter(Boolean))];
-  const availSizes  = (w,c) => [...new Set(variants.filter(v=>(!hasWheels||v.wheel===w)&&(!hasColors||v.color===c)).map(v=>v.size).filter(Boolean))];
+  const availColors = (w) => [...new Set(variants.filter(v => (!hasWheels||v.wheel===w) && v.inStock).map(v=>v.color).filter(Boolean))];
+  const availSizes  = (w,c) => [...new Set(variants.filter(v=>(!hasWheels||v.wheel===w)&&(!hasColors||v.color===c)&&v.inStock).map(v=>v.size).filter(Boolean))];
   const wheels = [...new Set(variants.map(v=>v.wheel).filter(Boolean))];
   const allImgs = (() => {
     const colorImages = data.colorImages || {};
@@ -988,9 +988,9 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
       || null;
   })();
 
-  const availColors = (w) => [...new Set(variants.filter(v => !hasWheels || v.wheel === w).map(v => v.color).filter(Boolean))];
+  const availColors = (w) => [...new Set(variants.filter(v => (!hasWheels || v.wheel === w) && v.inStock).map(v => v.color).filter(Boolean))];
   const availSizes  = (w, c) => {
-    const raw = [...new Set(variants.filter(v => (!hasWheels||v.wheel===w) && (!hasColors||v.color===c)).map(v => v.size).filter(Boolean))];
+    const raw = [...new Set(variants.filter(v => (!hasWheels||v.wheel===w) && (!hasColors||v.color===c) && v.inStock).map(v => v.size).filter(Boolean))];
     return raw.sort((a, z) => {
       const ai = SIZE_ORDER.indexOf(a), zi = SIZE_ORDER.indexOf(z);
       return (ai < 0 ? 99 : ai) - (zi < 0 ? 99 : zi);
@@ -2298,6 +2298,47 @@ const PART_TABS = [
 const BIKE_EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
 const isBikeDept = (dept) => BIKE_EXCLUDE.some(x => (dept||'').toLowerCase().includes(x));
 
+// Per-department fallback images (used when Lightspeed has no image for an item)
+const R2 = 'https://still-term-f1ec.taocaruso77.workers.dev/r2';
+const IMG = 'https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=';
+const DEPT_IMG = {
+  'cassette':          IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/cassette/CS-HG50-8/pdp/CS-HG50-8.png'),
+  'chains':            IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/chain/CN-HG601/pdp/CN-HG601-1.png'),
+  'chainrings':        IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/chainring/FC-M8100/pdp/FC-M8100.png'),
+  'cranks':            IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/crankset/FC-M8100-1/pdp/FC-M8100-1.png'),
+  'bottom brackets':   IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/bottom-bracket/SM-BB71/pdp/SM-BB71.png'),
+  'derailleur rear':   IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/rear-derailleur/RD-M8100/pdp/RD-M8100.png'),
+  'derailleur front':  IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/front-derailleur/FD-M8100-D/pdp/FD-M8100-D.png'),
+  'shifters mtb':      IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/shifter/SL-M8100-IR/pdp/SL-M8100-IR.png'),
+  'brake pads':        IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/disc-brake-pad/L06A/pdp/L06A.png'),
+  'brake':             IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/disc-brake-caliper/BR-MT410/pdp/BR-MT410.png'),
+  'brake parts':       IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/disc-brake-pad/L06A/pdp/L06A.png'),
+  'forks':             IMG + encodeURIComponent('https://www.sram.com/globalassets/image-hierarchy/sram-product-root-images/forks/rockshox/rockshox-lyrik-ultimate-fork/a4/00-1216-021-000_a_1.png'),
+  'rear shock':        IMG + encodeURIComponent('https://www.sram.com/globalassets/image-hierarchy/sram-product-root-images/rear-shocks/rockshox/rockshox-super-deluxe-ultimate-coil-rear-shock/a2/00-1216-127-010_a_1.png'),
+  'forks parts':       `${R2}/parts/tools-hero.jpg`,
+  'tires 29"':         IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/EXO/maxxis-assegai-exo-maxx-terra-29x25-tr.jpg'),
+  'tires 700c':        IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/maxxis-refuse-700x32-bk-si.jpg'),
+  'tires 27" & 26x1&1/4 etc...': IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/EXO/maxxis-assegai-exo-27x25.jpg'),
+  'tires fatbike':     IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/maxxis-minion-fbr-26x40.jpg'),
+  'tubes':             IMG + encodeURIComponent('https://www.sram.com/globalassets/image-hierarchy/sram-product-root-images/components/quarq/quarq-dzero-road-power-meter-spider/crank-spider/quarq-dzero-road-spider-3000.png'),
+  'tire sealant':      `${R2}/parts/tools-hero.jpg`,
+  'wheels':            `${R2}/parts/tools-hero.jpg`,
+  'wheelset (fr+rr)':  `${R2}/parts/tools-hero.jpg`,
+  'rims':              `${R2}/parts/tools-hero.jpg`,
+  'handlebar':         IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/bar/ST-RS505/pdp/ST-RS505.png'),
+  'stem':              `${R2}/parts/tools-hero.jpg`,
+  'grips':             `${R2}/parts/tools-hero.jpg`,
+  'saddles':           `${R2}/parts/tools-hero.jpg`,
+  'seat post':         `${R2}/parts/tools-hero.jpg`,
+  'helmet':            `${R2}/parts/tools-hero.jpg`,
+  'gloves':            `${R2}/parts/tools-hero.jpg`,
+  'tools':             `${R2}/parts/tools-hero.jpg`,
+  'pumps':             `${R2}/parts/tools-hero.jpg`,
+  'lube':              `${R2}/parts/tools-hero.jpg`,
+  'locks':             `${R2}/parts/tools-hero.jpg`,
+  'lights':            `${R2}/parts/tools-hero.jpg`,
+};
+
 // Dept-level emoji — more specific than tab emoji
 const DEPT_EMOJI = {
   // Drivetrain
@@ -2377,21 +2418,24 @@ const useTabInventory = (tabId) => {
 
 // ── PartRow ───────────────────────────────────────────────────────────────
 const PartRow = React.memo(({ item, tabEmoji }) => {
+  const [imgErr, setImgErr] = React.useState(false);
   const price = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
   const lowStock = item.qty > 0 && item.qty <= 5;
-  const emoji = DEPT_EMOJI[(item.department || '').toLowerCase()] || tabEmoji || "⚙️";
+  const deptKey = (item.department || '').toLowerCase();
+  const emoji = DEPT_EMOJI[deptKey] || tabEmoji || "⚙️";
+  // Use Lightspeed image, then dept fallback, then emoji
+  const imgSrc = !imgErr && (item.image || DEPT_IMG[deptKey]);
   return (
     <div className="part-card" style={{ display:"flex", flexDirection:"column", background:"var(--white)", border:"1px solid var(--hairline)", cursor:"default", transition:"box-shadow .15s, border-color .15s" }}
       onMouseEnter={e => { e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor="var(--gray-300)"; }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow="none"; e.currentTarget.style.borderColor="var(--hairline)"; }}>
       {/* Image / icon area */}
-      <div style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:48, position:"relative" }}>
-        {item.image
-          ? <img src={item.image} alt={item.name} loading="lazy" decoding="async"
-              style={{ width:"100%", height:"100%", objectFit:"contain", padding:"16%", mixBlendMode:"multiply" }}
-              onError={e => { e.target.style.display="none"; e.target.nextSibling.style.display="flex"; }} />
-          : null}
-        <span style={{ display: item.image ? "none" : "flex", alignItems:"center", justifyContent:"center", width:"100%", height:"100%", fontSize:40, opacity:0.35 }}>{emoji}</span>
+      <div style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
+        {imgSrc
+          ? <img src={imgSrc} alt={item.name} loading="lazy" decoding="async"
+              style={{ width:"100%", height:"100%", objectFit:"contain", padding:"14%", mixBlendMode:"multiply" }}
+              onError={() => setImgErr(true)} />
+          : <span style={{ fontSize:40, opacity:0.25 }}>{emoji}</span>}
         {lowStock && <span style={{ position:"absolute", top:8, right:8, background:"#c2410c", color:"#fff", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", padding:"3px 7px", fontWeight:600 }}>Only {item.qty} left</span>}
       </div>
       {/* Info */}
