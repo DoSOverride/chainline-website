@@ -2212,8 +2212,10 @@ const PartsPage = ({ pageType = 'components' }) => {
 
   const { items, loading } = useTabInventory(cat);
   const activeTab = PART_TABS.find(t => t.id === cat) || PART_TABS[0];
+  const visibleTabs = PART_TABS.filter(t =>
+    pageType === 'accessories' ? ACC_TAB_IDS.includes(t.id) : COMP_TAB_IDS.includes(t.id)
+  );
 
-  // Filtered + sorted — items from Worker are already in-stock only
   const filtered = React.useMemo(() => {
     const q = search.trim().toLowerCase();
     const pool = q.length >= 2
@@ -2227,30 +2229,29 @@ const PartsPage = ({ pageType = 'components' }) => {
     return [...pool].sort((a, b) => (a.price||0) - (b.price||0));
   }, [items, search]);
 
-  const visible = filtered.slice(0, (page + 1) * PAGE);
+  const grouped = React.useMemo(() => {
+    if (search.trim().length >= 2) return null;
+    const g = {};
+    filtered.forEach(item => {
+      const d = item.department || 'Other';
+      if (!g[d]) g[d] = [];
+      g[d].push(item);
+    });
+    return Object.entries(g).sort(([a],[b]) => a.localeCompare(b));
+  }, [filtered, search]);
+
+  const visible = filtered.slice(0, (pg + 1) * PAGE);
   const hasMore = visible.length < filtered.length;
-
-  const switchCat = (id) => { setCat(id); setSearch(''); setPage(0); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-
-  const sideStyle = (active) => ({
-    width:"100%", display:"flex", alignItems:"center", gap:10, padding:"11px 16px",
-    border:"none", cursor:"pointer", textAlign:"left",
-    background: active ? "var(--black)" : "transparent",
-    color: active ? "var(--white)" : "var(--gray-600)",
-    transition:"background .15s, color .15s",
-    fontFamily:"var(--mono)", fontSize:10, letterSpacing:".1em", textTransform:"uppercase",
-    borderRadius:0,
-  });
+  const switchCat = (id) => { setCat(id); setSearch(''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
 
   return (
     <div className="page-fade">
       <section className="parts-page-section" style={{ background:"var(--white)", paddingTop:100, minHeight:"100vh" }}>
 
-        {/* ── Mobile tab strip (hidden on desktop) ── */}
+        {/* Mobile tabs */}
         <div className="parts-mobile-tabs">
-          {PART_TABS.map(t => (
-            <button key={t.id} className={"parts-mobile-tab " + (cat === t.id && !search ? "active" : "")}
-              onClick={() => switchCat(t.id)}>
+          {visibleTabs.map(t => (
+            <button key={t.id} className={"parts-mobile-tab " + (cat === t.id ? "active" : "")} onClick={() => switchCat(t.id)}>
               <span style={{ fontSize:14 }}>{t.emoji}</span>
               <span>{t.label}</span>
             </button>
@@ -2259,128 +2260,135 @@ const PartsPage = ({ pageType = 'components' }) => {
 
         <div className="parts-layout">
 
-          {/* ── Sidebar (desktop only) ── */}
+          {/* Sidebar */}
           <div className="parts-sidebar">
-            <div style={{ padding:"0 16px 12px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>Categories</div>
-            {PART_TABS.map(t => {
+            <div style={{ padding:"20px 20px 10px", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+              {pageType === 'accessories' ? 'Accessories & Gear' : 'Components & Parts'}
+            </div>
+            {visibleTabs.map(t => {
               const cached = window.CL_LS?.tabCache?.[t.id];
+              const active = cat === t.id && !search;
               return (
-                <button key={t.id} className={"parts-sidebar-btn " + (cat === t.id && !search ? "active" : "")} data-cursor="link" onClick={() => switchCat(t.id)} style={sideStyle(cat === t.id && !search)}>
-                  <span style={{ fontSize:15, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
-                  <span style={{ flex:1, lineHeight:1.3 }}>{t.label}</span>
-                  {cached && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity: cat === t.id && !search ? .7 : .45, flexShrink:0 }}>{cached.length}</span>}
+                <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)}
+                  style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 20px",
+                    border:"none", borderLeft: active ? "2px solid var(--black)" : "2px solid transparent",
+                    cursor:"pointer", textAlign:"left",
+                    background: active ? "var(--paper)" : "transparent",
+                    color: active ? "var(--black)" : "var(--gray-500)",
+                    transition:"all .15s", fontFamily:"var(--mono)", fontSize:10,
+                    letterSpacing:".1em", textTransform:"uppercase" }}>
+                  <span style={{ fontSize:16, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
+                  <span style={{ flex:1, lineHeight:1.3, fontWeight: active ? 600 : 400 }}>{t.label}</span>
+                  {cached && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.35, flexShrink:0 }}>{cached.length}</span>}
                 </button>
               );
             })}
-            <div style={{ margin:"20px 16px 0", paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
-              <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", lineHeight:1.8 }}>
-                Live · Lightspeed
-              </div>
+            <div style={{ margin:"20px 20px 0", paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
+              <p style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)", lineHeight:1.8, margin:0 }}>Live · Lightspeed</p>
             </div>
           </div>
 
-          {/* ── Main ── */}
-          <div className="parts-main" style={{ padding:"40px 0 80px", minWidth:0, overflow:"hidden" }}>
+          {/* Main */}
+          <div className="parts-main" style={{ minWidth:0, overflow:"hidden" }}>
 
-            {/* Category banner */}
+            {/* Hero banner */}
             {!search && (
-              activeTab.img
-                ? <div style={{ position:"relative", height:160, overflow:"hidden", marginBottom:0 }}>
-                    <img src={activeTab.img} alt={activeTab.label}
-                      style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
-                    <div style={{ position:"absolute", inset:0, background:"linear-gradient(to right, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 100%)" }} />
-                    <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", padding:"0 32px", gap:16 }}>
-                      <div>
-                        <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"#fafafa", lineHeight:1.1 }}>{activeTab.label}</div>
-                        <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.65)", marginTop:6 }}>{activeTab.sub}</div>
-                      </div>
-                    </div>
+              <div style={{ position:"relative", height:140, background:"#0a0a0a", overflow:"hidden" }}>
+                {activeTab.img && <img src={activeTab.img} alt={activeTab.label}
+                  style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.4 }} />}
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 100%)" }} />
+                <div style={{ position:"relative", height:"100%", display:"flex", alignItems:"center", padding:"0 28px", gap:16 }}>
+                  <span style={{ fontSize:36, lineHeight:1 }}>{activeTab.emoji}</span>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:600, textTransform:"uppercase", letterSpacing:"-.02em", color:"#fafafa", lineHeight:1 }}>{activeTab.label}</div>
+                    <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:5 }}>{activeTab.sub}</div>
                   </div>
-                : <div style={{ height:120, background:"#0a0a0a", display:"flex", alignItems:"center", padding:"0 32px", gap:16, marginBottom:0 }}>
-                    <div style={{ fontSize:28, lineHeight:1 }}>{activeTab.emoji}</div>
-                    <div>
-                      <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.5vw,32px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", color:"#fafafa", lineHeight:1.1 }}>{activeTab.label}</div>
-                      <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:6 }}>{activeTab.sub}</div>
-                    </div>
-                  </div>
+                  {!loading && filtered.length > 0 && (
+                    <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"rgba(255,255,255,0.45)", letterSpacing:".08em", textTransform:"uppercase" }}>{filtered.length} in stock</span>
+                  )}
+                </div>
+              </div>
             )}
 
-            {/* Search + header */}
-            <div className="parts-search-area" style={{ padding:"24px 32px 24px", borderBottom:"1px solid var(--hairline)" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:16 }}>
-                <h1 style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.02em", margin:0, flex:1 }}>
-                  {search ? `"${search}"` : activeTab.label}
-                </h1>
-                <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-500)", letterSpacing:".1em", textTransform:"uppercase", flexShrink:0 }}>
-                  {loading ? <span style={{ color:"#b45309" }}>loading…</span> : `${filtered.length} in stock`}
-                </span>
-              </div>
-
-              {/* Search input */}
-              <div style={{ display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 14px", transition:"border-color .15s" }}
+            {/* Sticky search bar */}
+            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:100, zIndex:10 }}>
+              <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
-                <span style={{ fontSize:16, color:"var(--gray-400)", userSelect:"none" }}>⌕</span>
-                <input ref={searchRef} type="text" placeholder="Search parts, brands, SKUs…"
-                  value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
-                  style={{ flex:1, padding:"13px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:15, background:"transparent", color:"var(--black)" }} />
-                {search && <button onClick={() => { setSearch(''); setPage(0); searchRef.current?.focus(); }}
-                  style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer", padding:"4px 6px" }}>✕ Clear</button>}
+                <span style={{ fontSize:13, color:"var(--gray-400)" }}>⌕</span>
+                <input ref={searchRef} type="text" placeholder={`Search ${activeTab.label.toLowerCase()}…`}
+                  value={search} onChange={e => { setSearch(e.target.value); setPg(0); }}
+                  style={{ flex:1, padding:"9px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:14, background:"transparent", color:"var(--black)" }} />
+                {search && <button onClick={() => { setSearch(''); setPg(0); searchRef.current?.focus(); }}
+                  style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer" }}>✕</button>}
               </div>
-
+              {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
             </div>
 
-            {/* Product list */}
-            {filtered.length === 0 ? (
-              <div style={{ padding:"60px 32px", textAlign:"center" }}>
-                {loading
-                  ? (
-                    <div>
-                      {[1,2,3,4,5,6].map(i => (
-                        <div key={i} style={{ display:"grid", gridTemplateColumns:"28px 1fr auto", gap:"0 12px", padding:"12px 14px", borderBottom:"1px solid var(--hairline)" }}>
-                          <div style={{ height:14, background:"var(--paper)", borderRadius:2 }} />
-                          <div style={{ height:14, background:"var(--paper)", borderRadius:2, opacity:.7 }} />
-                          <div style={{ height:14, width:60, background:"var(--paper)", borderRadius:2 }} />
-                        </div>
-                      ))}
+            {/* Content */}
+            {loading ? (
+              <div>
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} style={{ display:"grid", gridTemplateColumns:"24px 1fr auto", gap:"0 12px", padding:"14px 20px", borderBottom:"1px solid var(--hairline)", opacity: 1 - i*0.1 }}>
+                    <div style={{ height:11, background:"var(--paper)", borderRadius:2 }} />
+                    <div style={{ height:11, background:"var(--paper)", borderRadius:2, width:"55%" }} />
+                    <div style={{ height:11, width:44, background:"var(--paper)", borderRadius:2 }} />
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div style={{ padding:"72px 28px", textAlign:"center" }}>
+                <div style={{ fontSize:48, marginBottom:16, opacity:.25 }}>{activeTab.emoji}</div>
+                <p style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>
+                  {search ? `No results for "${search}"` : `No ${activeTab.label} in stock right now`}
+                </p>
+                <p style={{ fontSize:14, color:"var(--gray-500)", maxWidth:340, margin:"0 auto 28px" }}>
+                  {search ? "Try a different search or pick another category." : "Stock changes daily. We can order almost anything — give us a call."}
+                </p>
+                <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+                  <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
+                  <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Contact Us <ArrowRight /></button>
+                </div>
+              </div>
+            ) : grouped ? (
+              <div>
+                {grouped.map(([dept, deptItems]) => (
+                  <div key={dept}>
+                    <div style={{ padding:"10px 20px 8px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".16em", textTransform:"uppercase", color:"var(--gray-400)", background:"var(--paper)", borderBottom:"1px solid var(--hairline)", borderTop:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:8 }}>
+                      <span>{deptEmoji(dept, activeTab.emoji)}</span>
+                      <span style={{ flex:1 }}>{dept}</span>
+                      <span style={{ opacity:.45 }}>{deptItems.length}</span>
                     </div>
-                  ) : <>
-                      <p style={{ fontFamily:"var(--display)", fontSize:20, fontWeight:500, textTransform:"uppercase", marginBottom:10 }}>
-                        {search ? `No results for "${search}"` : "Nothing in stock right now"}
-                      </p>
-                      <p style={{ fontSize:14, color:"var(--gray-500)", marginBottom:24 }}>
-                        {search ? "Try a different spelling or browse a category on the left." : "We can order almost anything — give us a call."}
-                      </p>
-                      <div className="parts-cta-btns" style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
-                        <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
-                        <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Contact Us <ArrowRight /></button>
-                      </div>
-                    </>
-                }
+                    {deptItems.map(item => (
+                      <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
+                    ))}
+                  </div>
+                ))}
+                <div style={{ padding:"36px 20px 60px", borderTop:"1px solid var(--hairline)", marginTop:8 }}>
+                  <div className="eyebrow" style={{ marginBottom:6 }}>Need something not listed?</div>
+                  <p style={{ fontSize:13, color:"var(--gray-500)", marginBottom:14 }}>We stock 7,000+ products and can order most things within a few days.</p>
+                  <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
+                    <a href="tel:2508601968" className="btn btn-outline" data-cursor="link" style={{ fontSize:11 }}>Call Us</a>
+                    <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ fontSize:11 }}>Contact <ArrowRight /></button>
+                  </div>
+                </div>
               </div>
             ) : (
               <>
-                <div>
-                  {visible.map((item) => (
-                    <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
-                  ))}
+                <div style={{ padding:"10px 20px 8px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", background:"var(--paper)", borderBottom:"1px solid var(--hairline)" }}>
+                  {filtered.length} results for "{search}"
                 </div>
+                {visible.map(item => (
+                  <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
+                ))}
                 {hasMore && (
-                  <div style={{ padding:"28px 32px", textAlign:"center" }}>
-                    <button data-cursor="link" onClick={() => setPage(p => p + 1)}
-                      style={{ padding:"12px 32px", border:"1px solid var(--hairline)", background:"none", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", cursor:"pointer", color:"var(--gray-600)" }}>
-                      Load more — {filtered.length - visible.length} remaining
+                  <div style={{ padding:"24px", textAlign:"center" }}>
+                    <button data-cursor="link" onClick={() => setPg(p => p + 1)}
+                      style={{ padding:"11px 28px", border:"1px solid var(--hairline)", background:"none", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", cursor:"pointer", color:"var(--gray-600)" }}>
+                      Load more ({filtered.length - visible.length} remaining)
                     </button>
                   </div>
                 )}
-                <div className="parts-footer-cta" style={{ padding:"40px 32px 0", borderTop:"1px solid var(--hairline)", marginTop:16 }}>
-                  <div className="eyebrow" style={{ marginBottom:8 }}>Can't find what you need?</div>
-                  <p style={{ fontSize:13, color:"var(--gray-500)", marginBottom:12 }}>We stock 7,000+ products. If it's not listed, we can order it — usually arrives within a few days.</p>
-                  <div className="parts-cta-btns" style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                    <a href="tel:2508601968" className="btn btn-outline" data-cursor="link" style={{ fontSize:11 }}>Call (250) 860-1968</a>
-                    <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ fontSize:11 }}>Contact Us <ArrowRight /></button>
-                  </div>
-                </div>
               </>
             )}
           </div>
