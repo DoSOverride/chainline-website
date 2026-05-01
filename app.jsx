@@ -370,9 +370,9 @@ const App = () => {
         {page === "events" && <EventsPage />}
         {page === "social" && <SocialPage />}
         {page === "mtbco" && <MTBCOPage />}
-        {page === "brand-landing"   && <BrandLandingPage brand={window.cl.intent?.brand} />}
-        {page === "type-landing"    && <TypeLandingPage  type={window.cl.intent?.type} />}
-        {page === "service-landing" && <ServiceLandingPage service={window.cl.intent?.service} />}
+        {page === "brand-landing"   && <BrandLandingPage brand={intentState?.brand} />}
+        {page === "type-landing"    && <TypeLandingPage  type={intentState?.type} />}
+        {page === "service-landing" && <ServiceLandingPage service={intentState?.service} />}
       </main>
 
       <Footer />
