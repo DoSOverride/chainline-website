@@ -913,7 +913,7 @@ const BikeCardLarge = ({ b, idx }) => {
     try {
       const variantDesc = selected ? [selected.wheel, selected.color, selected.size].filter(Boolean).join(' · ') : null;
       const result = await window.clAddToCart(sku, name, price, img, sku, variantDesc || null);
-      if (result) { setAdded(true); setTimeout(() => setAdded(false), 2000); }
+      if (result) { setAdded(true); setTimeout(() => setAdded(false), 2000); window.dispatchEvent(new CustomEvent('cart:open')); }
     } catch(err) { console.warn(err); }
     setAdding(false);
   };
