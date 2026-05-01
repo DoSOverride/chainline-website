@@ -2210,9 +2210,18 @@ const PART_TABS = [
   { id:'suspension',  label:'Suspension',         emoji:'🔩',  img: `${R2}/lifestyle/trail-knox.jpg`,
     sub: "Forks, rear shocks, oil, seals",
     depts:['Forks','Fork Parts','Fork Oil','Rear Shock','Seals'] },
-  { id:'fit',        label:'Clothing & Gear',    emoji:'🪖', img:`${R2}/shop/interior-surly.jpg`,
-    sub:"Helmets, gloves, shoes, clothing, armour, sunglasses",
-    depts:['Helmet','Gloves','Armour','Sunglasses','Shoes Mountain','Shoes Road','Cleats','Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips'] },
+  { id:'helmets',    label:'Helmets',            emoji:'⛑️', img:`${R2}/shop/interior-surly.jpg`,
+    sub:"MTB, road and urban helmets",
+    depts:['Helmet'] },
+  { id:'protection', label:'Gloves & Armour',    emoji:'🛡️', img:`${R2}/shop/interior-surly.jpg`,
+    sub:"Gloves, knee/elbow pads, armour, sunglasses",
+    depts:['Gloves','Armour','Sunglasses'] },
+  { id:'shoes',      label:'Shoes & Cleats',     emoji:'👟', img:`${R2}/shop/interior-surly.jpg`,
+    sub:"Mountain & road shoes, SPD and road cleats",
+    depts:['Shoes Mountain','Shoes Road','Cleats'] },
+  { id:'clothing',   label:'Clothing',           emoji:'👕', img:`${R2}/shop/interior-surly.jpg`,
+    sub:"Jerseys, shorts, arm warmers, socks",
+    depts:['Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips'] },
   { id:'tools',      label:'Tools & Maintenance',emoji:'🔧', img:`${R2}/parts/tools-hero.jpg`,
     sub:"Pumps, lube, degreasers, workshop tools",
     depts:['Tools','Pumps','Lube','Degreasers','Trainers'] },
@@ -3811,14 +3820,10 @@ const EventsPage = () => {
 
   return (
     <div className="page-fade" data-screen-label="P Events">
-      <SubHero eyebrow="Community  /  N°02" title="Upcoming" italic="Events." />
+      <SubHero eyebrow="Explore  /  Events" title="Events." />
       <section className="section section-pad bg-black">
         <div className="container-wide">
-          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:56, flexWrap:"wrap", gap:24 }}>
-            <div>
-              <div className="section-label" style={{ color:"var(--gray-300)" }}>On the Calendar  /  N°01</div>
-              <h2 className="display-xl">What's<br/><span className="serif-italic">coming up.</span></h2>
-            </div>
+          <div className="reveal" style={{ display:"flex", justifyContent:"flex-end", marginBottom:40 }}>
             <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener"
               className="btn btn-outline-light" data-cursor="link">Follow for updates <ArrowRight /></a>
           </div>
@@ -3839,13 +3844,6 @@ const EventsPage = () => {
               </a>
             ))}
           </div>
-          <div className="reveal" style={{ marginTop:48, paddingTop:40, borderTop:"1px solid var(--hairline-light)", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:16 }}>
-            <div>
-              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".16em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:6 }}>Looking for skill clinics?</div>
-              <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,22px)", fontWeight:500, textTransform:"uppercase" }}>McGee Cycle coaching programs</div>
-            </div>
-            <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("clinics")}>View Skill Clinics <ArrowRight /></button>
-          </div>
         </div>
       </section>
     </div>
@@ -3865,7 +3863,7 @@ const ClinicsPage = () => {
   ];
   return (
     <div className="page-fade" data-screen-label="P Clinics">
-      <SubHero eyebrow="Community  /  N°03" title="Skill" italic="Clinics." />
+      <SubHero eyebrow="Explore  /  Clinics" title="Skill Clinics." />
       <section className="section section-pad bg-white">
         <div className="container-wide">
           <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:64, flexWrap:"wrap", gap:24 }}>

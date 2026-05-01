@@ -485,7 +485,8 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("demo")) return ["demo", null];
     if (l.includes("warranty")) return ["warranty", null];
     if (l.includes("fitting") || l.includes("bike fit") || l.includes("bike fitting")) return ["fitting", null];
-    if (l === "storage" || l.includes("storage program")) return ["storage", null];
+    if (l.includes("storage")) return ["storage", null];
+    if (l.includes("custom")) return ["services", null];
     if (l.includes("tune") || l === "custom builds" || l.includes("service pricing") || l.includes("service menu") || l === "tune-ups") return ["services", null];
     // Explore
     if (l.includes("social")) return ["social", null];
