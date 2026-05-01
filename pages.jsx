@@ -1153,7 +1153,7 @@ const ServicesPage = () => {
     { cat:"suspension", n:"04", name:"Shock Air Can Service",  price:45,  time:"1 DAY",
       includes:["Air can removed","New seals installed","Fresh oil","Consistent feel restored"] },
     { cat:"suspension", n:"05", name:"50hr Fork + Shock",      price:155, time:"2 DAYS",
-      includes:["Fork lower leg service","Shock air can service","Best value — done together"] },
+      includes:["Fork lower leg service","Shock air can service","Best value - done together"] },
     { cat:"suspension", n:"06", name:"Dropper Post Service",   price:140, time:"1–2 DAYS",
       desc:"Full dropper rebuild — seals, oil, bleed. Fox Transfer, Reverb, PNW, OneUp and more." },
     { cat:"suspension", n:"07", name:"Suspension Setup",        price:50,  time:"30 MIN",
