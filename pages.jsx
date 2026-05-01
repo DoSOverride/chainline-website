@@ -2050,9 +2050,9 @@ const ContactPage = () => (
     <section style={{ height: 440, position: "relative", overflow: "hidden" }}>
       <iframe
         title="ChainLine Cycle location"
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2569.8!2d-119.4960!3d49.8878!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x537df5efc38e336b%3A0x9afd17158d52e898!2sChainLine%20Cycle!5e0!3m2!1sen!2sca!4v1683000000000"
+        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD1u49vRTpJYznduzfBGaMIIdcxDI3xMrU&q=place_id:ChIJbbM4_V7zfVMRmOhSjhXRP9o&zoom=16&maptype=roadmap"
         width="100%" height="100%"
-        style={{ border: 0, display: "block", filter: "grayscale(20%) contrast(1.05)" }}
+        style={{ border: 0, display: "block" }}
         allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
       />
     </section>
@@ -2376,12 +2376,10 @@ const useTabInventory = (tabId) => {
 };
 
 // ── PartRow ───────────────────────────────────────────────────────────────
-const DEPT_EMOJI = { Cassette:"⚙️", Chains:"🔗", Chainrings:"⭕", Cranks:"🔩", "Bottom Brackets":"🔘", "Derailleur Front":"🔀", "Derailleur Rear":"🔀", "Shifters MTB":"🎮", "Shifters - Road":"🎮", Cables:"〰️", Brake:"🛑", "Brake pads":"🛑", "Brake parts":"🛑", "Brake Lever U":"🛑", "Brake Lever V":"🛑", Wheels:"🔵", Wheelset:"🔵", Rims:"⭕", Hubs:"⚙️", Spokes:"📍", 'Tires 29"':"🟤", 'Tires 700C':"⚫", 'Tires 27"':"🟤", 'Tires 26"':"🟤", "Tires Fatbike":"🟤", Tubes:"🫧", "Tire Sealant":"🧴", "Tire Protection":"🛡️", Forks:"🍴", "Fork Parts":"⚙️", "Fork Oil":"🛢️", "Rear Shock":"🌀", Seals:"🔵", Handlebar:"🏋️", Stem:"🔧", Grips:"✊", "Bar tape":"📏", Saddles:"🪑", "Seat post":"⬆️", Headsets:"🔘", Helmet:"⛑️", Gloves:"🧤", Armour:"🛡️", Sunglasses:"🕶️", Clothing:"👕", Shoes:"👟", Tools:"🔧", Pumps:"💨", Lube:"🛢️", Trainers:"🚴", Bags:"🎒", Packs:"🎒", Lights:"💡", Computers:"📱", Locks:"🔒", "Car Racks":"🚗", "Bike Racks":"🚲", Fenders:"🛡️", Bells:"🔔" };
-
 const PartRow = React.memo(({ item, tabEmoji }) => {
   const price = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
   const lowStock = item.qty > 0 && item.qty <= 5;
-  const emoji = DEPT_EMOJI[item.department] || tabEmoji || "⚙️";
+  const emoji = DEPT_EMOJI[(item.department || '').toLowerCase()] || tabEmoji || "⚙️";
   return (
     <div className="part-card" style={{ display:"flex", flexDirection:"column", background:"var(--white)", border:"1px solid var(--hairline)", cursor:"default", transition:"box-shadow .15s, border-color .15s" }}
       onMouseEnter={e => { e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor="var(--gray-300)"; }}
