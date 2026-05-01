@@ -76,6 +76,90 @@
 }
 </script>
 
+<!-- WebSite schema with SearchAction for Google sitelinks search box -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ChainLine Cycle",
+  "url": "https://chainline.ca",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://chainline.ca/bikes?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- FAQPage schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What bike brands does ChainLine Cycle carry?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ChainLine Cycle is an authorized dealer for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots, Knolly, and Revel. We stock mountain bikes, gravel bikes, road bikes, e-bikes, commuter bikes and kids bikes at our Kelowna location."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does a bike tune-up cost at ChainLine Cycle?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A standard bike tune-up at ChainLine Cycle starts at $75 and includes gear and brake adjustment, lubrication, and a safety inspection. Same-day service is available for most repairs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does ChainLine Cycle offer bike fitting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. ChainLine Cycle offers professional bike fitting with video analysis for road, mountain, gravel and triathlon positions. Bike fitting starts at $80. Book online at chainline.ca/fitting."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where is ChainLine Cycle located?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ChainLine Cycle is located at 1139 Ellis St, Kelowna, BC V1Y 1Z5. We are open Monday 10am–5pm, Tuesday–Friday 9:30am–5:30pm, Saturday 10am–4pm. Closed Sunday."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does ChainLine Cycle offer bike storage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. ChainLine Cycle offers secure, climate-controlled bike storage in Kelowna starting at $180. Your bike is spring-ready with a tune-up when you pick it up."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I demo a bike before buying at ChainLine Cycle?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. ChainLine Cycle maintains a demo fleet of mountain, gravel and e-bikes available for test rides on Kelowna's trails. Visit chainline.ca/demo or call (250) 860-1968 to arrange a demo."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does ChainLine Cycle sell used bikes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ChainLine Cycle runs a community classifieds board for used and pre-owned bikes in Kelowna at chainline.ca/classifieds."
+      }
+    }
+  ]
+}
+</script>
+
 <!-- Service schema -->
 <script type="application/ld+json">
 [
@@ -106,10 +190,10 @@
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
-<script type="text/babel" src="tweaks-panel.jsx?v=13"></script>
-<script type="text/babel" src="components.jsx?v=13"></script>
-<script type="text/babel" src="home.jsx?v=13"></script>
-<script type="text/babel" src="pages.jsx?v=13"></script>
-<script type="text/babel" src="app.jsx?v=13"></script>
+<script type="text/babel" src="tweaks-panel.jsx?v=14"></script>
+<script type="text/babel" src="components.jsx?v=14"></script>
+<script type="text/babel" src="home.jsx?v=14"></script>
+<script type="text/babel" src="pages.jsx?v=14"></script>
+<script type="text/babel" src="app.jsx?v=14"></script>
 </body>
 </html>

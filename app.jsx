@@ -194,7 +194,7 @@ const App = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [page]);
 
-  // Per-route title + meta description
+  // Per-route title + meta description + canonical
   React.useEffect(() => {
     const intent = window.cl?.intent;
     const brand = intent?.brand;
@@ -210,16 +210,27 @@ const App = () => {
       demo:        ["Demo Fleet | ChainLine Cycle Kelowna", "Try before you buy. Demo our fleet of mountain, gravel and e-bikes on Kelowna's trails."],
       components:  [tab ? `${tab.charAt(0).toUpperCase()+tab.slice(1)} Parts | ChainLine Cycle` : "Bike Components | ChainLine Cycle", "In-stock bike components in Kelowna. Drivetrain, brakes, suspension, cockpit and wheels."],
       accessories: ["Bike Accessories Kelowna | ChainLine Cycle", "Helmets, gloves, shoes, lights, locks, bags and tools. In stock at ChainLine Cycle, Kelowna."],
+      parts:       [tab ? `${tab.charAt(0).toUpperCase()+tab.slice(1)} | ChainLine Cycle Kelowna` : "Bike Parts Kelowna | ChainLine Cycle", "In-stock bike parts in Kelowna. Drivetrain, brakes, wheels, suspension, cockpit and more."],
       trails:      ["Kelowna Mountain Bike Trails | ChainLine Cycle", "Trail guide for Knox Mountain, Bear Creek, Myra Canyon and Kelowna Bike Park. Conditions, maps and local knowledge."],
       rides:       ["Group Rides Kelowna | ChainLine Cycle", "Join ChainLine's weekly group rides in Kelowna. All abilities welcome. Thursday and Friday evenings."],
+      events:      ["Bike Events Kelowna | ChainLine Cycle", "Upcoming mountain bike events, skill clinics and races near Kelowna. McGee Cycle clinics, Marin Wildside Enduro and more."],
       about:       ["About ChainLine Cycle | Kelowna's Bike Shop Since 2009", "ChainLine Cycle — Kelowna's only full-service performance bike shop. Four dedicated mechanics, real riders."],
       contact:     ["Contact ChainLine Cycle | 1139 Ellis St, Kelowna", "Get in touch with ChainLine Cycle. 1139 Ellis St, Kelowna BC. (250) 860-1968 · bikes@chainline.ca."],
       giftcards:   ["Gift Cards | ChainLine Cycle Kelowna", "Give the gift of bikes. ChainLine Cycle gift cards — valid on bikes, parts, accessories and services."],
+      brands:      ["Bike Brands | ChainLine Cycle Kelowna", "Authorized dealer for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots, Knolly and Revel in Kelowna, BC."],
+      classifieds: ["Used Bikes Kelowna | ChainLine Classifieds", "Buy and sell used bikes in Kelowna. Community classifieds powered by ChainLine Cycle."],
+      social:      ["ChainLine Cycle on Social | Kelowna MTB Community", "Follow ChainLine on Instagram, Facebook, YouTube, Pinkbike and Strava. Kelowna's mountain bike community."],
+      mtbco:       ["MTBCO — Kelowna Mountain Bike Club | ChainLine Cycle", "ChainLine Cycle supports the Mountain Bike Club of the Okanagan. Lost Lake Loop, Pink Highway and trail building in the Okanagan."],
+      warranty:    ["Bike Warranty Service Kelowna | ChainLine Cycle", "Warranty claims for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots and more. Authorized dealer in Kelowna, BC."],
+      terms:       ["Terms of Service | ChainLine Cycle", "ChainLine Cycle terms of service and purchase policies."],
+      privacy:     ["Privacy Policy | ChainLine Cycle", "ChainLine Cycle privacy policy. How we handle your personal information."],
     };
     const [title, desc] = META[page] || META.home;
     document.title = title;
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', desc);
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', `https://chainline.ca${routeToPath(page, intent)}`);
   }, [page]);
 
   // Silent background cache warmer — starts 4s after initial load
