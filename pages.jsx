@@ -2050,7 +2050,7 @@ const ContactPage = () => (
     <section style={{ height: 440, position: "relative", overflow: "hidden" }}>
       <iframe
         title="ChainLine Cycle location"
-        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD1u49vRTpJYznduzfBGaMIIdcxDI3xMrU&q=place_id:ChIJbbM4_V7zfVMRmOhSjhXRP9o&zoom=16&maptype=roadmap"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2569.8429327!2d-119.4984876!3d49.887806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x537df5efc38e336b%3A0x9afd17158d52e898!2sChainLine%20Cycle!5e0!3m2!1sen!2sca!4v1683000000000!5m2!1sen!2sca"
         width="100%" height="100%"
         style={{ border: 0, display: "block" }}
         allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
