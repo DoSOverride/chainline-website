@@ -3514,13 +3514,16 @@ const ComponentsLandingPage = () => {
 const AccessoriesLandingPage = () => {
   const [q, setQ] = React.useState('');
   const cats = [
-    { id:'fit',         label:'Clothing & Helmets', emoji:'⛑️', desc:'Helmets, gloves, shoes, jerseys, shorts, arm warmers, sunglasses, armour' },
-    { id:'tools',       label:'Tools & Maintenance',emoji:'🔧', desc:'Workshop tools, pumps, floor pumps, lube, degreasers, trainers' },
-    { id:'accessories', label:'Accessories',        emoji:'🎒', desc:'Lights, locks, computers, bags, racks, fenders, bells, water bottles' },
+    { id:'fit',   label:'Clothing & Gear',    emoji:'🪖', desc:'Helmets, gloves, shoes, jerseys, arm warmers, sunglasses, armour' },
+    { id:'tools', label:'Tools & Maintenance',emoji:'🔧', desc:'Pumps, workshop tools, lube, degreasers' },
+    { id:'bags',  label:'Bags & Hydration',   emoji:'🎒', desc:'Bags, backpacks, hydration packs, water bottles' },
+    { id:'lights',label:'Lights & Computers', emoji:'💡', desc:'Bike lights, cycling computers, GPS units' },
+    { id:'locks', label:'Locks',              emoji:'🔒', desc:'Cable locks, U-locks, chain locks' },
+    { id:'racks', label:'Racks & Fenders',    emoji:'🚲', desc:'Bike racks, fenders, kickstands, bells, mirrors' },
   ];
   const counts = useTabCounts(cats.map(c => c.id));
   const go = (id) => window.cl.go('accessories', { tab: id });
-  const search = () => { if (q.trim().length >= 2) window.cl.go('accessories', { tab: 'accessories', search: q.trim() }); };
+  const search = () => { if (q.trim().length >= 2) window.cl.go('accessories', { tab: 'fit', search: q.trim() }); };
   return (
     <div className="page-fade">
       <SubHero eyebrow="Accessories  /  In Stock" title="Accessories." italic="Gear up, ride ready." />
