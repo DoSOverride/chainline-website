@@ -3477,48 +3477,87 @@ const PartsLandingPage = () => {
 // ── Components Landing Page ──────────────────────────────────────────────────
 const ComponentsLandingPage = () => {
   const [q, setQ] = React.useState('');
-  const cats = [
-    { id:'drivetrain', label:'Drivetrain',    emoji:'⚙️', desc:'Cassettes, chains, cranks, derailleurs, shifters, cables, bottom brackets' },
-    { id:'brakes',     label:'Brakes',        emoji:'🔴', desc:'Hydraulic & mechanical disc brakes, pads, levers, rotors, adapters' },
-    { id:'wheels',     label:'Wheels & Tires',emoji:'⭕', desc:'Wheelsets, rims, hubs, spokes, tires, tubes, sealant, axles' },
-    { id:'cockpit',    label:'Cockpit',       emoji:'🎛️', desc:'Handlebars, stems, grips, saddles, seatposts, headsets, bar tape' },
-    { id:'suspension', label:'Suspension',    emoji:'🔩', desc:'Forks, rear shocks, fork oil, seals, bushings, fork parts' },
+  const sections = [
+    {
+      heading: 'Drivetrain',
+      tiles: [
+        { tab:'drivetrain', label:'Cassettes',       emoji:'🎡', desc:'All speeds, all brands' },
+        { tab:'drivetrain', label:'Chains',           emoji:'🔗', desc:'8–12 speed, KMC, Shimano, SRAM' },
+        { tab:'drivetrain', label:'Derailleurs',      emoji:'⚙️', desc:'Front & rear, electronic & mechanical' },
+        { tab:'drivetrain', label:'Cranks & BBs',     emoji:'🔧', desc:'Cranksets, bottom brackets, chainrings' },
+        { tab:'drivetrain', label:'Shifters',          emoji:'🎛️', desc:'MTB & road, trigger & twist' },
+        { tab:'drivetrain', label:'Cables & Housing', emoji:'〰️', desc:'Shift & brake cables, housing kits' },
+      ]
+    },
+    {
+      heading: 'Brakes',
+      tiles: [
+        { tab:'brakes', label:'Brake Systems',  emoji:'🛑', desc:'Hydraulic & mechanical disc brakes' },
+        { tab:'brakes', label:'Brake Pads',     emoji:'🛑', desc:'All brands, organic & metallic' },
+        { tab:'brakes', label:'Brake Levers',   emoji:'🛑', desc:'MTB & road levers, U & V brake' },
+      ]
+    },
+    {
+      heading: 'Wheels & Tires',
+      tiles: [
+        { tab:'wheels', label:'Wheelsets',       emoji:'⭕', desc:'Complete sets, all standards' },
+        { tab:'wheels', label:'Rims & Hubs',     emoji:'⭕', desc:'Build your own, all axle standards' },
+        { tab:'wheels', label:'Tires',           emoji:'🔘', desc:'29", 27.5", 700C, 26", fat bike' },
+        { tab:'wheels', label:'Tubes & Sealant', emoji:'🫧', desc:'All sizes, tubeless sealant & tape' },
+      ]
+    },
+    {
+      heading: 'Suspension',
+      tiles: [
+        { tab:'suspension', label:'Forks',       emoji:'🔩', desc:'Trail, enduro, XC — all standards' },
+        { tab:'suspension', label:'Rear Shocks', emoji:'🌀', desc:'Air & coil shocks, all sizes' },
+        { tab:'suspension', label:'Service Parts',emoji:'🛢️', desc:'Seals, oil, bushings, foam rings' },
+      ]
+    },
+    {
+      heading: 'Cockpit',
+      tiles: [
+        { tab:'cockpit', label:'Handlebars & Stems', emoji:'🎯', desc:'Rise bars, flat bars, road bars, stems' },
+        { tab:'cockpit', label:'Saddles & Seatposts', emoji:'💺', desc:'MTB, road & gravel saddles & posts' },
+        { tab:'cockpit', label:'Grips & Bar Tape',   emoji:'✊', desc:'Lock-on grips, foam, cork bar tape' },
+        { tab:'cockpit', label:'Headsets & Bearings',emoji:'🔵', desc:'All standards, loose & cartridge' },
+      ]
+    },
   ];
-  const counts = useTabCounts(cats.map(c => c.id));
-  const go = (id) => window.cl.go('components', { tab: id });
-  const search = () => { if (q.trim().length >= 2) window.cl.go('components', { tab: 'drivetrain', search: q.trim() }); };
+  const go = (tab) => window.cl.go('components', { tab });
+  const doSearch = () => { if (q.trim().length >= 2) window.cl.go('components', { tab: 'drivetrain', search: q.trim() }); };
   return (
     <div className="page-fade">
       <SubHero eyebrow="Components  /  In Stock" title="Components." italic="Everything your bike needs." />
       <section style={{ background:'var(--white)', padding:'60px 0 100px' }}>
         <div className="container-wide">
-          {/* Search */}
-          <div style={{ maxWidth:600, margin:'0 auto 64px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
-            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
-              placeholder="Search cassettes, brakes, saddles…"
+          <div style={{ maxWidth:600, margin:'0 auto 56px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
+            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&doSearch()}
+              placeholder="Search cassettes, brakes, suspension…"
               style={{ flex:1, padding:'16px 20px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:15, background:'transparent', color:'var(--black)' }} />
-            <button onClick={search} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
+            <button onClick={doSearch} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
           </div>
-          {/* Category grid */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
-            {cats.map(c => (
-              <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
-                style={{ display:'flex', alignItems:'center', gap:24, padding:'32px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
-                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-count').style.color='rgba(255,255,255,0.4)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-count').style.color='var(--gray-400)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
-                <span style={{ fontSize:36, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:4, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
-                  <div className="cat-count" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:4, transition:'color .15s' }}>
-                    {counts[c.id] === null ? <span style={{ opacity:.4 }}>Loading…</span> : `${counts[c.id]} in stock`}
-                  </div>
-                  <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
-                </div>
-                <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
-              </button>
-            ))}
-          </div>
-          <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
+          {sections.map(sec => (
+            <div key={sec.heading} style={{ marginBottom:56 }}>
+              <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:12, paddingBottom:10, borderBottom:'1px solid var(--hairline)' }}>{sec.heading}</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:2 }}>
+                {sec.tiles.map(c => (
+                  <button key={c.label} onClick={()=>go(c.tab)} data-cursor="link"
+                    style={{ display:'flex', alignItems:'center', gap:16, padding:'20px 20px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
+                    onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.45)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                    onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                    <span style={{ fontSize:24, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:3, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                      <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.08em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.5, transition:'color .15s' }}>{c.desc}</div>
+                    </div>
+                    <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight size={10} /></span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div style={{ marginTop:32, textAlign:'center', padding:'40px 0', borderTop:'1px solid var(--hairline)' }}>
             <div className="eyebrow" style={{ marginBottom:12 }}>Can't find what you need?</div>
             <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products and can special order almost anything — usually here within a few days.</p>
             <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
@@ -3535,51 +3574,89 @@ const ComponentsLandingPage = () => {
 // ── Accessories Landing Page ──────────────────────────────────────────────────
 const AccessoriesLandingPage = () => {
   const [q, setQ] = React.useState('');
-  const cats = [
-    { id:'fit',   label:'Clothing & Gear',    emoji:'🪖', desc:'Helmets, gloves, shoes, jerseys, arm warmers, sunglasses, armour' },
-    { id:'tools', label:'Tools & Maintenance',emoji:'🔧', desc:'Pumps, workshop tools, lube, degreasers' },
-    { id:'bags',  label:'Bags & Hydration',   emoji:'🎒', desc:'Bags, backpacks, hydration packs, water bottles' },
-    { id:'lights',label:'Lights & Computers', emoji:'💡', desc:'Bike lights, cycling computers, GPS units' },
-    { id:'locks', label:'Locks',              emoji:'🔒', desc:'Cable locks, U-locks, chain locks' },
-    { id:'racks', label:'Racks & Fenders',    emoji:'🚲', desc:'Bike racks, fenders, kickstands, bells, mirrors' },
+  const sections = [
+    {
+      heading: 'Helmets & Protection',
+      tiles: [
+        { tab:'fit', label:'Helmets',         emoji:'⛑️', desc:'MTB, road, urban — Giro, POC, Bell' },
+        { tab:'fit', label:'Gloves',           emoji:'🧤', desc:'Trail, XC, road — all seasons' },
+        { tab:'fit', label:'Armour & Pads',    emoji:'🛡️', desc:'Knee, elbow, back protection' },
+        { tab:'fit', label:'Sunglasses',       emoji:'🕶️', desc:'Sport eyewear, photochromic lenses' },
+      ]
+    },
+    {
+      heading: 'Clothing',
+      tiles: [
+        { tab:'fit', label:'Jerseys & Shorts', emoji:'👕', desc:'MTB & road jerseys, bibs, bib shorts' },
+        { tab:'fit', label:'Arm & Leg Warmers',emoji:'🧣', desc:'Wind jackets, arm & leg warmers' },
+        { tab:'fit', label:'Shoes & Cleats',   emoji:'👟', desc:'Mountain & road shoes, SPD & road cleats' },
+        { tab:'fit', label:'Socks',            emoji:'🧦', desc:'Wool, synthetic — all lengths' },
+      ]
+    },
+    {
+      heading: 'Bags & Hydration',
+      tiles: [
+        { tab:'bags', label:'Packs & Bags',     emoji:'🎒', desc:'Hydration packs, frame bags, saddle bags' },
+        { tab:'bags', label:'Water Bottles',    emoji:'🍶', desc:'Cages, bottles, insulated options' },
+        { tab:'bags', label:'Hydration Systems',emoji:'💧', desc:'Bladders, hoses, bite valves' },
+      ]
+    },
+    {
+      heading: 'Electronics & Security',
+      tiles: [
+        { tab:'lights', label:'Bike Lights',      emoji:'💡', desc:'Front & rear, trail lights, USB rechargeable' },
+        { tab:'lights', label:'Computers & GPS',  emoji:'📡', desc:'Cycling computers, GPS, sensors' },
+        { tab:'locks',  label:'Locks',            emoji:'🔒', desc:'Cable, U-lock, chain locks' },
+      ]
+    },
+    {
+      heading: 'Racks, Fenders & Tools',
+      tiles: [
+        { tab:'racks',  label:'Racks & Fenders',  emoji:'🚲', desc:'Rear racks, fenders, kickstands, bells' },
+        { tab:'tools',  label:'Pumps',             emoji:'💨', desc:'Floor pumps, mini pumps, CO₂' },
+        { tab:'tools',  label:'Tools & Lube',      emoji:'🔧', desc:'Workshop tools, chain lube, degreasers' },
+      ]
+    },
   ];
-  const counts = useTabCounts(cats.map(c => c.id));
-  const go = (id) => window.cl.go('accessories', { tab: id });
-  const search = () => { if (q.trim().length >= 2) window.cl.go('accessories', { tab: 'fit', search: q.trim() }); };
+  const go = (tab) => {
+    const accTabs = ['fit','tools','bags','lights','locks','racks'];
+    window.cl.go(accTabs.includes(tab) ? 'accessories' : 'components', { tab });
+  };
+  const doSearch = () => { if (q.trim().length >= 2) window.cl.go('accessories', { tab: 'fit', search: q.trim() }); };
   return (
     <div className="page-fade">
       <SubHero eyebrow="Accessories  /  In Stock" title="Accessories." italic="Gear up, ride ready." />
       <section style={{ background:'var(--white)', padding:'60px 0 100px' }}>
         <div className="container-wide">
-          {/* Search */}
-          <div style={{ maxWidth:600, margin:'0 auto 64px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
-            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&search()}
+          <div style={{ maxWidth:600, margin:'0 auto 56px', display:'flex', gap:0, border:'1px solid var(--hairline)', background:'var(--paper)' }}>
+            <input value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>e.key==='Enter'&&doSearch()}
               placeholder="Search helmets, lights, locks, tools…"
               style={{ flex:1, padding:'16px 20px', border:'none', outline:'none', fontFamily:'var(--body)', fontSize:15, background:'transparent', color:'var(--black)' }} />
-            <button onClick={search} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
+            <button onClick={doSearch} style={{ padding:'0 24px', background:'var(--black)', color:'var(--white)', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flexShrink:0 }}>Search</button>
           </div>
-          {/* Category grid — 3 full-width cards */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:2 }}>
-            {cats.map(c => (
-              <button key={c.id} onClick={()=>go(c.id)} data-cursor="link"
-                style={{ display:'flex', alignItems:'center', gap:24, padding:'40px 28px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
-                onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.5)';e.currentTarget.querySelector('.cat-count').style.color='rgba(255,255,255,0.4)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
-                onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-count').style.color='var(--gray-400)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
-                <span style={{ fontSize:40, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:4, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
-                  <div className="cat-count" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:4, transition:'color .15s' }}>
-                    {counts[c.id] === null ? <span style={{ opacity:.4 }}>Loading…</span> : `${counts[c.id]} in stock`}
-                  </div>
-                  <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.6, transition:'color .15s' }}>{c.desc}</div>
-                </div>
-                <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight /></span>
-              </button>
-            ))}
-          </div>
-          <div style={{ marginTop:64, textAlign:'center', padding:'48px 0', borderTop:'1px solid var(--hairline)' }}>
+          {sections.map(sec => (
+            <div key={sec.heading} style={{ marginBottom:56 }}>
+              <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:12, paddingBottom:10, borderBottom:'1px solid var(--hairline)' }}>{sec.heading}</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:2 }}>
+                {sec.tiles.map(c => (
+                  <button key={c.label} onClick={()=>go(c.tab)} data-cursor="link"
+                    style={{ display:'flex', alignItems:'center', gap:16, padding:'20px 20px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .15s' }}
+                    onMouseEnter={e=>{e.currentTarget.style.background='var(--black)';e.currentTarget.querySelector('.cat-label').style.color='var(--white)';e.currentTarget.querySelector('.cat-desc').style.color='rgba(255,255,255,0.45)';e.currentTarget.querySelector('.cat-arr').style.color='var(--white)';}}
+                    onMouseLeave={e=>{e.currentTarget.style.background='var(--paper)';e.currentTarget.querySelector('.cat-label').style.color='var(--black)';e.currentTarget.querySelector('.cat-desc').style.color='var(--gray-500)';e.currentTarget.querySelector('.cat-arr').style.color='var(--gray-400)';}}>
+                    <span style={{ fontSize:24, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div className="cat-label" style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:3, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
+                      <div className="cat-desc" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.08em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.5, transition:'color .15s' }}>{c.desc}</div>
+                    </div>
+                    <span className="cat-arr" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight size={10} /></span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div style={{ marginTop:32, textAlign:'center', padding:'40px 0', borderTop:'1px solid var(--hairline)' }}>
             <div className="eyebrow" style={{ marginBottom:12 }}>Don't see what you're after?</div>
-            <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products. If it's not on the shelf, we can order it — usually a few days out.</p>
+            <p style={{ fontSize:15, color:'var(--gray-500)', marginBottom:24, maxWidth:440, margin:'0 auto 24px' }}>We stock 7,000+ products. If it's not on the shelf, we can order it.</p>
             <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
               <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
               <button className="btn" data-cursor="link" onClick={()=>window.cl.go('contact')}>Contact Us <ArrowRight /></button>

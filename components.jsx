@@ -182,7 +182,7 @@ const ContactBar = () => {
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
     { id: "shop",     label: "Bikes",    panel: "shop",     route: "shop" },
-    { id: "store",    label: "Store",    panel: "store",    route: "store" },
+    { id: "store",    label: "Parts",    panel: "store",    route: "parts" },
     { id: "services", label: "Services", panel: "services", route: "services" },
     { id: "explore",  label: "Explore",  panel: "explore",  route: "rides" },
     { id: "more",     label: "More",     panel: "more",     route: "about" },
@@ -345,42 +345,32 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     store: {
       storeCols: [
         { h: "Components", route: "components", items: [
-          { label:"Drivetrain",       go:["components",{tab:"drivetrain"}] },
-          { label:"Cassettes & Chains",go:["components",{tab:"drivetrain"}] },
-          { label:"Derailleurs",      go:["components",{tab:"drivetrain"}] },
-          { label:"Chainrings",       go:["components",{tab:"drivetrain"}] },
-          { label:"Brakes & Pads",    go:["components",{tab:"brakes"}] },
-          { label:"Suspension",       go:["components",{tab:"suspension"}] },
-          { label:"Wheels",           go:["components",{tab:"wheels"}] },
-          { label:"Tires & Tubes",    go:["components",{tab:"wheels"}] },
-          { label:"Handlebar & Grips",go:["components",{tab:"cockpit"}] },
-          { label:"Saddles",          go:["components",{tab:"cockpit"}] },
-          { label:"Sealant & Lube",   go:["accessories",{tab:"tools"}] },
+          { label:"Drivetrain",        go:["components",{tab:"drivetrain"}] },
+          { label:"Brakes",            go:["components",{tab:"brakes"}] },
+          { label:"Suspension",        go:["components",{tab:"suspension"}] },
+          { label:"Wheels",            go:["components",{tab:"wheels"}] },
+          { label:"Cockpit",           go:["components",{tab:"cockpit"}] },
         ]},
         { h: "Accessories", route: "accessories", items: [
-          { label:"Helmets",          go:["accessories",{tab:"fit"}] },
-          { label:"Gloves & Armour",  go:["accessories",{tab:"fit"}] },
-          { label:"Shoes & Cleats",   go:["accessories",{tab:"fit"}] },
-          { label:"Clothing",         go:["accessories",{tab:"fit"}] },
-          { label:"Bags & Backpacks", go:["accessories",{tab:"bags"}] },
-          { label:"Hydration",        go:["accessories",{tab:"bags"}] },
-          { label:"Lights",           go:["accessories",{tab:"lights"}] },
-          { label:"Computers & GPS",  go:["accessories",{tab:"lights"}] },
-          { label:"Locks",            go:["accessories",{tab:"locks"}] },
-          { label:"Racks & Fenders",  go:["accessories",{tab:"racks"}] },
-          { label:"Pumps & Tools",    go:["accessories",{tab:"tools"}] },
+          { label:"Helmets",           go:["accessories",{tab:"fit"}] },
+          { label:"Gloves & Armour",   go:["accessories",{tab:"fit"}] },
+          { label:"Clothing",          go:["accessories",{tab:"fit"}] },
+          { label:"Shoes & Cleats",    go:["accessories",{tab:"fit"}] },
+          { label:"Bags & Packs",      go:["accessories",{tab:"bags"}] },
+          { label:"Lights & Computers",go:["accessories",{tab:"lights"}] },
+          { label:"Locks",             go:["accessories",{tab:"locks"}] },
+          { label:"Racks & Fenders",   go:["accessories",{tab:"racks"}] },
+          { label:"Pumps & Tools",     go:["accessories",{tab:"tools"}] },
         ]},
-        { h: "Parts", route: "components", items: [
-          { label:'Tires 29"',        go:["components",{tab:"wheels"}] },
-          { label:"Tires 700C",       go:["components",{tab:"wheels"}] },
-          { label:'Tires 27.5"',      go:["components",{tab:"wheels"}] },
-          { label:"Tubes",            go:["components",{tab:"wheels"}] },
-          { label:"Brake Pads",       go:["components",{tab:"brakes"}] },
-          { label:"Chains",           go:["components",{tab:"drivetrain"}] },
-          { label:"Cassettes",        go:["components",{tab:"drivetrain"}] },
-          { label:"Cables",           go:["components",{tab:"drivetrain"}] },
-          { label:"Lube & Degreaser", go:["accessories",{tab:"tools"}] },
-          { label:"Pumps",            go:["accessories",{tab:"tools"}] },
+        { h: "Parts", route: "parts", items: [
+          { label:'Tires 29"',         go:["components",{tab:"wheels"}] },
+          { label:"Tires 700C",        go:["components",{tab:"wheels"}] },
+          { label:'Tires 27.5"',       go:["components",{tab:"wheels"}] },
+          { label:"Tubes & Sealant",   go:["components",{tab:"wheels"}] },
+          { label:"Brake Pads",        go:["components",{tab:"brakes"}] },
+          { label:"Chains",            go:["components",{tab:"drivetrain"}] },
+          { label:"Cables",            go:["components",{tab:"drivetrain"}] },
+          { label:"Lube & Maintenance",go:["accessories",{tab:"tools"}] },
         ]},
       ],
     },
@@ -601,7 +591,7 @@ const MobileNav = ({ open, onClose }) => {
         {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
           <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
-          <div style={linkA} onClick={() => setPanel('store')}>Store <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('store')}>Parts <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('explore')}>Explore <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('more')}>More <ChevR /></div>
@@ -634,7 +624,7 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'store' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("store")); }}>Shop the Store</a>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts")); }}>All Parts & Gear</a>
           {[
             { label:"Components",  route:"components", sub:"Drivetrain, Brakes, Suspension, Cockpit" },
             { label:"Parts",       route:"parts",      sub:"Tires, Tubes, Chains, Cables, Brake Pads" },
