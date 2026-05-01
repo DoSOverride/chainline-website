@@ -103,6 +103,7 @@ const App = () => {
     window.cl.currentPage = p;
     return p;
   });
+  const [intentState, setIntentState] = React.useState(() => pathToRoute(window.location.pathname).intent);
   const [scrolled, setScrolled] = React.useState(false);
   const [showSticky, setShowSticky] = React.useState(false);
   const [megaOpen, setMegaOpen] = React.useState(null);
@@ -170,6 +171,7 @@ const App = () => {
       window.history.pushState({ page: p, intent: intent || null }, '', routeToPath(p, intent));
       setTimeout(() => { _fromCode = false; }, 50);
       setPage(p);
+      setIntentState(intent || null);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
 
@@ -188,6 +190,7 @@ const App = () => {
       window.cl.currentPage = p;
       window.cl.intent = intent;
       setPage(p);
+      setIntentState(intent);
       window.scrollTo({ top: 0, behavior: "auto" });
     };
     window.addEventListener('popstate', onPopState);
@@ -344,7 +347,7 @@ const App = () => {
           </>
         )}
         {page === "shop" && <ShopPage />}
-        {page === "bike" && <BikePage bike={window.cl.intent?.bike} onBack={() => window.cl.go("shop")} onCart={() => setCartOpen(true)} />}
+        {page === "bike" && <BikePage bike={intentState?.bike} onBack={() => window.cl.go("shop")} onCart={() => setCartOpen(true)} />}
         {page === "services" && <ServicesPage />}
         {page === "book" && <BookPage />}
         {page === "about" && <AboutPage />}
@@ -353,9 +356,9 @@ const App = () => {
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
         {page === "store"       && <StorePage />}
-        {page === "components"  && (window.cl.intent?.tab ? <PartsPage pageType="components" /> : <ComponentsLandingPage />)}
-        {page === "parts"       && (window.cl.intent?.tab ? <PartsPage pageType="components" /> : <PartsLandingPage />)}
-        {page === "accessories" && (window.cl.intent?.tab ? <PartsPage pageType="accessories" /> : <AccessoriesLandingPage />)}
+        {page === "components"  && (intentState?.tab ? <PartsPage key={intentState.tab} pageType="components" /> : <ComponentsLandingPage />)}
+        {page === "parts"       && (intentState?.tab ? <PartsPage key={"p-"+intentState.tab} pageType="components" /> : <PartsLandingPage />)}
+        {page === "accessories" && (intentState?.tab ? <PartsPage key={"a-"+intentState.tab} pageType="accessories" /> : <AccessoriesLandingPage />)}
         {page === "classifieds" && <ClassifiedsPage />}
         {page === "brands" && <BrandPage />}
         {page === "terms" && <TermsPage />}

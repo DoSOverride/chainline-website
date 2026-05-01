@@ -2224,13 +2224,8 @@ const ACC_TAB_IDS  = ['fit','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
   const defaultTab = pageType === 'accessories' ? 'fit' : 'drivetrain';
-  const [cat,    setCat]    = React.useState(defaultTab);
-  const [search, setSearch] = React.useState('');
-  const [pg,     setPg]     = React.useState(0);
-  const PAGE = 60;
-  const searchRef = React.useRef(null);
 
-  // Map removed tab IDs to current equivalents
+  // Map tab IDs (including legacy names) to current tab IDs
   const remapTab = (id) => {
     const REMAP = { helmets:'fit', protection:'fit', shoes:'fit', clothing:'fit',
                     accessories:'bags', fit:'fit', tools:'tools', bags:'bags',
@@ -2238,11 +2233,19 @@ const PartsPage = ({ pageType = 'components' }) => {
     return REMAP[id] || (COMP_TAB_IDS.includes(id) ? id : defaultTab);
   };
 
-  // Handle routing intent from nav
+  const [cat,    setCat]    = React.useState(() => {
+    const t = window.cl?.intent?.tab;
+    return t ? remapTab(t) : defaultTab;
+  });
+  const [search, setSearch] = React.useState('');
+  const [pg,     setPg]     = React.useState(0);
+  const PAGE = 60;
+  const searchRef = React.useRef(null);
+
+  // Handle routing intent from nav (dept/search filters only — tab handled in useState)
   React.useEffect(() => {
     const intent = window.cl?.intent;
     if (!intent) return;
-    if (intent.tab) setCat(remapTab(intent.tab));
     if (intent.dept)   setSearch(intent.dept);
     if (intent.search) setSearch(intent.search);
     window.cl.intent = null;
