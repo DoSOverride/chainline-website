@@ -32,19 +32,19 @@
 /* ── Dark mode root variables ── */
 [data-theme="dark"] {
   color-scheme: dark;
-  --black:        #f0f0ee;
-  --near-black:   #e0e0de;
-  --soft-black:   #c4c4c2;
-  --white:        #161616;
-  --paper:        #2a2a2a;
-  --gray-100:     #323232;
-  --gray-200:     #3c3c3c;
-  --gray-300:     #484846;
-  --gray-400:     #6a6a68;
-  --gray-500:     #949490;
-  --gray-600:     #b8b8b4;
-  --hairline:     rgba(255,255,255,0.09);
-  --hairline-light: rgba(255,255,255,0.07);
+  --black:        #edebe7;    /* warm off-white text */
+  --near-black:   #dedad4;
+  --soft-black:   #c0bcb6;
+  --white:        #111111;    /* deep page background */
+  --paper:        #1c1c1c;    /* card surfaces — clear lift from page */
+  --gray-100:     #272725;    /* inputs, hover surfaces */
+  --gray-200:     #363634;    /* borders, dividers */
+  --gray-300:     #525250;    /* placeholder / disabled */
+  --gray-400:     #727270;    /* secondary text */
+  --gray-500:     #969692;    /* body text on dark */
+  --gray-600:     #bcbcb8;    /* high-contrast secondary */
+  --hairline:     rgba(255,255,255,0.08);
+  --hairline-light: rgba(255,255,255,0.06);
   --stock-green:  #22c55e;
 }
 
@@ -70,245 +70,222 @@
   --stock-green:  #16a34a;
 }
 
-/* ── Dark mode component overrides ── */
+/* ── Dark mode component overrides ─────────────────────────────── */
 
 /* Header */
 [data-theme="dark"] .header,
 [data-theme="dark"] .header.solid,
 [data-theme="dark"] .header.light {
-  background: rgba(14,14,14,0.97) !important;
-  border-bottom-color: rgba(255,255,255,0.08) !important;
+  background: rgba(10,10,10,0.97) !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
 }
 
 /* Announce + contact bar */
 [data-theme="dark"] .announce {
   background: #0a0a0a !important;
-  color: #f0f0ee !important;
-  border-bottom-color: rgba(255,255,255,0.06) !important;
+  color: #edebe7 !important;
+  border-bottom-color: rgba(255,255,255,0.05) !important;
 }
 [data-theme="dark"] .contact-bar {
-  background: #111111 !important;
-  border-bottom-color: rgba(255,255,255,0.07) !important;
+  background: #0d0d0d !important;
+  border-bottom-color: rgba(255,255,255,0.06) !important;
 }
-[data-theme="dark"] .contact-bar a {
-  color: rgba(255,255,255,0.6) !important;
-}
-[data-theme="dark"] .contact-bar a:hover {
-  color: rgba(255,255,255,0.9) !important;
-}
+[data-theme="dark"] .contact-bar a       { color: rgba(255,255,255,0.52) !important; }
+[data-theme="dark"] .contact-bar a:hover { color: rgba(255,255,255,0.85) !important; }
 
 /* Mega menu */
 [data-theme="dark"] .mega {
-  background: rgba(12,12,12,0.99) !important;
-  border-color: rgba(255,255,255,0.09) !important;
+  background: rgba(10,10,10,0.99) !important;
+  border-color: rgba(255,255,255,0.07) !important;
 }
-[data-theme="dark"] .mega h4 { color: rgba(255,255,255,0.4) !important; }
-[data-theme="dark"] .mega a  { color: rgba(255,255,255,0.75) !important; }
-[data-theme="dark"] .mega a:hover { color: #ffffff !important; }
+[data-theme="dark"] .mega h4        { color: rgba(255,255,255,0.32) !important; }
+[data-theme="dark"] .mega a         { color: rgba(255,255,255,0.68) !important; }
+[data-theme="dark"] .mega a:hover   { color: #ffffff !important; }
+[data-theme="dark"] .mega-feature   { background: var(--gray-100) !important; }
 
 /* Cart drawer */
-[data-theme="dark"] .drawer { background: #181818 !important; }
+[data-theme="dark"] .drawer { background: #161616 !important; }
 
 /* Footer */
-[data-theme="dark"] .footer       { background: #0a0a0a !important; color: #f0f0ee !important; }
-[data-theme="dark"] .footer-massive { color: #f0f0ee !important; }
-[data-theme="dark"] .footer-col h4  { color: rgba(255,255,255,0.35) !important; }
-[data-theme="dark"] .hr-light       { border-top-color: rgba(255,255,255,0.09) !important; }
+[data-theme="dark"] .footer         { background: #0a0a0a !important; color: #edebe7 !important; }
+[data-theme="dark"] .footer-massive { color: #edebe7 !important; }
+[data-theme="dark"] .footer-col h4  { color: rgba(255,255,255,0.28) !important; }
+[data-theme="dark"] .hr-light       { border-top-color: rgba(255,255,255,0.07) !important; }
 
-/* Logo — invert to show on dark header */
+/* Logo */
 [data-theme="dark"] img[src*="logo-dark"] { filter: invert(1); }
 
 /* Placeholder boxes */
-[data-theme="dark"] .ph { background: var(--gray-100) !important; }
+[data-theme="dark"] .ph       { background: var(--gray-100) !important; }
 [data-theme="dark"] .ph-label { color: var(--gray-400) !important; }
 
-/* Forms */
+/* ── Forms — !important beats inline styles ── */
 [data-theme="dark"] input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background: var(--gray-100) !important;
+  background: var(--gray-100) !important;  /* #272725 */
   color: var(--black) !important;
-  border-color: var(--gray-200) !important;
+  border-color: rgba(255,255,255,0.13) !important;
+  caret-color: var(--black);
 }
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: var(--gray-400) !important; }
+[data-theme="dark"] select { color-scheme: dark; }
 
-/* Pill / tag chips */
-[data-theme="dark"] .pill { background: var(--gray-100) !important; border-color: var(--gray-200) !important; }
-
-/* Pills inside always-dark sections — the dark mode override above forces a LIGHT bg
-   (because bg-black locks --gray-100 to #ececea), making white inherited text invisible.
-   Override with a frosted white tint so they're readable on dark backgrounds. */
+/* ── Pill / tag chips ── */
+[data-theme="dark"] .pill {
+  background: var(--gray-100) !important;
+  border-color: var(--gray-200) !important;
+  color: var(--gray-600) !important;
+}
+/* Pills inside always-dark sections get locked light vars — re-frost them */
 [data-theme="dark"] .bg-black .pill,
 [data-theme="dark"] .hero-section .pill,
 [data-theme="dark"] .mobile-nav .pill {
-  background: rgba(255,255,255,0.12) !important;
-  border-color: rgba(255,255,255,0.28) !important;
-  color: rgba(255,255,255,0.9) !important;
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  color: rgba(255,255,255,0.85) !important;
 }
 
-/* Parts/shop add-to-cart buttons — var(--black) bg becomes white in dark mode */
+/* ── Buttons ── */
+[data-theme="dark"] .btn {
+  background: #232321;
+  color: #edebe7;
+  border-color: #2e2e2c;
+}
+[data-theme="dark"] .btn:hover { background: #2e2e2c; }
+[data-theme="dark"] .btn-outline {
+  background: transparent;
+  color: #edebe7;
+  border-color: rgba(255,255,255,0.22);
+}
+[data-theme="dark"] .btn-outline::before { background: rgba(255,255,255,0.06); }
+[data-theme="dark"] .btn-outline:hover   { color: #edebe7; background: rgba(255,255,255,0.07); }
+[data-theme="dark"] .btn-light {
+  background: rgba(255,255,255,0.08);
+  color: #edebe7;
+  border-color: rgba(255,255,255,0.18);
+}
+[data-theme="dark"] .btn-outline-light {
+  border-color: rgba(255,255,255,0.28);
+  color: #edebe7;
+}
+[data-theme="dark"] .sticky-cta .btn {
+  background: #232321;
+  color: #edebe7;
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* ── Parts / cart buttons ── */
 [data-theme="dark"] .part-cart-btn {
-  background: #1c1c1c !important;
-  color: #f0f0ee !important;
-  outline: 1px solid rgba(255,255,255,0.2);
+  background: #232321 !important;
+  color: #edebe7 !important;
+  outline: 1px solid rgba(255,255,255,0.16);
 }
-[data-theme="dark"] .part-cart-stepper-add {
-  background: #1c1c1c !important;
-  color: #f0f0ee !important;
-}
-[data-theme="dark"] .part-cart-stepper-remove {
-  background: #2a2a2a !important;
-  color: #f0f0ee !important;
-}
-
-/* Parts sidebar active tab — var(--black) inverts to near-white in dark mode */
+[data-theme="dark"] .part-cart-stepper-add    { background: #232321 !important; color: #edebe7 !important; }
+[data-theme="dark"] .part-cart-stepper-remove { background: #1c1c1c !important; color: #edebe7 !important; }
 [data-theme="dark"] .parts-sidebar-btn.active {
-  background: rgba(255,255,255,0.12) !important;
+  background: rgba(255,255,255,0.10) !important;
   color: #fafafa !important;
 }
 
-/* Bike images — keep as-is (white bg bikes look fine on dark paper background) */
-[data-theme="dark"] img.bike-img {
-  mix-blend-mode: normal !important;
-  filter: brightness(1.05) contrast(1.05) !important;
-}
-
-/* Buttons in dark mode */
-[data-theme="dark"] .btn {
-  background: #1c1c1c;
-  color: #f0f0ee;
-  border-color: #1c1c1c;
-}
-[data-theme="dark"] .btn-outline {
-  background: transparent;
-  color: #f0f0ee;
-  border-color: rgba(255,255,255,0.25);
-}
-[data-theme="dark"] .btn-outline::before { background: rgba(255,255,255,0.08); }
-[data-theme="dark"] .btn-outline:hover { color: #f0f0ee; background: rgba(255,255,255,0.08); }
-[data-theme="dark"] .btn-light {
-  background: rgba(255,255,255,0.1);
-  color: #f0f0ee;
-  border-color: rgba(255,255,255,0.2);
-}
-[data-theme="dark"] .btn-outline-light {
-  border-color: rgba(255,255,255,0.3);
-  color: #f0f0ee;
-}
-
-/* Dark mode — chat widget */
+/* ── Chat widget ── */
 [data-theme="dark"] .chat-toggle-btn {
   background: #1c1c1c !important;
-  border-color: rgba(255,255,255,0.18) !important;
-  color: #f0f0ee !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #edebe7 !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.7) !important;
 }
 [data-theme="dark"] .chat-popup {
-  background: #161616 !important;
-  border-color: rgba(255,255,255,0.1) !important;
+  background: #141414 !important;
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
-/* Dark mode — sticky CTA */
-[data-theme="dark"] .sticky-cta .btn {
-  background: #1c1c1c;
-  color: #f0f0ee;
-  border-color: rgba(255,255,255,0.2);
-}
-
-/* ── Shop page dark mode ─────────────────────────────────────── */
-
-/* Filter bar tabs — inactive text too dark on near-black bar */
+/* ── Shop filter tabs ── */
 [data-theme="dark"] .shop-filter-tab {
-  color: rgba(255,255,255,0.45) !important;
+  color: rgba(255,255,255,0.40) !important;
   border-bottom-color: transparent !important;
 }
 [data-theme="dark"] .shop-filter-tab.active {
-  color: #fafafa !important;
-  border-bottom-color: #fafafa !important;
+  color: #edebe7 !important;
+  border-bottom-color: #edebe7 !important;
 }
-[data-theme="dark"] .shop-filter-tab:hover {
-  color: rgba(255,255,255,0.8) !important;
-}
+[data-theme="dark"] .shop-filter-tab:hover { color: rgba(255,255,255,0.75) !important; }
 
-/* Bike card image — use light bg + multiply so white-bg photos blend cleanly */
-[data-theme="dark"] .shop-bike-card-img {
-  background: #d8d8d6 !important;
+/* ── Bike card images — the key fix ─────────────────────────────
+   White-bg product photos look terrible on dark backgrounds with
+   normal blend. Solution: multiply blend on a warm mid-gray wrapper.
+   multiply(#c8c4be, white) = #c8c4be — warm gray, not blinding white. */
+[data-theme="dark"] img.bike-img {
+  mix-blend-mode: multiply;
+  filter: none;
 }
-[data-theme="dark"] .shop-bike-card-img .bike-img {
+[data-theme="dark"] .bike-card-img-wrap      { background: #c8c4be !important; }
+[data-theme="dark"] .bike-card-featured-img  { background: #c8c4be !important; }
+[data-theme="dark"] .shop-bike-card-img      { background: #c8c4be !important; }
+[data-theme="dark"] .bike-scroller-item      { background: #c8c4be !important; }
+[data-theme="dark"] .bike-gallery-main,
+[data-theme="dark"] .bike-gallery-thumb      { background: #c8c4be !important; }
+
+[data-theme="dark"] .bike-card-img-primary,
+[data-theme="dark"] .bike-card-img-hover,
+[data-theme="dark"] .bike-card-featured-img .bike-img,
+[data-theme="dark"] .shop-bike-card-img .bike-img,
+[data-theme="dark"] .bike-scroller-item img {
   mix-blend-mode: multiply !important;
   filter: none !important;
 }
 
-/* Variant chips — unavailable text barely visible in dark mode */
-[data-theme="dark"] .shop-chip {
-  border-color: rgba(255,255,255,0.15) !important;
-  color: rgba(255,255,255,0.75) !important;
-}
-[data-theme="dark"] .shop-chip.active {
-  border-color: #fafafa !important;
-  color: #fafafa !important;
-}
-[data-theme="dark"] .shop-chip.unavail {
-  color: rgba(255,255,255,0.3) !important;
-  border-color: rgba(255,255,255,0.08) !important;
+/* ── Variant chips ── */
+[data-theme="dark"] .shop-chip         { border-color: rgba(255,255,255,0.13) !important; color: rgba(255,255,255,0.70) !important; }
+[data-theme="dark"] .shop-chip.active  { border-color: #edebe7 !important; color: #edebe7 !important; }
+[data-theme="dark"] .shop-chip.unavail { color: rgba(255,255,255,0.26) !important; border-color: rgba(255,255,255,0.06) !important; }
+
+/* bcc chips (wheel / size selectors on new cards) */
+[data-theme="dark"] .bcc        { border-color: rgba(255,255,255,0.13); color: rgba(255,255,255,0.65); }
+[data-theme="dark"] .bcc:hover  { border-color: rgba(255,255,255,0.42); color: #edebe7; }
+[data-theme="dark"] .bcc.active { border-color: #edebe7; background: #edebe7; color: #111; }
+
+/* Color swatch ring */
+[data-theme="dark"] .color-swatch.active {
+  box-shadow: 0 0 0 2px #1c1c1c, 0 0 0 3.5px #edebe7;
 }
 
-/* Dark mode — hero gradient overlay */
+/* ── Sticky bars with hardcoded rgba(250,…) — !important required ── */
+[data-theme="dark"] .shop-filter-sticky {
+  background: rgba(10,10,10,0.97) !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
+}
+[data-theme="dark"] .bike-back-bar {
+  background: rgba(10,10,10,0.97) !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
+}
+
+/* ── Brand flip cards ── */
+[data-theme="dark"] .brand-tile-back-light          { background: #141414 !important; }
+[data-theme="dark"] .brand-tile-back-light img      { filter: invert(1) !important; }
+[data-theme="dark"] .brand-tile-back-light span     { color: #edebe7 !important; }
+
+/* ── New bike card classes ── */
+[data-theme="dark"] .bike-card-name,
+[data-theme="dark"] .bike-card-price    { color: var(--black); }
+[data-theme="dark"] .bike-card-featured { border-color: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .bike-card-featured-info { border-left-color: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .bike-card-type-pill {
+  background: rgba(18,18,18,0.80) !important;
+  color: rgba(255,255,255,0.72) !important;
+  border: none !important;
+}
+
+/* ── Sub-hero / hero ── */
+[data-theme="dark"] .sub-hero-title { color: #edebe7 !important; }
 [data-theme="dark"] .hero-gradient-overlay {
   background: linear-gradient(to bottom, rgba(10,10,10,0.15) 0%, rgba(10,10,10,0.02) 38%, rgba(10,10,10,0.45) 100%) !important;
 }
-
-/* Sub-hero (always dark bg) */
-[data-theme="dark"] .sub-hero-title { color: #f0f0ee !important; }
-
-/* eyebrow-light always on dark bg — keep visible */
 .eyebrow-light { color: rgba(255,255,255,0.45); }
 
-/* Bike scroller — white-bg product photos on dark mode:
-   multiply blend × light-gray container = white bg disappears into gray,
-   bike colors survive (slightly muted but clearly colored, no inversion) */
-[data-theme="dark"] .bike-scroller-item {
-  background: #d0d0d0 !important;
-}
-[data-theme="dark"] .bike-scroller-item img {
-  mix-blend-mode: multiply !important;
-}
-
-/* Sticky nav bars — hardcoded rgba(250,250,250) backgrounds turn white in dark mode */
-[data-theme="dark"] .shop-filter-sticky {
-  background: rgba(12,12,12,0.97) !important;
-  border-bottom-color: rgba(255,255,255,0.08) !important;
-}
-[data-theme="dark"] .bike-back-bar {
-  background: rgba(12,12,12,0.97) !important;
-  border-bottom-color: rgba(255,255,255,0.08) !important;
-}
-
-/* Brand flip card — light-bg variant: go dark + invert logos to white */
-[data-theme="dark"] .brand-tile-back-light {
-  background: #141414 !important;
-}
-[data-theme="dark"] .brand-tile-back-light img {
-  filter: invert(1) !important;
-}
-[data-theme="dark"] .brand-tile-back-light span {
-  color: #f0f0ee !important;
-}
-
-/* Grain overlay — multiply is invisible on dark; switch to screen */
-[data-theme="dark"] .grain {
-  mix-blend-mode: screen;
-  opacity: 0.06;
-}
-
-/* Native <select> elements — dark chrome for the browser dropdown popup */
-[data-theme="dark"] select {
-  color-scheme: dark;
-}
-
-/* Mega feature panel */
-[data-theme="dark"] .mega-feature {
-  background: var(--gray-100) !important;
-}
+/* ── Grain overlay ── */
+[data-theme="dark"] .grain { mix-blend-mode: screen; opacity: 0.05; }
 
 
 /* ── Blinking stock indicator ── */
@@ -1078,34 +1055,7 @@ img {
   padding-top: 14px;
 }
 
-/* Dark mode */
-[data-theme="dark"] .bike-card-name,
-[data-theme="dark"] .bike-card-price { color: var(--white); }
-
-[data-theme="dark"] .bike-card-img-wrap { background: #d8d8d6; }
-[data-theme="dark"] .bike-card-img-wrap .bike-img {
-  mix-blend-mode: multiply !important;
-  filter: none !important;
-}
-
-[data-theme="dark"] .bike-card-featured { border-color: rgba(255,255,255,0.08); }
-[data-theme="dark"] .bike-card-featured-img { background: #d8d8d6; }
-[data-theme="dark"] .bike-card-featured-img .bike-img {
-  mix-blend-mode: multiply !important;
-  filter: none !important;
-}
-[data-theme="dark"] .bike-card-featured-info { border-left-color: rgba(255,255,255,0.08); }
-[data-theme="dark"] .bike-card-type-pill { background: rgba(30,30,30,0.85); color: rgba(255,255,255,0.75) !important; }
-
-[data-theme="dark"] .bcc {
-  border-color: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.7);
-}
-[data-theme="dark"] .bcc:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
-[data-theme="dark"] .bcc.active { border-color: #fff; background: #fff; color: #000; }
-[data-theme="dark"] .color-swatch.active {
-  box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 3.5px #fff;
-}
+/* Bike card dark mode — consolidated above in the main dark mode block */
 
 /* Sections */
 .section {
