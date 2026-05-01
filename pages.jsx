@@ -2213,21 +2213,29 @@ const PartsPage = ({ pageType = 'components' }) => {
   const PAGE = 60;
   const searchRef = React.useRef(null);
 
+  // Map removed tab IDs to current equivalents
+  const remapTab = (id) => {
+    const REMAP = { helmets:'fit', protection:'fit', shoes:'fit', clothing:'fit',
+                    accessories:'bags', fit:'fit', tools:'tools', bags:'bags',
+                    lights:'lights', locks:'locks', racks:'racks' };
+    return REMAP[id] || (COMP_TAB_IDS.includes(id) ? id : defaultTab);
+  };
+
   // Handle routing intent from nav
   React.useEffect(() => {
     const intent = window.cl?.intent;
     if (!intent) return;
-    if (intent.tab && PART_TABS.find(t => t.id === intent.tab)) setCat(intent.tab);
+    if (intent.tab) setCat(remapTab(intent.tab));
     if (intent.dept)   setSearch(intent.dept);
     if (intent.search) setSearch(intent.search);
     window.cl.intent = null;
   }, []);
 
-  const { items, loading } = useTabInventory(cat);
-  const activeTab = PART_TABS.find(t => t.id === cat) || PART_TABS[0];
-  const visibleTabs = PART_TABS.filter(t =>
-    pageType === 'accessories' ? ACC_TAB_IDS.includes(t.id) : COMP_TAB_IDS.includes(t.id)
-  );
+  const validTabIds = pageType === 'accessories' ? ACC_TAB_IDS : COMP_TAB_IDS;
+  const safeCat = validTabIds.includes(cat) ? cat : defaultTab;
+  const { items, loading } = useTabInventory(safeCat);
+  const visibleTabs = PART_TABS.filter(t => validTabIds.includes(t.id));
+  const activeTab = PART_TABS.find(t => t.id === safeCat) || visibleTabs[0];
 
   const filtered = React.useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -2255,16 +2263,16 @@ const PartsPage = ({ pageType = 'components' }) => {
 
   const visible = filtered.slice(0, (pg + 1) * PAGE);
   const hasMore = visible.length < filtered.length;
-  const switchCat = (id) => { setCat(id); setSearch(''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
+  const switchCat = (id) => { setCat(remapTab(id)); setSearch(''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
 
   return (
     <div className="page-fade">
-      <section className="parts-page-section" style={{ background:"var(--white)", paddingTop:100, minHeight:"100vh" }}>
+      <section className="parts-page-section" style={{ background:"var(--white)", paddingTop:136, minHeight:"100vh" }}>
 
         {/* Mobile tabs */}
         <div className="parts-mobile-tabs">
           {visibleTabs.map(t => (
-            <button key={t.id} className={"parts-mobile-tab " + (cat === t.id ? "active" : "")} onClick={() => switchCat(t.id)}>
+            <button key={t.id} className={"parts-mobile-tab " + (safeCat === t.id ? "active" : "")} onClick={() => switchCat(t.id)}>
               <span style={{ fontSize:14 }}>{t.emoji}</span>
               <span>{t.label}</span>
             </button>
@@ -2280,7 +2288,7 @@ const PartsPage = ({ pageType = 'components' }) => {
             </div>
             {visibleTabs.map(t => {
               const cached = window.CL_LS?.tabCache?.[t.id];
-              const active = cat === t.id && !search;
+              const active = safeCat === t.id && !search;
               return (
                 <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)}
                   style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 20px",
@@ -2324,7 +2332,7 @@ const PartsPage = ({ pageType = 'components' }) => {
             )}
 
             {/* Sticky search bar */}
-            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:100, zIndex:10 }}>
+            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:136, zIndex:10 }}>
               <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
@@ -3246,18 +3254,19 @@ const StorePage = () => {
           {!submitted && preview.length > 0 && (
             <div style={{ background:'var(--white)', marginTop:2 }}>
               {preview.map((item, i) => (
-                <button key={i} onClick={() => { setQ(item.name); runSearch(); }} data-cursor="link"
-                  style={{ width:'100%', display:'grid', gridTemplateColumns:'22px 1fr auto auto', gap:'0 14px', alignItems:'center', padding:'11px 20px', background:'none', border:'none', borderBottom:'1px solid var(--hairline)', cursor:'pointer', textAlign:'left' }}
+                <div key={i} style={{ display:'grid', gridTemplateColumns:'22px 1fr auto', gap:'0 14px', alignItems:'center', padding:'11px 20px', borderBottom:'1px solid var(--hairline)', transition:'background .12s' }}
                   onMouseEnter={e=>e.currentTarget.style.background='var(--paper)'}
-                  onMouseLeave={e=>e.currentTarget.style.background='none'}>
+                  onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                   <span style={{ fontSize:12, textAlign:'center', opacity:.5 }}>{tabEmoji(item._tab)}</span>
-                  <div>
-                    <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)' }}>{item.name}</div>
-                    <div style={{ fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.08em', textTransform:'uppercase', marginTop:1 }}>{item.department}</div>
+                  <div style={{ minWidth:0, cursor:'pointer' }} onClick={() => { setQ(item.name); runSearch(); }}>
+                    <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.name}</div>
+                    <div style={{ fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.08em', textTransform:'uppercase', marginTop:1 }}>
+                      {item.department}{item.price > 0 ? ` · $${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : ''}
+                      {item.qty > 0 && item.qty <= 5 ? ` · ${item.qty} left` : ''}
+                    </div>
                   </div>
-                  {item.qty > 0 && item.qty <= 3 && <span style={{ fontFamily:'var(--mono)', fontSize:9, color:'#b45309', letterSpacing:'.08em', textTransform:'uppercase' }}>{item.qty} left</span>}
-                  {item.price > 0 && <span style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:600, color:'var(--black)', whiteSpace:'nowrap' }}>${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}</span>}
-                </button>
+                  <PartCartBtn item={item} compact />
+                </div>
               ))}
               <button onClick={runSearch} data-cursor="link"
                 style={{ width:'100%', padding:'13px 20px', background:'var(--paper)', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--black)' }}>
@@ -3291,20 +3300,7 @@ const StorePage = () => {
                   <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginLeft:'auto' }}>{group.items.length} item{group.items.length !== 1 ? 's' : ''}</span>
                 </div>
                 {group.items.map((item, i) => (
-                  <div key={i} style={{ display:'grid', gridTemplateColumns:'22px 1fr auto', gap:'0 16px', alignItems:'center', padding:'11px 4px', borderBottom:'1px solid var(--hairline)', transition:'background .12s' }}
-                    onMouseEnter={e=>e.currentTarget.style.background='var(--paper)'}
-                    onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                    <span style={{ fontSize:13, textAlign:'center', opacity:.4 }}>{group.emoji}</span>
-                    <div style={{ minWidth:0 }}>
-                      <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.name}</div>
-                      <div style={{ fontFamily:'var(--mono)', fontSize:9, color:'var(--gray-400)', letterSpacing:'.08em', textTransform:'uppercase', marginTop:2 }}>{item.department}{item.sku ? ` · ${item.sku}` : ''}</div>
-                    </div>
-                    <div style={{ display:'flex', alignItems:'center', gap:12, flexShrink:0 }}>
-                      {item.qty > 0 && item.qty <= 3 && <span style={{ fontFamily:'var(--mono)', fontSize:9, color:'#b45309', letterSpacing:'.08em', textTransform:'uppercase' }}>{item.qty} left</span>}
-                      {item.price > 0 && <span style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:600, minWidth:52, textAlign:'right' }}>${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}</span>}
-                      <PartCartBtn item={item} compact />
-                    </div>
-                  </div>
+                  <PartRow key={i} item={item} />
                 ))}
               </div>
             ))}
