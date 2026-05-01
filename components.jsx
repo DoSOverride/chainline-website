@@ -9,7 +9,7 @@ const ChainLogo = ({ size = 22, color = "currentColor" }) => (
 // Brand wordmark — uses the real ChainLine Cycle logo
 const Wordmark = () => (
   <a href="#" onClick={(e) => { e.preventDefault(); window.cl.go("home"); }} className="nav-logo" data-cursor="link" aria-label="ChainLine Cycle — Home">
-    <img src="logo-dark.png" alt="ChainLine Cycle" className="logo-img" />
+    <img src="/logo-dark.png" alt="ChainLine Cycle" className="logo-img" />
   </a>
 );
 
@@ -642,7 +642,7 @@ const MobileNav = ({ open, onClose }) => {
       {/* ── Panel 1: Main ── */}
       <div className={"mob-panel " + (panel === 'main' ? "mob-panel-active" : "mob-panel-left")}
         style={{ pointerEvents: panel === 'main' ? 'all' : 'none' }}>
-        {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
+        {hdr(<div className="nav-logo"><img src="/logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
           <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
@@ -901,7 +901,7 @@ const Footer = () => (
       <div className="footer-grid">
         <div className="footer-col">
           <div className="nav-logo" style={{ marginBottom: 24 }}>
-            <img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" />
+            <img src="/logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" />
           </div>
           <div className="serif-italic" style={{ fontSize: 22, lineHeight: 1.3, color: "var(--gray-300)", marginBottom: 24, maxWidth: 360 }}>
             Built for Kelowna.<br/>Backed by Canada.<br/>Since 2009.
