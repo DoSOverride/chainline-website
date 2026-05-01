@@ -2441,7 +2441,7 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
       <div style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
         {imgSrc
           ? <img src={imgSrc} alt={item.name} loading="lazy" decoding="async"
-              style={{ width:"100%", height:"100%", objectFit:"contain", padding:"14%", mixBlendMode:"multiply" }}
+              style={{ width:"100%", height:"100%", objectFit: item.image ? "contain" : "cover", padding: item.image ? "14%" : 0, mixBlendMode: item.image ? "multiply" : "normal" }}
               onError={() => setImgErr(true)} />
           : <span style={{ fontSize:40, opacity:0.25 }}>{emoji}</span>}
         {lowStock && <span style={{ position:"absolute", top:8, right:8, background:"#c2410c", color:"#fff", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", padding:"3px 7px", fontWeight:600 }}>Only {item.qty} left</span>}
