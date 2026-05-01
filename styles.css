@@ -1729,8 +1729,42 @@ img {
 
 /* Mobile tab strip — hidden on desktop */
 .parts-mobile-tabs {
-  display: none;
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--white);
+  position: sticky;
+  top: 136px;
+  z-index: 40;
 }
+.parts-mobile-tabs::-webkit-scrollbar { display: none; }
+.parts-mobile-tab {
+  flex-shrink: 0;
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color .12s, border-color .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.parts-mobile-tab.active {
+  color: var(--black);
+  border-bottom-color: var(--black);
+}
+[data-theme="dark"] .parts-mobile-tab.active { color: #fafafa; border-bottom-color: #fafafa; }
 
 @media (max-width: 768px) {
   .parts-layout {
@@ -1742,40 +1776,9 @@ img {
   .parts-page-section {
     padding-top: 136px !important;
   }
+  /* Mobile: fix sticky top to account for safe area */
   .parts-mobile-tabs {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    border-bottom: 2px solid var(--hairline);
-    background: var(--white);
-    position: sticky;
-    top: 136px;
-    z-index: 40;
-  }
-  .parts-mobile-tabs::-webkit-scrollbar { display: none; }
-  .parts-mobile-tab {
-    flex-shrink: 0;
-    padding: 13px 14px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    border: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    background: none;
-    cursor: pointer;
-    white-space: nowrap;
-    color: var(--gray-500);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: color .15s, border-color .15s;
-  }
-  .parts-mobile-tab.active {
-    color: var(--black);
-    border-bottom-color: var(--black);
+    top: calc(100px + env(safe-area-inset-top, 0px));
   }
   /* Stats: 4th and 5th items don't need a left border when they wrap */
   .home-stats-grid > *:nth-child(4),

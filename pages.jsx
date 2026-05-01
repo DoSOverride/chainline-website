@@ -537,27 +537,27 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Bolinas Ridge 2 29",  handle:"marin-bolinas-ridge-2-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:800,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-bolinas-ridge-2-29.jpg" },
   { brand:"Marin", name:"Wildcat Trail 1 27.5",handle:"marin-wildcat-trail-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels, Women's", price:860, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-wildcat-trail-1-275.png" },
   { brand:"Marin", name:"Pine Mountain 1 29",  handle:"marin-pine-mountain-1-29",  type:"Adventure", tags:"Adventure Bike, Bikepacking, 29\"", price:1960, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg" },
-  { brand:"Transition", name:"Sentinel",    handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg" },
-  { brand:"Transition", name:"Spire Carbon",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/WebStoreImages/SB-Spire-CarbonE90-GalacticBlack.avif" },
-  { brand:"Pivot", name:"Switchblade",      handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/00swbv629cxxb-stmlgdrpcn" },
-  { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Hardtail, Trail", price:3400, img:"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946" },
+  { brand:"Transition", name:"Sentinel",    handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-sentinel.jpg" },
+  { brand:"Transition", name:"Spire Carbon",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-spire-carbon.avif" },
+  { brand:"Pivot", name:"Switchblade",      handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-switchblade.jpg" },
+  { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Hardtail, Trail", price:3400, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-sorceress.jpg" },
   { brand:"Marin", name:"Gestalt 2",   handle:"marin-gestalt-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-gestalt-2.jpg" },
   { brand:"Marin", name:"Gestalt X10", handle:"marin-gestalt-x10",  type:"Gravel",   tags:"Gravel Bike, 700c",        price:1400, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-gestalt-x10.jpg" },
   { brand:"Marin", name:"Nicasio 2",   handle:"marin-nicasio-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2300, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-nicasio-2.jpg" },
   { brand:"Marin", name:"Presidio 3",  handle:"marin-presidio-3",   type:"Gravel",   tags:"Gravel Bike, 700c",        price:1470, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-presidio-3.jpg" },
-  { brand:"Marin", name:"Four Corners 1",handle:"marin-four-corners-1",type:"Adventure",tags:"Touring Bike, Bikepacking, Gravel", price:1600, img:"https://cdn.shopify.com/s/files/1/0931/9455/1645/files/MRN_27_FC_1_GREEN_PROFILE_2000PX.png?v=1773143826" },
-  { brand:"Surly", name:"Bridge Club", handle:"surly-bridge-club",  type:"Adventure", tags:"Bikepacking, Touring, Adventure", price:1850, img:"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946" },
+  { brand:"Marin", name:"Four Corners 1",handle:"marin-four-corners-1",type:"Adventure",tags:"Touring Bike, Bikepacking, Gravel", price:1600, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-four-corners-1.png" },
+  { brand:"Surly", name:"Bridge Club", handle:"surly-bridge-club",  type:"Adventure", tags:"Bikepacking, Touring, Adventure", price:1850, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-bridge-club.jpg" },
   { brand:"Marin", name:"Stinson E",    handle:"marin-stinson-e",    type:"E-Bike",  tags:"Electric Bike, City",      price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e.jpg" },
   { brand:"Marin", name:"Stinson E ST", handle:"marin-stinson-e-st", type:"E-Bike",  tags:"Electric Bike, Step-Through", price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e-st.jpg" },
-  { brand:"Pivot",      name:"Shuttle AM",   handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/shuttleam-highlight-left-zg2ocmj2" },
-  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
+  { brand:"Pivot",      name:"Shuttle AM",   handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-shuttle-am.jpg" },
+  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-regulator-cx.avif" },
   { brand:"Marin", name:"Fairfax 1",       handle:"marin-fairfax-1",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:700,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-1.jpg" },
   { brand:"Marin", name:"Fairfax 2",       handle:"marin-fairfax-2",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-2.jpg" },
   { brand:"Marin", name:"San Anselmo DS2", handle:"marin-san-anselmo-ds2",type:"Commuter", tags:"Dual-Sport, Women's",     price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-anselmo-ds2.jpg" },
   { brand:"Marin", name:"Kentfield ST 1",  handle:"marin-kentfield-st-1", type:"Commuter", tags:"City, Comfort",           price:670,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-kentfield-st-1.png" },
   { brand:"Marin", name:"Kentfield ST 2",  handle:"marin-kentfield-st-2", type:"Commuter", tags:"City, Comfort",           price:900,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-kentfield-st-2.png" },
   { brand:"Marin", name:"Stinson 1 27.5",    handle:"marin-stinson-1-27-5",    type:"Comfort", tags:"Comfort, Cruiser, 27.5\"", price:860, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-1-27-5.png" },
-  { brand:"Marin", name:"Stinson 1 LS 27.5", handle:"marin-stinson-1-ls-27-5", type:"Comfort", tags:"Comfort, Step-Through",   price:800, img:"https://cdn.shopify.com/s/files/1/0931/9455/1645/files/2025_MARIN_STINSON_LS_1_TEAL_SIDE.png?v=1753799841" },
+  { brand:"Marin", name:"Stinson 1 LS 27.5", handle:"marin-stinson-1-ls-27-5", type:"Comfort", tags:"Comfort, Step-Through",   price:800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-1-ls-27-5.png" },
   { brand:"Marin", name:"Stinson 2 LS 27.5", handle:"marin-stinson-2-ls-27-5", type:"Comfort", tags:"Comfort, Step-Through",   price:900, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-2-ls-27-5.png" },
   { brand:"Marin", name:"Bayview Trail",  handle:"marin-bayview-trail",  type:"Kids", tags:"Kids Bike, 24\"", price:600, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-bayview-trail.jpg" },
   { brand:"Marin", name:"Donky Jr",       handle:"marin-donky-jr",       type:"Kids", tags:"Kids Bike, 24\"", price:430, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-donky-jr.png" },
@@ -567,15 +567,15 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"San Quentin 1",  handle:"marin-san-quentin-1",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1350, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-quentin-1.png" },
   { brand:"Marin", name:"San Quentin 2",  handle:"marin-san-quentin-2",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-quentin-2.png" },
   // ── Transition full lineup ─────────────────────────────────────
-  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/FC_Spur.jpg" },
-  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/FC_Smug.jpg" },
-  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/M2-BR.jpg" },
-  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/FC-PBJ.jpg" },
+  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-spur.jpg" },
+  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-smuggler.jpg" },
+  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-bottlerocket.jpg" },
+  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-pbj.jpg" },
   // ── Surly full lineup ──────────────────────────────────────────
-  { brand:"Surly", name:"Karate Monkey",    handle:"surly-karate-monkey",    type:"Adventure", tags:"Bikepacking, Hardtail, 29\", Adventure", price:2800, img:"https://surlybikes.com/cdn/shop/files/surly-karate-monkey-front-suspension-bike-blue-BK00263-2000px-sq.jpg?v=1742063134&width=1946" },
-  { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Adventure", tags:"Fat Bike, Snow, Sand, Adventure",   price:3500, img:"https://surlybikes.com/cdn/shop/files/surly-ice-cream-truck-bike-yellow-BK00596-2000px-sq.jpg?v=1741976875&width=1946" },
+  { brand:"Surly", name:"Karate Monkey",    handle:"surly-karate-monkey",    type:"Adventure", tags:"Bikepacking, Hardtail, 29\", Adventure", price:2800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-karate-monkey.jpg" },
+  { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Adventure", tags:"Fat Bike, Snow, Sand, Adventure",   price:3500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-ice-cream-truck.jpg" },
   // ── Knolly ────────────────────────────────────────────────────
-  { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, img:"https://cdn.shopify.com/s/files/1/0714/3611/files/FUGITIVE_EAGLE_90_FOX_-_RAW_LOUVRED.png?v=1759774351" },
+  { brand:"Knolly", name:"Fugitive",  handle:"knolly-fugitive",  type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension", price:4550, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/knolly-fugitive.png" },
   // ── Salsa ─────────────────────────────────────────────────────
   { brand:"Salsa", name:"Timberjack GX",  handle:"salsa-timberjack-gx-eagle",  type:"Mountain", tags:"Mountain Bike, Hardtail, 29\"",       price:3500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-timberjack-gx-eagle.png" },
   { brand:"Salsa", name:"Spearfish C",   handle:"salsa-spearfish-c-gx-eagle", type:"Mountain", tags:"Mountain Bike, Full Suspension, 29\"", price:5800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/salsa-spearfish-c-gx-eagle.png" },
@@ -2464,18 +2464,71 @@ const PartsPage = ({ pageType = 'components' }) => {
   const hasMore = visible.length < filtered.length;
   const switchCat = (id) => { setCat(remapTab(id)); setSearch(''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
 
+  // Subcategory chips — granular nav at the top, all screen sizes
+  const subCats = pageType === 'accessories' ? [
+    { label:'Helmets',    tab:'helmets',                       emoji:'⛑️' },
+    { label:'Gloves',     tab:'protection', search:'Glove',    emoji:'🧤' },
+    { label:'Armour',     tab:'protection', search:'Armour',   emoji:'🛡️' },
+    { label:'Sunglasses', tab:'protection', search:'Sunglass', emoji:'🕶️' },
+    { label:'Jerseys',    tab:'clothing',   search:'Jersey',   emoji:'👕' },
+    { label:'Warmers',    tab:'clothing',   search:'Warmer',   emoji:'🧣' },
+    { label:'Socks',      tab:'clothing',   search:'Sock',     emoji:'🧦' },
+    { label:'Shoes',      tab:'shoes',                         emoji:'👟' },
+    { label:'Cleats',     tab:'shoes',      search:'Cleat',    emoji:'🔩' },
+    { label:'Bags',       tab:'bags',                          emoji:'🎒' },
+    { label:'Hydration',  tab:'bags',       search:'Hydrat',   emoji:'💧' },
+    { label:'Bottles',    tab:'bags',       search:'Bottle',   emoji:'🍶' },
+    { label:'Lights',     tab:'lights',     search:'Light',    emoji:'💡' },
+    { label:'Computers',  tab:'lights',     search:'Comput',   emoji:'📡' },
+    { label:'Locks',      tab:'locks',                         emoji:'🔒' },
+    { label:'Racks',      tab:'racks',                         emoji:'🚲' },
+    { label:'Pumps',      tab:'tools',      search:'Pump',     emoji:'💨' },
+    { label:'Tools',      tab:'tools',                         emoji:'🔧' },
+    { label:'Lube',       tab:'tools',      search:'Lube',     emoji:'🫙' },
+  ] : [
+    { label:'Cassettes',  tab:'drivetrain', search:'Cassette', emoji:'🎡' },
+    { label:'Chains',     tab:'drivetrain', search:'Chain',    emoji:'🔗' },
+    { label:'Derailleurs',tab:'drivetrain', search:'Derail',   emoji:'⚙️' },
+    { label:'Cranks',     tab:'drivetrain', search:'Crank',    emoji:'🔧' },
+    { label:'Shifters',   tab:'drivetrain', search:'Shift',    emoji:'🎛️' },
+    { label:'Cables',     tab:'drivetrain', search:'Cable',    emoji:'〰️' },
+    { label:'Brakes',     tab:'brakes',                        emoji:'🛑' },
+    { label:'Brake Pads', tab:'brakes',     search:'Brake pad',emoji:'🛑' },
+    { label:'Wheelsets',  tab:'wheels',     search:'Wheel',    emoji:'⭕' },
+    { label:'Tires 29"',  tab:'wheels',     search:'29',       emoji:'🔘' },
+    { label:'Tires 700C', tab:'wheels',     search:'700C',     emoji:'🔘' },
+    { label:'Tires 27.5"',tab:'wheels',     search:'27',       emoji:'🔘' },
+    { label:'Tubes',      tab:'wheels',     search:'Tube',     emoji:'🫧' },
+    { label:'Sealant',    tab:'wheels',     search:'Sealant',  emoji:'🫙' },
+    { label:'Forks',      tab:'suspension', search:'Fork',     emoji:'🔩' },
+    { label:'Shocks',     tab:'suspension', search:'Shock',    emoji:'🌀' },
+    { label:'Handlebars', tab:'cockpit',    search:'Handle',   emoji:'🎯' },
+    { label:'Saddles',    tab:'cockpit',    search:'Saddle',   emoji:'💺' },
+    { label:'Grips',      tab:'cockpit',    search:'Grip',     emoji:'✊' },
+    { label:'Bar Tape',   tab:'cockpit',    search:'Bar tape', emoji:'🌀' },
+    { label:'Headsets',   tab:'cockpit',    search:'Head',     emoji:'🔵' },
+    { label:'Seatposts',  tab:'cockpit',    search:'Seat post',emoji:'💺' },
+  ];
+  const switchSubCat = (sc) => { setCat(remapTab(sc.tab)); setSearch(sc.search || ''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
+  const isSubActive  = (sc) => cat === remapTab(sc.tab) && (sc.search ? search.toLowerCase() === sc.search.toLowerCase() : !search.trim());
+
   return (
     <div className="page-fade">
       <section className="parts-page-section" style={{ background:"var(--white)", paddingTop:136, minHeight:"100vh" }}>
 
-        {/* Mobile tabs */}
+        {/* Subcategory chip strip — always visible, horizontal scroll */}
         <div className="parts-mobile-tabs">
-          {visibleTabs.map(t => (
-            <button key={t.id} className={"parts-mobile-tab " + (safeCat === t.id ? "active" : "")} onClick={() => switchCat(t.id)}>
-              <span style={{ fontSize:14 }}>{t.emoji}</span>
-              <span>{t.label}</span>
-            </button>
-          ))}
+          {subCats.map(sc => {
+            const active = isSubActive(sc);
+            return (
+              <button key={sc.label} onClick={() => switchSubCat(sc)} data-cursor="link"
+                className={"parts-mobile-tab " + (active ? "active" : "")}
+                style={{ display:'flex', alignItems:'center', gap:5, padding:'10px 12px', flexShrink:0 }}>
+                <span style={{ fontSize:13, lineHeight:1 }}>{sc.emoji}</span>
+                <span>{sc.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="parts-layout">
