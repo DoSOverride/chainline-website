@@ -446,8 +446,8 @@ const LocalStory = () => (
     <div className="container-wide">
       <div className="home-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
         <div className="reveal" style={{ aspectRatio: "4/5", position: "relative", overflow: "hidden" }}>
-          <img src="https://still-term-f1ec.taocaruso77.workers.dev/r2/shop/interior-tires.jpg" alt="ChainLine Cycle — Kelowna's bike shop since 2009"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
+          <img src="/shop-exterior.webp" alt="ChainLine Cycle — Kelowna's bike shop since 2009"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
           <div style={{ position: "absolute", top: 24, left: 24, padding: "8px 14px", background: "var(--black)", color: "var(--white)", fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase" }}>EST. 2009</div>
         </div>
         <div className="reveal reveal-d-2">
