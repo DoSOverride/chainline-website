@@ -44,4 +44,29 @@
   <url><loc>https://chainline.ca/giftcards</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://chainline.ca/terms</loc><lastmod>2026-04-30</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chainline.ca/privacy</loc><lastmod>2026-04-30</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+
+  <!-- Programmatic SEO: Brand × Kelowna -->
+  <url><loc>https://chainline.ca/marin-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/transition-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/surly-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/pivot-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/salsa-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bianchi-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/moots-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/knolly-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/revel-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Programmatic SEO: Type × Kelowna -->
+  <url><loc>https://chainline.ca/mountain-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/gravel-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/road-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/e-bike-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/commuter-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chainline.ca/kids-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+
+  <!-- Programmatic SEO: Service × Kelowna -->
+  <url><loc>https://chainline.ca/bike-tune-up-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/bike-fitting-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/bike-storage-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike-demo-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>
