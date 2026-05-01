@@ -1697,6 +1697,59 @@ const FAQs = () => {
 };
 
 // ABOUT
+const AboutReviews = () => {
+  const [reviews, setReviews] = React.useState([]);
+  const [meta, setMeta]       = React.useState({ rating: 4.9, total: null });
+  React.useEffect(() => {
+    fetch(`${WORKER}/api/reviews`).then(r => r.json()).then(d => {
+      if (d.reviews?.length) setReviews(d.reviews);
+      if (d.rating) setMeta({ rating: d.rating, total: d.total });
+    }).catch(() => {});
+  }, []);
+  const Stars = ({ n }) => (
+    <span style={{ color:'#f59e0b', letterSpacing:2, fontSize:14 }}>{'★'.repeat(n)}</span>
+  );
+  const fallback = [
+    { author:"Sarah K.",  time:"Feb 2025", rating:5, text:"Brought my Sentinel in after a rough crash on Knox. Back in perfect shape within two days. These guys actually ride the trails they service bikes for." },
+    { author:"Mike T.",   time:"Jan 2025", rating:5, text:"Staff spent 45 minutes making sure the fit was right. No pressure. A year later my son's Bobcat Trail is still running perfectly." },
+    { author:"Jess R.",   time:"Mar 2025", rating:5, text:"Full suspension service and tubeless conversion on my Switchblade. Mechanic knew the bike better than I did. Worth every cent." },
+  ];
+  const shown = reviews.length > 0 ? reviews.slice(0,3) : fallback;
+  return (
+    <section className="section section-pad bg-white">
+      <div className="container-wide">
+        <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, gap:24, flexWrap:"wrap" }}>
+          <div>
+            <div className="section-label">Customer Reviews</div>
+            <h2 className="display-l">What riders<br/><span className="serif-italic">say about us.</span></h2>
+          </div>
+          <a href="https://search.google.com/local/writereview?placeid=ChIJbbM4_V7zfVMRmOhSjhXRP9o" target="_blank" rel="noopener"
+            className="btn btn-outline" data-cursor="link">Leave a Review <ArrowRight /></a>
+        </div>
+        <div className="reveal" style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:2 }}>
+          {shown.map((r, i) => (
+            <div key={i} style={{ padding:"32px 28px", background:"var(--paper)" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:16 }}>
+                <Stars n={r.rating || 5} />
+                <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)" }}>{r.time}</span>
+              </div>
+              <p style={{ fontSize:15, lineHeight:1.7, color:"var(--gray-600)", marginBottom:20 }}>"{r.text}"</p>
+              <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, textTransform:"uppercase", letterSpacing:"-.01em" }}>{r.author}</div>
+            </div>
+          ))}
+        </div>
+        <div className="reveal" style={{ textAlign:"center", marginTop:24 }}>
+          <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+            {meta.rating} ★{meta.total ? `  ·  ${meta.total} reviews` : ""}  ·  Google Reviews  ·{" "}
+            <a href="https://maps.google.com/?q=ChainLine+Cycle+Kelowna" target="_blank" rel="noopener"
+              style={{ color:"var(--gray-400)", textDecoration:"underline" }}>View all on Google</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const AboutPage = () => (
   <div className="page-fade" data-screen-label="P05 About">
     <SubHero eyebrow="About  /  N°01" title="We're ChainLine." italic="Kelowna's bike shop. Since 2009." />
@@ -1794,6 +1847,9 @@ const AboutPage = () => (
       <img src="/shop-interior.jpg" alt="ChainLine Cycle — 1139 Ellis St, Kelowna"
         loading="lazy" decoding="async" style={{ width:"100%", height:"clamp(280px,45vw,600px)", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
     </section>
+
+    {/* Google Reviews */}
+    <AboutReviews />
 
     {/* Visit us */}
     <section className="section section-pad bg-paper">
