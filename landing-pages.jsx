@@ -259,7 +259,7 @@ function BrandLandingPage({ brand }) {
     <div className="page-fade">
       {/* Hero */}
       <section style={{ background: "#0a0a0a", minHeight: "65vh", display: "flex", alignItems: "flex-end", padding: "140px 0 80px", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${data.accentColor}18 0%, transparent 55%)` }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, " + data.accentColor + "18 0%, transparent 55%)" }} />
         <div className="container-wide" style={{ position: "relative", zIndex: 1 }}>
           <div className="section-label" style={{ color: "var(--gray-500)", marginBottom: 20 }}>Authorized Dealer · Kelowna, BC</div>
           <h1 className="display-2xl" style={{ color: "#fafafa", marginBottom: 20 }}>
@@ -321,7 +321,7 @@ function BrandLandingPage({ brand }) {
                   </div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--gray-500)", marginBottom: 6, letterSpacing: ".06em" }}>{data.name}</div>
                   <div style={{ fontFamily: "var(--display)", fontSize: "clamp(15px,1.4vw,18px)", fontWeight: 600, marginBottom: 8 }}>{b.name}</div>
-                  {b.price && <div style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--gray-600)" }}>${Number(b.price).toLocaleString()}</div>}
+                  {b.price && <div style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--gray-600)" }}>{"$" + Number(b.price).toLocaleString()}</div>}
                 </div>
               ))}
             </div>
@@ -436,7 +436,7 @@ function TypeLandingPage({ type }) {
                   </div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--gray-500)", marginBottom: 6 }}>{b.brand}</div>
                   <div style={{ fontFamily: "var(--display)", fontSize: "clamp(15px,1.4vw,18px)", fontWeight: 600, marginBottom: 8 }}>{b.name}</div>
-                  {b.price && <div style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--gray-600)" }}>${Number(b.price).toLocaleString()}</div>}
+                  {b.price && <div style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--gray-600)" }}>{"$" + Number(b.price).toLocaleString()}</div>}
                 </div>
               ))}
             </div>
