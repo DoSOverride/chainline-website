@@ -598,6 +598,12 @@ const MobileNav = ({ open, onClose }) => {
   // Reset to main panel when nav closes
   React.useEffect(() => { if (!open) setTimeout(() => setPanel('main'), 500); }, [open]);
 
+  // Lock body scroll when nav is open
+  React.useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   const dismiss = (fn) => { onClose(); fn && fn(); };
 
   const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
@@ -638,6 +644,8 @@ const MobileNav = ({ open, onClose }) => {
   const subA  = { color:"var(--white)", padding:"12px 0", borderBottom:"1px solid rgba(255,255,255,0.06)", display:"block", textDecoration:"none", fontFamily:"var(--display)", fontSize:20, fontWeight:500, letterSpacing:"-.01em", textTransform:"uppercase", cursor:"pointer" };
 
   return (
+    <>
+    <div className={"mobile-nav-backdrop " + (open ? "open" : "")} onClick={() => dismiss()} />
     <div className={"mobile-nav " + (open ? "open" : "")} style={{ overflow:"hidden" }}>
       {/* ── Panel 1: Main ── */}
       <div className={"mob-panel " + (panel === 'main' ? "mob-panel-active" : "mob-panel-left")}
@@ -815,6 +823,7 @@ const MobileNav = ({ open, onClose }) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
@@ -916,7 +925,7 @@ const Footer = () => (
           <div className="nav-logo" style={{ marginBottom: 24 }}>
             <img src="/logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" />
           </div>
-          <div className="serif-italic" style={{ fontSize: 22, lineHeight: 1.3, color: "var(--gray-300)", marginBottom: 24, maxWidth: 360 }}>
+          <div style={{ fontSize: 15, lineHeight: 1.6, color: "var(--gray-400)", marginBottom: 24, maxWidth: 360, fontFamily:"var(--body)" }}>
             Built for Kelowna.<br/>Backed by Canada.<br/>Since 2009.
           </div>
           <div style={{ display: "flex", gap: 14, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
@@ -1116,25 +1125,29 @@ const ChatWidget = () => {
     setThinking(false);
   };
 
+  const chatRight = 16;
+  const chatBottom = window.innerWidth <= 768 ? 76 : 24;
   return (
     <>
       <button onClick={() => setOpen(o => !o)} data-cursor="link" className="chat-toggle-btn"
-        style={{ position: "fixed", left: btnBottom, bottom: btnBottom, zIndex: 80, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
+        style={{ position: "fixed", right: chatRight, bottom: chatBottom, zIndex: 90, width: 52, height: 52, borderRadius: "50%", background: "var(--black)", color: "var(--white)", display: "grid", placeItems: "center", border: "1px solid var(--black)", boxShadow: "0 4px 16px rgba(0,0,0,0.2)" }}>
         {open
           ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2l12 12M14 2L2 14"/></svg>
           : <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4h16v10H8l-4 3v-3H2z"/></svg>
         }
       </button>
       {open && (
-        <div className="chat-popup" style={{ position: "fixed", left: btnBottom, bottom: btnBottom + 64, zIndex: 80, width: 320, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: 440 }}>
+        <div className="chat-popup" style={{ position: "fixed", right: chatRight, bottom: chatBottom + 64, zIndex: 90, width: "min(320px, calc(100vw - 32px))", background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.16)", display: "flex", flexDirection: "column", maxHeight: "min(440px, calc(100vh - 200px))" }}>
           <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--hairline)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--black)", color: "var(--white)" }}>
             <div>
-              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine Cycle Support</div>
+              <div style={{ fontFamily: "var(--display)", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em" }}>ChainLine Support</div>
               <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-300)", marginTop: 2 }}>Ask us anything · Usually instant</div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e" }} />
-              <span style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>Online</span>
+              <button onClick={() => setOpen(false)} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(255,255,255,0.7)", display:"flex", alignItems:"center", padding:4 }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1l12 12M13 1L1 13"/></svg>
+              </button>
             </div>
           </div>
           <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 10 }}>

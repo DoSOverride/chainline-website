@@ -1463,17 +1463,37 @@ img {
 
 .mobile-nav {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 82%;
+  max-width: 380px;
   background: var(--black);
   color: var(--white);
   z-index: 200;
   transform: translateX(100%);
-  transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1);
+  transition: transform 0.42s cubic-bezier(0.7, 0, 0.2, 1);
   overflow: hidden;
 }
 
 .mobile-nav.open {
   transform: translateX(0);
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 199;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.mobile-nav-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
 }
 
 /* Two-panel mobile nav */
@@ -1915,6 +1935,7 @@ img {
   /* ── Footer ── */
   .footer-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
   .footer-bottom { flex-direction: column; text-align: center; }
+  .footer { padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important; }
 
   /* ── Parts page ── */
   .parts-main { min-width: 0; overflow-x: hidden; }

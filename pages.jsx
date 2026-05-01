@@ -1381,7 +1381,10 @@ const ServicesPage = () => {
                   </div>
                   {/* Right: book button */}
                   <div style={{ display:"flex", alignItems:"flex-start", flexShrink:0, paddingTop:2 }}>
-                    <button className="btn btn-outline" data-cursor="link" style={{ fontSize:11, whiteSpace:"nowrap" }} onClick={() => window.cl.go("book")}>Book <ArrowRight /></button>
+                    <button className="btn btn-outline" data-cursor="link" style={{ fontSize:11, whiteSpace:"nowrap" }} onClick={() => {
+                      const map = { "Basic Tune Up":"Tune-Up","Tune Up":"Tune-Up","FS Tune Up":"Full Suspension Tune-Up","E-Bike Tune Up":"E-Bike Tune-Up","Complete Overhaul":"Complete Overhaul","Fork Seal Service":"Fork Seal Service","Shock Air Can Service":"Shock Air Can Service","Dropper Post Service":"Dropper Service","Brake Bleed":"Brake Bleed","Tubeless Set Up":"Tubeless Set Up","Flat Fix":"Flat Fix","Flat Fix — E-Bike Rear":"Flat Fix","Bike Assessment":"Not Sure / Assessment","Cable & Housing Full":"Cable Package","Cable & Housing Half":"Cable Package" };
+                      window.cl.go("book", { service: map[s.name] || s.name });
+                    }}>Book <ArrowRight /></button>
                   </div>
                 </div>
               </div>
@@ -1452,15 +1455,25 @@ const ServicesPage = () => {
 
 // BOOK PAGE
 const BookPage = () => {
-  const [data,      setData]      = React.useState({ service: "Tune-Up" });
+  const initialService = window.cl?.intent?.service || "Tune-Up";
+  const [data,      setData]      = React.useState({ service: initialService });
   const [submitted, setSubmitted] = React.useState(false);
   const [submitting,setSubmitting]= React.useState(false);
   const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
 
   const SERVICES = [
-    "Tune-Up", "Full Suspension Tune-Up", "E-Bike Tune-Up", "Complete Overhaul",
-    "Fork Seal Service", "Shock Air Can Service", "Dropper Service", "Brake Bleed",
-    "Cable Package", "Tubeless Set Up", "Flat Fix", "Not Sure / Assessment",
+    { name:"Tune-Up",                desc:"Gears, brakes, bearing check, safety inspection. Same-day." },
+    { name:"Full Suspension Tune-Up",desc:"Tune-up + pivot inspection and torque. Recommended annually." },
+    { name:"E-Bike Tune-Up",         desc:"Full tune-up + motor, battery and firmware check." },
+    { name:"Complete Overhaul",      desc:"Full teardown, degrease, new cables/housing, road test." },
+    { name:"Fork Seal Service",      desc:"Lower leg service with new seals, foam rings and fresh oil." },
+    { name:"Shock Air Can Service",  desc:"Air can rebuild with new seals and fresh oil." },
+    { name:"Dropper Service",        desc:"Full dropper rebuild — seals, oil, bleed. All brands." },
+    { name:"Brake Bleed",            desc:"Hydraulic bleed per caliper. Parts extra." },
+    { name:"Cable Package",          desc:"Full cable and housing replacement, all cables." },
+    { name:"Tubeless Set Up",        desc:"Tape, valve stem and sealant per wheel." },
+    { name:"Flat Fix",               desc:"Tube replacement including labour. Parts extra." },
+    { name:"Not Sure / Assessment",  desc:"We'll diagnose and give you a written quote. Cost goes toward repairs." },
   ];
 
   const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
@@ -1504,7 +1517,7 @@ const BookPage = () => {
             </p>
           </div>
           <div style={{ display:"flex", gap:12 }}>
-            <button className="btn btn-outline" onClick={() => { setData({ service:"Tune-Up" }); setSubmitted(false); }}>Book another</button>
+            <button className="btn btn-outline" onClick={() => { setData({ service: initialService || "Tune-Up" }); setSubmitted(false); }}>Book another</button>
             <button className="btn" onClick={() => window.cl.go("home")}>Back home <ArrowRight /></button>
           </div>
         </div>
@@ -1521,11 +1534,12 @@ const BookPage = () => {
           {/* 1 — Service (pre-selected: Tune-Up) */}
           <div style={{ marginBottom:40 }}>
             <div className="eyebrow" style={{ marginBottom:16 }}>Select a service *</div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
               {SERVICES.map(s => (
-                <button key={s} data-cursor="link" onClick={() => upd("service", s)}
-                  style={{ padding:"12px 16px", border:"1.5px solid "+(data.service===s?"var(--black)":"var(--hairline)"), background:data.service===s?"var(--black)":"transparent", color:data.service===s?"var(--white)":"var(--black)", textAlign:"left", fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", cursor:"pointer", transition:"all .15s" }}>
-                  {s}
+                <button key={s.name} data-cursor="link" onClick={() => upd("service", s.name)}
+                  style={{ padding:"14px 16px", border:"1.5px solid "+(data.service===s.name?"var(--black)":"var(--hairline)"), background:data.service===s.name?"var(--black)":"transparent", color:data.service===s.name?"var(--white)":"var(--black)", textAlign:"left", cursor:"pointer", transition:"all .15s" }}>
+                  <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", marginBottom:5 }}>{s.name}</div>
+                  <div style={{ fontFamily:"var(--body)", fontSize:11, lineHeight:1.45, opacity: data.service===s.name ? 0.75 : 0.55 }}>{s.desc}</div>
                 </button>
               ))}
             </div>

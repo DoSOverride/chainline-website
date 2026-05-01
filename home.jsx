@@ -759,11 +759,13 @@ const Newsletter = () => {
             <p style={{ color: "var(--gray-300)", fontSize: 15, marginBottom: 24, lineHeight: 1.6 }}>
               New bikes, trail conditions, group rides, and the occasional sale. One email a fortnight, no filler.
             </p>
-            <form onSubmit={(e) => { e.preventDefault(); if (email) setSent(true); }} style={{ display: "flex", borderBottom: "1px solid var(--gray-300)", paddingBottom: 12 }}>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={{ flex: 1, background: "transparent", border: "none", outline: "none", color: "var(--white)", fontFamily: "var(--body)", fontSize: 16, padding: "8px 0" }} />
-              <button type="submit" data-cursor="link" style={{ fontFamily: "var(--display)", fontSize: 12, fontWeight: 600, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--white)", display: "flex", alignItems: "center", gap: 10 }}>
-                {sent ? "Subscribed ✓" : "Subscribe"} <ArrowRight />
-              </button>
+            <form onSubmit={(e) => { e.preventDefault(); if (email) setSent(true); }}>
+              <div style={{ display:"flex", alignItems:"center", border:"1px solid rgba(255,255,255,0.2)", background:"rgba(255,255,255,0.05)", marginBottom:12 }}>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={{ flex:1, background:"transparent", border:"none", outline:"none", color:"var(--white)", fontFamily:"var(--body)", fontSize:15, padding:"12px 16px" }} />
+                <button type="submit" data-cursor="link" style={{ flexShrink:0, padding:"12px 20px", background:"var(--white)", color:"var(--black)", border:"none", fontFamily:"var(--display)", fontSize:11, fontWeight:600, letterSpacing:".16em", textTransform:"uppercase", cursor:"pointer", display:"flex", alignItems:"center", gap:8, whiteSpace:"nowrap" }}>
+                  {sent ? "Subscribed ✓" : "Subscribe"} {!sent && <ArrowRight />}
+                </button>
+              </div>
             </form>
             <div style={{ marginTop: 12, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gray-500)" }}>By subscribing you agree to our privacy policy.</div>
           </div>
