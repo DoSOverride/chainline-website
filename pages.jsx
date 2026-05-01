@@ -2299,44 +2299,52 @@ const BIKE_EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bm
 const isBikeDept = (dept) => BIKE_EXCLUDE.some(x => (dept||'').toLowerCase().includes(x));
 
 // Per-department fallback images (used when Lightspeed has no image for an item)
-const R2 = 'https://still-term-f1ec.taocaruso77.workers.dev/r2';
-const IMG = 'https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=';
+// Unsplash images are free, CDN-served, no hotlink blocking
+const UNS = 'https://images.unsplash.com/';
 const DEPT_IMG = {
-  'cassette':          IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/cassette/CS-HG50-8/pdp/CS-HG50-8.png'),
-  'chains':            IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/chain/CN-HG601/pdp/CN-HG601-1.png'),
-  'chainrings':        IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/chainring/FC-M8100/pdp/FC-M8100.png'),
-  'cranks':            IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/crankset/FC-M8100-1/pdp/FC-M8100-1.png'),
-  'bottom brackets':   IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/bottom-bracket/SM-BB71/pdp/SM-BB71.png'),
-  'derailleur rear':   IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/rear-derailleur/RD-M8100/pdp/RD-M8100.png'),
-  'derailleur front':  IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/front-derailleur/FD-M8100-D/pdp/FD-M8100-D.png'),
-  'shifters mtb':      IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/shifter/SL-M8100-IR/pdp/SL-M8100-IR.png'),
-  'brake pads':        IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/disc-brake-pad/L06A/pdp/L06A.png'),
-  'brake':             IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/disc-brake-caliper/BR-MT410/pdp/BR-MT410.png'),
-  'brake parts':       IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/disc-brake-pad/L06A/pdp/L06A.png'),
-  'forks':             IMG + encodeURIComponent('https://www.sram.com/globalassets/image-hierarchy/sram-product-root-images/forks/rockshox/rockshox-lyrik-ultimate-fork/a4/00-1216-021-000_a_1.png'),
-  'rear shock':        IMG + encodeURIComponent('https://www.sram.com/globalassets/image-hierarchy/sram-product-root-images/rear-shocks/rockshox/rockshox-super-deluxe-ultimate-coil-rear-shock/a2/00-1216-127-010_a_1.png'),
-  'forks parts':       `${R2}/parts/tools-hero.jpg`,
-  'tires 29"':         IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/EXO/maxxis-assegai-exo-maxx-terra-29x25-tr.jpg'),
-  'tires 700c':        IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/maxxis-refuse-700x32-bk-si.jpg'),
-  'tires 27" & 26x1&1/4 etc...': IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/EXO/maxxis-assegai-exo-27x25.jpg'),
-  'tires fatbike':     IMG + encodeURIComponent('https://www.maxxis.com/content/images/products/maxxis-minion-fbr-26x40.jpg'),
-  'tubes':             IMG + encodeURIComponent('https://www.sram.com/globalassets/image-hierarchy/sram-product-root-images/components/quarq/quarq-dzero-road-power-meter-spider/crank-spider/quarq-dzero-road-spider-3000.png'),
-  'tire sealant':      `${R2}/parts/tools-hero.jpg`,
-  'wheels':            `${R2}/parts/tools-hero.jpg`,
-  'wheelset (fr+rr)':  `${R2}/parts/tools-hero.jpg`,
-  'rims':              `${R2}/parts/tools-hero.jpg`,
-  'handlebar':         IMG + encodeURIComponent('https://bike.shimano.com/content/dam/shimano/bike/products/components/bar/ST-RS505/pdp/ST-RS505.png'),
-  'stem':              `${R2}/parts/tools-hero.jpg`,
-  'grips':             `${R2}/parts/tools-hero.jpg`,
-  'saddles':           `${R2}/parts/tools-hero.jpg`,
-  'seat post':         `${R2}/parts/tools-hero.jpg`,
-  'helmet':            `${R2}/parts/tools-hero.jpg`,
-  'gloves':            `${R2}/parts/tools-hero.jpg`,
-  'tools':             `${R2}/parts/tools-hero.jpg`,
-  'pumps':             `${R2}/parts/tools-hero.jpg`,
-  'lube':              `${R2}/parts/tools-hero.jpg`,
-  'locks':             `${R2}/parts/tools-hero.jpg`,
-  'lights':            `${R2}/parts/tools-hero.jpg`,
+  // Drivetrain — close-up bike mechanics
+  'cassette':          UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'chains':            UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'chainrings':        UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'cranks':            UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'bottom brackets':   UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'derailleur rear':   UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'derailleur front':  UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'shifters mtb':      UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  // Brakes
+  'brake pads':        UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'brake':             UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'brake parts':       UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  // Suspension
+  'forks':             UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'rear shock':        UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'forks parts':       UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  // Tires & wheels
+  'tires 29"':         UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'tires 700c':        UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'tires 27" & 26x1&1/4 etc...': UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'tires fatbike':     UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'tubes':             UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'tire sealant':      UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'wheels':            UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  'wheelset (fr+rr)':  UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  'rims':              UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  // Cockpit
+  'handlebar':         UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'stem':              UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  'grips':             UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  // Comfort
+  'saddles':           UNS + 'photo-1590674899484-d5640e854abe?w=300&q=80',
+  'seat post':         UNS + 'photo-1590674899484-d5640e854abe?w=300&q=80',
+  // Apparel & protection
+  'helmet':            UNS + 'photo-1558618666-fcd25c85cd64?w=300&q=80',
+  'gloves':            UNS + 'photo-1571333250630-f0230c320b6d?w=300&q=80',
+  // Accessories & maintenance
+  'tools':             UNS + 'photo-1505705694340-019e1e335916?w=300&q=80',
+  'pumps':             UNS + 'photo-1556909114-f6e7ad7d3136?w=300&q=80',
+  'lube':              UNS + 'photo-1581093804475-577d72e38aa0?w=300&q=80',
+  'locks':             UNS + 'photo-1449426468159-d96dbf08f19f?w=300&q=80',
+  'lights':            UNS + 'photo-1542291026-7eec264c27ff?w=300&q=80',
 };
 
 // Dept-level emoji — more specific than tab emoji
