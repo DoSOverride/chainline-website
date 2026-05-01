@@ -519,9 +519,9 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Bolinas Ridge 2 29",  handle:"marin-bolinas-ridge-2-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:800,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-bolinas-ridge-2-29.jpg" },
   { brand:"Marin", name:"Wildcat Trail 1 27.5",handle:"marin-wildcat-trail-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels, Women's", price:860, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-wildcat-trail-1-275.png" },
   { brand:"Marin", name:"Pine Mountain 1 29",  handle:"marin-pine-mountain-1-29",  type:"Adventure", tags:"Adventure Bike, Bikepacking, 29\"", price:1960, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg" },
-  { brand:"Transition", name:"Sentinel",             handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://www.transitionbikes.com/images/Sentinel_MainPage_HannahBlur.jpg" },
-  { brand:"Transition", name:"Spire Carbon", handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://www.transitionbikes.com/WebStoreImages/SB-Spire-AlloyE70-UltraViolet.avif" },
-  { brand:"Pivot", name:"Switchblade", handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/11/switchbladev3-highlight-right-aurhm3my.jpg" },
+  { brand:"Transition", name:"Sentinel",    handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg" },
+  { brand:"Transition", name:"Spire Carbon",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/WebStoreImages/SB-Spire-CarbonE90-GalacticBlack.avif" },
+  { brand:"Pivot", name:"Switchblade",      handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/00swbv629cxxb-stmlgdrpcn" },
   { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Hardtail, Trail", price:3400, img:"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946" },
   { brand:"Marin", name:"Gestalt 2",   handle:"marin-gestalt-2",    type:"Gravel",   tags:"Gravel Bike, 700c",        price:2000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-gestalt-2.jpg" },
   { brand:"Marin", name:"Gestalt X10", handle:"marin-gestalt-x10",  type:"Gravel",   tags:"Gravel Bike, 700c",        price:1400, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-gestalt-x10.jpg" },
@@ -531,8 +531,8 @@ const SHOP_BIKES = [
   { brand:"Surly", name:"Bridge Club", handle:"surly-bridge-club",  type:"Adventure", tags:"Bikepacking, Touring, Adventure", price:1850, img:"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946" },
   { brand:"Marin", name:"Stinson E",    handle:"marin-stinson-e",    type:"E-Bike",  tags:"Electric Bike, City",      price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e.jpg" },
   { brand:"Marin", name:"Stinson E ST", handle:"marin-stinson-e-st", type:"E-Bike",  tags:"Electric Bike, Step-Through", price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e-st.jpg" },
-  { brand:"Pivot",      name:"Shuttle AM", handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://cms.pivotcycles.com/wp-content/uploads/2025/10/shuttleam-photo-gallery-beauty-4-msswiet3.jpg" },
-  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
+  { brand:"Pivot",      name:"Shuttle AM",   handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/shuttleam-highlight-left-zg2ocmj2" },
+  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif" },
   { brand:"Marin", name:"Fairfax 1",       handle:"marin-fairfax-1",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:700,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-1.jpg" },
   { brand:"Marin", name:"Fairfax 2",       handle:"marin-fairfax-2",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-2.jpg" },
   { brand:"Marin", name:"San Anselmo DS2", handle:"marin-san-anselmo-ds2",type:"Commuter", tags:"Dual-Sport, Women's",     price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-anselmo-ds2.jpg" },
@@ -549,10 +549,10 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"San Quentin 1",  handle:"marin-san-quentin-1",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1350, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-quentin-1.png" },
   { brand:"Marin", name:"San Quentin 2",  handle:"marin-san-quentin-2",  type:"Mountain", tags:"Mountain Bike, 27.5\"",               price:1800, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-quentin-2.png" },
   // ── Transition full lineup ─────────────────────────────────────
-  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://www.transitionbikes.com/images/FC_Spur.jpg" },
-  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://www.transitionbikes.com/images/FC_Smug.jpg" },
-  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://www.transitionbikes.com/images/M2-BR.jpg" },
-  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://www.transitionbikes.com/images/FC-PBJ.jpg" },
+  { brand:"Transition", name:"Spur",         handle:"transition-spur",         type:"Mountain", tags:"Mountain Bike, Cross-Country, 29\"", price:6000, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/FC_Spur.jpg" },
+  { brand:"Transition", name:"Smuggler",     handle:"transition-smuggler",     type:"Mountain", tags:"Mountain Bike, Trail/Enduro, 29\"",  price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/FC_Smug.jpg" },
+  { brand:"Transition", name:"Bottlerocket", handle:"transition-bottlerocket", type:"Mountain", tags:"Mountain Bike, Freeride",             price:6500, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/M2-BR.jpg" },
+  { brand:"Transition", name:"PBJ",          handle:"transition-pbj",          type:"Mountain", tags:"Dirt Jump, Park, Slopestyle",         price:1900, img:"https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=https://www.transitionbikes.com/images/FC-PBJ.jpg" },
   // ── Surly full lineup ──────────────────────────────────────────
   { brand:"Surly", name:"Karate Monkey",    handle:"surly-karate-monkey",    type:"Adventure", tags:"Bikepacking, Hardtail, 29\", Adventure", price:2800, img:"https://surlybikes.com/cdn/shop/files/surly-karate-monkey-front-suspension-bike-blue-BK00263-2000px-sq.jpg?v=1742063134&width=1946" },
   { brand:"Surly", name:"Ice Cream Truck",  handle:"surly-ice-cream-truck",  type:"Adventure", tags:"Fat Bike, Snow, Sand, Adventure",   price:3500, img:"https://surlybikes.com/cdn/shop/files/surly-ice-cream-truck-bike-yellow-BK00596-2000px-sq.jpg?v=1741976875&width=1946" },
@@ -1744,7 +1744,7 @@ const AboutPage = () => (
 
     {/* Shop interior */}
     <section className="section bg-white" style={{ padding:0 }}>
-      <img src="shop-interior.jpg" alt="ChainLine Cycle — 1139 Ellis St, Kelowna"
+      <img src="/shop-interior.jpg" alt="ChainLine Cycle — 1139 Ellis St, Kelowna"
         loading="lazy" decoding="async" style={{ width:"100%", height:"clamp(280px,45vw,600px)", objectFit:"cover", objectPosition:"center 40%", display:"block" }} />
     </section>
 
