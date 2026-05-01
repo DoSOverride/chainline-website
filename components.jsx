@@ -394,7 +394,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
       cols: [
         { h: "Rides & Events", items: ["Group Rides", "Skill Clinics", "Events"] },
         { h: "Trails", items: ["Knox Mountain", "Bear Creek", "Myra Canyon", "Kelowna Bike Park"] },
-        { h: "Community", items: ["Pinkbike", "Social", "Trail Conditions"] },
+        { h: "Community", items: ["MTBCO", "Pinkbike", "Social", "Trail Conditions"] },
       ],
     },
     more: {
@@ -457,6 +457,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("tune") || l === "custom builds" || l.includes("service pricing") || l.includes("service menu") || l === "tune-ups") return ["services", null];
     // Explore
     if (l.includes("social")) return ["social", null];
+    if (l.includes("mtbco") || l.includes("mountain bike club")) return ["mtbco", null];
     if (l.includes("clinic") || l.includes("event") || l.includes("skill")) return ["events", null];
     if (l.includes("ride")) return ["rides", null];
     if (l.includes("trail") || l.includes("knox") || l.includes("bear") || l.includes("myra") || l.includes("park") || l.includes("condition")) return ["trails", null];
@@ -691,6 +692,7 @@ const MobileNav = ({ open, onClose }) => {
               ))}
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14, marginTop:24 }}>Community</div>
               {[
+                { label:"MTBCO",    route:"mtbco"       },
                 { label:"Pinkbike", route:"classifieds" },
                 { label:"Social",   route:"social"      },
               ].map(it => (

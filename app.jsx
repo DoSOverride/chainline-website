@@ -6,7 +6,7 @@ const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","ki
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
 const _COMP_TABS = ["drivetrain","brakes","wheels","cockpit","suspension"];
 const _ACC_TABS  = ["helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
-const _PAGES     = ["services","book","about","contact","rides","trails","events","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social"];
+const _PAGES     = ["services","book","about","contact","rides","trails","events","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social","mtbco"];
 const partPageFor = (tab) => _ACC_TABS.includes(tab) ? "accessories" : "components";
 
 function pathToRoute(pathname) {
@@ -255,9 +255,9 @@ const App = () => {
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
         {page === "store"       && <StorePage />}
-        {page === "components"  && (window.cl.intent?.tab ? <PartsPage /> : <ComponentsLandingPage />)}
-        {page === "parts"       && (window.cl.intent?.tab ? <PartsPage /> : <PartsLandingPage />)}
-        {page === "accessories" && (window.cl.intent?.tab ? <PartsPage /> : <AccessoriesLandingPage />)}
+        {page === "components"  && (window.cl.intent?.tab ? <PartsPage pageType="components" /> : <ComponentsLandingPage />)}
+        {page === "parts"       && (window.cl.intent?.tab ? <PartsPage pageType="components" /> : <PartsLandingPage />)}
+        {page === "accessories" && (window.cl.intent?.tab ? <PartsPage pageType="accessories" /> : <AccessoriesLandingPage />)}
         {page === "classifieds" && <ClassifiedsPage />}
         {page === "brands" && <BrandPage />}
         {page === "terms" && <TermsPage />}
@@ -268,6 +268,7 @@ const App = () => {
         {page === "storage" && <StoragePage />}
         {page === "events" && <EventsPage />}
         {page === "social" && <SocialPage />}
+        {page === "mtbco" && <MTBCOPage />}
       </main>
 
       <Footer />

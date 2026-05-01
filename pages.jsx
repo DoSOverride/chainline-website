@@ -2189,10 +2189,14 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
 });
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
-const PartsPage = () => {
-  const [cat,    setCat]    = React.useState('drivetrain');
+const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
+const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+
+const PartsPage = ({ pageType = 'components' }) => {
+  const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
+  const [cat,    setCat]    = React.useState(defaultTab);
   const [search, setSearch] = React.useState('');
-  const [page,   setPage]   = React.useState(0);
+  const [pg,     setPg]     = React.useState(0);
   const PAGE = 60;
   const searchRef = React.useRef(null);
 
@@ -3549,37 +3553,38 @@ Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, 
 
 // EVENTS & CLINICS PAGE
 const EventsPage = () => {
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+
   const MCGEE_CLINICS = [
-    {
-      tag: "Adult · All Levels",
-      name: "Adult Skills Clinic",
-      desc: "Six progressive sessions covering descending, jumping, climbing, cornering, and bike maintenance. Runs July and August across Knox, Crawford, Gillard, SilverStar, and more. All levels welcome — beginner to advanced.",
-      details: "6 sessions · $600 · Drop-ins available",
-      url: "https://mcgeecycle.com/adultskillclinic",
-    },
-    {
-      tag: "Youth · Ages 7–14",
-      name: "Skills Camp",
-      desc: "Mon–Fri summer camp led by PMBIA-certified coaches including pro rider Will Curry. Skill sessions, trail exploration, games, and bike maintenance workshops. Small coach-to-rider ratios. Six weeks offered July and August.",
-      details: "Mon–Fri · 10 AM–3:30 PM · Drop-ins available",
-      url: "https://mcgeecycle.com/skills-camp",
-    },
+    { tag:"Adult · All Levels", name:"Adult Skills Clinic",
+      desc:"Six progressive sessions covering descending, jumping, climbing, cornering, and bike maintenance. Runs July and August across Knox, Crawford, Gillard, SilverStar, and more. All levels welcome — beginner to advanced.",
+      details:"6 sessions · $600 · Drop-ins available", url:"https://mcgeecycle.com/adultskillclinic" },
+    { tag:"Youth · Ages 7–14", name:"Skills Camp",
+      desc:"Mon–Fri summer camp led by PMBIA-certified coaches including pro rider Will Curry. Skill sessions, trail exploration, games, and bike maintenance workshops. Small coach-to-rider ratios. Six weeks July and August.",
+      details:"Mon–Fri · 10 AM–3:30 PM · Drop-ins available", url:"https://mcgeecycle.com/skills-camp" },
   ];
-  const nextDate = (dow) => {
-    const DAYS = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
-    const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-    const today = new Date();
-    const diff = ((dow - today.getDay()) % 7 + 7) % 7 || 7;
-    const d = new Date(today); d.setDate(today.getDate() + diff);
-    return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
-  };
-  const RIDES = [
-    { dow:4, name:"Thursday Night Shuttle / Pedal", meta:"MTB · Shuttle or Pedal", time:"6:00 PM Sharp", meet:"ChainLine Cycle — 1139 Ellis St", level:"All levels",  desc:"Meet at the shop and we'll pick where to go. Shuttle or pedal, decided on the night. All levels welcome." },
-    { dow:5, name:"Friday Night Pedal Ride",        meta:"MTB · Crawford",          time:"6:00 PM Sharp", meet:"Crawford Power Lines",            level:"All paces",   desc:"Weekly pedal night at Crawford. Meet at the power lines and we roll from there. Good vibes, all paces." },
-  ].map(r => ({ ...r, date: nextDate(r.dow) }));
+
+  const STATIC_EVENTS = [
+    { title:"Smith Creek Enduro", dateLabel:"Summer 2026", tag:"Race", location:"Smith Creek, West Kelowna",
+      desc:"ChainLine-supported enduro race at Smith Creek. Timed stages through some of the best trails in the area. Registration details coming — follow our Instagram for updates.", url:"https://instagram.com/ChainLineCycle" },
+  ];
+  const [calEvents, setCalEvents] = React.useState(null);
+  React.useEffect(() => {
+    fetch(`${WORKER}/api/calendar`)
+      .then(r => r.json())
+      .then(d => { if (d.events && d.events.length > 0) setCalEvents(d.events); })
+      .catch(() => {});
+  }, []);
+  const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString("en-CA", { month:"short", day:"numeric", year:"numeric" }) : "";
+  const events = calEvents
+    ? calEvents.map(e => ({ title:e.title, dateLabel:fmtDate(e.start), tag:"Event", location:e.location, desc:e.desc, url:e.url }))
+    : STATIC_EVENTS;
+
   return (
     <div className="page-fade" data-screen-label="P Events">
-      <SubHero eyebrow="Community  /  N°02" title="Events &" italic="Clinics." sub="Skills clinics, demo days, group rides, and shop events — all year in Kelowna." />
+      <SubHero eyebrow="Community  /  N°02" title="Events &" italic="Clinics." sub="Skill clinics with McGee Cycle and upcoming ChainLine events." />
+
+      {/* ── McGee Cycle clinics ── */}
       <section className="section section-pad bg-white">
         <div className="container-wide">
           <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:64, flexWrap:"wrap", gap:24 }}>
@@ -3587,7 +3592,9 @@ const EventsPage = () => {
               <div className="section-label">Skill Clinics  /  N°01</div>
               <h2 className="display-xl">Learn to<br/><span className="serif-italic">ride better.</span></h2>
             </div>
-            <p style={{ maxWidth:400, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>We partner with <strong>McGee Cycle</strong> — Kelowna's dedicated MTB coaching program. PMBIA-certified coaches, small groups, real trails.</p>
+            <p style={{ maxWidth:400, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>
+              We partner with <strong>McGee Cycle</strong> — Kelowna's dedicated MTB coaching program. PMBIA-certified coaches, small groups, real trails.
+            </p>
           </div>
           <div className="mcgee-clinics-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:24 }}>
             {MCGEE_CLINICS.map((c, i) => (
@@ -3615,42 +3622,34 @@ const EventsPage = () => {
           </div>
         </div>
       </section>
+
+      {/* ── Upcoming events (synced from Google Calendar) ── */}
       <section className="section section-pad bg-black">
         <div className="container-wide">
-          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:48, flexWrap:"wrap", gap:24 }}>
+          <div className="reveal" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:56, flexWrap:"wrap", gap:24 }}>
             <div>
-              <div className="section-label" style={{ color:"var(--gray-300)" }}>Group Rides  /  N°02</div>
-              <h2 className="display-xl">Ride <span className="serif-italic">with us.</span></h2>
+              <div className="section-label" style={{ color:"var(--gray-300)" }}>Upcoming Events  /  N°02</div>
+              <h2 className="display-xl">What's<br/><span className="serif-italic">coming up.</span></h2>
             </div>
-            <p style={{ maxWidth:360, fontSize:15, color:"var(--gray-300)", lineHeight:1.6 }}>Two rides every week, all year. Show up, clip in, leave faster than you came.</p>
+            <a href="https://instagram.com/ChainLineCycle" target="_blank" rel="noopener"
+              className="btn btn-outline-light" data-cursor="link">Follow for updates <ArrowRight /></a>
           </div>
           <div style={{ borderTop:"1px solid var(--hairline-light)" }}>
-            {RIDES.map((r, i) => (
-              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"120px 1fr auto", gap:32, padding:"28px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"center" }}>
-                <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)" }}>{r.date}</div>
+            {events.map((e, i) => (
+              <a key={i} href={e.url || "#"} target={e.url ? "_blank" : undefined} rel="noopener" data-cursor="link"
+                className="reveal"
+                style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline-light)", alignItems:"start", textDecoration:"none", color:"inherit" }}>
                 <div>
-                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(17px,2vw,22px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:6 }}>{r.name}</div>
-                  <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)" }}>{r.meta}  ·  {r.time}  ·  {r.meet}</div>
+                  <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-300)", marginBottom:8 }}>{e.dateLabel}</div>
+                  <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.65)", fontSize:9 }}>{e.tag}</span>
                 </div>
-                <span className="pill" style={{ background:"rgba(255,255,255,0.08)", borderColor:"rgba(255,255,255,0.2)", color:"rgba(255,255,255,0.7)", fontSize:9, whiteSpace:"nowrap" }}>{r.level}</span>
-              </div>
+                <div>
+                  <div style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:8 }}>{e.title}</div>
+                  {e.location && <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:10 }}>{e.location}</div>}
+                  <p style={{ fontSize:14, color:"var(--gray-300)", lineHeight:1.75, margin:0 }}>{e.desc}</p>
+                </div>
+              </a>
             ))}
-          </div>
-          <div className="reveal" style={{ marginTop:40 }}>
-            <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("rides")}>View All Rides <ArrowRight /></button>
-          </div>
-        </div>
-      </section>
-      <section className="section section-pad bg-paper">
-        <div className="container-narrow" style={{ textAlign:"center" }}>
-          <div className="reveal">
-            <div className="section-label" style={{ justifyContent:"center", marginBottom:24 }}>Trail Conditions</div>
-            <h3 className="display-l" style={{ marginBottom:20 }}>Check before<br/><span className="serif-italic">you ride.</span></h3>
-            <p style={{ fontSize:15, color:"var(--gray-500)", marginBottom:36, lineHeight:1.7 }}>Real-time conditions for Knox, Crawford, Black Mountain, and all Kelowna-area trails — updated by the trail community on Trailforks.</p>
-            <div style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
-              <a href="https://www.trailforks.com/region/kelowna/" target="_blank" rel="noopener" className="btn" data-cursor="link">Kelowna on Trailforks <ArrowRight /></a>
-              <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("trails")}>Our Trail Guide <ArrowRight /></button>
-            </div>
           </div>
         </div>
       </section>
@@ -3658,3 +3657,100 @@ const EventsPage = () => {
   );
 };
 window.EventsPage = EventsPage;
+
+// MTBCO PAGE
+const MTBCOPage = () => {
+  const R2 = "https://still-term-f1ec.taocaruso77.workers.dev/r2";
+  const sponsored = [
+    { name:"Lost Lake Loop",  tf:"https://www.trailforks.com/region/gillard/",    img:`${R2}/lifestyle/trail-forest.jpg`, note:"A flowing natural trail through the trees with lake views — one of the most scenic loops in the Gillard network." },
+    { name:"Pink Highway",    tf:"https://www.trailforks.com/region/gillard/",    img:`${R2}/lifestyle/trail-pines.jpg`,  note:"Fast, fun, and approachable. Pink Highway is a crowd favourite that gives back more than it takes. Perfect intro to Gillard." },
+  ];
+  return (
+    <div className="page-fade" data-screen-label="P MTBCO">
+      <SubHero eyebrow="Community  /  N°03" title="MTBCO." italic="Building trails since the beginning." sub="Mountain Bike Club Okanagan — the crew that builds and maintains the trails we all ride." />
+
+      {/* Who they are */}
+      <section className="section section-pad bg-white">
+        <div className="container-wide">
+          <div className="home-2col reveal" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:80, alignItems:"start" }}>
+            <div>
+              <div className="section-label" style={{ marginBottom:32 }}>About MTBCO</div>
+              <h2 className="display-l" style={{ marginBottom:28 }}>Volunteers who<br/><span className="serif-italic">build the trails.</span></h2>
+              <p style={{ fontSize:16, lineHeight:1.75, color:"var(--gray-600)", marginBottom:20 }}>
+                The Mountain Bike Club Okanagan is the grassroots organization behind many of Kelowna's best singletrack trails. From initial planning and permitting through to dig days, drainage fixes, and ongoing maintenance — MTBCO members put in the hours that make the trails possible.
+              </p>
+              <p style={{ fontSize:16, lineHeight:1.75, color:"var(--gray-600)", marginBottom:32 }}>
+                ChainLine Cycle is proud to sponsor MTBCO and support their work in the Okanagan. We stock their merchandise in store and regularly send staff to dig days. If you ride local trails, MTBCO built them.
+              </p>
+              <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
+                <a href="https://mtbco.ca" target="_blank" rel="noopener" className="btn" data-cursor="link">Visit MTBCO <ArrowRight /></a>
+                <a href="https://mtbco.ca/membership" target="_blank" rel="noopener" className="btn btn-outline" data-cursor="link">Join / Donate <ArrowRight /></a>
+              </div>
+            </div>
+            <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+              {[
+                { n:"Trail Advocacy", d:"MTBCO works with the City of Kelowna, West Kelowna, and regional parks to plan, permit, and protect access to mountain bike trails." },
+                { n:"Trail Building",  d:"Volunteer dig days throughout the season. Bring your tools and your lunch — MTBCO supplies the experience and the vision." },
+                { n:"Trail Maintenance", d:"Drainage, pruning, erosion repair, and feature upkeep after every heavy rain and freeze-thaw cycle." },
+                { n:"Youth Programs",   d:"Working with schools and youth groups to introduce the next generation to trail building and responsible riding." },
+              ].map((s, i) => (
+                <div key={i} className="reveal" style={{ paddingBottom:20, borderBottom:"1px solid var(--hairline)" }}>
+                  <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.005em", marginBottom:8 }}>{s.n}</div>
+                  <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.7, margin:0 }}>{s.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sponsored trails */}
+      <section className="section section-pad bg-paper">
+        <div className="container-wide">
+          <div className="reveal" style={{ marginBottom:56 }}>
+            <div className="section-label">ChainLine Sponsored Trails</div>
+            <h2 className="display-l">Our trails.<br/><span className="serif-italic">Built together.</span></h2>
+          </div>
+          <div className="home-2col" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:32 }}>
+            {sponsored.map((t, i) => (
+              <a key={i} href={t.tf} target="_blank" rel="noopener" data-cursor="link"
+                className={"reveal reveal-d-" + (i+1)}
+                style={{ display:"block", textDecoration:"none", color:"inherit" }}>
+                <div style={{ aspectRatio:"4/3", marginBottom:20, overflow:"hidden", position:"relative" }}>
+                  <img src={t.img} alt={t.name}
+                    style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .5s ease" }}
+                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.04)"}
+                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
+                  <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%)" }} />
+                </div>
+                <div className="display-s" style={{ marginBottom:10 }}>{t.name}</div>
+                <p className="serif-italic" style={{ fontSize:15, lineHeight:1.6, color:"var(--gray-600)", marginBottom:12 }}>"{t.note}"</p>
+                <span style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", display:"inline-flex", alignItems:"center", gap:6 }}>
+                  View on Trailforks <ArrowRight size={9} />
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Get involved */}
+      <section className="section section-pad bg-black">
+        <div className="container-narrow" style={{ textAlign:"center" }}>
+          <div className="reveal">
+            <div className="section-label" style={{ justifyContent:"center", color:"var(--gray-300)", marginBottom:24 }}>Get Involved</div>
+            <h3 className="display-l" style={{ marginBottom:20 }}>Show up to<br/><span className="serif-italic">a dig day.</span></h3>
+            <p style={{ fontSize:15, color:"var(--gray-300)", maxWidth:480, margin:"0 auto 40px", lineHeight:1.7 }}>
+              MTBCO posts dig days on their website and socials throughout the season. No experience required — just show up with gloves and a shovel. The trails you ride get better every time someone does.
+            </p>
+            <div style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap" }}>
+              <a href="https://mtbco.ca" target="_blank" rel="noopener" className="btn btn-light" data-cursor="link">MTBCO Website <ArrowRight /></a>
+              <a href="https://mtbco.ca/membership" target="_blank" rel="noopener" className="btn btn-outline-light" data-cursor="link">Become a Member <ArrowRight /></a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+window.MTBCOPage = MTBCOPage;
