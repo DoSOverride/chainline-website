@@ -338,7 +338,7 @@ const App = () => {
       <StickyCTA show={showSticky} />
 
       {pwaInstallable && !pwaDismissed && (
-        <div style={{ position:"fixed", bottom:24, left:"50%", transform:"translateX(-50%)", zIndex:300, background:"var(--black)", color:"var(--white)", display:"flex", alignItems:"center", gap:16, padding:"14px 20px", boxShadow:"0 4px 32px rgba(0,0,0,0.5)", maxWidth:420, width:"calc(100% - 48px)" }}>
+        <div style={{ position:"fixed", bottom:"calc(72px + env(safe-area-inset-bottom, 0px))", left:"50%", transform:"translateX(-50%)", zIndex:300, background:"var(--black)", color:"var(--white)", display:"flex", alignItems:"center", gap:16, padding:"14px 20px", boxShadow:"0 4px 32px rgba(0,0,0,0.5)", maxWidth:420, width:"calc(100% - 48px)" }}>
           <div style={{ flex:1 }}>
             <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, textTransform:"uppercase", letterSpacing:"-.01em" }}>Install ChainLine</div>
             <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:2 }}>Add to home screen — works offline</div>
@@ -406,6 +406,7 @@ const App = () => {
 
       <ChatWidget />
       {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
+      <BottomNav page={page} cartCount={cart.length} onSearch={() => setSearchOpen(true)} onCart={() => setCartOpen(true)} />
 
       <TweaksPanel open={tweaksOpen} onClose={() => setTweaksOpen(false)}>
         <TweakSection title="Type">

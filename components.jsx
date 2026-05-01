@@ -1258,4 +1258,38 @@ const SearchModal = ({ onClose }) => {
   );
 };
 
-Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ContactBar, ChatWidget, SearchModal });
+// ── Bottom Navigation Bar (mobile / PWA) ─────────────────────────────────
+const HomeIcon  = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>;
+const BikeIcon  = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M5.5 17.5L12 7l2.5 3.5H8"/><path d="M12 7h3.5l3 3.5"/></svg>;
+const WrenchIcon= () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>;
+const BagIcon   = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>;
+
+const BottomNav = ({ page, cartCount, onSearch, onCart }) => {
+  const tabs = [
+    { id:'home',       label:'Home',   icon:<HomeIcon />,   action:() => window.cl.go('home') },
+    { id:'shop',       label:'Bikes',  icon:<BikeIcon />,   action:() => window.cl.go('shop') },
+    { id:'components', label:'Parts',  icon:<WrenchIcon />, action:() => window.cl.go('components') },
+    { id:'search',     label:'Search', icon:<SearchIcon />, action: onSearch },
+    { id:'cart',       label:'Cart',   icon:<BagIcon />,    action: onCart, badge: cartCount },
+  ];
+  const isActive = (id) => {
+    if (id === 'home') return page === 'home';
+    if (id === 'shop') return page === 'shop' || page === 'bike';
+    if (id === 'components') return ['components','accessories','parts'].includes(page);
+    return false;
+  };
+  return (
+    <nav className="bottom-nav" role="navigation" aria-label="Main navigation">
+      {tabs.map(t => (
+        <button key={t.id} className={"bottom-nav-btn" + (isActive(t.id) ? " active" : "")}
+          onClick={t.action} aria-label={t.label} data-cursor="link">
+          {t.icon}
+          <span className="bottom-nav-lbl">{t.label}</span>
+          {t.badge > 0 && <span className="bottom-nav-badge">{t.badge}</span>}
+        </button>
+      ))}
+    </nav>
+  );
+};
+
+Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ContactBar, ChatWidget, SearchModal, BottomNav });

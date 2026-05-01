@@ -1964,6 +1964,121 @@ button, a, input, select, textarea, [data-cursor="link"] {
   }
 }
 
+/* ============================================================
+   MOBILE PWA — Safe area, bottom nav, iPhone optimizations
+   ============================================================ */
+
+/* ── Safe-area top: header extends under Dynamic Island / notch ── */
+.header {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* ── Hide contact bar on mobile — header too tall otherwise ── */
+@media (max-width: 768px) {
+  .contact-bar { display: none !important; }
+}
+
+/* ── Always hide contact bar in standalone PWA mode ── */
+@media (display-mode: standalone) {
+  .contact-bar { display: none !important; }
+}
+
+/* ── Safe-area adjusted offsets (add safe-area on top of existing values) ── */
+@media (max-width: 768px) {
+  .bike-back-bar      { top:  calc(100px + env(safe-area-inset-top, 0px)) !important; }
+  .bike-page          { padding-top: calc(100px + env(safe-area-inset-top, 0px)) !important; }
+  .shop-filter-sticky { top:  calc(132px + env(safe-area-inset-top, 0px)) !important; }
+  .hero-content       { padding-top: calc(190px + env(safe-area-inset-top, 0px)) !important; }
+  .parts-page-section { padding-top: calc(100px + env(safe-area-inset-top, 0px)) !important; }
+  /* SubHero pages (services, about, etc.) */
+  .sub-hero           { padding-top: calc(100px + env(safe-area-inset-top, 0px)) !important; }
+}
+
+/* ── Bottom navigation bar ─────────────────────────────────── */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--white);
+  border-top: 1px solid var(--hairline);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+[data-theme="dark"] .bottom-nav {
+  background: rgba(14,14,14,0.97);
+  border-top-color: rgba(255,255,255,0.1);
+}
+
+@media (max-width: 768px) {
+  .bottom-nav { display: flex; }
+}
+
+.bottom-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 10px 4px 8px;
+  color: var(--gray-400);
+  transition: color .12s;
+  height: 56px;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-btn.active { color: var(--black); }
+[data-theme="dark"] .bottom-nav-btn.active { color: #fafafa; }
+
+.bottom-nav-lbl {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: 7px;
+  right: calc(50% - 18px);
+  min-width: 16px;
+  height: 16px;
+  background: var(--black);
+  color: var(--white);
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+[data-theme="dark"] .bottom-nav-badge { background: #fafafa; color: #0a0a0a; }
+
+/* ── Clear bottom nav: push all page content above it ── */
+@media (max-width: 768px) {
+  main { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important; }
+
+  /* Float elements above bottom nav */
+  .chat-toggle-btn {
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px) !important;
+  }
+  .sticky-cta {
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 10px) !important;
+    right: 12px !important;
+  }
+}
+
 /* ── Hover states (extracted from inline JSX styles) ────────── */
 a:hover .bike-hover { transform: translateY(0); }
 .brand-tile:hover   { background: var(--black); color: var(--white); }
