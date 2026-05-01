@@ -1513,8 +1513,7 @@ img {
 /* Sticky CTA */
 .sticky-cta {
   position: fixed;
-  /* Match the hero CTA's vertical position — hero has clamp(80px,14vh,180px) bottom padding */
-  bottom: clamp(80px, 14vh, 180px);
+  bottom: 32px;
   right: 40px;
   z-index: 90;
   opacity: 0;
