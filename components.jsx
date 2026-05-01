@@ -181,20 +181,21 @@ const ContactBar = () => {
 // Header / Nav
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
-    { id: "shop",     label: "Bikes",    panel: "shop",     route: "shop" },
-    { id: "store",    label: "Parts",    panel: "store",    route: "parts" },
-    { id: "services", label: "Services", panel: "services", route: "services" },
-    { id: "explore",  label: "Explore",  panel: "explore",  route: "rides" },
-    { id: "more",     label: "More",     panel: "more",     route: "about" },
+    { id: "shop",        label: "Bikes",       panel: "shop",        route: "shop" },
+    { id: "components",  label: "Components",  panel: "components",  route: "components" },
+    { id: "parts",       label: "Parts",       panel: "parts",       route: "parts" },
+    { id: "accessories", label: "Accessories", panel: "accessories", route: "accessories" },
+    { id: "services",    label: "Services",    panel: "services",    route: "services" },
+    { id: "explore",     label: "Explore",     panel: "explore",     route: "rides" },
+    { id: "more",        label: "More",        panel: "more",        route: "about" },
   ];
 
   const closeTimer = React.useRef(null);
   const openMega = (p) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     onMega(p);
-    // Preload inventory when hovering Store or Bikes
-    if (p === 'store') window.lightspeedWarmCache?.();
-    if (p === 'shop')  window.lightspeedGetBikes?.();
+    if (['store','components','parts','accessories'].includes(p)) window.lightspeedWarmCache?.();
+    if (p === 'shop') window.lightspeedGetBikes?.();
   };
   const scheduleClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => onMega(null), 180); };
 
@@ -206,6 +207,11 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [accountOpen]);
+  React.useEffect(() => {
+    const onKey = (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); onSearch(); } };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onSearch]);
 
   return (
     <header className={"header " + (scrolled ? (page === "home" ? "solid" : "light") : "")} data-screen-label="00 Header">
@@ -374,6 +380,46 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
         ]},
       ],
     },
+    components: {
+      storeCols: [
+        { h: "Components", route: "components", items: [
+          { label:"Drivetrain",        go:["components",{tab:"drivetrain"}] },
+          { label:"Brakes",            go:["components",{tab:"brakes"}] },
+          { label:"Suspension",        go:["components",{tab:"suspension"}] },
+          { label:"Wheels",            go:["components",{tab:"wheels"}] },
+          { label:"Cockpit",           go:["components",{tab:"cockpit"}] },
+        ]},
+      ],
+    },
+    parts: {
+      storeCols: [
+        { h: "Parts", route: "parts", items: [
+          { label:'Tires 29"',         go:["components",{tab:"wheels"}] },
+          { label:"Tires 700C",        go:["components",{tab:"wheels"}] },
+          { label:'Tires 27.5"',       go:["components",{tab:"wheels"}] },
+          { label:"Tubes & Sealant",   go:["components",{tab:"wheels"}] },
+          { label:"Brake Pads",        go:["components",{tab:"brakes"}] },
+          { label:"Chains",            go:["components",{tab:"drivetrain"}] },
+          { label:"Cables",            go:["components",{tab:"drivetrain"}] },
+          { label:"Lube & Maintenance",go:["accessories",{tab:"tools"}] },
+        ]},
+      ],
+    },
+    accessories: {
+      storeCols: [
+        { h: "Accessories", route: "accessories", items: [
+          { label:"Helmets",           go:["accessories",{tab:"fit"}] },
+          { label:"Gloves & Armour",   go:["accessories",{tab:"fit"}] },
+          { label:"Clothing",          go:["accessories",{tab:"fit"}] },
+          { label:"Shoes & Cleats",    go:["accessories",{tab:"fit"}] },
+          { label:"Bags & Packs",      go:["accessories",{tab:"bags"}] },
+          { label:"Lights & Computers",go:["accessories",{tab:"lights"}] },
+          { label:"Locks",             go:["accessories",{tab:"locks"}] },
+          { label:"Racks & Fenders",   go:["accessories",{tab:"racks"}] },
+          { label:"Pumps & Tools",     go:["accessories",{tab:"tools"}] },
+        ]},
+      ],
+    },
     services: {
       cols: [
         { h: "Book", items: ["Book a Service", "Book a Fitting", "Book a Demo", "Book Storage"] },
@@ -466,7 +512,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
         <div className="container-wide">
           {/* Bikes panel: By Style | Brands col1 | Brands col2 */}
           {d.styleCol ? (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:48 }}>
+            <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.storeCols.length}, 1fr)`, gap:48 }}>
               <div className="mega-col">
                 <h4>By Style</h4>
                 <ul>
@@ -484,7 +530,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
             </div>
           ) : /* Store panel: 3 cols — Components | Parts | Accessories */
           d.storeCols ? (
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:48 }}>
+            <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.storeCols.length}, 1fr)`, gap:48 }}>
               {d.storeCols.map((col, ci) => (
                 <div key={ci} className="mega-col">
                   <h4 style={{ cursor:"pointer" }} onClick={() => { onClose(); window.cl.go(col.route); }}>{col.h}</h4>
@@ -591,7 +637,9 @@ const MobileNav = ({ open, onClose }) => {
         {hdr(<div className="nav-logo"><img src="logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
           <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
-          <div style={linkA} onClick={() => setPanel('store')}>Parts <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('parts')}>Parts <ChevR /></div>
+          <div style={linkA} onClick={() => setPanel('accessories')}>Accessories <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('explore')}>Explore <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('more')}>More <ChevR /></div>
@@ -620,22 +668,60 @@ const MobileNav = ({ open, onClose }) => {
         </div>
       </div>
 
-      {/* ── Panel 3: Store ── */}
-      <div className={"mob-panel " + (panel === 'store' ? "mob-panel-active" : "mob-panel-right")}>
+      {/* ── Panel 3: Components ── */}
+      <div className={"mob-panel " + (panel === 'components' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts")); }}>All Parts & Gear</a>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components")); }}>All Components</a>
           {[
-            { label:"Components",  route:"components", sub:"Drivetrain, Brakes, Suspension, Cockpit" },
-            { label:"Parts",       route:"parts",      sub:"Tires, Tubes, Chains, Cables, Brake Pads" },
-            { label:"Accessories", route:"accessories",sub:"Helmets, Lights, Bags, Clothing, Tools" },
+            { label:"Drivetrain",  tab:"drivetrain" },
+            { label:"Brakes",      tab:"brakes" },
+            { label:"Suspension",  tab:"suspension" },
+            { label:"Wheels",      tab:"wheels" },
+            { label:"Cockpit",     tab:"cockpit" },
           ].map(it => (
-            <a key={it.label} href="#" onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}
-              style={{ ...linkA, flexDirection:"column", alignItems:"flex-start", gap:2, paddingRight:40, position:"relative" }}>
-              {it.label}
-              <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"rgba(255,255,255,0.4)", fontWeight:400 }}>{it.sub}</span>
-              <span style={{ position:"absolute", right:0, top:"50%", transform:"translateY(-50%)" }}><ChevR /></span>
-            </a>
+            <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab })); }}>{it.label}</a>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Panel 4: Parts ── */}
+      <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts")); }}>All Parts</a>
+          {[
+            { label:'Tires 29"',         page:"components", tab:"wheels" },
+            { label:"Tires 700C",         page:"components", tab:"wheels" },
+            { label:'Tires 27.5"',        page:"components", tab:"wheels" },
+            { label:"Tubes & Sealant",    page:"components", tab:"wheels" },
+            { label:"Brake Pads",         page:"components", tab:"brakes" },
+            { label:"Chains",             page:"components", tab:"drivetrain" },
+            { label:"Cables",             page:"components", tab:"drivetrain" },
+            { label:"Lube & Tools",       page:"accessories", tab:"tools" },
+          ].map(it => (
+            <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.page, { tab: it.tab })); }}>{it.label}</a>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Panel 5: Accessories ── */}
+      <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
+        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
+        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories")); }}>All Accessories</a>
+          {[
+            { label:"Helmets",             tab:"fit" },
+            { label:"Gloves & Armour",     tab:"fit" },
+            { label:"Clothing",            tab:"fit" },
+            { label:"Shoes & Cleats",      tab:"fit" },
+            { label:"Bags & Packs",        tab:"bags" },
+            { label:"Lights & Computers",  tab:"lights" },
+            { label:"Locks",               tab:"locks" },
+            { label:"Racks & Fenders",     tab:"racks" },
+            { label:"Pumps & Tools",       tab:"tools" },
+          ].map(it => (
+            <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab: it.tab })); }}>{it.label}</a>
           ))}
         </div>
       </div>
@@ -1130,7 +1216,7 @@ const SearchModal = ({ onClose }) => {
           <div>
             <div className="eyebrow" style={{ marginBottom:12, color:"var(--gray-500)" }}>Components &amp; Accessories</div>
             {partResults.map((p, i) => (
-              <button key={i} onClick={() => { const tab = (window.PART_TABS||[]).find(t=>t.depts.some(d=>d===(p.department||"")));  window.cl.go("parts",{dept:p.department,tab:tab?.id}); onClose(); }} data-cursor="link" style={rowStyle}>
+              <button key={i} onClick={() => { const tab=(window.PART_TABS||[]).find(t=>t.depts.some(d=>d===(p.department||"")));const tabId=tab?.id;const accTabs=['fit','tools','bags','lights','locks','racks'];window.cl.go(accTabs.includes(tabId)?'accessories':'components',{dept:p.department,tab:tabId});onClose(); }} data-cursor="link" style={rowStyle}>
                 <div style={{ flex:1 }}>
                   <div className="eyebrow" style={{ marginBottom:3 }}>{p.department}</div>
                   <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em" }}>{p.name}</div>
@@ -1138,7 +1224,7 @@ const SearchModal = ({ onClose }) => {
                 {p.price > 0 && <div style={{ fontFamily:"var(--display)", fontSize:15, fontWeight:500, flexShrink:0 }}>${p.price.toFixed(2)}</div>}
               </button>
             ))}
-            <button onClick={() => { window.cl.go("parts"); onClose(); }} data-cursor="link"
+            <button onClick={() => { window.cl.go("components"); onClose(); }} data-cursor="link"
               style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 0", background:"none", border:"none", cursor:"pointer", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)" }}>
               Browse all components &amp; accessories <ArrowRight size={10} />
             </button>

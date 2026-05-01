@@ -260,10 +260,23 @@ window.fuzzyMatch = function(needle, haystack) {
   );
 };
 
-// ── Search products (fuzzy) ───────────────────────────────────
+// ── Search products (fuzzy) — searches tabCache + CL_LS.products ─
 window.lightspeedSearch = function(query) {
   if (!query || query.length < 2) return [];
-  return (window.CL_LS.products || []).filter(p =>
+  // Aggregate from tabCache (populated as user browses or via warmCache)
+  const tabCache = window.CL_LS?.tabCache || {};
+  const fromCache = Object.values(tabCache).flat();
+  // Also include products if loaded via loadAll
+  const fromProducts = window.CL_LS.products || [];
+  // Deduplicate by id/name
+  const seen = new Set();
+  const pool = [];
+  for (const item of [...fromCache, ...fromProducts]) {
+    const key = item.id || item.itemID || item.name;
+    if (!seen.has(key)) { seen.add(key); pool.push(item); }
+  }
+  return pool.filter(p =>
+    !['labour','food','shop use'].some(x => (p.department||'').toLowerCase().includes(x)) &&
     window.fuzzyMatch(query, (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || ''))
   );
 };
