@@ -315,8 +315,8 @@ function BrandLandingPage({ brand }) {
               {bikes.slice(0, 6).map(b => (
                 <div key={b.handle} className="bike-card reveal" onClick={() => window.cl.go("bike", { bike: b })} style={{ cursor: "pointer" }}>
                   <div style={{ aspectRatio: "1", background: "var(--white)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, overflow: "hidden" }}>
-                    {b.images?.[0]
-                      ? <img src={b.images[0]} alt={`${data.name} ${b.name} — available at ChainLine Cycle in Kelowna`} loading="lazy" decoding="async" className="bike-img" style={{ width: "100%", height: "100%", objectFit: "contain", padding: "8%" }} onError={e => e.target.style.display = "none"} />
+                    {(b.images && b.images[0])
+                      ? <img src={b.images[0]} alt={data.name + " " + b.name + " — available at ChainLine Cycle in Kelowna"} loading="lazy" decoding="async" className="bike-img" style={{ width: "100%", height: "100%", objectFit: "contain", padding: "8%" }} onError={function(e){ e.target.style.display = "none"; }} />
                       : <div className="ph ph-corners" style={{ width: "100%", height: "100%" }} />}
                   </div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--gray-500)", marginBottom: 6, letterSpacing: ".06em" }}>{data.name}</div>
@@ -430,8 +430,8 @@ function TypeLandingPage({ type }) {
               {bikes.slice(0, 6).map(b => (
                 <div key={b.handle} className="bike-card reveal" onClick={() => window.cl.go("bike", { bike: b })} style={{ cursor: "pointer" }}>
                   <div style={{ aspectRatio: "1", background: "var(--white)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16, overflow: "hidden" }}>
-                    {b.images?.[0]
-                      ? <img src={b.images[0]} alt={`${b.name} ${typeLabel} bike — ChainLine Cycle Kelowna`} loading="lazy" decoding="async" className="bike-img" style={{ width: "100%", height: "100%", objectFit: "contain", padding: "8%" }} onError={e => e.target.style.display = "none"} />
+                    {(b.images && b.images[0])
+                      ? <img src={b.images[0]} alt={b.name + " " + typeLabel + " bike — ChainLine Cycle Kelowna"} loading="lazy" decoding="async" className="bike-img" style={{ width: "100%", height: "100%", objectFit: "contain", padding: "8%" }} onError={function(e){ e.target.style.display = "none"; }} />
                       : <div className="ph ph-corners" style={{ width: "100%", height: "100%" }} />}
                   </div>
                   <div style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--gray-500)", marginBottom: 6 }}>{b.brand}</div>
