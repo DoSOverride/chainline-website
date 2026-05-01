@@ -105,6 +105,16 @@ const App = () => {
   });
   const [intentState, setIntentState] = React.useState(() => pathToRoute(window.location.pathname).intent);
   const [scrolled, setScrolled] = React.useState(false);
+  const [pwaInstallable, setPwaInstallable] = React.useState(false);
+  const [pwaDismissed, setPwaDismissed] = React.useState(() => !!localStorage.getItem('pwa-dismissed'));
+  React.useEffect(() => {
+    const onInstallable = () => setPwaInstallable(true);
+    const onInstalled   = () => { setPwaInstallable(false); setPwaDismissed(true); };
+    window.addEventListener('pwa:installable', onInstallable);
+    window.addEventListener('pwa:installed', onInstalled);
+    if (window._pwaPrompt) setPwaInstallable(true);
+    return () => { window.removeEventListener('pwa:installable', onInstallable); window.removeEventListener('pwa:installed', onInstalled); };
+  }, []);
   const [showSticky, setShowSticky] = React.useState(false);
   const [megaOpen, setMegaOpen] = React.useState(null);
   const [mobileNav, setMobileNav] = React.useState(false);
@@ -325,6 +335,21 @@ const App = () => {
       <MobileNav open={mobileNav} onClose={() => setMobileNav(false)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} items={cart} onRemove={(i) => setCart(cart.filter((_, idx) => idx !== i))} />
       <StickyCTA show={showSticky} />
+
+      {pwaInstallable && !pwaDismissed && (
+        <div style={{ position:"fixed", bottom:24, left:"50%", transform:"translateX(-50%)", zIndex:300, background:"var(--black)", color:"var(--white)", display:"flex", alignItems:"center", gap:16, padding:"14px 20px", boxShadow:"0 4px 32px rgba(0,0,0,0.5)", maxWidth:420, width:"calc(100% - 48px)" }}>
+          <div style={{ flex:1 }}>
+            <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:600, textTransform:"uppercase", letterSpacing:"-.01em" }}>Install ChainLine</div>
+            <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:2 }}>Add to home screen — works offline</div>
+          </div>
+          <button onClick={() => { window._pwaPrompt?.prompt(); setPwaInstallable(false); }} data-cursor="link"
+            style={{ background:"var(--white)", color:"var(--black)", border:"none", padding:"8px 16px", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".12em", textTransform:"uppercase", cursor:"pointer", flexShrink:0 }}>
+            Install
+          </button>
+          <button onClick={() => { setPwaDismissed(true); localStorage.setItem('pwa-dismissed','1'); }} data-cursor="link"
+            style={{ background:"none", border:"none", color:"rgba(255,255,255,0.4)", cursor:"pointer", fontFamily:"var(--mono)", fontSize:11, flexShrink:0, padding:"4px 0" }}>✕</button>
+        </div>
+      )}
 
       <main key={page}>
         {page === "home" && (

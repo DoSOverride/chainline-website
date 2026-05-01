@@ -243,5 +243,22 @@ window.ServiceLandingPage = function(p) {
 };
 </script>
 <script type="text/babel" src="/app.jsx?v=18"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+// Capture install prompt for later use
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  window._pwaPrompt = e;
+  window.dispatchEvent(new CustomEvent('pwa:installable'));
+});
+window.addEventListener('appinstalled', () => {
+  window._pwaPrompt = null;
+  window.dispatchEvent(new CustomEvent('pwa:installed'));
+});
+</script>
 </body>
 </html>
