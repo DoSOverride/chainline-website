@@ -31,6 +31,7 @@ function pathToRoute(pathname) {
   if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (_PAGES.includes(s1)) return { page: s1, intent: null };
 
+  if (s1 === 'e-bikes-kelowna') return { page: 'type-landing', intent: { type: 'e-bike' } };
   // Programmatic SEO: /[brand]-bikes-kelowna, /[type]-bikes-kelowna
   const bikeKelownaMatch = s1.match(/^(.+?)-bikes-kelowna$/);
   if (bikeKelownaMatch) {
@@ -61,7 +62,7 @@ function routeToPath(page, intent) {
   if (page === 'parts')       return intent?.tab ? `/parts/${intent.tab}`       : '/parts';
   if (page === 'accessories') return intent?.tab ? `/accessories/${intent.tab}` : '/accessories';
   if (page === 'brand-landing') return `/${intent?.brand}-bikes-kelowna`;
-  if (page === 'type-landing')  return `/${intent?.type}-bikes-kelowna`;
+  if (page === 'type-landing')  return `/${intent?.type === 'e-bike' ? 'e-bikes' : intent?.type + '-bikes'}-kelowna`;
   if (page === 'service-landing') {
     const svcSlug = { 'tune-up': 'bike-tune-up-kelowna', 'fitting': 'bike-fitting-kelowna', 'storage': 'bike-storage-kelowna', 'demo': 'bike-demo-kelowna' };
     return `/${svcSlug[intent?.service] || 'services'}`;
@@ -241,7 +242,18 @@ const App = () => {
       mtbco:       ["MTBCO — Kelowna Mountain Bike Club | ChainLine Cycle", "ChainLine Cycle supports the Mountain Bike Club of the Okanagan. Lost Lake Loop, Pink Highway and trail building in the Okanagan."],
       warranty:    ["Bike Warranty Service Kelowna | ChainLine Cycle", "Warranty claims for Marin, Transition, Surly, Pivot, Salsa, Bianchi, Moots and more. Authorized dealer in Kelowna, BC."],
       terms:       ["Terms of Service | ChainLine Cycle", "ChainLine Cycle terms of service and purchase policies."],
+      store:       ["Shop Bikes & Gear | ChainLine Cycle Kelowna", "Browse in-stock bikes, parts and accessories at ChainLine Cycle. Kelowna's performance bike shop since 2009."],
       privacy:     ["Privacy Policy | ChainLine Cycle", "ChainLine Cycle privacy policy. How we handle your personal information."],
+    };
+    const setMeta = (t, d, c) => {
+      document.title = t;
+      document.querySelector('meta[name="description"]')?.setAttribute('content', d);
+      document.querySelector('link[rel="canonical"]')?.setAttribute('href', c);
+      document.querySelector('meta[property="og:title"]')?.setAttribute('content', t);
+      document.querySelector('meta[property="og:description"]')?.setAttribute('content', d);
+      document.querySelector('meta[property="og:url"]')?.setAttribute('content', c);
+      document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', t);
+      document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', d);
     };
     // Programmatic landing page meta (dynamic per brand/type/service)
     const brandSlug = intent?.brand;
@@ -251,32 +263,33 @@ const App = () => {
     const typeName  = typeSlug  ? (typeSlug === "e-bike" ? "E-Bike" : typeSlug.charAt(0).toUpperCase() + typeSlug.slice(1)) : "";
     const svcTitles = { 'tune-up': 'Bike Tune-Up', 'fitting': 'Bike Fitting', 'storage': 'Bike Storage', 'demo': 'Bike Demo' };
     const svcDescs  = { 'tune-up': 'Expert bike tune-up in Kelowna at ChainLine Cycle. Drivetrain service, brake adjustment, bearing check. From $75. Same-day available.', 'fitting': 'Professional bike fitting in Kelowna. Video analysis, full position setup. Road, mountain, gravel. From $80.', 'storage': 'Secure bike storage in Kelowna. Climate-controlled, spring tune-up included. From $180/season.', 'demo': 'Demo bikes in Kelowna at ChainLine Cycle. Test before you buy. Demo fee credited toward purchase.' };
+    if (page === 'bike') {
+      const bike = window.cl?.intent?.bike;
+      if (bike) {
+        const n = bike.name || bike.title;
+        const br = bike.brand || bike.vendor || '';
+        const can = `https://chainline.ca/bike/${bike.handle}`;
+        setMeta(`${br ? br + ' ' : ''}${n} | ChainLine Cycle Kelowna`, `${br ? br + ' ' : ''}${n} available at ChainLine Cycle in Kelowna, BC. Expert assembly, warranty support, and local trail knowledge.`, can);
+        return;
+      }
+    }
     if (page === 'brand-landing' && brandName) {
-      document.title = `${brandName} Bikes Kelowna | ChainLine Cycle`;
-      document.querySelector('meta[name="description"]')?.setAttribute('content', `Authorized ${brandName} dealer in Kelowna, BC. In-stock ${brandName} bikes at ChainLine Cycle — expert mechanics, warranty service, local trail knowledge.`);
-      document.querySelector('link[rel="canonical"]')?.setAttribute('href', `https://chainline.ca/${brandSlug}-bikes-kelowna`);
+      setMeta(`${brandName} Bikes Kelowna | ChainLine Cycle`, `Authorized ${brandName} dealer in Kelowna, BC. In-stock ${brandName} bikes at ChainLine Cycle — expert mechanics, warranty service, local trail knowledge.`, `https://chainline.ca/${brandSlug}-bikes-kelowna`);
       return;
     }
     if (page === 'type-landing' && typeName) {
-      document.title = `${typeName} Bikes Kelowna | ChainLine Cycle`;
-      document.querySelector('meta[name="description"]')?.setAttribute('content', `Shop ${typeName.toLowerCase()} bikes in Kelowna at ChainLine Cycle. Expert advice, in-stock selection, professional fitting. Kelowna's performance bike shop since 2009.`);
-      document.querySelector('link[rel="canonical"]')?.setAttribute('href', `https://chainline.ca/${typeSlug}-bikes-kelowna`);
+      const typeUrl = typeSlug === 'e-bike' ? 'e-bikes-kelowna' : `${typeSlug}-bikes-kelowna`;
+      setMeta(`${typeName} Bikes Kelowna | ChainLine Cycle`, `Shop ${typeName.toLowerCase()} bikes in Kelowna at ChainLine Cycle. Expert advice, in-stock selection, professional fitting. Kelowna's performance bike shop since 2009.`, `https://chainline.ca/${typeUrl}`);
       return;
     }
     if (page === 'service-landing' && svcSlug) {
       const svcRoutes = { 'tune-up': 'bike-tune-up-kelowna', 'fitting': 'bike-fitting-kelowna', 'storage': 'bike-storage-kelowna', 'demo': 'bike-demo-kelowna' };
-      document.title = `${svcTitles[svcSlug] || 'Bike Service'} Kelowna | ChainLine Cycle`;
-      document.querySelector('meta[name="description"]')?.setAttribute('content', svcDescs[svcSlug] || '');
-      document.querySelector('link[rel="canonical"]')?.setAttribute('href', `https://chainline.ca/${svcRoutes[svcSlug]}`);
+      setMeta(`${svcTitles[svcSlug] || 'Bike Service'} Kelowna | ChainLine Cycle`, svcDescs[svcSlug] || '', `https://chainline.ca/${svcRoutes[svcSlug]}`);
       return;
     }
 
     const [title, desc] = META[page] || META.home;
-    document.title = title;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', desc);
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.setAttribute('href', `https://chainline.ca${routeToPath(page, intent)}`);
+    setMeta(title, desc, `https://chainline.ca${routeToPath(page, intent)}`);
   }, [page]);
 
   // Silent background cache warmer — starts 4s after initial load
