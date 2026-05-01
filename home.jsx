@@ -419,23 +419,18 @@ const BikeScroller = () => {
   const trackPx = bikes.length * itemWidth;
   const duration = Math.round(trackPx / BRAND_PX_PER_S);
 
-  const BikeItem = ({ b }) => (
-    <div onClick={() => window.cl.go("bike", { bike: b })}
+  const trackItems = bikes.map((b, i) => (
+    <div key={i} onClick={() => window.cl.go("bike", { bike: b })}
       className="bike-scroller-item"
       style={{ flexShrink:0, width:200, height:148, marginRight:20, position:"relative", background:"var(--white)", cursor:"pointer", overflow:"hidden" }}>
       <img src={b.img} alt={b.name} loading="lazy" decoding="async" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"contain", padding:"8%", mixBlendMode:"multiply" }}
         onError={e => { e.target.parentElement.style.display = 'none'; }} />
     </div>
-  );
-  const Track = () => (
-    <div className="marquee-track" style={{ display:"flex", animationDuration:`${duration}s` }}>
-      {bikes.map((b, i) => <BikeItem key={i} b={b} />)}
-    </div>
-  );
+  ));
   return (
     <div className="marquee" style={{ padding:"20px 0", background:"var(--paper)", borderTop:"1px solid var(--hairline)", borderBottom:"1px solid var(--hairline)" }}>
-      <Track />
-      <Track />
+      <div className="marquee-track" style={{ display:"flex", animationDuration:`${duration}s` }}>{trackItems}</div>
+      <div className="marquee-track" style={{ display:"flex", animationDuration:`${duration}s` }}>{trackItems}</div>
     </div>
   );
 };

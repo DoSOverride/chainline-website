@@ -835,6 +835,7 @@ img {
   flex-shrink: 0;
   animation: marquee 38s linear infinite;
   gap: 0;
+  will-change: transform;
 }
 
 @keyframes shopLoadBar {
