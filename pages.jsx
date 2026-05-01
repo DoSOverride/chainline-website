@@ -2072,15 +2072,24 @@ const PART_TABS = [
   { id:'suspension',  label:'Suspension',         emoji:'🔩',  img: `${R2}/lifestyle/trail-knox.jpg`,
     sub: "Forks, rear shocks, oil, seals",
     depts:['Forks','Fork Parts','Fork Oil','Rear Shock','Seals'] },
-  { id:'helmets',    label:'Helmets',            emoji:'🪖', img:`${R2}/shop/interior-surly.jpg`,   sub:"MTB, road, gravel and commuter helmets",          depts:['Helmet'] },
-  { id:'protection', label:'Gloves & Armour',    emoji:'🥊', img:`${R2}/shop/interior-surly.jpg`,   sub:"Gloves, body armour, sunglasses",                 depts:['Gloves','Armour','Sunglasses'] },
-  { id:'shoes',      label:'Shoes & Cleats',     emoji:'👟', img:`${R2}/shop/interior-surly.jpg`,   sub:"MTB shoes, road shoes, cleats",                   depts:['Shoes Mountain','Shoes Road','Cleats'] },
-  { id:'clothing',   label:'Clothing',           emoji:'👕', img:`${R2}/shop/interior-surly.jpg`,   sub:"Jerseys, shorts, arm warmers, socks",             depts:['Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips'] },
-  { id:'tools',      label:'Tools & Maintenance',emoji:'🔧', img:`${R2}/parts/tools-hero.jpg`,      sub:"Pumps, lube, degreasers, workshop tools",         depts:['Tools','Pumps','Lube','Degreasers','Trainers'] },
-  { id:'bags',       label:'Bags & Hydration',   emoji:'🎒', img:`${R2}/lifestyle/rides-social.jpg`,sub:"Packs, bags, hydration, water bottles",           depts:['Bags','Packs','Hydration','Water Bottle','Water Bottle cage','Basket'] },
-  { id:'lights',     label:'Lights & Computers', emoji:'💡', img:`${R2}/lifestyle/trail-forest.jpg`,sub:"Bike lights, cycling computers, GPS",             depts:['Lights','Computers'] },
-  { id:'locks',      label:'Locks',              emoji:'🔒', img:`${R2}/shop/shop-interior.jpg`,    sub:"Cable locks, U-locks, chain locks",               depts:['Locks'] },
-  { id:'racks',      label:'Racks & Fenders',    emoji:'🚲', img:`${R2}/shop/shop-interior.jpg`,    sub:"Bike racks, fenders, kickstands, bells, mirrors", depts:['Bike Racks','Car Racks','Fenders','Kickstands','Mirrors','Bells','Misc. Accessories'] },
+  { id:'fit',        label:'Clothing & Gear',    emoji:'🪖', img:`${R2}/shop/interior-surly.jpg`,
+    sub:"Helmets, gloves, shoes, clothing, armour, sunglasses",
+    depts:['Helmet','Gloves','Armour','Sunglasses','Shoes Mountain','Shoes Road','Cleats','Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips'] },
+  { id:'tools',      label:'Tools & Maintenance',emoji:'🔧', img:`${R2}/parts/tools-hero.jpg`,
+    sub:"Pumps, lube, degreasers, workshop tools",
+    depts:['Tools','Pumps','Lube','Degreasers','Trainers'] },
+  { id:'bags',       label:'Bags & Hydration',   emoji:'🎒', img:`${R2}/lifestyle/rides-social.jpg`,
+    sub:"Packs, bags, hydration, water bottles",
+    depts:['Bags','Packs','Hydration','Water Bottle','Water Bottle cage','Basket'] },
+  { id:'lights',     label:'Lights & Computers', emoji:'💡', img:`${R2}/lifestyle/trail-forest.jpg`,
+    sub:"Bike lights, cycling computers, GPS",
+    depts:['Lights','Computers'] },
+  { id:'locks',      label:'Locks',              emoji:'🔒', img:`${R2}/shop/shop-interior.jpg`,
+    sub:"Cable locks, U-locks, chain locks",
+    depts:['Locks'] },
+  { id:'racks',      label:'Racks & Fenders',    emoji:'🚲', img:`${R2}/shop/shop-interior.jpg`,
+    sub:"Bike racks, fenders, kickstands, bells, mirrors",
+    depts:['Bike Racks','Car Racks','Fenders','Kickstands','Mirrors','Bells','Misc. Accessories'] },
 ];
 
 const BIKE_EXCLUDE = ['labour','food','shop use','consignments','bikes','bike bmx','bike cruiser','bike cross','frames','build kit','group'];
@@ -2190,7 +2199,7 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
-const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+const ACC_TAB_IDS  = ['fit','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
   const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
