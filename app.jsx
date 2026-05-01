@@ -382,9 +382,9 @@ const App = () => {
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
         {page === "store"       && <StorePage />}
-        {page === "components"  && (intentState?.tab ? <PartsPage key={intentState.tab} pageType="components" /> : <ComponentsLandingPage />)}
+        {page === "components"  && <PartsPage key={intentState?.tab || 'drivetrain'} pageType="components" />}
         {page === "parts"       && (intentState?.tab ? <PartsPage key={"p-"+intentState.tab} pageType="components" /> : <PartsLandingPage />)}
-        {page === "accessories" && (intentState?.tab ? <PartsPage key={"a-"+intentState.tab} pageType="accessories" /> : <AccessoriesLandingPage />)}
+        {page === "accessories" && <PartsPage key={intentState?.tab || 'helmets'} pageType="accessories" />}
         {page === "classifieds" && <ClassifiedsPage />}
         {page === "brands" && <BrandPage />}
         {page === "terms" && <TermsPage />}

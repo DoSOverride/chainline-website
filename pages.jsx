@@ -2350,16 +2350,18 @@ const PartRow = React.memo(({ item }) => {
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
-const ACC_TAB_IDS  = ['fit','tools','bags','lights','locks','racks'];
+const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
-  const defaultTab = pageType === 'accessories' ? 'fit' : 'drivetrain';
+  const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
 
   // Map tab IDs (including legacy names) to current tab IDs
   const remapTab = (id) => {
-    const REMAP = { helmets:'fit', protection:'fit', shoes:'fit', clothing:'fit',
-                    accessories:'bags', fit:'fit', tools:'tools', bags:'bags',
-                    lights:'lights', locks:'locks', racks:'racks' };
+    const REMAP = {
+      fit:'helmets', accessories:'bags',
+      helmets:'helmets', protection:'protection', shoes:'shoes', clothing:'clothing',
+      tools:'tools', bags:'bags', lights:'lights', locks:'locks', racks:'racks',
+    };
     return REMAP[id] || (COMP_TAB_IDS.includes(id) ? id : defaultTab);
   };
 
@@ -2388,13 +2390,11 @@ const PartsPage = ({ pageType = 'components' }) => {
   const activeTab = PART_TABS.find(t => t.id === safeCat) || visibleTabs[0];
 
   const filtered = React.useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = search.trim();
     const pool = q.length >= 2
       ? items.filter(p => {
-          const name = (p.name || '').toLowerCase();
-          const dept = (p.department || '').toLowerCase();
-          const sku  = (p.sku  || '').toLowerCase();
-          return name.includes(q) || dept.includes(q) || sku.includes(q);
+          const hay = (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || '');
+          return window.fuzzyMatch ? window.fuzzyMatch(q, hay) : hay.toLowerCase().includes(q.toLowerCase());
         })
       : items;
     return [...pool].sort((a, b) => (a.price||0) - (b.price||0));
