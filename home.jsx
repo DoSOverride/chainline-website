@@ -471,14 +471,14 @@ const LocalStory = () => (
 const GearHScroll = () => {
   const R2 = `${WORKER_URL}/r2`;
   const cats = [
-    { name: "Helmets & Protection", tab: "fit",          img: `${R2}/shop/interior-surly.jpg` },
-    { name: "Apparel & Clothing",   tab: "fit",          img: `${R2}/lifestyle/rides-group.jpg` },
-    { name: "Components",           tab: "drivetrain",   img: `${R2}/shop/interior-parts.jpg` },
-    { name: "Tools & Maintenance",  tab: "tools",        img: `${R2}/parts/tools-hero.jpg` },
-    { name: "Bags & Racks",         tab: "accessories",  img: `${R2}/lifestyle/rides-social.jpg` },
-    { name: "Lights & Computers",   tab: "accessories",  img: `${R2}/lifestyle/trail-forest.jpg` },
-    { name: "Wheels & Tires",       tab: "wheels",       img: `${R2}/shop/interior-tires.jpg` },
-    { name: "Suspension",           tab: "suspension",   img: `${R2}/lifestyle/trail-pines.jpg` },
+    { name: "Helmets",              page: "accessories", tab: "helmets",    img: `${R2}/shop/interior-surly.jpg` },
+    { name: "Apparel & Clothing",   page: "accessories", tab: "clothing",   img: `${R2}/lifestyle/rides-group.jpg` },
+    { name: "Components",           page: "components",  tab: "drivetrain", img: `${R2}/shop/interior-parts.jpg` },
+    { name: "Tools & Maintenance",  page: "accessories", tab: "tools",      img: `${R2}/parts/tools-hero.jpg` },
+    { name: "Bags & Hydration",     page: "accessories", tab: "bags",       img: `${R2}/lifestyle/rides-social.jpg` },
+    { name: "Lights & Computers",   page: "accessories", tab: "lights",     img: `${R2}/lifestyle/trail-forest.jpg` },
+    { name: "Wheels & Tires",       page: "components",  tab: "wheels",     img: `${R2}/shop/interior-tires.jpg` },
+    { name: "Suspension",           page: "components",  tab: "suspension", img: `${R2}/lifestyle/trail-pines.jpg` },
   ];
   return (
     <section className="section section-pad bg-white" data-screen-label="08 Gear" style={{ paddingBottom: 80 }}>
@@ -486,9 +486,9 @@ const GearHScroll = () => {
         <div className="reveal" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, gap: 40, flexWrap: "wrap" }}>
           <div>
             <div className="section-label">Gear Up  /  N°05</div>
-            <h2 className="display-xl">Components &<br/><span className="serif-italic">accessories.</span></h2>
+            <h2 className="display-xl">Shop.<br/><span className="serif-italic">Gear up.</span></h2>
           </div>
-          <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("parts")}>
+          <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("gear")}>
             Browse All <ArrowRight />
           </button>
         </div>
@@ -497,7 +497,7 @@ const GearHScroll = () => {
         <div style={{ display: "flex", gap: 24, paddingBottom: 24 }}>
           {cats.map((c, i) => (
             <a key={i} href="#" data-cursor="link" style={{ flex: "0 0 280px", scrollSnapAlign: "start" }}
-               onClick={e => { e.preventDefault(); window.cl.go("parts", { tab: c.tab }); }}>
+               onClick={e => { e.preventDefault(); window.cl.go(c.page, { tab: c.tab }); }}>
               <div className={c.img ? "" : "ph ph-corners"} style={{ aspectRatio: "3/4", position: "relative", overflow: "hidden",
                 background: c.img ? "var(--near-black)" : undefined }}>
                 {c.img

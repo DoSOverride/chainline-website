@@ -26,6 +26,7 @@ function pathToRoute(pathname) {
     return bike ? { page: 'bike', intent: { bike } } : { page: 'shop', intent: null };
   }
   if (s1 === 'store') return { page: 'store', intent: null };
+  if (s1 === 'gear')  return { page: 'gear',  intent: null };
   if (s1 === 'components') return { page: 'components', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (s1 === 'accessories') return { page: 'accessories', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
@@ -382,6 +383,7 @@ const App = () => {
         {page === "contact" && <ContactPage />}
         {page === "giftcards" && <GiftCardsPage />}
         {page === "store"       && <StorePage />}
+        {page === "gear"        && <AllShopPage />}
         {page === "components"  && (intentState?.tab ? <PartsPage key={intentState.tab} pageType="components" /> : <ComponentsLandingPage />)}
         {page === "parts"       && (intentState?.tab ? <PartsPage key={"p-"+intentState.tab} pageType="components" /> : <PartsLandingPage />)}
         {page === "accessories" && (intentState?.tab ? <PartsPage key={"a-"+intentState.tab} pageType="accessories" /> : <AccessoriesLandingPage />)}

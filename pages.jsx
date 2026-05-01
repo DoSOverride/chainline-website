@@ -3810,7 +3810,174 @@ const AccessoriesLandingPage = () => (
   />
 );
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, PartsLandingPage, ComponentsLandingPage, AccessoriesLandingPage, StorePage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
+// ── All Shop Page (/gear) ─────────────────────────────────────────────────────
+const AllShopPage = () => {
+  const [q, setQ] = React.useState('');
+  const [results, setResults] = React.useState([]);
+  const inputRef = React.useRef(null);
+
+  React.useEffect(() => {
+    window.lightspeedWarmCache?.(['drivetrain','brakes','wheels','cockpit','suspension','helmets','protection','shoes','clothing','tools','bags','lights','locks','racks']);
+    setTimeout(() => inputRef.current?.focus(), 300);
+  }, []);
+
+  React.useEffect(() => {
+    if (q.trim().length < 2) { setResults([]); return; }
+    const t = setTimeout(() => {
+      const all = window.lightspeedSearch?.(q.trim()) || [];
+      setResults(all.filter(p => !['labour','food','shop use','consignments','bikes'].some(x => (p.department||'').toLowerCase().includes(x))).slice(0, 24));
+    }, 150);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  const resultGo = (p) => {
+    const tab = window.PART_TABS?.find(t => t.depts.some(d => d.toLowerCase() === (p.department||'').toLowerCase()))?.id;
+    const accTabs = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+    window.cl.go(accTabs.includes(tab) ? 'accessories' : 'components', { tab, search: p.name });
+  };
+
+  const sections = [
+    { id:'components',  label:'Components',  sub:'Drivetrain · Brakes · Suspension · Wheels · Cockpit', img:`${R2}/shop/interior-parts.jpg`,   items:['Drivetrain','Brakes','Suspension','Wheels','Cockpit'] },
+    { id:'parts',       label:'Parts',        sub:'Tires · Tubes · Chains · Brake Pads · Lube',          img:`${R2}/shop/interior-tires.jpg`,   items:['Tires 29"','Tires 700C','Tubes','Chains','Brake Pads'] },
+    { id:'accessories', label:'Accessories',  sub:'Helmets · Clothing · Bags · Lights · Tools',          img:`${R2}/shop/interior-surly.jpg`,   items:['Helmets','Clothing','Bags','Lights','Tools'] },
+  ];
+
+  const quickCats = [
+    { label:'Cassettes',  page:'components',  tab:'drivetrain', search:'Cassette', emoji:'🎡' },
+    { label:'Tires 29"',  page:'components',  tab:'wheels',     search:'29',       emoji:'🔘' },
+    { label:'Helmets',    page:'accessories', tab:'helmets',                       emoji:'⛑️' },
+    { label:'Brake Pads', page:'components',  tab:'brakes',     search:'Brake pad',emoji:'🛑' },
+    { label:'Chains',     page:'components',  tab:'drivetrain', search:'Chain',    emoji:'🔗' },
+    { label:'Tubes',      page:'components',  tab:'wheels',     search:'Tube',     emoji:'🫧' },
+    { label:'Clothing',   page:'accessories', tab:'clothing',                      emoji:'👕' },
+    { label:'Forks',      page:'components',  tab:'suspension', search:'Fork',     emoji:'🔩' },
+    { label:'Saddles',    page:'components',  tab:'cockpit',    search:'Saddle',   emoji:'💺' },
+    { label:'Lights',     page:'accessories', tab:'lights',     search:'Light',    emoji:'💡' },
+    { label:'Bags',       page:'accessories', tab:'bags',                          emoji:'🎒' },
+    { label:'Tools',      page:'accessories', tab:'tools',                         emoji:'🔧' },
+  ];
+
+  return (
+    <div className="page-fade" style={{ minHeight:'100vh' }}>
+
+      {/* ── Dark hero + search ── */}
+      <section style={{ background:'var(--black)', paddingTop:'calc(100px + env(safe-area-inset-top, 0px))', paddingBottom:72, position:'relative', overflow:'hidden' }}>
+        <div className="grain" style={{ position:'absolute', inset:0 }} />
+        <div className="container-wide" style={{ position:'relative' }}>
+          <div style={{ maxWidth:800, margin:'0 auto' }}>
+            <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.2em', textTransform:'uppercase', color:'rgba(255,255,255,0.3)', marginBottom:20, textAlign:'center' }}>
+              ChainLine Kelowna  ·  Parts, Components & Accessories
+            </div>
+            <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(48px,10vw,96px)', fontWeight:700, textTransform:'uppercase', letterSpacing:'-.04em', lineHeight:.9, color:'#fafafa', marginBottom:48, textAlign:'center' }}>
+              Shop
+            </h1>
+            {/* Search input */}
+            <div style={{ display:'flex', alignItems:'center', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.15)', backdropFilter:'blur(16px)', padding:'0 24px', gap:12 }}>
+              <span style={{ fontSize:22, color:'rgba(255,255,255,0.3)', flexShrink:0, lineHeight:1 }}>⌕</span>
+              <input ref={inputRef} value={q} onChange={e => setQ(e.target.value)}
+                placeholder="Search cassettes, helmets, tires, brake pads…"
+                style={{ flex:1, padding:'22px 0', border:'none', outline:'none', fontFamily:'var(--display)', fontSize:'clamp(14px,2vw,18px)', fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', background:'transparent', color:'#fafafa' }} />
+              {q && <button onClick={() => { setQ(''); inputRef.current?.focus(); }}
+                style={{ padding:'4px 8px', background:'rgba(255,255,255,0.08)', border:'none', cursor:'pointer', color:'rgba(255,255,255,0.5)', fontSize:16, lineHeight:1 }}>✕</button>}
+            </div>
+            {q.trim().length >= 2 && (
+              <p style={{ marginTop:12, fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.16em', textTransform:'uppercase', color:'rgba(255,255,255,0.28)', textAlign:'center' }}>
+                {results.length} result{results.length !== 1 ? 's' : ''} across all inventory
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Results or browse ── */}
+      <section style={{ background:'var(--white)', padding:'0 0 120px', minHeight:'60vh' }}>
+        <div className="container-wide">
+          {q.trim().length >= 2 ? (
+            results.length > 0 ? (
+              <div style={{ paddingTop:40 }}>
+                {results.map((p, i) => (
+                  <button key={i} onClick={() => resultGo(p)} data-cursor="link"
+                    style={{ display:'flex', alignItems:'center', gap:16, padding:'14px 0', borderBottom:'1px solid var(--hairline)', background:'none', border:'none', borderBottom:'1px solid var(--hairline)', cursor:'pointer', textAlign:'left', width:'100%', WebkitTapHighlightColor:'transparent' }}>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:3 }}>{p.department}</div>
+                      <div style={{ fontFamily:'var(--display)', fontSize:15, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)', lineHeight:1.2 }}>{p.name}</div>
+                    </div>
+                    {p.price > 0 && <div style={{ fontFamily:'var(--display)', fontSize:15, fontWeight:600, color:'var(--black)', flexShrink:0 }}>${p.price % 1 === 0 ? p.price : p.price.toFixed(2)}</div>}
+                    <span style={{ color:'var(--gray-400)', flexShrink:0 }}><ArrowRight size={12} /></span>
+                  </button>
+                ))}
+                <button onClick={() => setQ('')} style={{ marginTop:28, display:'flex', alignItems:'center', gap:8, background:'none', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--gray-500)', padding:'8px 0' }}>
+                  ← Browse all categories
+                </button>
+              </div>
+            ) : (
+              <div style={{ paddingTop:80, textAlign:'center' }}>
+                <p style={{ fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:24 }}>No results for "{q}"</p>
+                <button onClick={() => setQ('')} className="btn btn-outline" data-cursor="link">Browse categories</button>
+              </div>
+            )
+          ) : (
+            <>
+              {/* 3 big section cards */}
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:3, marginBottom:3, marginTop:0 }}>
+                {sections.map(sec => (
+                  <button key={sec.id} onClick={() => window.cl.go(sec.id)} data-cursor="link"
+                    style={{ display:'block', position:'relative', background:'var(--black)', border:'none', cursor:'pointer', overflow:'hidden', textAlign:'left', padding:0, WebkitTapHighlightColor:'transparent' }}>
+                    <div style={{ aspectRatio:'4/5', position:'relative' }}>
+                      {sec.img && <img src={sec.img} alt={sec.label} loading="lazy" decoding="async"
+                        style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:.45, transition:'opacity .5s, transform .5s' }} />}
+                      <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.1) 100%)' }} />
+                      <div style={{ position:'absolute', inset:0, padding:'28px 28px 32px', display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
+                        <div style={{ fontFamily:'var(--display)', fontSize:'clamp(32px,5vw,48px)', fontWeight:700, textTransform:'uppercase', letterSpacing:'-.04em', lineHeight:.9, color:'#fafafa', marginBottom:16 }}>{sec.label}</div>
+                        <div style={{ display:'flex', flexWrap:'wrap', gap:'5px 10px', marginBottom:20 }}>
+                          {sec.items.map(it => (
+                            <span key={it} style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.12em', textTransform:'uppercase', color:'rgba(255,255,255,0.5)', background:'rgba(255,255,255,0.08)', padding:'3px 7px' }}>{it}</span>
+                          ))}
+                        </div>
+                        <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.14em', textTransform:'uppercase', color:'rgba(255,255,255,0.55)', display:'flex', alignItems:'center', gap:8 }}>
+                          <span>{sec.sub.split(' · ')[0]}</span>
+                          <ArrowRight size={10} />
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Quick category grid */}
+              <div style={{ marginTop:48 }}>
+                <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:12, paddingBottom:10, borderBottom:'1px solid var(--hairline)' }}>Quick browse</div>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))', gap:2 }}>
+                  {quickCats.map(c => (
+                    <button key={c.label} onClick={() => window.cl.go(c.page, { tab:c.tab, ...(c.search ? {search:c.search} : {}) })}
+                      data-cursor="link"
+                      style={{ display:'flex', alignItems:'center', gap:10, padding:'14px 16px', background:'var(--paper)', border:'none', cursor:'pointer', textAlign:'left', transition:'background .12s', WebkitTapHighlightColor:'transparent' }}
+                      onMouseEnter={e => { e.currentTarget.style.background='var(--black)'; e.currentTarget.querySelector('.qcl').style.color='var(--white)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background='var(--paper)'; e.currentTarget.querySelector('.qcl').style.color='var(--black)'; }}>
+                      <span style={{ fontSize:18, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
+                      <span className="qcl" style={{ fontFamily:'var(--display)', fontSize:12, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)', transition:'color .12s', lineHeight:1.2 }}>{c.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginTop:56, padding:'40px 0', borderTop:'1px solid var(--hairline)', textAlign:'center' }}>
+                <div className="eyebrow" style={{ marginBottom:10 }}>Don't see what you need?</div>
+                <p style={{ fontSize:14, color:'var(--gray-500)', maxWidth:400, margin:'0 auto 20px' }}>We stock 7,000+ products and can order almost anything — usually here within a few days.</p>
+                <div style={{ display:'flex', gap:10, justifyContent:'center', flexWrap:'wrap' }}>
+                  <a href="tel:2508601968" className="btn btn-outline" data-cursor="link">Call (250) 860-1968</a>
+                  <button className="btn" data-cursor="link" onClick={() => window.cl.go('contact')}>Contact Us <ArrowRight /></button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, PartsLandingPage, ComponentsLandingPage, AccessoriesLandingPage, AllShopPage, StorePage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
 
 // EVENTS & CLINICS PAGE
 const EventsPage = () => {
