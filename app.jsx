@@ -370,9 +370,9 @@ const App = () => {
         {page === "events" && <EventsPage />}
         {page === "social" && <SocialPage />}
         {page === "mtbco" && <MTBCOPage />}
-        {page === "brand-landing"   && <BrandLandingPage brand={intentState?.brand} />}
-        {page === "type-landing"    && <TypeLandingPage  type={intentState?.type} />}
-        {page === "service-landing" && <ServiceLandingPage service={intentState?.service} />}
+        {page === "brand-landing"   && window.BrandLandingPage   && React.createElement(window.BrandLandingPage,   { brand:   intentState?.brand })}
+        {page === "type-landing"    && window.TypeLandingPage    && React.createElement(window.TypeLandingPage,    { type:    intentState?.type })}
+        {page === "service-landing" && window.ServiceLandingPage && React.createElement(window.ServiceLandingPage, { service: intentState?.service })}
       </main>
 
       <Footer />

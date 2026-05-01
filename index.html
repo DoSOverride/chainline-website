@@ -196,37 +196,54 @@
 <script type="text/babel" src="/home.jsx?v=17"></script>
 <script type="text/babel" src="/pages.jsx?v=18"></script>
 <script type="text/babel">
-// ChainLine Landing Pages — inlined to guarantee synchronous execution before app.jsx
-function BrandLandingPage({ brand }) {
-  return React.createElement("div", { className: "page-fade" },
-    React.createElement("section", { style: { background: "#0a0a0a", minHeight: "60vh", display: "flex", alignItems: "center", padding: "140px 0 80px" } },
-      React.createElement("div", { className: "container-wide" },
-        React.createElement("h1", { className: "display-2xl", style: { color: "#fafafa" } }, brand + " Bikes in Kelowna"),
-        React.createElement("p", { style: { color: "var(--gray-400)", marginTop: 20 } }, "Authorized dealer at ChainLine Cycle - 1139 Ellis St, Kelowna BC.")
-      )
-    )
+window.BrandLandingPage = function BrandLandingPage({ brand }) {
+  return (
+    <div className="page-fade">
+      <section style={{ background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" }}>
+        <div className="container-wide">
+          <div className="section-label" style={{ color:"var(--gray-500)", marginBottom:20 }}>Authorized Dealer - Kelowna, BC</div>
+          <h1 className="display-2xl" style={{ color:"#fafafa", marginBottom:20 }}>{brand} Bikes in Kelowna</h1>
+          <p style={{ color:"var(--gray-400)", fontSize:"clamp(16px,1.8vw,20px)", maxWidth:540, lineHeight:1.65, marginBottom:40 }}>In-stock selection at ChainLine Cycle. Expert mechanics and warranty service.</p>
+          <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
+            <button className="btn btn-primary" onClick={() => window.cl.go("shop")}>Shop All Bikes</button>
+            <button className="btn btn-ghost-white" onClick={() => window.cl.go("book")}>Book a Service</button>
+          </div>
+        </div>
+      </section>
+    </div>
   );
-}
-function TypeLandingPage({ type }) {
-  return React.createElement("div", { className: "page-fade" },
-    React.createElement("section", { style: { background: "#0a0a0a", minHeight: "60vh", display: "flex", alignItems: "center", padding: "140px 0 80px" } },
-      React.createElement("div", { className: "container-wide" },
-        React.createElement("h1", { className: "display-2xl", style: { color: "#fafafa" } }, type + " Bikes in Kelowna"),
-        React.createElement("p", { style: { color: "var(--gray-400)", marginTop: 20 } }, "In-stock selection at ChainLine Cycle - 1139 Ellis St, Kelowna BC.")
-      )
-    )
+};
+window.TypeLandingPage = function TypeLandingPage({ type }) {
+  return (
+    <div className="page-fade">
+      <section style={{ background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" }}>
+        <div className="container-wide">
+          <div className="section-label" style={{ color:"var(--gray-500)", marginBottom:20 }}>ChainLine Cycle - Kelowna, BC</div>
+          <h1 className="display-2xl" style={{ color:"#fafafa", marginBottom:20 }}>{type} Bikes in Kelowna</h1>
+          <p style={{ color:"var(--gray-400)", fontSize:"clamp(16px,1.8vw,20px)", maxWidth:540, lineHeight:1.65, marginBottom:40 }}>In-stock selection at ChainLine Cycle. Expert advice and professional fitting.</p>
+          <button className="btn btn-primary" onClick={() => window.cl.go("shop")}>Shop All Bikes</button>
+        </div>
+      </section>
+    </div>
   );
-}
-function ServiceLandingPage({ service }) {
-  return React.createElement("div", { className: "page-fade" },
-    React.createElement("section", { style: { background: "#0a0a0a", minHeight: "60vh", display: "flex", alignItems: "center", padding: "140px 0 80px" } },
-      React.createElement("div", { className: "container-wide" },
-        React.createElement("h1", { className: "display-2xl", style: { color: "#fafafa" } }, "Bike " + service + " in Kelowna"),
-        React.createElement("p", { style: { color: "var(--gray-400)", marginTop: 20 } }, "Book at ChainLine Cycle - 1139 Ellis St, Kelowna BC. (250) 860-1968.")
-      )
-    )
+};
+window.ServiceLandingPage = function ServiceLandingPage({ service }) {
+  return (
+    <div className="page-fade">
+      <section style={{ background:"#0a0a0a", minHeight:"60vh", display:"flex", alignItems:"center", padding:"140px 0 80px" }}>
+        <div className="container-wide">
+          <div className="section-label" style={{ color:"var(--gray-500)", marginBottom:20 }}>ChainLine Cycle - 1139 Ellis St, Kelowna</div>
+          <h1 className="display-2xl" style={{ color:"#fafafa", marginBottom:20 }}>Bike {service} in Kelowna</h1>
+          <p style={{ color:"var(--gray-400)", fontSize:"clamp(16px,1.8vw,20px)", maxWidth:540, lineHeight:1.65, marginBottom:40 }}>Expert service at ChainLine Cycle. Book online or call (250) 860-1968.</p>
+          <div style={{ display:"flex", gap:16, flexWrap:"wrap" }}>
+            <button className="btn btn-primary" onClick={() => window.cl.go("book")}>Book a Service</button>
+            <button className="btn btn-ghost-white" onClick={() => window.cl.go("services")}>All Services</button>
+          </div>
+        </div>
+      </section>
+    </div>
   );
-}
+};
 </script>
 <script type="text/babel" src="/app.jsx?v=18"></script>
 </body>
