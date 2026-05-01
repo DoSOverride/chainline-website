@@ -1,4 +1,4 @@
-const CACHE = 'chainline-v3';
+const CACHE = 'chainline-v4';
 
 const PRECACHE = [
   '/',
@@ -9,9 +9,6 @@ const PRECACHE = [
   '/apple-touch-icon.png',
   '/logo.png',
   '/logo-dark.png',
-  '/bike-data.js',
-  '/lightspeed.js',
-  '/shopify.js',
 ];
 
 self.addEventListener('install', e => {
