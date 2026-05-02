@@ -2636,6 +2636,12 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
           {price && <span style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:600, color:"var(--black)" }}>{price}</span>}
           <PartCartBtn item={item} compact />
         </div>
+        <div style={{ display:"flex", alignItems:"center", gap:5, marginTop:2 }}>
+          <span style={{ width:5, height:5, borderRadius:"50%", background: lowStock ? "#c2410c" : "var(--stock-green)", flexShrink:0 }} />
+          <span style={{ fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", color: lowStock ? "#c2410c" : "var(--stock-green)" }}>
+            {lowStock ? `${item.qty} left` : "In Stock"}
+          </span>
+        </div>
       </div>
     </div>
   );

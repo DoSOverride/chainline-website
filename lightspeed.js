@@ -65,7 +65,7 @@ window.lightspeedGetTab = async function(tabId) {
 
 // ── Warm cache: silently preload tabs with small delays ───────
 window.lightspeedWarmCache = async function(tabs) {
-  if (!tabs) tabs = ['drivetrain','brakes','wheels','cockpit','suspension','fit','tools','bags','lights','locks','racks'];
+  if (!tabs) tabs = ['drivetrain','brakes','wheels','cockpit','suspension','helmets','protection','shoes','tools','bags','lights','locks','racks'];
   for (const tab of tabs) {
     if (!window.CL_LS.tabCache?.[tab]) {
       await window.lightspeedGetTab(tab);

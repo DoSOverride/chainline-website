@@ -193,7 +193,8 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
   const openMega = (p) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     onMega(p);
-    if (['parts','accessories'].includes(p)) window.lightspeedWarmCache?.();
+    if (p === 'parts')       window.lightspeedWarmCache?.(['drivetrain','brakes','wheels','cockpit','suspension']);
+    if (p === 'accessories') window.lightspeedWarmCache?.(['helmets','protection','shoes','tools','bags','lights','locks','racks']);
     if (p === 'shop') window.lightspeedGetBikes?.();
   };
   const scheduleClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => onMega(null), 180); };
@@ -543,17 +544,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
               </div>
             </div>
           ) : d.searchPage ? (
-            /* Parts / Accessories: search bar + 4 category cols */
+            /* Parts / Accessories: "All X" CTA + 4 category cols */
             <>
-              <div style={{ display:"flex", alignItems:"center", gap:20, paddingBottom:20, marginBottom:20, borderBottom:"1px solid var(--hairline)" }}>
-                <div style={{ position:"relative", flex:"0 0 260px" }}>
-                  <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
-                  <input
-                    placeholder={`Search ${d.allLabel.toLowerCase()}…`}
-                    style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:8, paddingBottom:8, border:"1px solid var(--hairline)", background:"var(--paper)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".08em", color:"var(--black)", outline:"none" }}
-                    onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) { onClose(); window.cl.go(d.searchPage, { search: e.target.value.trim() }); } }}
-                  />
-                </div>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", paddingBottom:16, marginBottom:16, borderBottom:"1px solid var(--hairline)" }}>
                 <a href="#" data-cursor="link"
                   onClick={e => { e.preventDefault(); onClose(); window.cl.go(d.searchPage); }}
                   style={{ ...linkStyle, color:"var(--black)", fontWeight:600, fontSize:12, display:"flex", alignItems:"center", gap:6, letterSpacing:".1em" }}>
@@ -699,16 +692,6 @@ const MobileNav = ({ open, onClose }) => {
       {/* ── Panel: Parts (merged components + parts) ── */}
       <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        {/* Search */}
-        <div style={{ padding:"12px 24px 16px", borderBottom:"1px solid rgba(255,255,255,0.1)", flexShrink:0 }}>
-          <div style={{ position:"relative" }}>
-            <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
-            <input placeholder="Search parts…"
-              style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:9, paddingBottom:9, background:"rgba(255,255,255,0.08)", border:"none", borderBottom:"1px solid rgba(255,255,255,0.15)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:16, letterSpacing:".05em", outline:"none" }}
-              onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) dismiss(() => window.cl.go("components", { search: e.target.value.trim() })); }}
-            />
-          </div>
-        </div>
         <div style={{ padding:"0 24px", flex:1, overflowY:"auto" }}>
           <a href="#" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
             onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components")); }}>All Parts</a>
@@ -740,16 +723,6 @@ const MobileNav = ({ open, onClose }) => {
       {/* ── Panel: Accessories ── */}
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        {/* Search */}
-        <div style={{ padding:"12px 24px 16px", borderBottom:"1px solid rgba(255,255,255,0.1)", flexShrink:0 }}>
-          <div style={{ position:"relative" }}>
-            <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
-            <input placeholder="Search accessories…"
-              style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:9, paddingBottom:9, background:"rgba(255,255,255,0.08)", border:"none", borderBottom:"1px solid rgba(255,255,255,0.15)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:16, letterSpacing:".05em", outline:"none" }}
-              onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) dismiss(() => window.cl.go("accessories", { search: e.target.value.trim() })); }}
-            />
-          </div>
-        </div>
         <div style={{ padding:"0 24px", flex:1, overflowY:"auto" }}>
           <a href="#" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
             onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories")); }}>All Accessories</a>
