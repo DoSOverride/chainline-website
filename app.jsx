@@ -311,6 +311,14 @@ const App = () => {
     setMeta(title, desc, `https://chainline.ca${routeToPath(page, intent)}`);
   }, [page]);
 
+  // Preload top parts tabs 2s after initial load
+  React.useEffect(() => {
+    const t = setTimeout(() => {
+      window.lightspeedWarmCache?.(['drivetrain', 'helmets', 'wheels']);
+    }, 2000);
+    return () => clearTimeout(t);
+  }, []);
+
   // Silent background cache warmer — starts 4s after initial load
   React.useEffect(() => {
     const t = setTimeout(() => window.lightspeedWarmCache?.(), 4000);
