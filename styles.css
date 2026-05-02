@@ -2297,3 +2297,8 @@ a:hover .bike-hover { transform: translateY(0); }
   .part-page-grid { grid-template-columns: 1fr; gap: 24px; }
 }
 [data-theme="dark"] .part-page-img-wrap { background: #d4d0cb; }
+
+/* ── CompareBar — clear mobile bottom-nav (68px + safe area) ── */
+@media (max-width: 768px) {
+  .compare-bar-sticky { bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
+}

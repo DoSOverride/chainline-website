@@ -716,7 +716,7 @@ const CompareBar = () => {
     <>
       {/* Sticky bar */}
       {list.length > 0 && !open && (
-        '<div className="compare-bar-sticky" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
+        <div className='compare-bar-sticky' style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
           <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flex:1 }}>
             Comparing: {list.map(b => b.name || b.title).join(' vs ')}
           </div>
