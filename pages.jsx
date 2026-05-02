@@ -4755,7 +4755,8 @@ const QuotePage = () => {
   }, [id]);
 
   const decide = (recId, val) => setDecisions(d => ({ ...d, [recId]: val }));
-  const allDecided = quote?.recommendations?.length > 0 && quote.recommendations.every(r => decisions[r.id] !== null && decisions[r.id] !== undefined);
+  const allDecided = !quote?.recommendations?.length ||
+    quote.recommendations.every(r => decisions[r.id] !== null && decisions[r.id] !== undefined);
   const approvedTotal = (quote?.recommendations || []).filter(r => decisions[r.id] === true).reduce((s, r) => s + (r.price || 0), 0);
 
   const urgencyConfig = {
