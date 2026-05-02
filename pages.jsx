@@ -3224,9 +3224,8 @@ const VENDOR_BRANDS = [
     { name:"Giro",         desc:"Helmets, shoes, gloves and eyewear. Safety-first design since 1985." },
     { name:"Bell",         desc:"Iconic bike helmets from road to MTB. Bold protection for every rider." },
     { name:"100%",         desc:"Performance goggles, helmets, gloves and apparel. Race-bred since 2012." },
-    { name:"Troy Lee Designs", desc:"Premium MTB helmets, pads and apparel — built with world champions." },
-    { name:"POC",          desc:"Swedish safety innovation. Helmets, goggles and protective gear." },
-    { name:"Smith",        desc:"Helmets and sunglasses engineered for performance and protection." },
+    { name:"Fox Racing",   desc:"Apparel, helmets and protective gear from the MTB suspension leader." },
+    { name:"Leatt",        desc:"Full-body protection — neck braces, helmets, body armour and gloves." },
   ]},
   { cat:"Electronics & Navigation", brands:[
     { name:"Garmin",       desc:"GPS computers, fitness trackers and sensors. The standard in cycling navigation." },
