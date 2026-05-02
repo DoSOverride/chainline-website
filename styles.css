@@ -931,23 +931,15 @@ img {
   object-fit: contain;
   padding: 8%;
   mix-blend-mode: multiply;
-  will-change: opacity, transform;
+  will-change: opacity;
+  transition: opacity 0.4s ease;
 }
 
-.bike-card-img-primary {
-  opacity: 1; z-index: 1;
-  transform: scale(1) translateX(0);
-  transition: opacity 0.32s ease, transform 0.32s ease;
-}
-.bike-card-img-hover {
-  opacity: 0; z-index: 2;
-  transform: scale(1.05) translateX(12px);
-  transition: opacity 0.32s ease 0.06s, transform 0.38s ease 0.04s;
-}
+.bike-card-img-primary { opacity: 1; z-index: 1; }
+.bike-card-img-hover   { opacity: 0; z-index: 2; }
 
 .bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-primary {
   opacity: 0;
-  transform: scale(0.95) translateX(-10px);
 }
 .bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-hover {
   opacity: 1;
@@ -1716,6 +1708,13 @@ img {
 /* ============================================================
    PARTS PAGE
    ============================================================ */
+/* On desktop, chips strip is redundant — sidebar handles category nav */
+@media (min-width: 769px) {
+  .parts-mobile-tabs { display: none !important; }
+  /* Search bar spans full width: sidebar (220px) + content */
+  .parts-search-bar { padding-left: 240px !important; }
+}
+
 .parts-layout {
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -1783,13 +1782,14 @@ img {
   .parts-page-section {
     padding-top: 136px !important;
   }
-  /* Mobile: fix sticky tops to account for safe area (header = 100px + safe area, chips ~42px) */
+  /* Mobile: fix sticky tops to account for safe area */
   .parts-mobile-tabs {
     top: calc(100px + env(safe-area-inset-top, 0px));
   }
   .parts-search-bar {
     top: calc(142px + env(safe-area-inset-top, 0px)) !important;
   }
+  .parts-search-bar .parts-search-result-count { display: none; }
   /* Stats: 4th and 5th items don't need a left border when they wrap */
   .home-stats-grid > *:nth-child(4),
   .home-stats-grid > *:nth-child(5) {

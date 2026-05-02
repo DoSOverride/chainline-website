@@ -2625,17 +2625,22 @@ const PartsPage = ({ pageType = 'components' }) => {
     const t = window.cl?.intent?.tab;
     return t ? remapTab(t) : defaultTab;
   });
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = React.useState(() => {
+    // Pre-populate search from intent (e.g. mega menu "Cassettes" click)
+    return window.cl?.intent?.search || '';
+  });
   const [pg,     setPg]     = React.useState(0);
   const PAGE = 60;
   const searchRef = React.useRef(null);
 
-  // Handle routing intent from nav (dept/search filters only — tab handled in useState)
+  // Handle routing intent — also fires when navigating between parts pages
   React.useEffect(() => {
     const intent = window.cl?.intent;
     if (!intent) return;
+    if (intent.tab)    setCat(remapTab(intent.tab));
     if (intent.dept)   setSearch(intent.dept);
     if (intent.search) setSearch(intent.search);
+    else if (intent.tab && !intent.dept) setSearch(''); // tab-only nav clears search
     window.cl.intent = null;
   }, []);
 
@@ -2742,7 +2747,7 @@ const PartsPage = ({ pageType = 'components' }) => {
     <div className="page-fade">
       <section className="parts-page-section" style={{ background:"var(--white)", paddingTop:136, minHeight:"100vh" }}>
 
-        {/* Subcategory chip strip — always visible, horizontal scroll */}
+        {/* Subcategory chip strip — mobile only (sidebar handles desktop) */}
         <div className="parts-mobile-tabs">
           {subCats.map(sc => {
             const active = isSubActive(sc);
@@ -2755,6 +2760,22 @@ const PartsPage = ({ pageType = 'components' }) => {
               </button>
             );
           })}
+        </div>
+
+        {/* Search bar — OUTSIDE layout so sticky works across full width */}
+        <div className="parts-search-bar" style={{ padding:"10px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:136, zIndex:15 }}>
+          <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
+            onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
+            onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
+            <span style={{ fontSize:13, color:"var(--gray-400)" }}>⌕</span>
+            <input ref={searchRef} type="text" placeholder={`Search ${activeTab.label.toLowerCase()} — or anything…`}
+              value={search} onChange={e => { setSearch(e.target.value); setPg(0); }}
+              style={{ flex:1, padding:"8px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:14, background:"transparent", color:"var(--black)" }} />
+            {search && <button onClick={() => { setSearch(''); setPg(0); searchRef.current?.focus(); }}
+              style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer" }}>✕</button>}
+          </div>
+          {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
+          {search && !loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", flexShrink:0 }}>{filtered.length} results</span>}
         </div>
 
         <div className="parts-layout">
@@ -2810,27 +2831,12 @@ const PartsPage = ({ pageType = 'components' }) => {
           </div>
 
           {/* Main */}
-          <div className="parts-main" style={{ minWidth:0, overflow:"hidden" }}>
-
-            {/* Sticky search bar — chips strip sticks at 136px and is ~42px tall, so search stacks at 178px */}
-            <div className="parts-search-bar" style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:178, zIndex:10 }}>
-              <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
-                onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
-                onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
-                <span style={{ fontSize:13, color:"var(--gray-400)" }}>⌕</span>
-                <input ref={searchRef} type="text" placeholder={`Search ${activeTab.label.toLowerCase()} — or anything…`}
-                  value={search} onChange={e => { setSearch(e.target.value); setPg(0); }}
-                  style={{ flex:1, padding:"9px 0", border:"none", outline:"none", fontFamily:"var(--body)", fontSize:14, background:"transparent", color:"var(--black)" }} />
-                {search && <button onClick={() => { setSearch(''); setPg(0); searchRef.current?.focus(); }}
-                  style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer" }}>✕</button>}
-              </div>
-              {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
-            </div>
+          <div className="parts-main" style={{ minWidth:0, overflowX:"hidden" }}>
 
             {/* Global search indicator */}
             {searchIsGlobal && search && (
               <div style={{ padding:"8px 20px", background:"#fef9c3", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"#92400e" }}>
-                No results in {activeTab.label} — showing all inventory
+                Showing all inventory — no results in {activeTab.label}
               </div>
             )}
 
