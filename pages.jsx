@@ -368,7 +368,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
           <div className="bike-page-img-wrap" style={{ aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 12 }}>
             {allImgs.length > 0
               ? <img src={allImgs[activeImg]} alt={[(b.brand || b.vendor || ''), (b.name || b.title)].filter(Boolean).join(' ')}
-                  className="bike-img" loading="lazy" decoding="async"
+                  className="bike-img" loading={activeImg === 0 ? "eager" : "lazy"} decoding="async"
                   style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8%' }}
                   onError={e => { e.target.style.display='none'; }} />
               : <div className="ph ph-corners" style={{ width: '100%', height: '100%' }}>
