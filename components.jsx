@@ -1229,6 +1229,27 @@ const ChatWidget = () => {
   const [thinking, setThinking] = React.useState(false);
   const bottomRef = React.useRef(null);
   const [btnBottom, setBtnBottom] = React.useState(window.innerWidth <= 768 ? 16 : 32);
+  const transcriptSent = React.useRef(false);
+  const inactivityTimer = React.useRef(null);
+
+  const sendTranscript = React.useCallback((messages) => {
+    if (transcriptSent.current || messages.length < 2) return;
+    const hasUserMsg = messages.some(m => m.role === 'user');
+    if (!hasUserMsg) return;
+    transcriptSent.current = true;
+    fetch(`${WORKER}/api/chat-transcript`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, page: window.location.pathname }),
+    }).catch(() => {});
+  }, []);
+
+  React.useEffect(() => {
+    if (msgs.length < 2) return;
+    clearTimeout(inactivityTimer.current);
+    inactivityTimer.current = setTimeout(() => sendTranscript(msgs), 10 * 60 * 1000);
+    return () => clearTimeout(inactivityTimer.current);
+  }, [msgs]);
 
   React.useEffect(() => {
     if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: "smooth" });
