@@ -928,10 +928,12 @@ const ShopPage = ({ intentState }) => {
             <div style={{ textAlign:"center", padding:"80px 0" }}>
               {type === "Sale" ? (
                 <>
-                  <div className="display-m" style={{ marginBottom:16 }}>No bikes on sale right now.</div>
-                  <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Check back soon — we'll post deals here when they happen. In the meantime, here's what's on sale at our brands directly.</p>
+                  <div className="display-m" style={{ marginBottom:16 }}>
+                    {window.CL_LS?.saleChecked ? "No bikes on sale right now." : "Checking for sale bikes…"}
+                  </div>
+                  <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Check back soon - we'll post deals here when they happen. In the meantime, here's what's on sale at our brands directly.</p>
                   <button className="btn btn-outline" data-cursor="link" onClick={() => { setBrand("All"); setType("All"); }}>Show All Bikes <ArrowRight /></button>
-                  <BrandSaleWidget />
+                  {window.CL_LS?.saleChecked && <BrandSaleWidget />}
                 </>
               ) : (
                 <>
@@ -3279,7 +3281,6 @@ const VENDOR_BRANDS = [
     { name:"Motorex",      desc:"Swiss precision lubricants and care products for high-performance drivetrains." },
   ]},
 ];
-const SPECIAL_ORDER_BRANDS_LIST = ["Salsa","Bianchi","Moots","Knolly","Revel"];
 const BrandPage = () => {
   const [activeVendorCat, setActiveVendorCat] = React.useState(null);
   const bikeBrands = [
