@@ -368,19 +368,21 @@ const CURRENCIES = [
   { code:'NOK', symbol:'kr', flag:'🇳🇴', name:'Norwegian Krone'   },
 ];
 const COUNTRY_CURRENCY = { US:'USD',GB:'GBP',AU:'AUD',NZ:'NZD',CH:'CHF',JP:'JPY',SE:'SEK',NO:'NOK',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',BE:'EUR',AT:'EUR',PT:'EUR',IE:'EUR',FI:'EUR',GR:'EUR' };
-// Initialize global price formatter (loaded before pages.jsx)
+// Initialize global price formatter — wrapped in try/catch for private-mode localStorage restrictions
+const _lsGet = (k, def) => { try { return localStorage.getItem(k) || def; } catch(e) { return def; } };
+const _lsSet = (k, v)   => { try { localStorage.setItem(k, v); } catch(e) {} };
 window.CL_CURRENCY = window.CL_CURRENCY || (() => {
-  const code = localStorage.getItem('cl-currency') || 'CAD';
+  const code = _lsGet('cl-currency', 'CAD');
   const info = CURRENCIES.find(c => c.code === code) || CURRENCIES[0];
   return { code, symbol: info.symbol, rate: 1 };
 })();
 window.formatPrice = (cad) => {
-  const c = window.CL_CURRENCY;
+  const c = window.CL_CURRENCY || { code:'CAD', symbol:'$', rate:1 };
   const v = Math.round((cad || 0) * (c.rate || 1));
   return `${c.symbol}${v.toLocaleString()} ${c.code}`;
 };
 const CurrencySelector = () => {
-  const [code, setCode] = React.useState(() => localStorage.getItem('cl-currency') || 'CAD');
+  const [code, setCode] = React.useState(() => _lsGet('cl-currency', 'CAD'));
   const [rates, setRates] = React.useState({ CAD:1 });
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
@@ -390,12 +392,11 @@ const CurrencySelector = () => {
     window.CL_CURRENCY = { code: c, symbol: info.symbol, rate: r };
     window.formatPrice = (cad) => { const v = Math.round((cad||0)*r); return `${info.symbol}${v.toLocaleString()} ${c}`; };
     window.dispatchEvent(new CustomEvent('currency:changed', { detail: window.CL_CURRENCY }));
-    localStorage.setItem('cl-currency', c);
+    _lsSet('cl-currency', c);
   };
   React.useEffect(() => {
-    // Cache exchange rates 24 hrs to avoid hitting free-tier limits (1500 req/month)
-    const cached = localStorage.getItem('cl-rates');
-    const cachedAt = parseInt(localStorage.getItem('cl-rates-ts') || '0', 10);
+    const cached = _lsGet('cl-rates', null);
+    const cachedAt = parseInt(_lsGet('cl-rates-ts', '0'), 10);
     if (cached && Date.now() - cachedAt < 86400000) {
       try { const r = JSON.parse(cached); setRates(r); applyRate(code, r); } catch(e) {}
     } else {
@@ -404,17 +405,17 @@ const CurrencySelector = () => {
           if (d.rates) {
             setRates(d.rates);
             applyRate(code, d.rates);
-            localStorage.setItem('cl-rates', JSON.stringify(d.rates));
-            localStorage.setItem('cl-rates-ts', String(Date.now()));
+            _lsSet('cl-rates', JSON.stringify(d.rates));
+            _lsSet('cl-rates-ts', String(Date.now()));
           }
         }).catch(() => {});
     }
-    if (!localStorage.getItem('cl-currency-set')) {
+    if (!_lsGet('cl-currency-set', null)) {
       fetch('https://ipapi.co/json/')
         .then(r => r.json()).then(d => {
           const detected = COUNTRY_CURRENCY[d.country_code] || 'CAD';
           setCode(detected);
-          localStorage.setItem('cl-currency-set', '1');
+          _lsSet('cl-currency-set', '1');
         }).catch(() => {});
     }
   }, []);
@@ -959,12 +960,12 @@ const MobileNav = ({ open, onClose }) => {
             <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Currency</div>
             <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
               {CURRENCIES.map(c => {
-                const isActive = (localStorage.getItem('cl-currency') || 'CAD') === c.code;
+                const isActive = _lsGet('cl-currency', 'CAD') === c.code;
                 return (
                   <button key={c.code}
                     onClick={() => {
-                      localStorage.setItem('cl-currency', c.code);
-                      localStorage.setItem('cl-currency-set', '1');
+                      _lsSet('cl-currency', c.code);
+                      _lsSet('cl-currency-set', '1');
                       const r = window.CL_CURRENCY?.rate || 1;
                       window.CL_CURRENCY = { code: c.code, symbol: c.symbol, rate: r };
                       window.dispatchEvent(new CustomEvent('currency:changed', { detail: window.CL_CURRENCY }));
