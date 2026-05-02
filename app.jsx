@@ -215,10 +215,10 @@ const App = () => {
   React.useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 80);
-      if (page === "book") {
+      const nearBottom = (document.documentElement.scrollHeight - window.scrollY - window.innerHeight) < 220;
+      if (page === "book" || nearBottom) {
         setShowSticky(false);
       } else if (page === "home") {
-        // Hide while the hero CTA is still on screen (~100vh hero); appear once it's gone
         setShowSticky(window.scrollY > window.innerHeight * 0.82);
       } else {
         setShowSticky(window.scrollY > 80);

@@ -2062,6 +2062,7 @@ button, a, input, select, textarea, [data-cursor="link"] {
 
 @media (max-width: 768px) {
   .bottom-nav { display: flex; }
+  footer { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
 }
 
 .bottom-nav-btn {
