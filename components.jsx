@@ -393,9 +393,22 @@ const CurrencySelector = () => {
     localStorage.setItem('cl-currency', c);
   };
   React.useEffect(() => {
-    fetch('https://open.er-api.com/v6/latest/CAD')
-      .then(r => r.json()).then(d => { if (d.rates) { setRates(d.rates); applyRate(code, d.rates); } })
-      .catch(() => {});
+    // Cache exchange rates 24 hrs to avoid hitting free-tier limits (1500 req/month)
+    const cached = localStorage.getItem('cl-rates');
+    const cachedAt = parseInt(localStorage.getItem('cl-rates-ts') || '0', 10);
+    if (cached && Date.now() - cachedAt < 86400000) {
+      try { const r = JSON.parse(cached); setRates(r); applyRate(code, r); } catch(e) {}
+    } else {
+      fetch('https://open.er-api.com/v6/latest/CAD')
+        .then(r => r.json()).then(d => {
+          if (d.rates) {
+            setRates(d.rates);
+            applyRate(code, d.rates);
+            localStorage.setItem('cl-rates', JSON.stringify(d.rates));
+            localStorage.setItem('cl-rates-ts', String(Date.now()));
+          }
+        }).catch(() => {});
+    }
     if (!localStorage.getItem('cl-currency-set')) {
       fetch('https://ipapi.co/json/')
         .then(r => r.json()).then(d => {
