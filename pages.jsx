@@ -4105,9 +4105,11 @@ const StorePage = () => {
                   <span style={{ fontFamily:'var(--display)', fontSize:16, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em' }}>{group.label}</span>
                   <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginLeft:'auto' }}>{group.items.length} item{group.items.length !== 1 ? 's' : ''}</span>
                 </div>
-                {group.items.map((item, i) => (
-                  <PartCard key={i} item={item} tabId={group.id} tabEmoji={group.emoji} />
-                ))}
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))', gap:1, padding:1, background:'var(--hairline)' }}>
+                  {group.items.map((item, i) => (
+                    <PartCard key={i} item={item} tabId={group.id} tabEmoji={group.emoji} />
+                  ))}
+                </div>
               </div>
             ))}
           </div>
