@@ -230,7 +230,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
 
   const inStockV  = variants.filter(v => v.inStock);
   const hasWheels = [...new Set(variants.map(v=>v.wheel).filter(Boolean))].length > 1;
-  const hasColors = [...new Set(variants.map(v=>v.color).filter(Boolean))].length > 1;
+  const hasColors = [...new Set(variants.map(v=>v.color).filter(Boolean))].length > 0;
   const hasSizes  = [...new Set(variants.map(v=>v.size).filter(Boolean))].length > 1;
 
   const [selWheel, setWheel] = React.useState(null);
@@ -860,14 +860,23 @@ const ShopPage = ({ intentState }) => {
 
     function parseVariantLabel(label) {
       let s = label.trim();
-      // Frame size at end
+      // Strip drivetrain/spec words that appear in product variant names (e.g. "Ride Eagle 70/90")
+      s = s.replace(/\b(?:ride|eagle|gx|sx|nx|xt|xo|di2|axs|grx|deore|sram|shimano|alloy|carbon|coil|boost|comp|elite|pro|race|trail|enduro|single|crown|custom|frame|performance|line)\b/gi, ' ')
+           .replace(/\b\d+[\/\*]\d+\b/g, ' ')  // e.g. 70/90
+           .replace(/\s+/g, ' ').trim();
+      // Frame size at end (Color Size format — e.g. "Blue Small")
+      let size = null;
       const fmatch = s.match(FRAME_RE);
-      const size = fmatch ? fmatch[1] : null;
-      if (size) s = s.slice(0, s.lastIndexOf(fmatch[1])).trim();
-      // Strip leading model artifacts BEFORE wheel check:
-      // - digits e.g. "4 ", "3 ", "90 " (model numbers/years)
-      // - short uppercase codes e.g. "E ", "ST ", "CX " (sub-model codes)
+      if (fmatch) { size = fmatch[1]; s = s.slice(0, s.lastIndexOf(fmatch[1])).trim(); }
+      // Strip leading model artifacts
       s = s.replace(/^(\d+\s+|[A-Z]{1,3}\s+)+/, '').trim();
+      // Frame size at front (Size Color format — e.g. "Large Olive" or "M Black")
+      if (!size) {
+        const fm2 = s.match(/^(Extra\s+Small|Extra\s+Large|X-Small|X-Large|Small|Medium|Large|XS|XL|XXL|\d+cm|[SMLX]{1,2}L?)\s+/i);
+        if (fm2 && /^(xs|s|sm|m|md|l|lg|xl|xxl|extra\s+small|extra\s+large|x-small|x-large|small|medium|large|\d+cm)$/i.test(fm2[1].trim())) {
+          size = fm2[1].trim(); s = s.slice(fm2[0].length).trim();
+        }
+      }
       // Wheel size — whitelist only valid bicycle sizes
       const wmatch = s.match(VALID_WHEELS);
       const wheel = wmatch ? wmatch[1].replace(/c$/i,'C').replace(/b$/i,'B') + '"' : null;
@@ -1102,11 +1111,7 @@ const getCardTagline = (b, bikeData) => {
   const frameStr = specs.Frame || '';
   const travelM  = frameStr.match(/(\d{2,3})mm\s+[Rr]ear/);
   const travel   = travelM ? travelM[1] + 'mm' : null;
-  const tireStr  = specs.Tires || '';
-  const tireM    = tireStr.match(/(\d{2,3}(?:\.\d+)?["″]\s*[×x]\s*\d+(?:\.\d+)?["″])/i);
-  const tire     = tireM ? tireM[1].replace(/\s+/g,' ') : null;
-  const parts    = [travel, tire].filter(Boolean);
-  return parts.length ? parts.join(' · ') : null;
+  return travel || null;  // wheel chip already shows size; tire spec removed to avoid duplication
 };
 
 const COLOR_HEX = (c) => {
@@ -1144,7 +1149,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const colors  = [...new Set(variants.map(v => v.color).filter(Boolean))];
   const sizes   = [...new Set(variants.map(v => v.size).filter(Boolean))];
   const hasWheels = wheels.length > 0;
-  const hasColors = colors.length > 1;   // only show swatches when 2+ colors
+  const hasColors = colors.length > 0;   // show swatch even for single-color bikes
   const hasSizes  = sizes.length > 0;
   // colorImages colors — used for special order bikes that have no LS variants
   const _bikeDataEarly = window.BIKE_DATA?.[b.handle] || {};
@@ -3047,7 +3052,7 @@ const PartPage = ({ sku, returnTab }) => {
 
   return (
     <div className="page-fade">
-      <section style={{ paddingTop:100, minHeight:'100vh', background:'var(--white)' }}>
+      <section style={{ paddingTop:156, minHeight:'100vh', background:'var(--white)' }}>
         <div style={{ maxWidth:1100, margin:'0 auto', padding:'0 24px' }}>
 
           <button onClick={handleBack} data-cursor="link"
