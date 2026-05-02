@@ -2798,6 +2798,156 @@ const cleanDept = (d) => {
   return MAP[d.toLowerCase()] || d.charAt(0).toUpperCase() + d.slice(1);
 };
 
+// ── PartPage ──────────────────────────────────────────────────────────────
+const PartPage = ({ sku, returnTab }) => {
+  const [data,       setData]       = React.useState(null);
+  const [loading,    setLoading]    = React.useState(true);
+  const [imgSrc,     setImgSrc]     = React.useState(null);
+  const [imgErr,     setImgErr]     = React.useState(false);
+  const [proxyTried, setProxyTried] = React.useState(false);
+  const tabId = returnTab || 'components';
+  const { items: relatedItems } = useTabInventory(tabId);
+
+  React.useEffect(() => {
+    if (!sku) return;
+    setLoading(true);
+    setData(null);
+    fetch(`https://still-term-f1ec.taocaruso77.workers.dev/api/part/${encodeURIComponent(sku)}`)
+      .then(r => r.json())
+      .then(d => { setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [sku]);
+
+  React.useEffect(() => {
+    if (!data?.item) return;
+    const it = data.item;
+    setImgErr(false);
+    setProxyTried(false);
+    if (it.image) { setImgSrc(it.image); return; }
+    if (window.resolvePartImg) {
+      const p = window.resolvePartImg(it, tabId);
+      if (p) { setImgSrc(p); return; }
+    }
+    setImgSrc(resolvePartImg(it.name, it.department) || null);
+  }, [data]);
+
+  const handleBack = () => window.cl.go(returnTab || 'components', returnTab ? { tab: returnTab } : null);
+  const handleImgError = () => {
+    if (!proxyTried && imgSrc && !imgSrc.includes('/api/img')) {
+      setProxyTried(true);
+      setImgSrc(`https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=${encodeURIComponent(imgSrc)}`);
+    } else { setImgErr(true); }
+  };
+
+  if (loading) return (
+    <div className="page-fade" style={{ paddingTop:136, minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.16em', textTransform:'uppercase', color:'var(--gray-400)' }}>Loading…</span>
+    </div>
+  );
+
+  if (!data?.item) return (
+    <div className="page-fade" style={{ paddingTop:136, minHeight:'100vh', padding:'136px 28px 60px' }}>
+      <button onClick={handleBack} data-cursor="link" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--gray-400)', background:'none', border:'none', cursor:'pointer', marginBottom:32 }}>← Back</button>
+      <p style={{ color:'var(--gray-500)' }}>Part not found.</p>
+    </div>
+  );
+
+  const { item, enrichment } = data;
+  const price = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
+  const lowStock = item.qty > 0 && item.qty <= 5;
+  const tabLabel = (PART_TABS.find(t => t.id === tabId) || {}).label || 'Parts';
+  const specs = enrichment?.specs || {};
+  const specEntries = Object.entries(specs).filter(([k, v]) => v && String(v).trim());
+  const related = relatedItems.filter(r => r.sku !== sku && r.department === item.department).slice(0, 12);
+
+  return (
+    <div className="page-fade">
+      <section style={{ paddingTop:100, minHeight:'100vh', background:'var(--white)' }}>
+        <div style={{ maxWidth:1100, margin:'0 auto', padding:'0 24px' }}>
+
+          <button onClick={handleBack} data-cursor="link"
+            style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--gray-400)', background:'none', border:'none', cursor:'pointer', marginBottom:28, display:'flex', alignItems:'center', gap:6 }}>
+            ← {tabLabel}
+          </button>
+
+          <div className="part-page-grid">
+            <div className="part-page-img-wrap">
+              {imgSrc && !imgErr
+                ? <img src={imgSrc} alt={item.name} loading="eager"
+                    style={{ width:'100%', height:'100%', objectFit:'contain', padding:'10%', mixBlendMode:'multiply' }}
+                    onError={handleImgError} />
+                : <span style={{ fontSize:72, opacity:0.15 }}>{DEPT_EMOJI[(item.department||'').toLowerCase()] || '⚙️'}</span>}
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+              {item.manufacturer && (
+                <div style={{ fontFamily:'var(--mono)', fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'.14em', color:'var(--gray-400)' }}>
+                  {item.manufacturer} · {cleanDept(item.department || '')}
+                </div>
+              )}
+              <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(20px,3vw,28px)', fontWeight:700, textTransform:'uppercase', letterSpacing:'-.02em', color:'var(--black)', lineHeight:1.1, margin:0 }}>{item.name}</h1>
+              <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+                {price && <span style={{ fontFamily:'var(--display)', fontSize:26, fontWeight:800, color:'var(--black)' }}>{price}</span>}
+                <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                  <span style={{ width:7, height:7, borderRadius:'50%', background: lowStock ? '#c2410c' : 'var(--stock-green)' }} />
+                  <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color: lowStock ? '#c2410c' : 'var(--stock-green)' }}>
+                    {lowStock ? `Only ${item.qty} left` : `In Stock${item.qty > 1 ? ` (${item.qty})` : ''}`}
+                  </span>
+                </div>
+              </div>
+
+              {enrichment?.summary && (
+                <p style={{ fontSize:15, color:'var(--gray-600)', lineHeight:1.65, margin:0, maxWidth:480 }}>{enrichment.summary}</p>
+              )}
+
+              {enrichment?.compatibility && (
+                <div style={{ background:'var(--paper)', border:'1px solid var(--hairline)', padding:'10px 14px', fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-500)', letterSpacing:'.06em' }}>
+                  {enrichment.compatibility}
+                </div>
+              )}
+
+              {specEntries.length > 0 && (
+                <div>
+                  <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:10 }}>Specs</div>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px 16px' }}>
+                    {specEntries.map(([k, v]) => (
+                      <div key={k} style={{ display:'flex', flexDirection:'column', gap:1, borderBottom:'1px solid var(--hairline)', paddingBottom:5 }}>
+                        <span style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)' }}>{k}</span>
+                        <span style={{ fontFamily:'var(--mono)', fontSize:11, color:'var(--black)', fontWeight:500 }}>{String(v)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginTop:8 }}>
+                <button className="btn" data-cursor="link" onClick={() => window.cl.go('book')} style={{ fontSize:12 }}>
+                  Book a Service <ArrowRight />
+                </button>
+                <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go('contact')} style={{ fontSize:12 }}>
+                  Ask Us About This
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {related.length > 0 && (
+            <div style={{ marginTop:56, borderTop:'1px solid var(--hairline)', paddingTop:32 }}>
+              <div className="eyebrow" style={{ marginBottom:16 }}>More {cleanDept(item.department || '')}</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))', gap:1, background:'var(--hairline)' }}>
+                {related.map(r => (
+                  <PartCard key={r.id || r.sku} item={r} tabId={tabId} tabEmoji={PART_TABS.find(t=>t.id===tabId)?.emoji||'⚙️'} />
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </section>
+    </div>
+  );
+};
+
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
 const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
@@ -4703,7 +4853,7 @@ const AllShopPage = () => {
   );
 };
 
-Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartsPage, PartsLandingPage, ComponentsLandingPage, AccessoriesLandingPage, AllShopPage, StorePage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
+Object.assign(window, { ShopPage, ServicesPage, BookPage, AboutPage, RidesPage, TrailsPage, ContactPage, GiftCardsPage, PartPage, PartsPage, PartsLandingPage, ComponentsLandingPage, AccessoriesLandingPage, AllShopPage, StorePage, ClassifiedsPage, BrandPage, BikeCardLarge, SubHero, SHOP_BIKES, TermsPage, PrivacyPage, PART_TABS, WarrantyPage, DemoPage, FittingPage, StoragePage, SocialPage });
 
 // EVENTS & CLINICS PAGE
 const EventsPage = () => {

@@ -2271,3 +2271,25 @@ a:hover .bike-hover { transform: translateY(0); }
 [data-theme="dark"] .parts-filter-chip { background: var(--paper); color: var(--gray-300); border-color: var(--hairline); }
 [data-theme="dark"] .parts-filter-chip.active { background: var(--white); color: var(--black); }
 [data-theme="dark"] .parts-sort-select { background: var(--paper); color: var(--gray-300); }
+
+/* ── PartPage layout ── */
+.part-page-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 48px;
+}
+.part-page-img-wrap {
+  aspect-ratio: 1;
+  background: #d4d0cb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  overflow: hidden;
+}
+@media (max-width: 768px) {
+  .part-page-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+[data-theme="dark"] .part-page-img-wrap { background: #d4d0cb; }
