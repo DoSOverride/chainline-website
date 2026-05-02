@@ -2004,9 +2004,7 @@ const TrailsPage = () => {
                 <div style={{ aspectRatio:"4/3", marginBottom:18, overflow:"hidden", position:"relative" }}>
                   <img src={t.img} alt={t.name}
                     loading="lazy" decoding="async"
-                    style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", transition:"transform .5s ease" }}
-                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.04)"}
-                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
+                    style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center", display:"block", transition:"transform .5s ease" }} />
                   <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 55%)" }} />
                 </div>
                 <div className="display-s" style={{ marginBottom:10 }}>{t.name}</div>
@@ -2461,7 +2459,7 @@ const DEPT_IMG = {
   'locks':             UNS + 'photo-1449426468159-d96dbf08f19f?w=300&q=80',
   'bags':              UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
   'packs':             UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
-  'hydration ':        UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
+  'hydration':         UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
   'water bottle':      UNS + 'photo-1580261450046-d0a30080dc9b?w=300&q=80',
   'water bottle cage': UNS + 'photo-1580261450046-d0a30080dc9b?w=300&q=80',
   'car racks':         UNS + 'photo-1469395446868-fb6a048d5ca3?w=300&q=80',
@@ -2576,7 +2574,7 @@ const DEPT_EMOJI = {
   // Accessories
   'lights':'💡','locks':'🔒','computers':'📡','bags':'🎒','packs':'🎒',
   'car racks':'🚗','bike racks':'🚗','fenders':'🛡️','kickstands':'📍',
-  'water bottle':'🍶','water bottle cage':'🫙','hydration ':'💧',
+  'water bottle':'🍶','water bottle cage':'🫙','hydration':'💧',
   'bells':'🔔','mirrors':'🪞','misc. accessories':'📦','basket':'🧺',
 };
 const deptEmoji = (dept, fallback) => DEPT_EMOJI[(dept||'').toLowerCase().trim()] || fallback;
@@ -2726,22 +2724,20 @@ const PartsPage = ({ pageType = 'components' }) => {
   const visibleTabs = PART_TABS.filter(t => validTabIds.includes(t.id));
   const activeTab = PART_TABS.find(t => t.id === safeCat) || visibleTabs[0];
 
-  const [searchIsGlobal, setSearchIsGlobal] = React.useState(false);
   const filtered = React.useMemo(() => {
     const q = search.trim();
-    if (q.length < 2) { setSearchIsGlobal(false); return [...items].sort((a, b) => (a.price||0) - (b.price||0)); }
-    // Search within current tab first
+    if (q.length < 2) return [...items].sort((a, b) => (a.price||0) - (b.price||0));
     const tabPool = items.filter(p => {
       const hay = (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || '');
       return window.fuzzyMatch ? window.fuzzyMatch(q, hay) : hay.toLowerCase().includes(q.toLowerCase());
     });
-    if (tabPool.length > 0) { setSearchIsGlobal(false); return [...tabPool].sort((a, b) => (a.price||0) - (b.price||0)); }
-    // Fallback: search all cached inventory (cross-tab / global)
+    if (tabPool.length > 0) return [...tabPool].sort((a, b) => (a.price||0) - (b.price||0));
     const globalPool = (window.lightspeedSearch?.(q) || [])
       .filter(p => !['labour','food','shop use','consignments','bikes'].some(x => (p.department||'').toLowerCase().includes(x)));
-    setSearchIsGlobal(globalPool.length > 0);
     return [...globalPool].sort((a, b) => (a.price||0) - (b.price||0));
   }, [items, search]);
+
+  const searchIsGlobal = search.trim().length >= 2 && filtered.length > 0 && !items.some(p => filtered.includes(p));
 
   const grouped = React.useMemo(() => {
     if (search.trim().length >= 2) return null;
@@ -2809,7 +2805,7 @@ const PartsPage = ({ pageType = 'components' }) => {
     { label:'Bar Tape',         tab:'cockpit',    search:'Bar tape',    emoji:'🌀' },
     { label:'Saddles',          tab:'cockpit',    search:'Saddle',      emoji:'💺' },
     { label:'Seatposts',        tab:'cockpit',    search:'Seat post',   emoji:'💺' },
-    { label:'Headsets',         tab:'cockpit',    search:'Head',        emoji:'🔵' },
+    { label:'Headsets',         tab:'cockpit',    search:'Headset',        emoji:'🔵' },
     // Suspension
     { label:'Forks',            tab:'suspension', search:'Fork',        emoji:'🔩' },
     { label:'Rear Shocks',      tab:'suspension', search:'Shock',       emoji:'🌀' },
@@ -2851,7 +2847,7 @@ const PartsPage = ({ pageType = 'components' }) => {
               style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", background:"none", border:"none", cursor:"pointer" }}>✕</button>}
           </div>
           {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
-          {search && !loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", flexShrink:0 }}>{filtered.length} results</span>}
+          {search && !loading && <span className="parts-search-result-count" style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", flexShrink:0 }}>{filtered.length} results</span>}
         </div>
 
         <div className="parts-layout">
@@ -3654,9 +3650,7 @@ const SocialPage = () => {
                   style={{ cursor:"pointer", display:"flex", flexDirection:"column" }}>
                   <div style={{ position:"relative", aspectRatio:"16/9", overflow:"hidden", background:"var(--gray-100)", marginBottom:14 }}>
                     {v.thumbnail
-                      ? <img src={v.thumbnail} alt={v.title} loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block", transition:"transform .4s ease" }}
-                          onMouseEnter={e => e.currentTarget.style.transform="scale(1.03)"}
-                          onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
+                      ? <img src={v.thumbnail} alt={v.title} loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block", transition:"transform .4s ease" }} />
                       : <div style={{ width:"100%", height:"100%", background:"var(--gray-100)" }} />
                     }
                     <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", opacity:0, transition:"opacity .2s", background:"rgba(0,0,0,0.25)" }}
@@ -4106,12 +4100,12 @@ const PartsLandingPage = () => (
         { label:'26" & Fat Bike',  emoji:'🔘', desc:'26 inch, fat bike, kids tires',      page:'components', tab:'wheels',    search:'26' },
       ]},
       { heading:'Tubes & Sealing', tiles:[
-        { label:'Inner Tubes',      emoji:'🫧', desc:'All wheel sizes, all valve types',    page:'components', tab:'wheels',    search:'Tubes' },
+        { label:'Inner Tubes',      emoji:'🫧', desc:'All wheel sizes, all valve types',    page:'components', tab:'wheels',    search:'Tube' },
         { label:'Tubeless Sealant', emoji:'🫙', desc:"Stan's, Orange Seal, and more",       page:'components', tab:'wheels',    search:'Sealant' },
         { label:'Tire Protection',  emoji:'🛡️', desc:'Inserts, liners, flat protection',   page:'components', tab:'wheels',    search:'Tire Protect' },
       ]},
       { heading:'Drivetrain Parts', tiles:[
-        { label:'Drive Chains',     emoji:'🔗', desc:'8–12 speed, all brands',             page:'components', tab:'drivetrain', search:'Chains' },
+        { label:'Drive Chains',     emoji:'🔗', desc:'8–12 speed, all brands',             page:'components', tab:'drivetrain', search:'Chain' },
         { label:'Cables & Housing', emoji:'〰️', desc:'Shift & brake cables, housing',      page:'components', tab:'drivetrain', search:'Cables' },
         { label:'Cassettes',        emoji:'⚙️', desc:'Road, MTB, all speeds',              page:'components', tab:'drivetrain', search:'Cassette' },
       ]},
@@ -4167,7 +4161,7 @@ const ComponentsLandingPage = () => (
         { label:'Handlebars & Stems',   emoji:'🎯', desc:'Rise bars, flat bars, road bars, stems',  page:'components', tab:'cockpit', search:'Handle' },
         { label:'Saddles & Seatposts',  emoji:'💺', desc:'MTB, road & gravel saddles & posts',       page:'components', tab:'cockpit', search:'Saddle' },
         { label:'Grips & Bar Tape',     emoji:'✊', desc:'Lock-on grips, foam, cork bar tape',        page:'components', tab:'cockpit', search:'Grip' },
-        { label:'Headsets & Bearings',  emoji:'🔵', desc:'All standards, loose & cartridge',          page:'components', tab:'cockpit', search:'Head' },
+        { label:'Headsets & Bearings',  emoji:'🔵', desc:'All standards, loose & cartridge',          page:'components', tab:'cockpit', search:'Headset' },
       ]},
     ]}
   />
@@ -4179,9 +4173,9 @@ const AccessoriesLandingPage = () => (
     eyebrow="Accessories  /  In Stock"
     title="Accessories."
     italic="Gear up, ride ready."
-    placeholder="Search helmets, lights, bags, clothing, tools…"
+    placeholder="Search helmets, lights, bags, shoes, tools…"
     ctaText="We stock 7,000+ products. If it's not on the shelf, we can order it."
-    sectionTabIds={['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks']}
+    sectionTabIds={['helmets','protection','shoes','tools','bags','lights','locks','racks']}
     sections={[
       { heading:'Helmets & Protection', tiles:[
         { label:'Helmets',         emoji:'⛑️', desc:'MTB, road, urban — Giro, POC, Bell',    page:'accessories', tab:'helmets' },
@@ -4545,9 +4539,7 @@ const MTBCOPage = () => {
                 style={{ display:"block", textDecoration:"none", color:"inherit" }}>
                 <div style={{ aspectRatio:"4/3", marginBottom:20, overflow:"hidden", position:"relative" }}>
                   <img src={t.img} alt={t.name}
-                    loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .5s ease" }}
-                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.04)"}
-                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"} />
+                    loading="lazy" decoding="async" style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform .5s ease" }} />
                   <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 55%)" }} />
                 </div>
                 <div className="display-s" style={{ marginBottom:10 }}>{t.name}</div>

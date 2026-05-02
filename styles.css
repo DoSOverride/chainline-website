@@ -378,6 +378,12 @@ button {
   color: inherit;
 }
 
+/* Prevent iOS Safari from zooming on input focus (requires font-size >= 16px) */
+input, select, textarea {
+  font-size: 16px;
+  font-family: inherit;
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -883,6 +889,7 @@ img {
   font-weight: 600;
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 3;
 }
 
@@ -952,6 +959,7 @@ img {
   padding: 4px 9px;
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-radius: 2px;
   font-family: var(--mono);
   font-size: 9px;
@@ -1724,9 +1732,9 @@ img {
   border-right: 1px solid var(--hairline);
   padding-top: 8px;
   position: sticky;
-  top: 136px;
+  top: 178px;
   align-self: start;
-  height: calc(100vh - 136px);
+  height: calc(100vh - 178px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--hairline) transparent;
@@ -2137,7 +2145,21 @@ a:hover .bike-hover { transform: translateY(0); }
   .booking-types { grid-template-columns: 1fr !important; }
 }
 
-/* ── Parts category landing tiles ── */
+/* ── Parts category landing tiles + general card image hover ── */
+.parts-cat-tile img {
+  transition: transform 0.4s ease;
+  will-change: transform;
+}
+.parts-cat-tile:hover img {
+  transform: scale(1.05);
+}
+
+/* Trail cards, video thumbnails — img hover driven by parent */
+.trail-card img, .video-thumb img {
+  transition: transform 0.5s ease;
+}
+.trail-card:hover img { transform: scale(1.04); }
+.video-thumb:hover img { transform: scale(1.03); }
 [data-theme="dark"] .parts-cat-tile {
   background: var(--paper) !important;
   border-color: rgba(255,255,255,0.08) !important;
