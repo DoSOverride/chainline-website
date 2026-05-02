@@ -2627,9 +2627,6 @@ const PART_TABS = [
   { id:'shoes',      label:'Shoes & Cleats',     emoji:'👟', img:`${R2}/shop/interior-surly.jpg`,
     sub:"Mountain & road shoes, SPD and road cleats",
     depts:['Shoes Mountain','Shoes Road','Cleats'] },
-  { id:'clothing',   label:'Clothing',           emoji:'👕', img:`${R2}/shop/interior-surly.jpg`,
-    sub:"Jerseys, shorts, arm warmers, socks",
-    depts:['Clothing','Arm Warmers','Leg Warmers','Socks','Pant Clips'] },
   { id:'tools',      label:'Tools & Maintenance',emoji:'🔧', img:`${R2}/parts/tools-hero.jpg`,
     sub:"Pumps, lube, degreasers, workshop tools",
     depts:['Tools','Pumps','Lube','Degreasers','Trainers'] },
@@ -3019,7 +3016,7 @@ const PartPage = ({ sku, returnTab }) => {
     setImgSrc(resolvePartImg(it.name, it.department) || null);
   }, [data]);
 
-  const handleBack = () => { const accTabs = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks']; const destPage = accTabs.includes(returnTab) ? 'accessories' : 'components'; window.cl.go(destPage, returnTab ? { tab: returnTab } : null); };
+  const handleBack = () => { const accTabs = ['helmets','protection','shoes','tools','bags','lights','locks','racks']; const destPage = accTabs.includes(returnTab) ? 'accessories' : 'components'; window.cl.go(destPage, returnTab ? { tab: returnTab } : null); };
   const handleImgError = () => {
     if (!proxyTried && imgSrc && !imgSrc.includes('/api/img')) {
       setProxyTried(true);
@@ -3139,7 +3136,7 @@ const PartPage = ({ sku, returnTab }) => {
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
-const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+const ACC_TAB_IDS  = ['helmets','protection','shoes','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
   const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
@@ -3148,7 +3145,7 @@ const PartsPage = ({ pageType = 'components' }) => {
   const remapTab = (id) => {
     const REMAP = {
       fit:'helmets', accessories:'bags',
-      helmets:'helmets', protection:'protection', shoes:'shoes', clothing:'clothing',
+      helmets:'helmets', protection:'protection', shoes:'shoes',
       tools:'tools', bags:'bags', lights:'lights', locks:'locks', racks:'racks',
     };
     return REMAP[id] || (COMP_TAB_IDS.includes(id) ? id : defaultTab);
@@ -4908,7 +4905,7 @@ const AllShopPage = () => {
   const inputRef = React.useRef(null);
 
   React.useEffect(() => {
-    window.lightspeedWarmCache?.(['drivetrain','brakes','wheels','cockpit','suspension','helmets','protection','shoes','clothing','tools','bags','lights','locks','racks']);
+    window.lightspeedWarmCache?.(['drivetrain','brakes','wheels','cockpit','suspension','helmets','protection','shoes','tools','bags','lights','locks','racks']);
     setTimeout(() => inputRef.current?.focus(), 300);
   }, []);
 
