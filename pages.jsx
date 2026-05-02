@@ -622,8 +622,8 @@ const SHOP_BIKES = [
 ];
 
 // SHOP
-const ShopPage = () => {
-  const intent = window.cl?.intent || null;
+const ShopPage = ({ intentState }) => {
+  const intent = window.cl?.intent || intentState || null;
   const saved  = window.cl?.shopFilter || {};
   const [brand, setBrand] = React.useState(intent?.brand || saved.brand || "All");
   const [type,  setType]  = React.useState(intent?.type  || saved.type  || "All");
@@ -635,12 +635,13 @@ const ShopPage = () => {
   // Persist filter state so back-nav restores it
   React.useEffect(() => { window.cl = window.cl || {}; window.cl.shopFilter = { brand, type }; }, [brand, type]);
 
-  // Apply intent from nav links (brand / type filter)
+  // Apply intent when navigating to shop (including same-page re-nav via intentState prop)
   React.useEffect(() => {
-    if (window.cl?.intent?.brand) { setBrand(window.cl.intent.brand); setType("All"); }
-    if (window.cl?.intent?.type)  { setType(window.cl.intent.type);   setBrand("All"); }
+    const src = intentState || window.cl?.intent;
+    if (src?.brand) { setBrand(src.brand); setType("All"); }
+    else if (src?.type) { setType(src.type); setBrand("All"); }
     if (window.cl?.intent) window.cl.intent = null;
-  });
+  }, [intentState]);
 
   // Re-render when Shopify images arrive so resolveImage() picks them up
   React.useEffect(() => {

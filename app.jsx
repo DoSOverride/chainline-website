@@ -375,7 +375,7 @@ const App = () => {
             <Newsletter />
           </>
         )}
-        {page === "shop" && <ShopPage />}
+        {page === "shop" && <ShopPage intentState={intentState} />}
         {page === "bike" && <BikePage bike={intentState?.bike} onBack={() => window.cl.go("shop")} onCart={() => setCartOpen(true)} />}
         {page === "services" && <ServicesPage />}
         {page === "book" && <BookPage />}
