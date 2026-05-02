@@ -8,7 +8,7 @@ const ChainLogo = ({ size = 22, color = "currentColor" }) => (
 
 // Brand wordmark — uses the real ChainLine Cycle logo
 const Wordmark = () => (
-  <a href="#" onClick={(e) => { e.preventDefault(); window.cl.go("home"); }} className="nav-logo" data-cursor="link" aria-label="ChainLine Cycle — Home">
+  <a href="/" onClick={(e) => { e.preventDefault(); window.cl.go("home"); }} className="nav-logo" data-cursor="link" aria-label="ChainLine Cycle — Home">
     <img src="/logo-dark.png" alt="ChainLine Cycle" className="logo-img" />
   </a>
 );
@@ -222,16 +222,17 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           <Wordmark />
           <nav className="nav-links">
             {items.map((it) => (
-              <div
+              <a
                 key={it.id}
+                href={pageHref(it.route)}
                 className={"nav-link " + (page === it.id || (it.route && page === it.route) ? "active" : "")}
                 data-cursor="link"
                 onMouseEnter={() => it.panel ? openMega(it.panel) : openMega(null)}
-                onClick={() => { if (it.route) { onMega(null); window.cl.go(it.route, it.intent || null); } }}
+                onClick={(e) => { e.preventDefault(); if (it.route) { onMega(null); window.cl.go(it.route, it.intent || null); } }}
               >
                 {it.label}
                 {it.panel && <span className="chev" />}
-              </div>
+              </a>
             ))}
           </nav>
           <div className="nav-utility">
@@ -338,6 +339,19 @@ const ArrowRight = ({ size = 12 }) => (
     <path d="M1 6h10M7 2l4 4-4 4"/>
   </svg>
 );
+
+const pageHref = (page, intent) => {
+  if (!page || page === 'home') return '/';
+  if (page === 'shop') {
+    if (intent?.type && intent.type !== 'All') return `/bikes/${intent.type.toLowerCase().replace(/\s+/g,'-')}`;
+    if (intent?.brand) return `/bikes/${intent.brand.toLowerCase()}`;
+    return '/bikes';
+  }
+  if (page === 'components') return intent?.tab ? `/components/${intent.tab}` : '/components';
+  if (page === 'accessories') return intent?.tab ? `/accessories/${intent.tab}` : '/accessories';
+  if (page === 'parts') return intent?.tab ? `/parts/${intent.tab}` : '/parts';
+  return `/${page}`;
+};
 
 const MegaMenu = ({ open, onOpen, onClose }) => {
   const BIKE_BRANDS  = ["Marin", "Transition", "Surly", "Pivot", "Salsa"];
@@ -531,23 +545,23 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
               <div className="mega-col">
                 <h4>By Style</h4>
                 <ul>
-                  <li><a href="#" data-cursor="link" onClick={(e) => handleClick(e, "All Bikes")}>All Bikes</a></li>
-                  {d.styleCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
+                  <li><a href="/bikes" data-cursor="link" onClick={(e) => handleClick(e, "All Bikes")}>All Bikes</a></li>
+                  {d.styleCol.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
                 </ul>
               </div>
               <div className="mega-col">
                 <h4>By Brand</h4>
-                <ul>{d.brandCol.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                <ul>{d.brandCol.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
               <div className="mega-col">
-                <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
             </div>
           ) : d.searchPage ? (
             /* Parts / Accessories: "All X" CTA + 4 category cols */
             <>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", paddingBottom:16, marginBottom:16, borderBottom:"1px solid var(--hairline)" }}>
-                <a href="#" data-cursor="link"
+                <a href={"/" + d.searchPage} data-cursor="link"
                   onClick={e => { e.preventDefault(); onClose(); window.cl.go(d.searchPage); }}
                   style={{ ...linkStyle, color:"var(--black)", fontWeight:600, fontSize:12, display:"flex", alignItems:"center", gap:6, letterSpacing:".1em" }}>
                   {d.allLabel} <ArrowRight size={10} />
@@ -559,7 +573,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
                     <h4>{col.h}</h4>
                     <ul>{col.items.map(item => (
                       <li key={item.label}>
-                        <a href="#" data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
+                        <a href={pageHref(item.go[0], item.go[1])} data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
                       </li>
                     ))}</ul>
                   </div>
@@ -572,13 +586,13 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
               {d.cols.slice(0, 2).map((c, i) => (
                 <div key={i} className="mega-col">
                   <h4>{c.h}</h4>
-                  <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                  <ul>{c.items.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
                 </div>
               ))}
               {d.cols[2] && (
                 <div className="mega-col">
                   <h4>{d.cols[2].h}</h4>
-                  <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                  <ul style={{ marginBottom: 24 }}>{d.cols[2].items.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
                   {d.cols[2].feature && (
                     <a href="#" data-cursor="link" onClick={(e) => handleClick(e, d.cols[2].feature.title)} className="mega-feature" style={{ aspectRatio:"16/8", display:"flex", alignItems:"flex-end", padding:24, textDecoration:"none", position:"relative", overflow:"hidden", background:"var(--gray-100)" }}>
                       <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 60%)" }} />
@@ -671,18 +685,18 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'shop' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:20, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
+          <a href="/bikes" style={{ ...linkA, fontSize:28, marginBottom:20, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop")); }}>All Bikes</a>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0, borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:16 }}>
             <div style={{ paddingRight:16 }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Brand</div>
               {BRANDS.map(br => (
-                <a key={br} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
+                <a key={br} href={'/bikes/' + br.toLowerCase()} style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", { brand: br })); }}>{br}</a>
               ))}
             </div>
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:12 }}>By Style</div>
               {TYPES.map(t => (
-                <a key={t} href="#" style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
+                <a key={t} href={t === "All Bikes" ? "/bikes" : '/bikes/' + t.toLowerCase().replace(/\s+/g,'-')} style={{ ...subA, fontSize:15, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("shop", t === "All Bikes" ? null : { type: t })); }}>{t}</a>
               ))}
             </div>
           </div>
@@ -693,7 +707,7 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"0 24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
+          <a href="/components" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
             onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components")); }}>All Parts</a>
           {[
             { label:"Drivetrain",      tab:"drivetrain" },
@@ -702,7 +716,7 @@ const MobileNav = ({ open, onClose }) => {
             { label:"Wheels & Tires",  tab:"wheels" },
             { label:"Cockpit",         tab:"cockpit" },
           ].map(it => (
-            <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab })); }}>{it.label}</a>
+            <a key={it.label} href={'/components/' + it.tab} style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab })); }}>{it.label}</a>
           ))}
           <div style={{ marginTop:16, paddingTop:14, borderTop:"1px solid rgba(255,255,255,0.08)" }}>
             <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"rgba(255,255,255,0.35)", marginBottom:10 }}>Quick Access</div>
@@ -714,7 +728,7 @@ const MobileNav = ({ open, onClose }) => {
               { label:"Cables",       tab:"drivetrain",search:"Cable" },
               { label:"Tire Sealant", tab:"wheels",    search:"Sealant" },
             ].map(it => (
-              <a key={it.label} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab, search: it.search })); }}>{it.label}</a>
+              <a key={it.label} href={'/components/' + it.tab} style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab, search: it.search })); }}>{it.label}</a>
             ))}
           </div>
         </div>
@@ -724,7 +738,7 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"0 24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
+          <a href="/accessories" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
             onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories")); }}>All Accessories</a>
           {[
             { label:"Helmets",             tab:"helmets" },
@@ -736,7 +750,7 @@ const MobileNav = ({ open, onClose }) => {
             { label:"Racks & Fenders",     tab:"racks" },
             { label:"Pumps & Tools",       tab:"tools" },
           ].map(it => (
-            <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab: it.tab })); }}>{it.label}</a>
+            <a key={it.label} href={'/accessories/' + it.tab} style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories", { tab: it.tab })); }}>{it.label}</a>
           ))}
         </div>
       </div>
@@ -745,7 +759,7 @@ const MobileNav = ({ open, onClose }) => {
       <div className={"mob-panel " + (panel === 'services' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
         <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("services")); }}>All Services</a>
+          <a href="/services" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("services")); }}>All Services</a>
           <div style={{ borderTop:"1px solid rgba(255,255,255,0.1)", paddingTop:20 }}>
             {[
               { label:"Book a Service",  route:"book"      },
@@ -755,7 +769,7 @@ const MobileNav = ({ open, onClose }) => {
               { label:"Warranty",        route:"warranty"  },
               { label:"Service Pricing", route:"services"  },
             ].map(it => (
-              <a key={it.label} href="#" style={{ ...subA, fontSize:20 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+              <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:20 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
             ))}
           </div>
         </div>
@@ -773,7 +787,7 @@ const MobileNav = ({ open, onClose }) => {
                 { label:"Skill Clinics", route:"clinics" },
                 { label:"Events",        route:"events" },
               ].map(it => (
-                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+                <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14, marginTop:24 }}>Community</div>
               {[
@@ -781,13 +795,13 @@ const MobileNav = ({ open, onClose }) => {
                 { label:"Pinkbike", route:"classifieds" },
                 { label:"Social",   route:"social"      },
               ].map(it => (
-                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+                <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
             </div>
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
               <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Trails</div>
               {["Knox Mountain","Bear Creek","Myra Canyon","Kelowna Bike Park"].map(it => (
-                <a key={it} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("trails")); }}>{it}</a>
+                <a key={it} href="/trails" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("trails")); }}>{it}</a>
               ))}
             </div>
           </div>
@@ -806,7 +820,7 @@ const MobileNav = ({ open, onClose }) => {
                 { label:"Contact",    route:"contact" },
                 { label:"Our Brands", route:"brands"  },
               ].map(it => (
-                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+                <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
             </div>
             <div style={{ paddingLeft:16, borderLeft:"1px solid rgba(255,255,255,0.1)" }}>
@@ -815,7 +829,7 @@ const MobileNav = ({ open, onClose }) => {
                 { label:"Gift Cards", route:"giftcards" },
                 { label:"Sale",       route:"shop"      },
               ].map(it => (
-                <a key={it.label} href="#" style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
+                <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
             </div>
           </div>
@@ -978,7 +992,7 @@ const Footer = () => (
             <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", marginRight:4 }}>{heading}</span>
             {links.map(([label,route,intent], i) => (
               <React.Fragment key={label}>
-                <a href="#" className="link-underline" data-cursor="link" style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-300)" }}
+                <a href={pageHref(route,intent)} className="link-underline" data-cursor="link" style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-300)" }}
                   onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a>
                 {i < links.length-1 && <span style={{ color:"var(--gray-600)" }}>·</span>}
               </React.Fragment>
@@ -994,9 +1008,9 @@ const Footer = () => (
           <span>VISA</span><span>MC</span><span>AMEX</span><span>APPLE PAY</span><span>SHOP PAY</span>
         </div>
         <div style={{ display: "flex", gap: 18 }}>
-          <a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("privacy");}}>Privacy</a>
-          <a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("terms");}}>Terms</a>
-          <a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("contact");}}>Accessibility</a>
+          <a href="/privacy" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("privacy");}}>Privacy</a>
+          <a href="/terms" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("terms");}}>Terms</a>
+          <a href="/contact" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("contact");}}>Accessibility</a>
         </div>
       </div>
     </div>

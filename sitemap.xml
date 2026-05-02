@@ -4,8 +4,7 @@
   <url><loc>https://chainline.ca/bikes</loc><lastmod>2026-04-30</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://chainline.ca/bikes/mountain</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/bikes/gravel</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chainline.ca/bikes/road</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://chainline.ca/bikes/e-bike</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://chainline.ca/bikes/e-bike</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/bikes/commuter</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chainline.ca/bikes/kids</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chainline.ca/bikes/marin</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
@@ -24,9 +23,17 @@
   <url><loc>https://chainline.ca/components/cockpit</loc><lastmod>2026-04-30</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://chainline.ca/components/suspension</loc><lastmod>2026-04-30</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://chainline.ca/accessories</loc><lastmod>2026-04-30</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chainline.ca/accessories/helmets</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chainline.ca/accessories/protection</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chainline.ca/accessories/shoes</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chainline.ca/accessories/clothing</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+  <url><loc>https://chainline.ca/accessories/tools</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chainline.ca/accessories/bags</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chainline.ca/accessories/lights</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+  <url><loc>https://chainline.ca/accessories/locks</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+  <url><loc>https://chainline.ca/accessories/racks</loc><lastmod>2026-05-02</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
   <url><loc>https://chainline.ca/parts</loc><lastmod>2026-04-30</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-  <url><loc>https://chainline.ca/store</loc><lastmod>2026-04-30</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chainline.ca/services</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+<url><loc>https://chainline.ca/services</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://chainline.ca/book</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/fitting</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/storage</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -61,7 +68,6 @@
   <!-- Programmatic SEO: Type × Kelowna -->
   <url><loc>https://chainline.ca/mountain-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/gravel-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://chainline.ca/road-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chainline.ca/e-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/commuter-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chainline.ca/kids-bikes-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
@@ -71,4 +77,68 @@
   <url><loc>https://chainline.ca/bike-fitting-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chainline.ca/bike-storage-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chainline.ca/bike-demo-kelowna</loc><lastmod>2026-04-30</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Individual bike pages -->
+  <url><loc>https://chainline.ca/bike/bianchi-aria</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/bianchi-e-suv-comp</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/bianchi-grok-s-grx</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/bianchi-impulso-pro</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/bianchi-oltre-rc</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/knolly-fugitive</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bayview-trail</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bobcat-trail-3-29</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bobcat-trail-4-27-5</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bobcat-trail-4-29</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bobcat-trail-5-29</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bolinas-ridge-1-27-5</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bolinas-ridge-1-29</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-bolinas-ridge-2-29</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-donky-jr</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-fairfax-1</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-fairfax-2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-four-corners-1</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-gestalt-2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-gestalt-x10</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-kentfield-st-1</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-kentfield-st-2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-nicasio-2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-pine-mountain-1-29</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-presidio-3</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-rift-zone-2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-rift-zone-jr</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-san-anselmo-ds2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-san-quentin-1</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-san-quentin-2</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-stinson-1-27-5</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-stinson-1-ls-27-5</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-stinson-2-ls-27-5</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-stinson-e</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-stinson-e-st</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/marin-wildcat-trail-1-27-5</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/moots-baxter-grx</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/moots-highline-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/moots-routt-rsl-grx</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/moots-ybb-sl-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/pivot-shuttle-am-ride-eagle-70-90</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/pivot-switchblade-ride-eagle-70-90</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/revel-rail-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/revel-ranger-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/revel-rascal-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/salsa-cutthroat-grx</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/salsa-journeyman-sora</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/salsa-spearfish-c-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/salsa-timberjack-gx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/salsa-timberjack-sx-eagle</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/salsa-warbird-grx-600</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/surly-bridge-club</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/surly-ice-cream-truck</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/surly-karate-monkey</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/surly-sorceress</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-bottlerocket</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-pbj</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-regulator-cx-eagle-90</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-sentinel</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-smuggler</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-spire-carbon-eagle-90</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chainline.ca/bike/transition-spur</loc><lastmod>2026-05-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>
