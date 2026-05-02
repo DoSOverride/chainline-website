@@ -118,6 +118,41 @@
 /* Placeholder boxes */
 [data-theme="dark"] .ph       { background: var(--gray-100) !important; }
 [data-theme="dark"] .ph-label { color: var(--gray-400) !important; }
+/* ph.ph-corners wraps bike card images — needs warm gray so mix-blend multiply works */
+[data-theme="dark"] .ph.ph-corners { background: #d4d0cb !important; }
+
+/* Part card image area — warm gray so future Lightspeed product images (white bg) render correctly */
+[data-theme="dark"] .part-card-img { background: #d4d0cb !important; }
+/* Part card text area and card border */
+[data-theme="dark"] .part-card { background: var(--paper) !important; border-color: rgba(255,255,255,0.08) !important; }
+
+/* Google Maps iframe in dark mode — invert+hue-rotate gives natural dark map look */
+[data-theme="dark"] .contact-map-section iframe,
+[data-theme="dark"] iframe[src*="google.com/maps"] {
+  filter: invert(0.92) hue-rotate(180deg) saturate(0.7) brightness(0.9);
+}
+
+/* Review cards */
+[data-theme="dark"] .review-card,
+[data-theme="dark"] [class*="review"] { border-color: rgba(255,255,255,0.08) !important; }
+
+/* Service flip cards front/back */
+[data-theme="dark"] .svc-card .svc-front { background: var(--paper) !important; border-color: rgba(255,255,255,0.08) !important; }
+[data-theme="dark"] .svc-card .svc-back  { background: var(--near-black) !important; }
+[data-theme="dark"] .svc-card .svc-front h3,
+[data-theme="dark"] .svc-card .svc-front p { color: var(--black) !important; }
+
+/* Newsletter section */
+[data-theme="dark"] .home-newsletter-grid input[type="email"] {
+  background: var(--gray-100) !important;
+  color: var(--black) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+}
+
+/* Lifestyle/trail photo sections — don't dim real photography */
+[data-theme="dark"] .lifestyle-img,
+[data-theme="dark"] [class*="trail-img"],
+[data-theme="dark"] .shop-exterior img { filter: none !important; opacity: 1 !important; }
 
 /* ── Forms — !important beats inline styles ── */
 [data-theme="dark"] input,

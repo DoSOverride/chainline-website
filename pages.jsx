@@ -2124,7 +2124,7 @@ const ContactPage = () => (
         </div>
       </div>
     </section>
-    <section style={{ height: 440, position: "relative", overflow: "hidden" }}>
+    <section className="contact-map-section" style={{ height: 440, position: "relative", overflow: "hidden" }}>
       <iframe
         title="ChainLine Cycle location"
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2569.8429327!2d-119.4984876!3d49.887806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x537df5efc38e336b%3A0x9afd17158d52e898!2sChainLine%20Cycle!5e0!3m2!1sen!2sca!4v1683000000000!5m2!1sen!2sca"
@@ -2633,7 +2633,7 @@ const PartRow = React.memo(({ item, tabEmoji }) => {
       onMouseEnter={e => { e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor="var(--gray-300)"; }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow="none"; e.currentTarget.style.borderColor="var(--hairline)"; }}>
       {/* Image / icon area */}
-      <div style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
+      <div className="part-card-img" style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
         {imgSrc
           ? <img src={imgSrc} alt={item.name} loading="lazy" decoding="async"
               style={{ width:"100%", height:"100%", objectFit: item.image ? "contain" : "cover", padding: item.image ? "14%" : 0, mixBlendMode: item.image ? "multiply" : "normal" }}
