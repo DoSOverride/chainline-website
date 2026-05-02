@@ -745,7 +745,7 @@ const MobileNav = ({ open, onClose }) => {
           <div style={{ position:"relative" }}>
             <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
             <input placeholder="Search accessories…"
-              style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:9, paddingBottom:9, background:"rgba(255,255,255,0.08)", border:"none", borderBottom:"1px solid rgba(255,255,255,0.15)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:14, letterSpacing:".05em", outline:"none" }}
+              style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:9, paddingBottom:9, background:"rgba(255,255,255,0.08)", border:"none", borderBottom:"1px solid rgba(255,255,255,0.15)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:16, letterSpacing:".05em", outline:"none" }}
               onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) dismiss(() => window.cl.go("accessories", { search: e.target.value.trim() })); }}
             />
           </div>
