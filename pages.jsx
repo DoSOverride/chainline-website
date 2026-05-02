@@ -4568,20 +4568,20 @@ const MTBCOPage = () => {
 
 const QUOTE_SERVICES = {
   completed: [
-    "Basic tune-up (brakes + derailleurs)",
-    "Full tune-up",
-    "E-bike tune-up",
-    "Complete overhaul",
-    "Brake bleed (per caliper)",
-    "Fork lower leg service",
-    "Full fork service",
-    "Rear shock service",
-    "Dropper post service",
-    "Cable & housing package",
-    "Tubeless set-up (per wheel)",
-    "Wheel true",
-    "Safety inspection",
-    "Custom (see notes)",
+    { id:"tune-basic",  label:"Basic tune-up (brakes + derailleurs)", price:75  },
+    { id:"tune-full",   label:"Full tune-up",                          price:120 },
+    { id:"tune-ebike",  label:"E-bike tune-up",                        price:120 },
+    { id:"overhaul",    label:"Complete overhaul",                     price:250 },
+    { id:"bleed",       label:"Brake bleed (per caliper)",             price:60  },
+    { id:"fork-lower",  label:"Fork lower leg service",                price:65  },
+    { id:"fork-full",   label:"Full fork service",                     price:130 },
+    { id:"shock",       label:"Rear shock service",                    price:120 },
+    { id:"dropper",     label:"Dropper post service",                  price:140 },
+    { id:"cables",      label:"Cable & housing package",               price:85  },
+    { id:"tubeless",    label:"Tubeless set-up (per wheel)",           price:35  },
+    { id:"true",        label:"Wheel true",                            price:25  },
+    { id:"inspect",     label:"Safety inspection",                     price:60  },
+    { id:"custom-done", label:"Custom (see notes)",                    price:0, custom:true },
   ],
   recommendations: [
     { id:"chain-std",    label:"Chain",                          price:55,  urgency:"soon"      },
@@ -4616,15 +4616,13 @@ const InspectionPage = () => {
   const [form, setForm] = React.useState({
     mechanic: '', customerName: '', customerPhone: '', customerEmail: '',
     bikeBrand: '', bikeModel: '', bikeYear: '', bikeColor: '',
-    completed: [],
+    completed: QUOTE_SERVICES.completed.map(s => ({ ...s, selected: false, customPrice: '' })),
     recs: QUOTE_SERVICES.recommendations.map(r => ({ ...r, selected: false, customLabel: '', customPrice: '' })),
     notes: '',
   });
   const upd = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const toggleCompleted = (svc) => setForm(f => {
-    const has = f.completed.includes(svc);
-    return { ...f, completed: has ? f.completed.filter(s => s !== svc) : [...f.completed, svc] };
-  });
+  const toggleCompleted = (id) => setForm(f => ({ ...f, completed: f.completed.map(s => s.id === id ? { ...s, selected: !s.selected } : s) }));
+  const updCompleted = (id, v) => setForm(f => ({ ...f, completed: f.completed.map(s => s.id === id ? { ...s, customPrice: v } : s) }));
   const toggleRec = (id) => setForm(f => ({ ...f, recs: f.recs.map(r => r.id === id ? { ...r, selected: !r.selected } : r) }));
   const updRec = (id, k, v) => setForm(f => ({ ...f, recs: f.recs.map(r => r.id === id ? { ...r, [k]: v } : r) }));
   const urgencyColor = (u) => ({ urgent:'#dc2626', soon:'#d97706', attention:'#2563eb', good:'#16a34a' }[u] || '#666');
@@ -4637,6 +4635,11 @@ const InspectionPage = () => {
         price: r.custom ? (parseFloat(r.customPrice) || 0) : r.price,
         urgency: r.urgency,
       }));
+      const completedItems = form.completed.filter(s => s.selected).map(s => ({
+        id: s.id,
+        label: s.label,
+        price: s.custom ? (parseFloat(s.customPrice) || 0) : s.price,
+      }));
       const res = await fetch(`${WORKER}/api/quote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -4645,7 +4648,7 @@ const InspectionPage = () => {
           mechanic: form.mechanic || 'ChainLine Mechanic',
           customer: { name: form.customerName, phone: form.customerPhone, email: form.customerEmail },
           bike: { brand: form.bikeBrand, model: form.bikeModel, year: form.bikeYear, color: form.bikeColor },
-          completed: form.completed,
+          completed: completedItems,
           recommendations: selectedRecs,
           notes: form.notes,
         }),
@@ -4675,20 +4678,20 @@ const InspectionPage = () => {
               <div className="eyebrow" style={{ marginBottom:24 }}>Your name</div>
               <input style={inp} placeholder="Mechanic name" value={form.mechanic} onChange={e => upd('mechanic', e.target.value)} />
               <div className="eyebrow" style={{ marginBottom:16, marginTop:8 }}>Customer info</div>
-              <label style={lbl}>Name</label>
+              <label style={lbl}>Name *</label>
               <input style={inp} placeholder="Jane Smith" value={form.customerName} onChange={e => upd('customerName', e.target.value)} />
-              <label style={lbl}>Phone</label>
+              <label style={lbl}>Phone (optional)</label>
               <input style={inp} placeholder="250-555-1234" value={form.customerPhone} onChange={e => upd('customerPhone', e.target.value)} />
               <label style={lbl}>Email (optional)</label>
               <input style={inp} placeholder="jane@email.com" value={form.customerEmail} onChange={e => upd('customerEmail', e.target.value)} />
-              <div className="eyebrow" style={{ marginBottom:16, marginTop:8 }}>Bike</div>
+              <div className="eyebrow" style={{ marginBottom:16, marginTop:8 }}>Bike (optional)</div>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
                 <div><label style={lbl}>Brand</label><input style={inp} placeholder="Transition" value={form.bikeBrand} onChange={e => upd('bikeBrand', e.target.value)} /></div>
                 <div><label style={lbl}>Model</label><input style={inp} placeholder="Sentinel" value={form.bikeModel} onChange={e => upd('bikeModel', e.target.value)} /></div>
                 <div><label style={lbl}>Year</label><input style={inp} placeholder="2024" value={form.bikeYear} onChange={e => upd('bikeYear', e.target.value)} /></div>
                 <div><label style={lbl}>Colour</label><input style={inp} placeholder="Glacier White" value={form.bikeColor} onChange={e => upd('bikeColor', e.target.value)} /></div>
               </div>
-              <button className="btn" data-cursor="link" disabled={!form.customerName || !form.customerPhone}
+              <button className="btn" data-cursor="link" disabled={!form.customerName}
                 onClick={() => setStep(2)} style={{ marginTop:16 }}>Next: Completed Work <ArrowRight /></button>
             </div>
           )}
@@ -4696,15 +4699,28 @@ const InspectionPage = () => {
             <div>
               <p style={{ color:'var(--gray-500)', marginBottom:24, fontSize:15 }}>What did you do today? (check all that apply)</p>
               <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
-                {QUOTE_SERVICES.completed.map(svc => (
-                  <label key={svc} style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 0', borderBottom:'1px solid var(--hairline)', cursor:'pointer' }}>
-                    <input type="checkbox" checked={form.completed.includes(svc)} onChange={() => toggleCompleted(svc)}
-                      style={{ width:18, height:18, accentColor:'var(--black)', cursor:'pointer' }} />
-                    <span style={{ fontSize:15 }}>{svc}</span>
+                {form.completed.map(svc => (
+                  <label key={svc.id} style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 0', borderBottom:'1px solid var(--hairline)', cursor:'pointer' }}>
+                    <input type="checkbox" checked={svc.selected} onChange={() => toggleCompleted(svc.id)}
+                      style={{ width:18, height:18, accentColor:'var(--black)', cursor:'pointer', flexShrink:0 }} />
+                    <span style={{ flex:1, fontSize:15 }}>{svc.label}</span>
+                    {svc.custom && svc.selected
+                      ? <input type="number" placeholder="0" value={svc.customPrice}
+                          onClick={e => e.preventDefault()}
+                          onChange={e => updCompleted(svc.id, e.target.value)}
+                          style={{ width:70, padding:'4px 8px', border:'1px solid var(--hairline)', fontFamily:'var(--mono)', fontSize:12, background:'var(--white)', flexShrink:0 }} />
+                      : svc.price > 0 && <span style={{ fontFamily:'var(--mono)', fontSize:12, color:'var(--gray-500)', flexShrink:0 }}>${svc.price}</span>
+                    }
                   </label>
                 ))}
               </div>
-              <div style={{ display:'flex', gap:12, marginTop:32 }}>
+              {form.completed.filter(s => s.selected).length > 0 && (
+                <div style={{ display:'flex', justifyContent:'space-between', padding:'14px 0', fontFamily:'var(--mono)', fontSize:12, fontWeight:600 }}>
+                  <span>Completed work subtotal</span>
+                  <span>${form.completed.filter(s=>s.selected).reduce((t,s)=>t+(s.custom?parseFloat(s.customPrice)||0:s.price),0)}</span>
+                </div>
+              )}
+              <div style={{ display:'flex', gap:12, marginTop:24 }}>
                 <button className="btn btn-outline" onClick={() => setStep(1)}>← Back</button>
                 <button className="btn" onClick={() => setStep(3)} data-cursor="link">Next: Recommendations <ArrowRight /></button>
               </div>
@@ -4770,10 +4786,20 @@ const InspectionPage = () => {
                       </div>
                     );
                   })}
-                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:12, fontWeight:700 }}>
-                    <span>Estimated total</span>
-                    <span>${form.recs.filter(r=>r.selected).reduce((s,r)=>s+(r.custom?parseFloat(r.customPrice)||0:r.price),0)}</span>
-                  </div>
+                  {(() => {
+                    const doneTotal = form.completed.filter(s=>s.selected).reduce((t,s)=>t+(s.custom?parseFloat(s.customPrice)||0:s.price),0);
+                    const recsTotal = form.recs.filter(r=>r.selected).reduce((s,r)=>s+(r.custom?parseFloat(r.customPrice)||0:r.price),0);
+                    const sub = doneTotal + recsTotal;
+                    const tax = Math.round(sub * 0.05 * 100) / 100;
+                    return (
+                      <>
+                        {doneTotal > 0 && <div style={{ display:'flex', justifyContent:'space-between', padding:'4px 0', fontSize:13, color:'var(--gray-500)' }}><span>Completed work</span><span>${doneTotal}</span></div>}
+                        {recsTotal > 0 && <div style={{ display:'flex', justifyContent:'space-between', padding:'4px 0', fontSize:13, color:'var(--gray-500)' }}><span>Recommended extras</span><span>${recsTotal}</span></div>}
+                        <div style={{ display:'flex', justifyContent:'space-between', padding:'4px 0', fontSize:12, color:'var(--gray-400)', borderTop:'1px solid var(--hairline)', marginTop:4 }}><span>GST (5%)</span><span>${tax.toFixed(2)}</span></div>
+                        <div style={{ display:'flex', justifyContent:'space-between', marginTop:4, fontWeight:700 }}><span>Estimated total</span><span>${(sub + tax).toFixed(2)}</span></div>
+                      </>
+                    );
+                  })()}
                 </div>
               )}
               <div style={{ display:'flex', gap:12, marginTop:8 }}>
@@ -4800,7 +4826,8 @@ const InspectionPage = () => {
               <button className="link-underline" onClick={() => {
                 setStep(1);
                 setForm({ mechanic:form.mechanic, customerName:'', customerPhone:'', customerEmail:'', bikeBrand:'', bikeModel:'', bikeYear:'', bikeColor:'',
-                  completed:[], recs:QUOTE_SERVICES.recommendations.map(r=>({...r,selected:false,customLabel:'',customPrice:''})), notes:'' });
+                  completed:QUOTE_SERVICES.completed.map(s=>({...s,selected:false,customPrice:''})),
+                  recs:QUOTE_SERVICES.recommendations.map(r=>({...r,selected:false,customLabel:'',customPrice:''})), notes:'' });
               }} style={{ display:'block', margin:'32px auto 0', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', cursor:'pointer', background:'none', border:'none' }}>
                 New Quote →
               </button>
@@ -4842,7 +4869,12 @@ const QuotePage = () => {
   const decide = (recId, val) => setDecisions(d => ({ ...d, [recId]: val }));
   const allDecided = !quote?.recommendations?.length ||
     quote.recommendations.every(r => decisions[r.id] !== null && decisions[r.id] !== undefined);
-  const approvedTotal = (quote?.recommendations || []).filter(r => decisions[r.id] === true).reduce((s, r) => s + (r.price || 0), 0);
+  const completedTotal = (quote?.completed || []).reduce((s, r) => s + (typeof r === 'object' ? (r.price || 0) : 0), 0);
+  const approvedRecsTotal = (quote?.recommendations || []).filter(r => decisions[r.id] === true).reduce((s, r) => s + (r.price || 0), 0);
+  const approvedTotal = approvedRecsTotal; // kept for backwards-compat references below
+  const subtotal = completedTotal + approvedRecsTotal;
+  const gst = Math.round(subtotal * 0.05 * 100) / 100;
+  const grandTotal = subtotal + gst;
 
   const urgencyConfig = {
     urgent:    { color:'#dc2626', bg:'#fef2f2', label:'Safety — Urgent',   icon:'🔴' },
@@ -4892,9 +4924,21 @@ const QuotePage = () => {
       {quote.completed?.length > 0 && (
         <div style={{ marginBottom:24 }}>
           <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:12 }}>Work completed today</div>
-          {quote.completed.map((svc, i) => (
-            <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderBottom:'1px solid var(--hairline)', fontSize:15 }}><span style={{ color:'#16a34a' }}>✓</span> {svc}</div>
-          ))}
+          {quote.completed.map((svc, i) => {
+            const label = typeof svc === 'string' ? svc : svc.label;
+            const price = typeof svc === 'object' && svc.price > 0 ? svc.price : null;
+            return (
+              <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid var(--hairline)', fontSize:15 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:10 }}><span style={{ color:'#16a34a' }}>✓</span>{label}</div>
+                {price && <span style={{ fontFamily:'var(--mono)', fontSize:13, fontWeight:600 }}>${price}</span>}
+              </div>
+            );
+          })}
+          {completedTotal > 0 && (
+            <div style={{ display:'flex', justifyContent:'space-between', padding:'10px 0', fontFamily:'var(--mono)', fontSize:11, color:'var(--gray-500)' }}>
+              <span>Completed subtotal</span><span>${completedTotal}</span>
+            </div>
+          )}
         </div>
       )}
       {quote.notes && (
@@ -4937,12 +4981,32 @@ const QuotePage = () => {
         </div>
       )}
       {allDecided && (
-        <div style={{ background:approvedTotal>0?'#f0fdf4':'var(--paper)', padding:16, marginBottom:24, borderTop:`2px solid ${approvedTotal>0?'#16a34a':'var(--hairline)'}` }}>
-          <div style={{ display:'flex', justifyContent:'space-between', fontFamily:'var(--display)', fontSize:20, fontWeight:600 }}>
-            <span>Approved total</span>
-            <span style={{ color:approvedTotal>0?'#16a34a':'var(--gray-400)' }}>${approvedTotal}</span>
+        <div style={{ background:grandTotal>0?'#f0fdf4':'var(--paper)', padding:16, marginBottom:24, borderTop:`2px solid ${grandTotal>0?'#16a34a':'var(--hairline)'}` }}>
+          {completedTotal > 0 && (
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:14, marginBottom:6, color:'var(--gray-600)' }}>
+              <span>Work completed today</span><span style={{ fontFamily:'var(--mono)' }}>${completedTotal}</span>
+            </div>
+          )}
+          {approvedRecsTotal > 0 && (
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:14, marginBottom:6, color:'var(--gray-600)' }}>
+              <span>Approved extras</span><span style={{ fontFamily:'var(--mono)' }}>${approvedRecsTotal}</span>
+            </div>
+          )}
+          {subtotal > 0 && (
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:14, marginBottom:6, color:'var(--gray-500)', borderTop:'1px solid var(--hairline)', paddingTop:8 }}>
+              <span>Subtotal</span><span style={{ fontFamily:'var(--mono)' }}>${subtotal}</span>
+            </div>
+          )}
+          {subtotal > 0 && (
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:13, marginBottom:8, color:'var(--gray-400)' }}>
+              <span>GST (5%)</span><span style={{ fontFamily:'var(--mono)' }}>${gst.toFixed(2)}</span>
+            </div>
+          )}
+          <div style={{ display:'flex', justifyContent:'space-between', fontFamily:'var(--display)', fontSize:20, fontWeight:600, borderTop:subtotal>0?'1px solid var(--hairline)':'none', paddingTop:subtotal>0?8:0 }}>
+            <span>Total</span>
+            <span style={{ color:grandTotal>0?'#16a34a':'var(--gray-400)' }}>${grandTotal.toFixed(2)}</span>
           </div>
-          <div style={{ fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)', marginTop:4 }}>Does not include labour from completed work above</div>
+          {subtotal === 0 && <div style={{ fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)', marginTop:4 }}>No items approved</div>}
         </div>
       )}
       <div style={{ marginBottom:20 }}>

@@ -923,15 +923,15 @@ const CartDrawer = ({ open, onClose, items, onRemove }) => {
 const Footer = () => (
   <footer className="footer">
     <div className="container-wide">
-      <div className="footer-grid">
+      <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:40, marginBottom:32 }}>
         <div className="footer-col">
-          <div className="nav-logo" style={{ marginBottom: 24 }}>
+          <div className="nav-logo" style={{ marginBottom: 20 }}>
             <img src="/logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" />
           </div>
-          <div style={{ fontSize: 15, lineHeight: 1.6, color: "var(--gray-400)", marginBottom: 24, maxWidth: 360, fontFamily:"var(--body)" }}>
-            Built for Kelowna.<br/>Backed by Canada.<br/>Since 2009.
+          <div style={{ fontSize: 14, lineHeight: 1.6, color: "var(--gray-400)", marginBottom: 20, fontFamily:"var(--body)" }}>
+            Built for Kelowna. Backed by Canada. Since 2009.
           </div>
-          <div style={{ display: "flex", gap: 14, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 12, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", flexWrap: "wrap" }}>
             {[
               ["Instagram","https://instagram.com/ChainLineCycle"],
               ["TikTok","https://tiktok.com/@ChainLineCycle"],
@@ -939,14 +939,11 @@ const Footer = () => (
               ["YouTube","https://youtube.com/@ChainLine_Cycle"],
               ["Pinkbike","https://www.pinkbike.com/u/ChainLineCycle/buysell/"],
               ["Threads","https://threads.net/@ChainLineCycle"],
-              ["X","https://x.com/ChainLineCycle"],
-              ["Bluesky","https://bsky.app/profile/ChainLineCycle.bsky.social"],
-              ["Snapchat","https://snapchat.com/add/ChainLineCycle"],
             ].map(([label, href]) => (
               <a key={label} href={href} target="_blank" rel="noopener" className="link-underline" data-cursor="link">{label}</a>
             ))}
           </div>
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop: 12 }}>
             <a href="https://search.google.com/local/writereview?placeid=ChIJbbM4_V7zfVMRmOhSjhXRP9o&source=g.page.m._&laa=merchant-review-solicitation" target="_blank" rel="noopener"
               className="link-underline" data-cursor="link"
               style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", display:"inline-flex", alignItems:"center", gap:6 }}>
@@ -955,80 +952,39 @@ const Footer = () => (
           </div>
         </div>
         <div className="footer-col">
-          <h4>Bikes</h4>
-          <ul>
-            {[
-              ["All Bikes",        "shop",        null],
-              ["Mountain",         "shop",        {type:"Mountain"}],
-              ["Gravel",           "shop",        {type:"Gravel"}],
-              ["E-Bikes",          "shop",        {type:"E-Bike"}],
-              ["Commuter",         "shop",        {type:"Commuter"}],
-              ["Kids",             "shop",        {type:"Kids"}],
-              ["Classifieds",      "classifieds", null],
-              ["Gift Cards",       "giftcards",   null],
-            ].map(([label,route,intent]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
-            ))}
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4>Parts & Accessories</h4>
-          <ul>
-            {[
-              ["Components",       "components",  null],
-              ["Drivetrain",       "components",  {tab:"drivetrain"}],
-              ["Brakes",           "components",  {tab:"brakes"}],
-              ["Wheels & Tires",   "components",  {tab:"wheels"}],
-              ["Accessories",      "accessories", null],
-              ["Helmets",          "accessories", {tab:"helmets"}],
-              ["Tools & Pumps",    "accessories", {tab:"tools"}],
-              ["Bags & Lights",    "accessories", {tab:"bags"}],
-            ].map(([label,route,intent]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
-            ))}
-          </ul>
-        </div>
-        <div className="footer-col">
-          <h4>Services</h4>
-          <ul>
-            {[
-              ["Book a Service",   "book",        null],
-              ["Bike Fitting",     "fitting",     null],
-              ["Custom Builds",    "services",    null],
-              ["Demo Fleet",       "demo",        null],
-              ["Storage",          "storage",     null],
-              ["Warranty",         "warranty",    null],
-            ].map(([label,route,intent]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
-            ))}
-          </ul>
-          <h4 style={{marginTop:20}}>Explore</h4>
-          <ul>
-            {[
-              ["Group Rides",      "rides",       null],
-              ["Trails",           "trails",      null],
-              ["Events",           "events",      null],
-              ["MTBCO",            "mtbco",       null],
-              ["About Us",         "about",       null],
-              ["Contact",          "contact",     null],
-            ].map(([label,route,intent]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
-            ))}
-          </ul>
-        </div>
-        <div className="footer-col">
           <h4>Visit Us</h4>
           <div style={{ fontSize: 14, lineHeight: 1.7, color: "var(--gray-300)" }}>
             <a href="https://maps.google.com/?q=1139+Ellis+St+Kelowna+BC+V1Y+1Z5" target="_blank" rel="noopener" className="link-underline" data-cursor="link">
-              1139 Ellis St.<br/>Kelowna, BC V1Y 1Z5
+              1139 Ellis St. · Kelowna, BC V1Y 1Z5
             </a><br/>
-            <a href="tel:2508601968" className="link-underline" data-cursor="link">(250) 860-1968</a><br/>
+            <a href="tel:2508601968" className="link-underline" data-cursor="link">(250) 860-1968</a>
+            {" · "}
             <a href="mailto:bikes@chainline.ca" className="link-underline" data-cursor="link">bikes@chainline.ca</a>
           </div>
-          <div style={{ marginTop: 18, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>
-            Mon  10–5<br/>Tue–Fri  9:30–5:30<br/>Sat  10–4  ·  Sun  closed
+          <div style={{ marginTop: 12, fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gray-300)" }}>
+            Mon 10-5 · Tue-Fri 9:30-5:30 · Sat 10-4 · Sun closed
           </div>
         </div>
+      </div>
+      <div style={{ borderTop:"1px solid var(--hairline)", paddingTop:20, marginBottom:8 }}>
+        {[
+          ["Bikes", [["All Bikes","shop",null],["Mountain","shop",{type:"Mountain"}],["Gravel","shop",{type:"Gravel"}],["E-Bikes","shop",{type:"E-Bike"}],["Commuter","shop",{type:"Commuter"}],["Kids","shop",{type:"Kids"}],["Classifieds","classifieds",null],["Gift Cards","giftcards",null]]],
+          ["Parts", [["Components","components",null],["Drivetrain","components",{tab:"drivetrain"}],["Brakes","components",{tab:"brakes"}],["Wheels","components",{tab:"wheels"}]]],
+          ["Accessories", [["Helmets","accessories",{tab:"helmets"}],["Tools","accessories",{tab:"tools"}],["Bags","accessories",{tab:"bags"}]]],
+          ["Services", [["Book","book",null],["Fitting","fitting",null],["Builds","services",null],["Demo","demo",null],["Storage","storage",null],["Warranty","warranty",null]]],
+          ["Explore", [["Rides","rides",null],["Trails","trails",null],["Events","events",null],["MTBCO","mtbco",null],["About","about",null],["Contact","contact",null]]],
+        ].map(([heading, links]) => (
+          <div key={heading} style={{ display:"inline-flex", alignItems:"baseline", flexWrap:"wrap", gap:"4px 6px", marginRight:24, marginBottom:10 }}>
+            <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", marginRight:4 }}>{heading}</span>
+            {links.map(([label,route,intent], i) => (
+              <React.Fragment key={label}>
+                <a href="#" className="link-underline" data-cursor="link" style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-300)" }}
+                  onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a>
+                {i < links.length-1 && <span style={{ color:"var(--gray-600)" }}>·</span>}
+              </React.Fragment>
+            ))}
+          </div>
+        ))}
       </div>
       <div className="footer-massive">CHAINLINE</div>
       <hr className="hr-light" style={{ marginBottom: 24 }} />
