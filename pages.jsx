@@ -2711,40 +2711,62 @@ const useTabInventory = (tabId) => {
   return { items, loading };
 };
 
-// ── PartRow ───────────────────────────────────────────────────────────────
-const PartRow = React.memo(({ item, tabEmoji }) => {
-  const [imgErr, setImgErr] = React.useState(false);
-  const price = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
+// ── PartCard (replaces PartRow) ───────────────────────────────────────────
+const PartCard = React.memo(({ item, tabId, tabEmoji }) => {
+  const [imgSrc, setImgSrc] = React.useState(() => {
+    if (item.image) return item.image;
+    if (window.resolvePartImg) {
+      const fromParts = window.resolvePartImg(item, tabId);
+      if (fromParts) return fromParts;
+    }
+    return resolvePartImg(item.name, item.department) || null;
+  });
+  const [imgFailed, setImgFailed] = React.useState(false);
+  const [proxyTried, setProxyTried] = React.useState(false);
+
+  const price    = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
   const lowStock = item.qty > 0 && item.qty <= 5;
-  const deptKey = (item.department || '').toLowerCase();
-  const emoji = DEPT_EMOJI[deptKey] || tabEmoji || "⚙️";
-  // Use Lightspeed image → name-pattern match → dept fallback → emoji
-  const imgSrc = !imgErr && (item.image || resolvePartImg(item.name, item.department));
+  const deptKey  = (item.department || '').toLowerCase();
+  const emoji    = DEPT_EMOJI[deptKey] || tabEmoji || '⚙️';
+  const brand    = item.manufacturer || '';
+
+  const handleImgError = () => {
+    if (!proxyTried && imgSrc && !imgSrc.includes('/api/img')) {
+      setProxyTried(true);
+      setImgSrc(`https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=${encodeURIComponent(imgSrc)}`);
+    } else {
+      setImgFailed(true);
+    }
+  };
+
+  const handleClick = () => {
+    if (item.sku) window.cl.go('part', { sku: item.sku, tab: tabId });
+  };
+
   return (
-    <div className="part-card" style={{ display:"flex", flexDirection:"column", background:"var(--white)", border:"1px solid var(--hairline)", cursor:"default", transition:"box-shadow .15s, border-color .15s" }}
-      onMouseEnter={e => { e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor="var(--gray-300)"; }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow="none"; e.currentTarget.style.borderColor="var(--hairline)"; }}>
-      {/* Image / icon area */}
-      <div className="part-card-img" style={{ aspectRatio:"1", background:"var(--paper)", display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
-        {imgSrc
+    <div className="part-card" onClick={handleClick}
+      style={{ display:'flex', flexDirection:'column', background:'var(--white)', border:'1px solid var(--hairline)', cursor:'pointer', transition:'box-shadow .15s, border-color .15s' }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor='var(--gray-300)'; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor='var(--hairline)'; }}>
+      <div className="part-card-img" style={{ aspectRatio:'1', background:'#d4d0cb', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
+        {imgSrc && !imgFailed
           ? <img src={imgSrc} alt={item.name} loading="lazy" decoding="async"
-              style={{ width:"100%", height:"100%", objectFit: item.image ? "contain" : "cover", padding: item.image ? "14%" : 0, mixBlendMode: item.image ? "multiply" : "normal" }}
-              onError={() => setImgErr(true)} />
-          : <span style={{ fontSize:40, opacity:0.25 }}>{emoji}</span>}
-        {lowStock && <span style={{ position:"absolute", top:8, right:8, background:"#c2410c", color:"#fff", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", padding:"3px 7px", fontWeight:600 }}>Only {item.qty} left</span>}
+              style={{ width:'100%', height:'100%', objectFit:'contain', padding:'12%', mixBlendMode:'multiply' }}
+              onError={handleImgError} />
+          : <span style={{ fontSize:36, opacity:0.2 }}>{emoji}</span>}
+        {lowStock && <span style={{ position:'absolute', top:6, right:6, background:'#c2410c', color:'#fff', fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.1em', textTransform:'uppercase', padding:'2px 6px', fontWeight:600 }}>Only {item.qty} left</span>}
       </div>
-      {/* Info */}
-      <div style={{ padding:"14px 16px 12px", flex:1, display:"flex", flexDirection:"column", gap:6 }}>
-        <div style={{ fontFamily:"var(--display)", fontSize:13, fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", lineHeight:1.25, color:"var(--black)", flex:1 }}>{item.name}</div>
-        {item.sku && <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", letterSpacing:".08em", textTransform:"uppercase" }}>{item.sku}</div>}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:4 }}>
-          {price && <span style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:600, color:"var(--black)" }}>{price}</span>}
-          <PartCartBtn item={item} compact />
+      <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:4 }}>
+        {brand && <div style={{ fontFamily:'var(--mono)', fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'.1em', color:'var(--gray-400)' }}>{brand}</div>}
+        <div style={{ fontFamily:'var(--display)', fontSize:12, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', lineHeight:1.25, color:'var(--black)', flex:1,
+          display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{item.name}</div>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:4 }}>
+          {price && <span style={{ fontFamily:'var(--display)', fontSize:14, fontWeight:700, color:'var(--black)' }}>{price}</span>}
         </div>
-        <div style={{ display:"flex", alignItems:"center", gap:5, marginTop:2 }}>
-          <span style={{ width:5, height:5, borderRadius:"50%", background: lowStock ? "#c2410c" : "var(--stock-green)", flexShrink:0 }} />
-          <span style={{ fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", color: lowStock ? "#c2410c" : "var(--stock-green)" }}>
-            {lowStock ? `${item.qty} left` : "In Stock"}
+        <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+          <span style={{ width:5, height:5, borderRadius:'50%', background: lowStock ? '#c2410c' : 'var(--stock-green)', flexShrink:0 }} />
+          <span style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.1em', textTransform:'uppercase', color: lowStock ? '#c2410c' : 'var(--stock-green)' }}>
+            {lowStock ? `${item.qty} left` : 'In Stock'}
           </span>
         </div>
       </div>
@@ -3063,9 +3085,9 @@ const PartsPage = ({ pageType = 'components' }) => {
                       <span style={{ flex:1 }}>{cleanDept(dept)}</span>
                       <span style={{ opacity:.45 }}>{deptItems.length}</span>
                     </div>
-                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>
                       {deptItems.map(item => (
-                        <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
+                        <PartCard key={item.id || item.sku || item.name} item={item} tabId={safeCat} tabEmoji={activeTab.emoji} />
                       ))}
                     </div>
                   </div>
@@ -3084,9 +3106,9 @@ const PartsPage = ({ pageType = 'components' }) => {
                 <div style={{ padding:"10px 20px 8px", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-400)", background:"var(--paper)", borderBottom:"1px solid var(--hairline)" }}>
                   {filtered.length} results for "{search}"
                 </div>
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(140px,1fr))", gap:1, padding:1, background:"var(--hairline)" }}>
                   {visible.map(item => (
-                    <PartRow key={item.id || item.sku || item.name} item={item} tabEmoji={activeTab.emoji} />
+                    <PartCard key={item.id || item.sku || item.name} item={item} tabId={safeCat} tabEmoji={activeTab.emoji} />
                   ))}
                 </div>
                 {hasMore && (
@@ -4084,7 +4106,7 @@ const StorePage = () => {
                   <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-400)', marginLeft:'auto' }}>{group.items.length} item{group.items.length !== 1 ? 's' : ''}</span>
                 </div>
                 {group.items.map((item, i) => (
-                  <PartRow key={i} item={item} />
+                  <PartCard key={i} item={item} tabId={group.id} tabEmoji={group.emoji} />
                 ))}
               </div>
             ))}
