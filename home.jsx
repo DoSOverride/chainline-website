@@ -93,7 +93,7 @@ const W = "https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=";
 const FEATURED_BIKES = [
   {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/color-transition-sentinel-glacier-white.jpg","handle":"transition-sentinel"},
   {"brand":"Pivot",     "name":"Switchblade","type":"Mountain","rawType":"Mountain Bike","price":8000,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-switchblade.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
-  {"brand":"Transition","name":"Regulator CX","type":"E-Bike","rawType":"Electric Bike","price":13000,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/ext-c8-2026-regulator-cx.avif","handle":"transition-regulator-cx-eagle-90"},
+  {"brand":"Transition","name":"Regulator CX","type":"E-Bike","rawType":"Electric Bike","price":13000,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-regulator-cx-clear-black-night.jpg","handle":"transition-regulator-cx-eagle-90"},
   {"brand":"Marin",     "name":"Pine Mountain 1","type":"Mountain","rawType":"Mountain Bike","price":1960,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg","handle":"marin-pine-mountain-1-29"},
   {"brand":"Surly",     "name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-bridge-club.jpg","handle":"surly-bridge-club"},
   {"brand":"Pivot",     "name":"Shuttle AM","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-shuttle-am-side.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
