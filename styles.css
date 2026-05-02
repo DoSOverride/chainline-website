@@ -2136,3 +2136,15 @@ a:hover .bike-hover { transform: translateY(0); }
   .hero-italic { font-size: clamp(16px, 5vw, 28px) !important; }
   .booking-types { grid-template-columns: 1fr !important; }
 }
+
+/* ── Parts category landing tiles ── */
+[data-theme="dark"] .parts-cat-tile {
+  background: var(--paper) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+[data-theme="dark"] .parts-cat-tile > div:first-child {
+  background: #2a2620 !important;
+}
+@media (max-width: 768px) {
+  .parts-cat-tile > div:first-child { aspect-ratio: 2/1 !important; }
+}

@@ -4036,23 +4036,40 @@ const PartsCategoryLanding = ({ eyebrow, title, italic, sections, sectionTabIds,
               </div>
             )
           ) : (
-            /* ── Sectioned tile grid ── */
+            /* ── Sectioned image-card grid ── */
             <>
               {sections.map(sec => (
-                <div key={sec.heading} style={{ marginBottom:48 }}>
-                  <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:10, paddingBottom:10, borderBottom:'1px solid var(--hairline)' }}>{sec.heading}</div>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:2 }}>
-                    {sec.tiles.map(c => (
-                      <button key={c.label} onClick={() => tileGo(c)} data-cursor="link"
-                        style={btnBase} onMouseEnter={onHover} onMouseLeave={offHover}>
-                        <span style={{ fontSize:22, lineHeight:1, flexShrink:0 }}>{c.emoji}</span>
-                        <div style={{ flex:1, minWidth:0 }}>
-                          <div className="cl" style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', marginBottom:2, color:'var(--black)', transition:'color .15s' }}>{c.label}</div>
-                          <div className="cd" style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.07em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.5, transition:'color .15s' }}>{c.desc}</div>
-                        </div>
-                        <span className="ca" style={{ color:'var(--gray-400)', transition:'color .15s', flexShrink:0 }}><ArrowRight size={10} /></span>
-                      </button>
-                    ))}
+                <div key={sec.heading} style={{ marginBottom:56 }}>
+                  <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:16, paddingBottom:12, borderBottom:'1px solid var(--hairline)' }}>{sec.heading}</div>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:12 }}>
+                    {sec.tiles.map(c => {
+                      const tileImg = resolvePartImg(c.search || c.label, '') ||
+                        PART_TABS.find(t => t.id === c.tab)?.img || null;
+                      return (
+                        <button key={c.label} onClick={() => tileGo(c)} data-cursor="link"
+                          className="parts-cat-tile"
+                          style={{ display:'flex', flexDirection:'column', background:'var(--white)', border:'1px solid var(--hairline)', cursor:'pointer', textAlign:'left', padding:0, overflow:'hidden', transition:'border-color .2s, box-shadow .2s' }}
+                          onMouseEnter={e => { e.currentTarget.style.borderColor='var(--black)'; e.currentTarget.style.boxShadow='0 8px 24px rgba(0,0,0,0.08)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.borderColor='var(--hairline)'; e.currentTarget.style.boxShadow='none'; }}>
+                          {/* Image area */}
+                          <div style={{ aspectRatio:'3/2', background:'#ede9e2', overflow:'hidden', position:'relative', flexShrink:0 }}>
+                            {tileImg
+                              ? <img src={tileImg} alt={c.label} loading="lazy" decoding="async"
+                                  style={{ width:'100%', height:'100%', objectFit:'cover', transition:'transform .4s ease' }}
+                                  onMouseEnter={e => { e.target.style.transform='scale(1.05)'; }}
+                                  onMouseLeave={e => { e.target.style.transform='scale(1)'; }}
+                                  onError={e => { e.target.style.display='none'; }} />
+                              : <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32 }}>{c.emoji}</div>
+                            }
+                          </div>
+                          {/* Label */}
+                          <div style={{ padding:'12px 14px 14px', flex:1, display:'flex', flexDirection:'column', gap:3 }}>
+                            <div style={{ fontFamily:'var(--display)', fontSize:13, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em', color:'var(--black)', lineHeight:1.2 }}>{c.label}</div>
+                            <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.06em', textTransform:'uppercase', color:'var(--gray-500)', lineHeight:1.5 }}>{c.desc}</div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
