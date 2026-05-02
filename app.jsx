@@ -6,7 +6,7 @@ const _TYPES     = ["mountain","gravel","road","e-bike","commuter","comfort","ki
 const _PART_TABS = ["drivetrain","brakes","wheels","cockpit","suspension","helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
 const _COMP_TABS = ["drivetrain","brakes","wheels","cockpit","suspension"];
 const _ACC_TABS  = ["helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","fit","accessories"];
-const _PAGES     = ["services","book","about","contact","rides","trails","events","clinics","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social","mtbco"];
+const _PAGES     = ["services","book","about","contact","rides","trails","events","clinics","classifieds","giftcards","brands","terms","privacy","demo","warranty","fitting","storage","social","mtbco","inspection"];
 const partPageFor = (tab) => _ACC_TABS.includes(tab) ? "accessories" : "components";
 
 function pathToRoute(pathname) {
@@ -31,6 +31,7 @@ function pathToRoute(pathname) {
   if (s1 === 'accessories') return { page: 'accessories', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (_PAGES.includes(s1)) return { page: s1, intent: null };
+  if (s1 === 'quote' && s2) return { page: 'quote', intent: { quoteId: s2 } };
 
   if (s1 === 'e-bikes-kelowna') return { page: 'type-landing', intent: { type: 'e-bike' } };
   // Programmatic SEO: /[brand]-bikes-kelowna, /[type]-bikes-kelowna
@@ -68,6 +69,7 @@ function routeToPath(page, intent) {
     const svcSlug = { 'tune-up': 'bike-tune-up-kelowna', 'fitting': 'bike-fitting-kelowna', 'storage': 'bike-storage-kelowna', 'demo': 'bike-demo-kelowna' };
     return `/${svcSlug[intent?.service] || 'services'}`;
   }
+  if (page === 'quote') return `/quote/${intent?.quoteId || ''}`;
   return `/${page}`;
 }
 
@@ -377,6 +379,8 @@ const App = () => {
         {page === "bike" && <BikePage bike={intentState?.bike} onBack={() => window.cl.go("shop")} onCart={() => setCartOpen(true)} />}
         {page === "services" && <ServicesPage />}
         {page === "book" && <BookPage />}
+        {page === "inspection" && <InspectionPage />}
+        {page === "quote"      && <QuotePage />}
         {page === "about" && <AboutPage />}
         {page === "rides" && <RidesPage />}
         {page === "trails" && <TrailsPage />}
