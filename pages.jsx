@@ -2657,28 +2657,44 @@ const PartsPage = ({ pageType = 'components' }) => {
     { label:'Tools',      tab:'tools',                         emoji:'🔧' },
     { label:'Lube',       tab:'tools',      search:'Lube',     emoji:'🫙' },
   ] : [
-    { label:'Cassettes',  tab:'drivetrain', search:'Cassette', emoji:'🎡' },
-    { label:'Chains',     tab:'drivetrain', search:'Chain',    emoji:'🔗' },
-    { label:'Derailleurs',tab:'drivetrain', search:'Derail',   emoji:'⚙️' },
-    { label:'Cranks',     tab:'drivetrain', search:'Crank',    emoji:'🔧' },
-    { label:'Shifters',   tab:'drivetrain', search:'Shift',    emoji:'🎛️' },
-    { label:'Cables',     tab:'drivetrain', search:'Cable',    emoji:'〰️' },
-    { label:'Brakes',     tab:'brakes',                        emoji:'🛑' },
-    { label:'Brake Pads', tab:'brakes',     search:'Brake pad',emoji:'🛑' },
-    { label:'Wheelsets',  tab:'wheels',     search:'Wheel',    emoji:'⭕' },
-    { label:'Tires 29"',  tab:'wheels',     search:'29',       emoji:'🔘' },
-    { label:'Tires 700C', tab:'wheels',     search:'700C',     emoji:'🔘' },
-    { label:'Tires 27.5"',tab:'wheels',     search:'27',       emoji:'🔘' },
-    { label:'Tubes',      tab:'wheels',     search:'Tube',     emoji:'🫧' },
-    { label:'Sealant',    tab:'wheels',     search:'Sealant',  emoji:'🫙' },
-    { label:'Forks',      tab:'suspension', search:'Fork',     emoji:'🔩' },
-    { label:'Shocks',     tab:'suspension', search:'Shock',    emoji:'🌀' },
-    { label:'Handlebars', tab:'cockpit',    search:'Handle',   emoji:'🎯' },
-    { label:'Saddles',    tab:'cockpit',    search:'Saddle',   emoji:'💺' },
-    { label:'Grips',      tab:'cockpit',    search:'Grip',     emoji:'✊' },
-    { label:'Bar Tape',   tab:'cockpit',    search:'Bar tape', emoji:'🌀' },
-    { label:'Headsets',   tab:'cockpit',    search:'Head',     emoji:'🔵' },
-    { label:'Seatposts',  tab:'cockpit',    search:'Seat post',emoji:'💺' },
+    // Drivetrain
+    { label:'Cassettes',        tab:'drivetrain', search:'Cassette',    emoji:'🎡' },
+    { label:'Chains',           tab:'drivetrain', search:'Chain',       emoji:'🔗' },
+    { label:'Chainrings',       tab:'drivetrain', search:'Chainring',   emoji:'⚙️' },
+    { label:'Cranks',           tab:'drivetrain', search:'Crank',       emoji:'🔧' },
+    { label:'Bottom Brackets',  tab:'drivetrain', search:'Bottom Brac', emoji:'⚙️' },
+    { label:'Rear Derailleur',  tab:'drivetrain', search:'Rear Derai',  emoji:'⚙️' },
+    { label:'Front Derailleur', tab:'drivetrain', search:'Front Derai', emoji:'⚙️' },
+    { label:'Shifters',         tab:'drivetrain', search:'Shift',       emoji:'🎛️' },
+    { label:'Cables',           tab:'drivetrain', search:'Cable',       emoji:'〰️' },
+    { label:'Freewheels',       tab:'drivetrain', search:'Freewh',      emoji:'🎡' },
+    // Brakes
+    { label:'Disc Brakes',      tab:'brakes',                           emoji:'🛑' },
+    { label:'Brake Pads',       tab:'brakes',     search:'Brake pad',   emoji:'🛑' },
+    { label:'Brake Levers',     tab:'brakes',     search:'Brake Lever', emoji:'🛑' },
+    // Wheels & Tires
+    { label:'Wheelsets',        tab:'wheels',     search:'Wheel',       emoji:'⭕' },
+    { label:'Hubs',             tab:'wheels',     search:'Hub',         emoji:'🔵' },
+    { label:'Rims',             tab:'wheels',     search:'Rim',         emoji:'⭕' },
+    { label:'Tires 29"',        tab:'wheels',     search:'29',          emoji:'🔘' },
+    { label:'Tires 700C',       tab:'wheels',     search:'700C',        emoji:'🔘' },
+    { label:'Tires 27.5"',      tab:'wheels',     search:'27',          emoji:'🔘' },
+    { label:'Fat Bike Tires',   tab:'wheels',     search:'Fatbike',     emoji:'🔘' },
+    { label:'Tubes',            tab:'wheels',     search:'Tube',        emoji:'🫧' },
+    { label:'Sealant',          tab:'wheels',     search:'Sealant',     emoji:'🫙' },
+    // Cockpit
+    { label:'Handlebars',       tab:'cockpit',    search:'Handle',      emoji:'🎯' },
+    { label:'Stems',            tab:'cockpit',    search:'Stem',        emoji:'🔩' },
+    { label:'Grips',            tab:'cockpit',    search:'Grip',        emoji:'✊' },
+    { label:'Bar Tape',         tab:'cockpit',    search:'Bar tape',    emoji:'🌀' },
+    { label:'Saddles',          tab:'cockpit',    search:'Saddle',      emoji:'💺' },
+    { label:'Seatposts',        tab:'cockpit',    search:'Seat post',   emoji:'💺' },
+    { label:'Headsets',         tab:'cockpit',    search:'Head',        emoji:'🔵' },
+    // Suspension
+    { label:'Forks',            tab:'suspension', search:'Fork',        emoji:'🔩' },
+    { label:'Rear Shocks',      tab:'suspension', search:'Shock',       emoji:'🌀' },
+    { label:'Fork Parts',       tab:'suspension', search:'Fork Part',   emoji:'🔧' },
+    { label:'Fork Oil',         tab:'suspension', search:'Fork Oil',    emoji:'🫙' },
   ];
   const switchSubCat = (sc) => { setCat(remapTab(sc.tab)); setSearch(sc.search || ''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
   const isSubActive  = (sc) => cat === remapTab(sc.tab) && (sc.search ? search.toLowerCase() === sc.search.toLowerCase() : !search.trim());
@@ -2704,39 +2720,61 @@ const PartsPage = ({ pageType = 'components' }) => {
 
         <div className="parts-layout">
 
-          {/* Sidebar */}
+          {/* Sidebar — full category tree on desktop */}
           <div className="parts-sidebar">
-            <div style={{ padding:"20px 20px 10px", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--gray-400)" }}>
+            <div style={{ padding:"16px 16px 8px", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--gray-400)" }}>
               {pageType === 'accessories' ? 'Accessories & Gear' : 'Components & Parts'}
             </div>
             {visibleTabs.map(t => {
+              const tabSubCats = subCats.filter(sc => remapTab(sc.tab) === t.id);
               const cached = window.CL_LS?.tabCache?.[t.id];
-              const active = safeCat === t.id && !search;
+              const tabActive = safeCat === t.id && !search;
+              const anySubActive = tabSubCats.some(sc => isSubActive(sc));
               return (
-                <button key={t.id} data-cursor="link" onClick={() => switchCat(t.id)}
-                  style={{ width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 20px",
-                    border:"none", borderLeft: active ? "2px solid var(--black)" : "2px solid transparent",
-                    cursor:"pointer", textAlign:"left",
-                    background: active ? "var(--paper)" : "transparent",
-                    color: active ? "var(--black)" : "var(--gray-500)",
-                    transition:"all .15s", fontFamily:"var(--mono)", fontSize:10,
-                    letterSpacing:".1em", textTransform:"uppercase" }}>
-                  <span style={{ fontSize:16, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
-                  <span style={{ flex:1, lineHeight:1.3, fontWeight: active ? 600 : 400 }}>{t.label}</span>
-                  {cached && <span style={{ fontFamily:"var(--mono)", fontSize:9, opacity:.35, flexShrink:0 }}>{cached.length}</span>}
-                </button>
+                <div key={t.id}>
+                  {/* Section header — click to show all items in this tab */}
+                  <button data-cursor="link" onClick={() => switchCat(t.id)}
+                    style={{ width:"100%", display:"flex", alignItems:"center", gap:8, padding:"9px 16px",
+                      border:"none", borderLeft: tabActive ? "2px solid var(--black)" : "2px solid transparent",
+                      cursor:"pointer", textAlign:"left",
+                      background: tabActive ? "var(--paper)" : "transparent",
+                      color: tabActive || anySubActive ? "var(--black)" : "var(--gray-500)",
+                      transition:"all .12s", fontFamily:"var(--mono)", fontSize:10,
+                      letterSpacing:".1em", textTransform:"uppercase" }}>
+                    <span style={{ fontSize:13, lineHeight:1, flexShrink:0 }}>{t.emoji}</span>
+                    <span style={{ flex:1, lineHeight:1.3, fontWeight: tabActive ? 700 : 500 }}>{t.label}</span>
+                    {cached && <span style={{ fontFamily:"var(--mono)", fontSize:8, opacity:.3, flexShrink:0 }}>{cached.length}</span>}
+                  </button>
+                  {/* Subcategories — always visible (no expand/collapse) */}
+                  {tabSubCats.map(sc => {
+                    const subActive = isSubActive(sc);
+                    return (
+                      <button key={sc.label} data-cursor="link" onClick={() => switchSubCat(sc)}
+                        style={{ width:"100%", display:"flex", alignItems:"center", gap:7, padding:"5px 16px 5px 34px",
+                          border:"none", borderLeft: subActive ? "2px solid var(--black)" : "2px solid transparent",
+                          cursor:"pointer", textAlign:"left",
+                          background: subActive ? "var(--paper)" : "transparent",
+                          color: subActive ? "var(--black)" : "var(--gray-400)",
+                          transition:"all .1s", fontFamily:"var(--mono)", fontSize:9,
+                          letterSpacing:".07em", textTransform:"uppercase" }}>
+                        <span style={{ fontSize:10, lineHeight:1, flexShrink:0, opacity:.7 }}>{sc.emoji}</span>
+                        <span style={{ lineHeight:1.3, fontWeight: subActive ? 600 : 400 }}>{sc.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               );
             })}
-            <div style={{ margin:"20px 20px 0", paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
-              <p style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)", lineHeight:1.8, margin:0 }}>Live · Lightspeed</p>
+            <div style={{ margin:"16px 16px 0", paddingTop:14, borderTop:"1px solid var(--hairline)" }}>
+              <p style={{ fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)", lineHeight:1.8, margin:0 }}>Live · Lightspeed inventory</p>
             </div>
           </div>
 
           {/* Main */}
           <div className="parts-main" style={{ minWidth:0, overflow:"hidden" }}>
 
-            {/* Sticky search bar — above hero so it's always visible near the top */}
-            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:136, zIndex:10 }}>
+            {/* Sticky search bar — chips strip sticks at 136px and is ~42px tall, so search stacks at 178px */}
+            <div className="parts-search-bar" style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:178, zIndex:10 }}>
               <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>

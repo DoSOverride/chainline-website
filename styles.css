@@ -1718,18 +1718,20 @@ img {
    ============================================================ */
 .parts-layout {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 220px 1fr;
   min-height: 80vh;
 }
 
 .parts-sidebar {
   border-right: 1px solid var(--hairline);
-  padding-top: 40px;
+  padding-top: 8px;
   position: sticky;
-  top: 80px;
+  top: 136px;
   align-self: start;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 136px);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
 }
 
 /* Mobile tab strip — hidden on desktop */
@@ -1781,9 +1783,12 @@ img {
   .parts-page-section {
     padding-top: 136px !important;
   }
-  /* Mobile: fix sticky top to account for safe area */
+  /* Mobile: fix sticky tops to account for safe area (header = 100px + safe area, chips ~42px) */
   .parts-mobile-tabs {
     top: calc(100px + env(safe-area-inset-top, 0px));
+  }
+  .parts-search-bar {
+    top: calc(142px + env(safe-area-inset-top, 0px)) !important;
   }
   /* Stats: 4th and 5th items don't need a left border when they wrap */
   .home-stats-grid > *:nth-child(4),
