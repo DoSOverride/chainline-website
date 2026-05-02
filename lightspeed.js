@@ -333,17 +333,24 @@ window.lightspeedReady = (async () => {
       window.dispatchEvent(new CustomEvent('lightspeed:ready', { detail: { count: bikeData.count } }));
       // Detect sale bikes (live price < static SHOP_BIKES price by >3%)
       // Deferred so SHOP_BIKES (from pages.jsx Babel) has time to compile
+      let _saleRetries = 0;
       (function checkSale() {
-        if (!window.SHOP_BIKES) { setTimeout(checkSale, 300); return; }
+        if (!window.SHOP_BIKES) {
+          if (++_saleRetries < 50) setTimeout(checkSale, 300); // give up after ~15s
+          return;
+        }
         const map = {};
-        window.SHOP_BIKES.forEach(b => { if (b.handle && b.price) map[b.handle] = b.price; });
+        window.SHOP_BIKES.forEach(b => { if (b.handle && b.price) map[b.handle] = Number(b.price); });
         const sale = new Set();
         window.CL_LS.bikes.forEach(b => {
-          if (map[b.handle] && b.price > 0 && b.price < map[b.handle] * 0.97) sale.add(b.handle);
+          const staticPrice = map[b.handle];
+          const livePrice = Number(b.price);
+          if (staticPrice && livePrice > 0 && livePrice < staticPrice * 0.97) sale.add(b.handle);
         });
         window.CL_LS.saleHandles = [...sale];
         window.CL_LS.hasSale = sale.size > 0;
         window.CL_LS.saleChecked = true;
+        window.dispatchEvent(new CustomEvent('lightspeed:sale'));
         if (sale.size > 0) console.log(`[ChainLine] Sale bikes: ${[...sale].join(', ')}`);
       })();
 

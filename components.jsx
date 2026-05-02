@@ -354,6 +354,18 @@ const pageHref = (page, intent) => {
 };
 
 const MegaMenu = ({ open, onOpen, onClose }) => {
+  const [saleState, setSaleState] = React.useState({ checked: false, hasSale: false, count: 0 });
+  React.useEffect(() => {
+    const onSale = () => setSaleState({
+      checked: !!(window.CL_LS?.saleChecked),
+      hasSale: !!(window.CL_LS?.hasSale),
+      count:   window.CL_LS?.saleHandles?.length || 0,
+    });
+    window.addEventListener('lightspeed:sale', onSale);
+    if (window.CL_LS?.saleChecked) onSale();
+    return () => window.removeEventListener('lightspeed:sale', onSale);
+  }, []);
+
   const BIKE_BRANDS  = ["Marin", "Transition", "Surly", "Pivot", "Salsa"];
   const BIKE_BRANDS2 = ["Bianchi", "Moots", "Knolly", "Revel"];
   const data = {
@@ -551,12 +563,12 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
                 <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", margin:"8px 0 8px" }}>By Style</div>
                 <ul>
                   {d.styleCol.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
-                  {window.CL_LS?.saleChecked ? (
-                    window.CL_LS.hasSale ? (
+                  {saleState.checked ? (
+                    saleState.hasSale ? (
                       <li style={{ marginTop:8, paddingTop:8, borderTop:"1px solid var(--hairline)" }}>
-                        <a href="#" data-cursor="link" style={{ color:"#dc2626", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}
+                        <a href="/bikes" data-cursor="link" style={{ color:"#dc2626", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}
                           onClick={e => { e.preventDefault(); onClose(); window.cl.go("shop", { sale:true }); }}>
-                          Sale <span style={{ fontFamily:"var(--mono)", fontSize:9, background:"#dc2626", color:"#fff", padding:"2px 6px", borderRadius:10 }}>{window.CL_LS.saleHandles.length}</span>
+                          Sale <span style={{ fontFamily:"var(--mono)", fontSize:9, background:"#dc2626", color:"#fff", padding:"2px 6px", borderRadius:10 }}>{saleState.count}</span>
                         </a>
                       </li>
                     ) : (
