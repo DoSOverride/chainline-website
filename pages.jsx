@@ -2952,6 +2952,11 @@ const PartCard = React.memo(({ item, tabId, tabEmoji }) => {
             {lowStock ? `${item.qty} left` : 'In Stock'}
           </span>
         </div>
+        {item.sku && (
+          <div onClick={e => e.stopPropagation()} style={{ marginTop:6 }}>
+            <PartCartBtn item={item} compact />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -3103,7 +3108,8 @@ const PartPage = ({ sku, returnTab }) => {
                 </div>
               )}
 
-              <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginTop:8 }}>
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginTop:8, alignItems:'center' }}>
+                {item.sku && <PartCartBtn item={item} />}
                 <button className="btn" data-cursor="link" onClick={() => window.cl.go('book')} style={{ fontSize:12 }}>
                   Book a Service <ArrowRight />
                 </button>
@@ -3446,7 +3452,7 @@ const PartsPage = ({ pageType = 'components' }) => {
           {/* Sidebar — full category tree on desktop */}
           <div className="parts-sidebar">
             <div style={{ padding:"16px 16px 8px", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--gray-400)" }}>
-              {pageType === 'accessories' ? 'Accessories & Gear' : 'Components & Parts'}
+              {pageType === 'accessories' ? 'Accessories & Gear' : 'Parts'}
             </div>
             {visibleTabs.map(t => {
               const tabSubCats = subCats.filter(sc => remapTab(sc.tab) === t.id);
