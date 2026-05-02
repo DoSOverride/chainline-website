@@ -92,11 +92,11 @@ const Hero = ({ variant }) => {
 const W = "https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=";
 const FEATURED_BIKES = [
   {"brand":"Transition","name":"Sentinel","type":"Mountain","rawType":"Mountain Bike","price":8900,"img":W+"https://www.fanatikbike.com/cdn/shop/files/2025-transition-sentinel-v3_glacier-white.jpg","handle":"transition-sentinel"},
-  {"brand":"Pivot",     "name":"Switchblade","type":"Mountain","rawType":"Mountain Bike","price":8000,"img":"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/switchbladev3-highlight-right-aurhm3my","handle":"pivot-switchblade-ride-eagle-70-90"},
+  {"brand":"Pivot",     "name":"Switchblade","type":"Mountain","rawType":"Mountain Bike","price":8000,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-switchblade.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
   {"brand":"Transition","name":"Regulator CX","type":"E-Bike","rawType":"Electric Bike","price":13000,"img":W+"https://www.transitionbikes.com/images/C1-2026-Regulator-CX.avif","handle":"transition-regulator-cx-eagle-90"},
   {"brand":"Marin",     "name":"Pine Mountain 1","type":"Mountain","rawType":"Mountain Bike","price":1960,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg","handle":"marin-pine-mountain-1-29"},
   {"brand":"Surly",     "name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"img":W+"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946","handle":"surly-bridge-club"},
-  {"brand":"Pivot",     "name":"Shuttle AM","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://res.cloudinary.com/dh826anba/image/upload/w_1200,f_auto,q_auto,dpr_2.0/shuttleam-highlight-left-zg2ocmj2","handle":"pivot-shuttle-am-ride-eagle-70-90"},
+  {"brand":"Pivot",     "name":"Shuttle AM","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-shuttle-am.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
   {"brand":"Knolly",    "name":"Fugitive","type":"Mountain","rawType":"Mountain Bike","price":4550,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/knolly-fugitive.png","handle":"knolly-fugitive"},
   {"brand":"Surly",     "name":"Sorceress","type":"Mountain","rawType":"Fat Bike","price":3400,"img":W+"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946","handle":"surly-sorceress"},
 ];
