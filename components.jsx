@@ -182,8 +182,7 @@ const ContactBar = () => {
 const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen, onSearch, darkMode, onToggleDark }) => {
   const items = [
     { id: "shop",        label: "Bikes",       panel: "shop",        route: "shop" },
-    { id: "components",  label: "Components",  panel: "components",  route: "components" },
-    { id: "parts",       label: "Parts",       panel: "parts",       route: "parts" },
+    { id: "parts",       label: "Parts",       panel: "parts",       route: "components" },
     { id: "accessories", label: "Accessories", panel: "accessories", route: "accessories" },
     { id: "services",    label: "Services",    panel: "services",    route: "services" },
     { id: "explore",     label: "Explore",     panel: "explore",     route: "rides" },
@@ -194,7 +193,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
   const openMega = (p) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     onMega(p);
-    if (['store','components','parts','accessories'].includes(p)) window.lightspeedWarmCache?.();
+    if (['parts','accessories'].includes(p)) window.lightspeedWarmCache?.();
     if (p === 'shop') window.lightspeedGetBikes?.();
   };
   const scheduleClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => onMega(null), 180); };
@@ -348,55 +347,22 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
       brandCol:  BIKE_BRANDS,
       brandCol2: BIKE_BRANDS2,
     },
-    store: {
-      storeCols: [
-        { h: "Components", route: "components", items: [
-          { label:"Cassettes",         go:["components",{tab:"drivetrain",search:"Cassette"}] },
-          { label:"Chains",            go:["components",{tab:"drivetrain",search:"Chain"}] },
-          { label:"Brake Pads",        go:["components",{tab:"brakes",search:"Brake pad"}] },
-          { label:"Disc Brakes",       go:["components",{tab:"brakes"}] },
-          { label:"Tires 29\"",        go:["components",{tab:"wheels",search:"29"}] },
-          { label:"Tubes",             go:["components",{tab:"wheels",search:"Tube"}] },
-          { label:"Forks",             go:["components",{tab:"suspension",search:"Fork"}] },
-          { label:"Handlebars",        go:["components",{tab:"cockpit",search:"Handle"}] },
-          { label:"Saddles",           go:["components",{tab:"cockpit",search:"Saddle"}] },
-        ]},
-        { h: "Accessories", route: "accessories", items: [
-          { label:"Helmets",           go:["accessories",{tab:"helmets"}] },
-          { label:"Gloves",            go:["accessories",{tab:"protection",search:"Glove"}] },
-          { label:"Shoes",             go:["accessories",{tab:"shoes",search:"Shoe"}] },
-          { label:"Bags & Packs",      go:["accessories",{tab:"bags"}] },
-          { label:"Lights",            go:["accessories",{tab:"lights",search:"Light"}] },
-          { label:"Locks",             go:["accessories",{tab:"locks"}] },
-          { label:"Pumps",             go:["accessories",{tab:"tools",search:"Pump"}] },
-          { label:"Lube",              go:["accessories",{tab:"tools",search:"Lube"}] },
-        ]},
-        { h: "Quick Parts", route: "components", items: [
-          { label:'Tires 27.5"',       go:["components",{tab:"wheels",search:"27"}] },
-          { label:"Tire Sealant",      go:["components",{tab:"wheels",search:"Sealant"}] },
-          { label:"Cables",            go:["components",{tab:"drivetrain",search:"Cable"}] },
-          { label:"Shifters",          go:["components",{tab:"drivetrain",search:"Shift"}] },
-          { label:"Rear Shocks",       go:["components",{tab:"suspension",search:"Shock"}] },
-          { label:"Grips",             go:["components",{tab:"cockpit",search:"Grip"}] },
-          { label:"Seatposts",         go:["components",{tab:"cockpit",search:"Seat post"}] },
-          { label:"Headsets",          go:["components",{tab:"cockpit",search:"Head"}] },
-        ]},
-      ],
-    },
-    components: {
-      storeCols: [
-        { h: "Drivetrain", route: "components", items: [
+    parts: {
+      searchPage: "components",
+      allLabel: "All Parts",
+      cols: [
+        { h: "Drivetrain", items: [
           { label:"Cassettes",         go:["components",{tab:"drivetrain",search:"Cassette"}] },
           { label:"Chains",            go:["components",{tab:"drivetrain",search:"Chain"}] },
           { label:"Chainrings",        go:["components",{tab:"drivetrain",search:"Chainring"}] },
           { label:"Cranks",            go:["components",{tab:"drivetrain",search:"Crank"}] },
-          { label:"Bottom Brackets",   go:["components",{tab:"drivetrain",search:"Bottom Brac"}] },
           { label:"Rear Derailleur",   go:["components",{tab:"drivetrain",search:"Rear Derai"}] },
           { label:"Front Derailleur",  go:["components",{tab:"drivetrain",search:"Front Derai"}] },
           { label:"Shifters",          go:["components",{tab:"drivetrain",search:"Shift"}] },
           { label:"Cables",            go:["components",{tab:"drivetrain",search:"Cable"}] },
+          { label:"Bottom Brackets",   go:["components",{tab:"drivetrain",search:"Bottom Brac"}] },
         ]},
-        { h: "Brakes & Suspension", route: "components", items: [
+        { h: "Brakes & Suspension", items: [
           { label:"Disc Brakes",       go:["components",{tab:"brakes"}] },
           { label:"Brake Pads",        go:["components",{tab:"brakes",search:"Brake pad"}] },
           { label:"Brake Levers",      go:["components",{tab:"brakes",search:"Lever"}] },
@@ -404,7 +370,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
           { label:"Rear Shocks",       go:["components",{tab:"suspension",search:"Shock"}] },
           { label:"Fork Parts & Oil",  go:["components",{tab:"suspension",search:"Fork Part"}] },
         ]},
-        { h: "Wheels & Tires", route: "components", items: [
+        { h: "Wheels & Tires", items: [
           { label:'Tires 29"',         go:["components",{tab:"wheels",search:"29"}] },
           { label:"Tires 700C",        go:["components",{tab:"wheels",search:"700C"}] },
           { label:'Tires 27.5"',       go:["components",{tab:"wheels",search:"27"}] },
@@ -412,10 +378,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
           { label:"Tubes",             go:["components",{tab:"wheels",search:"Tube"}] },
           { label:"Tire Sealant",      go:["components",{tab:"wheels",search:"Sealant"}] },
           { label:"Wheelsets",         go:["components",{tab:"wheels",search:"Wheel"}] },
-          { label:"Hubs",              go:["components",{tab:"wheels",search:"Hub"}] },
-          { label:"Rims",              go:["components",{tab:"wheels",search:"Rim"}] },
+          { label:"Hubs & Rims",       go:["components",{tab:"wheels",search:"Hub"}] },
         ]},
-        { h: "Cockpit", route: "components", items: [
+        { h: "Cockpit & Controls", items: [
           { label:"Handlebars",        go:["components",{tab:"cockpit",search:"Handle"}] },
           { label:"Stems",             go:["components",{tab:"cockpit",search:"Stem"}] },
           { label:"Grips",             go:["components",{tab:"cockpit",search:"Grip"}] },
@@ -426,38 +391,23 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
         ]},
       ],
     },
-    parts: {
-      storeCols: [
-        { h: "Quick Parts", route: "components", items: [
-          { label:'Tires 29"',         go:["components",{tab:"wheels",search:"29"}] },
-          { label:"Tires 700C",        go:["components",{tab:"wheels",search:"700C"}] },
-          { label:'Tires 27.5"',       go:["components",{tab:"wheels",search:"27"}] },
-          { label:"Tubes",             go:["components",{tab:"wheels",search:"Tube"}] },
-          { label:"Brake Pads",        go:["components",{tab:"brakes",search:"Brake pad"}] },
-          { label:"Chains",            go:["components",{tab:"drivetrain",search:"Chain"}] },
-          { label:"Cassettes",         go:["components",{tab:"drivetrain",search:"Cassette"}] },
-          { label:"Cables",            go:["components",{tab:"drivetrain",search:"Cable"}] },
-          { label:"Lube & Maintenance",go:["accessories",{tab:"tools"}] },
-          { label:"Tire Sealant",      go:["components",{tab:"wheels",search:"Sealant"}] },
-        ]},
-      ],
-    },
     accessories: {
-      storeCols: [
-        { h: "Protection", route: "accessories", items: [
+      searchPage: "accessories",
+      allLabel: "All Accessories",
+      cols: [
+        { h: "Protection", items: [
           { label:"Helmets",           go:["accessories",{tab:"helmets"}] },
+          { label:"MTB Helmets",       go:["accessories",{tab:"helmets",search:"MTB"}] },
           { label:"Gloves",            go:["accessories",{tab:"protection",search:"Glove"}] },
           { label:"Armour & Pads",     go:["accessories",{tab:"protection",search:"Armour"}] },
           { label:"Sunglasses",        go:["accessories",{tab:"protection",search:"Sunglass"}] },
         ]},
-        { h: "Clothing & Shoes", route: "accessories", items: [
-          { label:"Jerseys",           go:["accessories",{tab:"clothing",search:"Jersey"}] },
-          { label:"Arm & Leg Warmers", go:["accessories",{tab:"clothing",search:"Warmer"}] },
-          { label:"Socks",             go:["accessories",{tab:"clothing",search:"Sock"}] },
-          { label:"Shoes",             go:["accessories",{tab:"shoes",search:"Shoe"}] },
-          { label:"Cleats",            go:["accessories",{tab:"shoes",search:"Cleat"}] },
+        { h: "Shoes & Cleats", items: [
+          { label:"MTB Shoes",         go:["accessories",{tab:"shoes",search:"MTB"}] },
+          { label:"Road Shoes",        go:["accessories",{tab:"shoes",search:"Road"}] },
+          { label:"SPD Cleats",        go:["accessories",{tab:"shoes",search:"Cleat"}] },
         ]},
-        { h: "Carry & Lights", route: "accessories", items: [
+        { h: "Carry & Lights", items: [
           { label:"Bags & Packs",      go:["accessories",{tab:"bags"}] },
           { label:"Hydration",         go:["accessories",{tab:"bags",search:"Hydrat"}] },
           { label:"Water Bottles",     go:["accessories",{tab:"bags",search:"Bottle"}] },
@@ -465,14 +415,14 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
           { label:"Computers & GPS",   go:["accessories",{tab:"lights",search:"Comput"}] },
           { label:"Locks",             go:["accessories",{tab:"locks"}] },
         ]},
-        { h: "Maintenance & Racks", route: "accessories", items: [
+        { h: "Tools & Gear", items: [
           { label:"Pumps",             go:["accessories",{tab:"tools",search:"Pump"}] },
-          { label:"Lube & Degreasers", go:["accessories",{tab:"tools",search:"Lube"}] },
+          { label:"Lube",              go:["accessories",{tab:"tools",search:"Lube"}] },
+          { label:"Degreasers",        go:["accessories",{tab:"tools",search:"Degreaser"}] },
           { label:"Workshop Tools",    go:["accessories",{tab:"tools"}] },
           { label:"Bike Racks",        go:["accessories",{tab:"racks",search:"Bike Rack"}] },
           { label:"Car Racks",         go:["accessories",{tab:"racks",search:"Car Rack"}] },
           { label:"Fenders",           go:["accessories",{tab:"racks",search:"Fender"}] },
-          { label:"Kickstands & Bells",go:["accessories",{tab:"racks",search:"Kickstand"}] },
         ]},
       ],
     },
@@ -533,6 +483,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     if (l.includes("brake"))                                        return ["components",{tab:"brakes"}];
     if (l.includes("suspension") || l.includes("fork") || l.includes("shock")) return ["components",{tab:"suspension"}];
     if (l.includes("wheel") || l.includes("rim") || l.includes("hub")) return ["components",{tab:"wheels"}];
+    if (l === "all parts" || l === "parts") return ["components", null];
     if (l.includes("component"))                                    return ["components",{tab:"drivetrain"}];
     if (l.includes("accessor"))                                     return ["accessories",{tab:"helmets"}];
     if (l === "store") return ["store", null];
@@ -571,7 +522,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Bikes panel: By Style | Brands col1 | Brands col2 */}
+          {/* Bikes: By Style | Brands col1 | Brands col2 */}
           {d.styleCol ? (
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:48 }}>
               <div className="mega-col">
@@ -589,33 +540,39 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
                 <ul style={{ marginTop:28 }}>{d.brandCol2.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
               </div>
             </div>
-          ) : /* Store panel: 3 cols — Components | Parts | Accessories */
-          d.storeCols ? (
-            <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.storeCols.length}, 1fr)`, gap:48 }}>
-              {d.storeCols.map((col, ci) => (
-                <div key={ci} className="mega-col">
-                  <h4 style={{ cursor:"pointer" }} onClick={() => { onClose(); window.cl.go(col.route); }}>{col.h}</h4>
-                  <ul>{col.items.map(item => (
-                    <li key={item.label}>
-                      <a href="#" data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
-                    </li>
-                  ))}</ul>
+          ) : d.searchPage ? (
+            /* Parts / Accessories: search bar + 4 category cols */
+            <>
+              <div style={{ display:"flex", alignItems:"center", gap:20, paddingBottom:20, marginBottom:20, borderBottom:"1px solid var(--hairline)" }}>
+                <div style={{ position:"relative", flex:"0 0 260px" }}>
+                  <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+                  <input
+                    placeholder={`Search ${d.allLabel.toLowerCase()}…`}
+                    style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:8, paddingBottom:8, border:"1px solid var(--hairline)", background:"var(--paper)", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".08em", color:"var(--black)", outline:"none" }}
+                    onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) { onClose(); window.cl.go(d.searchPage, { search: e.target.value.trim() }); } }}
+                  />
                 </div>
-              ))}
-            </div>
-          ) : d.cols ? (
-            /* Components / Accessories: 4-col grid */
-            d.cols.length === 4 ? (
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:48 }}>
-                {d.cols.map((c, i) => (
-                  <div key={i} className="mega-col">
-                    <h4>{c.h}</h4>
-                    <ul>{c.items.map(it => <li key={it}><a href="#" data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}</ul>
+                <a href="#" data-cursor="link"
+                  onClick={e => { e.preventDefault(); onClose(); window.cl.go(d.searchPage); }}
+                  style={{ ...linkStyle, color:"var(--black)", fontWeight:600, fontSize:12, display:"flex", alignItems:"center", gap:6, letterSpacing:".1em" }}>
+                  {d.allLabel} <ArrowRight size={10} />
+                </a>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.cols.length}, 1fr)`, gap:40 }}>
+                {d.cols.map((col, ci) => (
+                  <div key={ci} className="mega-col">
+                    <h4>{col.h}</h4>
+                    <ul>{col.items.map(item => (
+                      <li key={item.label}>
+                        <a href="#" data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
+                      </li>
+                    ))}</ul>
                   </div>
                 ))}
               </div>
-            ) : (
-            /* Services / Explore: keep existing 3-col layout */
+            </>
+          ) : d.cols ? (
+            /* Services / Explore / More: 3-col layout */
             <div className="mega-grid">
               {d.cols.slice(0, 2).map((c, i) => (
                 <div key={i} className="mega-col">
@@ -639,7 +596,6 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
                 </div>
               )}
             </div>
-          )
           ) : null}
         </div>
       )}
@@ -708,7 +664,6 @@ const MobileNav = ({ open, onClose }) => {
         {hdr(<div className="nav-logo"><img src="/logo.png" alt="ChainLine Cycle" className="logo-img logo-img-light" style={{ height:28 }} /></div>)}
         <div style={{ padding:"24px 24px 0", flex:1, overflowY:"auto" }}>
           <div style={linkA} onClick={() => setPanel('shop')}>Bikes <ChevR /></div>
-          <div style={linkA} onClick={() => setPanel('components')}>Components <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('parts')}>Parts <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('accessories')}>Accessories <ChevR /></div>
           <div style={linkA} onClick={() => setPanel('services')}>Services <ChevR /></div>
@@ -739,48 +694,63 @@ const MobileNav = ({ open, onClose }) => {
         </div>
       </div>
 
-      {/* ── Panel 3: Components ── */}
-      <div className={"mob-panel " + (panel === 'components' ? "mob-panel-active" : "mob-panel-right")}>
+      {/* ── Panel: Parts (merged components + parts) ── */}
+      <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components")); }}>All Components</a>
+        {/* Search */}
+        <div style={{ padding:"12px 24px 16px", borderBottom:"1px solid rgba(255,255,255,0.1)", flexShrink:0 }}>
+          <div style={{ position:"relative" }}>
+            <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+            <input placeholder="Search parts…"
+              style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:9, paddingBottom:9, background:"rgba(255,255,255,0.08)", border:"none", borderBottom:"1px solid rgba(255,255,255,0.15)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:14, letterSpacing:".05em", outline:"none" }}
+              onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) dismiss(() => window.cl.go("components", { search: e.target.value.trim() })); }}
+            />
+          </div>
+        </div>
+        <div style={{ padding:"0 24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
+            onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components")); }}>All Parts</a>
           {[
-            { label:"Drivetrain",  tab:"drivetrain" },
-            { label:"Brakes",      tab:"brakes" },
-            { label:"Suspension",  tab:"suspension" },
-            { label:"Wheels",      tab:"wheels" },
-            { label:"Cockpit",     tab:"cockpit" },
+            { label:"Drivetrain",      tab:"drivetrain" },
+            { label:"Brakes",          tab:"brakes" },
+            { label:"Suspension",      tab:"suspension" },
+            { label:"Wheels & Tires",  tab:"wheels" },
+            { label:"Cockpit",         tab:"cockpit" },
           ].map(it => (
             <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab })); }}>{it.label}</a>
           ))}
+          <div style={{ marginTop:16, paddingTop:14, borderTop:"1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"rgba(255,255,255,0.35)", marginBottom:10 }}>Quick Access</div>
+            {[
+              { label:'Tires 29"',    tab:"wheels",    search:"29" },
+              { label:"Brake Pads",   tab:"brakes",    search:"Brake pad" },
+              { label:"Chains",       tab:"drivetrain",search:"Chain" },
+              { label:"Tubes",        tab:"wheels",    search:"Tube" },
+              { label:"Cables",       tab:"drivetrain",search:"Cable" },
+              { label:"Tire Sealant", tab:"wheels",    search:"Sealant" },
+            ].map(it => (
+              <a key={it.label} href="#" style={{ ...subA, fontSize:16, padding:"7px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("components", { tab: it.tab, search: it.search })); }}>{it.label}</a>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* ── Panel 4: Parts ── */}
-      <div className={"mob-panel " + (panel === 'parts' ? "mob-panel-active" : "mob-panel-right")}>
-        {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("parts")); }}>All Parts</a>
-          {[
-            { label:'Tires 29"',         page:"components", tab:"wheels" },
-            { label:"Tires 700C",         page:"components", tab:"wheels" },
-            { label:'Tires 27.5"',        page:"components", tab:"wheels" },
-            { label:"Tubes & Sealant",    page:"components", tab:"wheels" },
-            { label:"Brake Pads",         page:"components", tab:"brakes" },
-            { label:"Chains",             page:"components", tab:"drivetrain" },
-            { label:"Cables",             page:"components", tab:"drivetrain" },
-            { label:"Lube & Tools",       page:"accessories", tab:"tools" },
-          ].map(it => (
-            <a key={it.label} href="#" style={{ ...subA, fontSize:22 }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.page, { tab: it.tab })); }}>{it.label}</a>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Panel 5: Accessories ── */}
+      {/* ── Panel: Accessories ── */}
       <div className={"mob-panel " + (panel === 'accessories' ? "mob-panel-active" : "mob-panel-right")}>
         {hdr(<button onClick={() => setPanel('main')} style={{ background:"none", border:"none", color:"var(--white)", cursor:"pointer", display:"flex", alignItems:"center", gap:8, fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase" }}><ChevL /> Back</button>)}
-        <div style={{ padding:"24px", flex:1, overflowY:"auto" }}>
-          <a href="#" style={{ ...linkA, fontSize:28, marginBottom:24, display:"block" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories")); }}>All Accessories</a>
+        {/* Search */}
+        <div style={{ padding:"12px 24px 16px", borderBottom:"1px solid rgba(255,255,255,0.1)", flexShrink:0 }}>
+          <div style={{ position:"relative" }}>
+            <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", opacity:.4 }} width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+            <input placeholder="Search accessories…"
+              style={{ width:"100%", paddingLeft:30, paddingRight:12, paddingTop:9, paddingBottom:9, background:"rgba(255,255,255,0.08)", border:"none", borderBottom:"1px solid rgba(255,255,255,0.15)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:14, letterSpacing:".05em", outline:"none" }}
+              onKeyDown={e => { if (e.key === 'Enter' && e.target.value.trim()) dismiss(() => window.cl.go("accessories", { search: e.target.value.trim() })); }}
+            />
+          </div>
+        </div>
+        <div style={{ padding:"0 24px", flex:1, overflowY:"auto" }}>
+          <a href="#" style={{ ...linkA, fontSize:24, display:"block", padding:"18px 0 14px", borderBottom:"1px solid rgba(255,255,255,0.1)", marginBottom:4 }}
+            onClick={e => { e.preventDefault(); dismiss(() => window.cl.go("accessories")); }}>All Accessories</a>
           {[
             { label:"Helmets",             tab:"helmets" },
             { label:"Gloves & Armour",     tab:"protection" },
