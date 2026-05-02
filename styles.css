@@ -943,7 +943,6 @@ img {
 }
 .bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-hover {
   opacity: 1;
-  transform: scale(1) translateX(0);
 }
 
 .bike-card-badge {
