@@ -32,6 +32,7 @@ function pathToRoute(pathname) {
   if (s1 === 'parts') return { page: 'parts', intent: s2 && _PART_TABS.includes(s2) ? { tab: s2 } : null };
   if (_PAGES.includes(s1)) return { page: s1, intent: null };
   if (s1 === 'quote' && s2) return { page: 'quote', intent: { quoteId: s2 } };
+  if (s1 === 'part' && s2)  return { page: 'part',  intent: { sku: decodeURIComponent(s2), tab: null } };
 
   if (s1 === 'e-bikes-kelowna') return { page: 'type-landing', intent: { type: 'e-bike' } };
   // Programmatic SEO: /[brand]-bikes-kelowna, /[type]-bikes-kelowna
@@ -70,6 +71,7 @@ function routeToPath(page, intent) {
     return `/${svcSlug[intent?.service] || 'services'}`;
   }
   if (page === 'quote') return `/quote/${intent?.quoteId || ''}`;
+  if (page === 'part')  return `/part/${encodeURIComponent(intent?.sku || '')}`;
   return `/${page}`;
 }
 
@@ -381,6 +383,7 @@ const App = () => {
         {page === "book" && <BookPage />}
         {page === "inspection" && <InspectionPage />}
         {page === "quote"      && <QuotePage />}
+        {page === "part"       && <PartPage key={intentState?.sku || window.cl?.intent?.sku} sku={intentState?.sku || window.cl?.intent?.sku} returnTab={intentState?.tab || window.cl?.intent?.tab} />}
         {page === "about" && <AboutPage />}
         {page === "rides" && <RidesPage />}
         {page === "trails" && <TrailsPage />}

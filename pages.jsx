@@ -2831,7 +2831,7 @@ const PartPage = ({ sku, returnTab }) => {
     setImgSrc(resolvePartImg(it.name, it.department) || null);
   }, [data]);
 
-  const handleBack = () => window.cl.go(returnTab || 'components', returnTab ? { tab: returnTab } : null);
+  const handleBack = () => { const accTabs = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks']; const destPage = accTabs.includes(returnTab) ? 'accessories' : 'components'; window.cl.go(destPage, returnTab ? { tab: returnTab } : null); };
   const handleImgError = () => {
     if (!proxyTried && imgSrc && !imgSrc.includes('/api/img')) {
       setProxyTried(true);
