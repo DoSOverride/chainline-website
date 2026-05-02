@@ -124,6 +124,14 @@ This warms the 3 most-visited tabs silently in the background. When the user nav
 
 ---
 
+## Implementation Notes
+
+- **PartCartBtn in PartCard**: Wrap in `<div onClick={e => e.stopPropagation()}>` — PartCard has a card-level `onClick` navigating to PartPage; without this, tapping "Add to Cart" also triggers page navigation. Verify PartCartBtn doesn't already call stopPropagation internally before adding wrapper.
+- **R2 key sanitation**: `r2/parts/{sku}.jpg` — slugify SKU before use: `sku.replace(/[^a-z0-9-]/gi, '-')`. Lightspeed systemSkus appear numeric but may vary.
+- **Filter panel z-index**: Use `z-index: 250` for panel, `z-index: 249` for backdrop — slots between compare-bar (201) and cart drawer (300).
+- **Background preload**: Add 2s partial warm ALONGSIDE the existing 4s full warm in app.jsx — do NOT remove the existing timer.
+- **Current script versions**: pages.jsx v59, app.jsx v32, components.jsx v43, parts-data.js v1. Verify with `grep v= index.html` before starting.
+
 ## 6. Files Changed
 
 | File | Changes |
