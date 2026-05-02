@@ -38,21 +38,27 @@ function _slugify(str) {
 
 // Override window.resolvePartImg — called by PartCard before pages.jsx fallback
 window.resolvePartImg = function(item, tab) {
-  const slug = _slugify(item.name || '');
+  const slug  = _slugify(item.name || '');
+  const sku   = item.sku || '';
   const brand = (item.manufacturer || '').toLowerCase();
 
-  // 1. Exact R2 override (prefix match)
+  // 1. Explicit R2 override (manual uploads or synced via /api/sync-part-images)
   for (const key of Object.keys(PART_R2_OVERRIDES)) {
     if (slug.startsWith(key) || slug === key) return PART_R2_OVERRIDES[key];
   }
 
-  // 2. Brand CDN
+  // 2. Shopify product image — populated by shopify.js on page init
+  if (sku && window.CL_SHOP?.skuImageMap?.[sku]) {
+    return window.CL_SHOP.skuImageMap[sku];
+  }
+
+  // 3. Brand CDN
   if (brand && BRAND_CDN_MAP[brand]) {
     const url = BRAND_CDN_MAP[brand](item);
     if (url) return url;
   }
 
-  // 3. Fall through — pages.jsx resolvePartImg handles ITEM_IMG_PATTERNS + DEPT_IMG
+  // 4. Fall through — pages.jsx resolvePartImg handles ITEM_IMG_PATTERNS + DEPT_IMG
   return null;
 };
 
