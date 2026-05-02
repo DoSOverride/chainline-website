@@ -237,16 +237,6 @@
 [data-theme="dark"] .shop-chip.active  { border-color: #edebe7 !important; color: #edebe7 !important; }
 [data-theme="dark"] .shop-chip.unavail { color: rgba(255,255,255,0.26) !important; border-color: rgba(255,255,255,0.06) !important; }
 
-/* bcc chips (wheel / size selectors on new cards) */
-[data-theme="dark"] .bcc        { border-color: rgba(255,255,255,0.13); color: rgba(255,255,255,0.65); }
-[data-theme="dark"] .bcc:hover  { border-color: rgba(255,255,255,0.42); color: #edebe7; }
-[data-theme="dark"] .bcc.active { border-color: #edebe7; background: #edebe7; color: #111; }
-
-/* Color swatch ring */
-[data-theme="dark"] .color-swatch.active {
-  box-shadow: 0 0 0 2px #1c1c1c, 0 0 0 3.5px #edebe7;
-}
-
 /* ── Sticky bars with hardcoded rgba(250,…) — !important required ── */
 [data-theme="dark"] .shop-filter-sticky {
   background: rgba(10,10,10,0.97) !important;
