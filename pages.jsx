@@ -5143,7 +5143,7 @@ const ClinicsPage = () => {
               <h2 className="display-xl">Learn to<br/><span className="serif-italic">ride better.</span></h2>
             </div>
             <p style={{ maxWidth:400, fontSize:15, color:"var(--gray-500)", lineHeight:1.7 }}>
-              We partner with <strong>McGee Cycle</strong> — Kelowna's dedicated MTB coaching program. PMBIA-certified coaches, small groups, real trails.
+              We partner with <strong>McGee Cycle</strong> - Kelowna's dedicated MTB coaching program. PMBIA-certified coaches, small groups, real trails.
             </p>
           </div>
           <div className="mcgee-clinics-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:24 }}>
