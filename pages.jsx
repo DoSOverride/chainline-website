@@ -1286,10 +1286,19 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
             <div style={{ display:"flex", gap:10 }} onClick={e => e.stopPropagation()}>
               <button className="btn btn-outline" data-cursor="link" onClick={e => { e.stopPropagation(); goToBike(); }}
                 style={{ flex:1, justifyContent:"center", padding:"13px 16px" }}>Explore Bike</button>
-              <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
-                style={{ flex:1, justifyContent:"center", padding:"13px 16px" }}>
-                {added ? "Added ✓" : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
-              </button>
+              {isSpecialOrder ? (
+                <a className="btn" data-cursor="link"
+                  href={`mailto:bikes@chainline.ca?subject=${encodeURIComponent('Order Inquiry: ' + brand + ' ' + name)}&body=${encodeURIComponent('Hi ChainLine,\n\nI am interested in ordering the ' + brand + ' ' + name + ' (MSRP $' + price.toLocaleString() + ' CAD).\n\nPlease let me know about availability and lead time.\n\nThanks')}`}
+                  onClick={e => e.stopPropagation()}
+                  style={{ flex:1, justifyContent:'center', padding:'13px 16px', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:6 }}>
+                  Inquire <ArrowRight />
+                </a>
+              ) : (
+                <button className="btn" data-cursor="link" onClick={handleAdd} disabled={adding || !inStock}
+                  style={{ flex:1, justifyContent:"center", padding:"13px 16px" }}>
+                  {added ? "Added ✓" : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
+                </button>
+              )}
             </div>
           </div>
         </div>
