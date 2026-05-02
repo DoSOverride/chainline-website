@@ -557,6 +557,13 @@ const BikePage = ({ bike, onBack, onCart }) => {
         </div>
       </div>
       <Newsletter />
+      {/* Image zoom lightbox */}
+      {zoomedImg && (
+        <div onClick={() => setZoomedImg(null)} style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.92)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'zoom-out', padding:24 }}>
+          <img src={zoomedImg} alt="" style={{ maxWidth:'90vw', maxHeight:'90vh', objectFit:'contain' }} onClick={e => e.stopPropagation()} />
+          <button onClick={() => setZoomedImg(null)} style={{ position:'absolute', top:20, right:28, background:'none', border:'none', color:'#fff', fontSize:32, cursor:'pointer', lineHeight:1 }}>&#215;</button>
+        </div>
+      )}
     </div>
   );
 };
@@ -675,6 +682,91 @@ const BrandSaleWidget = () => {
         </div>
       ))}
     </div>
+  );
+};
+
+// ── Compare bikes feature ────────────────────────────────────
+const CompareBar = () => {
+  const [list, setList] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    const onUpdate = () => { setList([...(window.cl?.compareList || [])]); };
+    onUpdate();
+    window.addEventListener('compare:update', onUpdate);
+    return () => window.removeEventListener('compare:update', onUpdate);
+  }, []);
+
+  if (list.length === 0 && !open) return null;
+
+  const clear = (h) => {
+    window.cl.compareList = (window.cl?.compareList || []).filter(x => x.handle !== h);
+    window.dispatchEvent(new CustomEvent('compare:update'));
+  };
+
+  const specRows = () => {
+    const keys = new Set();
+    list.forEach(b => {
+      const d = window.BIKE_DATA?.[b.handle] || {};
+      if (d.specs) Object.keys(d.specs).forEach(k => keys.add(k));
+    });
+    return [...keys].filter(k => k !== 'Colors');
+  };
+
+  return (
+    <>
+      {/* Sticky bar */}
+      {list.length > 0 && !open && (
+        <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:200, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
+          <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flex:1 }}>
+            Comparing: {list.map(b => b.name || b.title).join(' vs ')}
+          </div>
+          <button className="btn btn-outline" data-cursor="link" onClick={() => setOpen(true)} style={{ color:'#fff', borderColor:'rgba(255,255,255,0.4)', padding:'8px 18px', fontSize:11 }}>
+            Compare Now
+          </button>
+          <button onClick={() => { window.cl.compareList = []; window.dispatchEvent(new CustomEvent('compare:update')); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.5)', cursor:'pointer', fontSize:20, lineHeight:1, padding:'0 4px' }}>&#215;</button>
+        </div>
+      )}
+      {/* Full comparison modal */}
+      {open && (
+        <div style={{ position:'fixed', inset:0, zIndex:300, background:'rgba(0,0,0,0.85)', overflowY:'auto', padding:'80px 24px 40px' }} onClick={() => setOpen(false)}>
+          <div style={{ background:'var(--white)', maxWidth:960, margin:'0 auto', padding:40 }} onClick={e => e.stopPropagation()}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
+              <div className="display-m">Compare</div>
+              <button onClick={() => setOpen(false)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:28, lineHeight:1 }}>&#215;</button>
+            </div>
+            {/* Bike headers */}
+            <div style={{ display:'grid', gridTemplateColumns:`180px ${list.map(()=>'1fr').join(' ')}`, gap:24, marginBottom:24 }}>
+              <div />
+              {list.map(b => {
+                const d = window.BIKE_DATA?.[b.handle] || {};
+                const img = d.images?.[0] || b.img;
+                return (
+                  <div key={b.handle} style={{ textAlign:'center' }}>
+                    {img && <img src={img} alt={b.name} style={{ width:'100%', maxHeight:160, objectFit:'contain', marginBottom:12 }} />}
+                    <div style={{ fontFamily:'var(--display)', fontSize:16, fontWeight:500 }}>{b.brand} {b.name}</div>
+                    <div style={{ fontFamily:'var(--display)', fontSize:22, fontWeight:500, marginTop:4 }}>${(b.price||0).toLocaleString()} <span style={{ fontFamily:'var(--mono)', fontSize:11, opacity:.4 }}>CAD</span></div>
+                    <button className="btn btn-outline" data-cursor="link" onClick={() => { setOpen(false); window.cl.go("bike", { bike: b }); }} style={{ marginTop:12, fontSize:11, padding:'8px 16px' }}>View Bike</button>
+                  </div>
+                );
+              })}
+            </div>
+            {/* Specs table */}
+            {specRows().map((k, i) => (
+              <div key={k} style={{ display:'grid', gridTemplateColumns:`180px ${list.map(()=>'1fr').join(' ')}`, gap:24, padding:'12px 0', borderBottom:'1px solid var(--hairline)', background: i%2===0 ? 'transparent' : 'var(--paper)' }}>
+                <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-500)', paddingTop:2 }}>{k}</div>
+                {list.map(b => {
+                  const d = window.BIKE_DATA?.[b.handle] || {};
+                  return <div key={b.handle} style={{ fontSize:13, lineHeight:1.4 }}>{d.specs?.[k] || <span style={{ color:'var(--gray-400)' }}>-</span>}</div>;
+                })}
+              </div>
+            ))}
+            <div style={{ marginTop:24, textAlign:'center' }}>
+              <button onClick={() => { setOpen(false); window.cl.compareList = []; window.dispatchEvent(new CustomEvent('compare:update')); }} className="btn btn-outline" style={{ fontSize:11 }}>Clear Compare</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -970,6 +1062,7 @@ const ShopPage = ({ intentState }) => {
         </div>
       </section>
       <Newsletter />
+      <CompareBar />
     </div>
   );
 };
@@ -1022,8 +1115,14 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const colors  = [...new Set(variants.map(v => v.color).filter(Boolean))];
   const sizes   = [...new Set(variants.map(v => v.size).filter(Boolean))];
   const hasWheels = wheels.length > 0;
-  const hasColors = colors.length > 0;
+  const hasColors = colors.length > 1;   // only show swatches when 2+ colors
   const hasSizes  = sizes.length > 0;
+  // colorImages colors — used for special order bikes that have no LS variants
+  const _bikeDataEarly = window.BIKE_DATA?.[b.handle] || {};
+  const _ciImgs   = _bikeDataEarly.colorImages || {};
+  const _ciColors = Object.keys(_ciImgs);
+  const staticClrs     = variants.length === 0 ? _ciColors : [];
+  const hasStaticColors = staticClrs.length > 1;
 
   const pickDefault = (vs) => {
     const ins = vs.filter(v => v.inStock);
@@ -1034,16 +1133,27 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   };
   const defV = pickDefault(variants);
   const [selWheel, setWheel] = React.useState(defV?.wheel || null);
-  const [selColor, setColor] = React.useState(defV?.color || null);
+  const [selColor, setColor] = React.useState(defV?.color || (_ciColors.length > 0 ? _ciColors[0] : null));
   const [selSize,  setSize]  = React.useState(defV?.size  || null);
   const [adding,      setAdding]     = React.useState(false);
   const [added,       setAdded]      = React.useState(false);
   const [imgFallback, setImgFallback] = React.useState(false);
   const [cartQty,     setCartQty]    = React.useState(0);
+  const [inCompare,   setInCompare]  = React.useState(false);
+  React.useEffect(() => {
+    const onUpdate = () => setInCompare(!!(window.cl?.compareList||[]).some(x=>x.handle===b.handle));
+    onUpdate();
+    window.addEventListener('compare:update', onUpdate);
+    return () => window.removeEventListener('compare:update', onUpdate);
+  }, [b.handle]);
 
   React.useEffect(() => {
     const d = pickDefault(b.variants || []);
     if (d) { setWheel(d.wheel || null); setColor(d.color || null); setSize(d.size || null); }
+    else {
+      const ci = Object.keys(window.BIKE_DATA?.[b.handle]?.colorImages || {});
+      if (ci.length > 0) setColor(ci[0]);
+    }
   }, [b.handle, (b.variants || []).length]);
 
   const selected = variants.find(v =>
@@ -1256,6 +1366,19 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
           </div>
         )}
 
+        {/* Static color swatches from colorImages (special order bikes w/o LS variants) */}
+        {!hasColors && hasStaticColors && (
+          <div className="bike-card-colors" onClick={e => e.stopPropagation()}>
+            {staticClrs.map(c => (
+              <button key={c} title={c}
+                onClick={e => { e.stopPropagation(); setColor(c); }}
+                className={"color-swatch" + (selColor===c ? " active" : "")}
+                style={{ background: COLOR_HEX(c) }} />
+            ))}
+            {selColor && <span className="bike-card-color-label">{selColor}</span>}
+          </div>
+        )}
+
         {/* Wheel chips */}
         {hasWheels && (
           <div className="bike-card-chips" onClick={e => e.stopPropagation()}>
@@ -1295,12 +1418,34 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
             style={{ flex:'0 0 auto', padding:'10px 16px', fontSize:11 }}>
             Details
           </button>
-          <button className="btn" data-cursor="link" onClick={handleAdd}
-            disabled={adding || !inStock || atMaxQty}
-            style={{ flex:1, justifyContent:'center', padding:'10px 8px', fontSize:11, opacity: atMaxQty ? 0.5 : 1 }}>
-            {added ? "Added ✓" : atMaxQty ? `In Cart (${cartQty})` : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
-          </button>
+          {isSpecialOrder ? (
+            <a className="btn" data-cursor="link"
+              href={`mailto:bikes@chainline.ca?subject=${encodeURIComponent('Order Inquiry: ' + brand + ' ' + name)}&body=${encodeURIComponent('Hi ChainLine,\n\nI am interested in ordering the ' + brand + ' ' + name + ' (MSRP $' + price.toLocaleString() + ' CAD).\nColour/Size: ' + [selColor, selSize].filter(Boolean).join(' / ') + '\n\nPlease let me know about availability and lead time.\n\nThanks')}`}
+              onClick={e => e.stopPropagation()}
+              style={{ flex:1, justifyContent:'center', padding:'10px 8px', fontSize:11, textDecoration:'none', display:'inline-flex', alignItems:'center', gap:6 }}>
+              Inquire <ArrowRight />
+            </a>
+          ) : (
+            <button className="btn" data-cursor="link" onClick={handleAdd}
+              disabled={adding || !inStock || atMaxQty}
+              style={{ flex:1, justifyContent:'center', padding:'10px 8px', fontSize:11, opacity: atMaxQty ? 0.5 : 1 }}>
+              {added ? "Added ✓" : atMaxQty ? `In Cart (${cartQty})` : adding ? "…" : !inStock ? "Out of Stock" : "Add to Cart"}
+            </button>
+          )}
         </div>
+        {/* Compare toggle */}
+        <button onClick={e => {
+            e.stopPropagation();
+            const list = window.cl?.compareList || [];
+            const idx = list.findIndex(x => x.handle === b.handle);
+            if (idx >= 0) { window.cl.compareList = list.filter((_,i) => i !== idx); }
+            else if (list.length < 2) { window.cl = window.cl||{}; window.cl.compareList = [...list, b]; }
+            window.dispatchEvent(new CustomEvent('compare:update'));
+          }}
+          data-cursor="link"
+          style={{ background:'none', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.12em', textTransform:'uppercase', color: inCompare ? 'var(--black)' : 'var(--gray-400)', padding:'8px 0 0', textAlign:'left', display:'block', width:'100%' }}>
+          {inCompare ? '✓ In Compare' : '+ Compare'}
+        </button>
       </div>
     </div>
   );

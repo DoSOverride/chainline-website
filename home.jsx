@@ -70,7 +70,7 @@ const Hero = ({ variant }) => {
             <div style={{ fontSize: 16, lineHeight: 1.5, color: "var(--gray-300)" }}>{v.sub}</div>
           </div>
           <div className="hero-ctas" style={{ display: "flex", gap: 16, opacity: 0, animation: "splitIn 1s 1.6s forwards ease", transform: "translateY(20px)" }}>
-            <button className="btn btn-light" data-cursor="link" onClick={() => window.cl.go("shop")}>Shop Bikes <ArrowRight /></button>
+            <button className="btn btn-light" data-cursor="link" onClick={() => window.cl.go("shop", { type: "All" })}>Shop Bikes <ArrowRight /></button>
             <button className="btn btn-outline-light" data-cursor="link" onClick={() => window.cl.go("book")}>Book a Service <ArrowRight /></button>
           </div>
         </div>
