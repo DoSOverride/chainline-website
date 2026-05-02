@@ -955,18 +955,64 @@ const Footer = () => (
           </div>
         </div>
         <div className="footer-col">
-          <h4>Shop</h4>
+          <h4>Bikes</h4>
           <ul>
-            {[["Store","store"],["Bikes","shop"],["Components","components"],["Parts","parts"],["Accessories","accessories"],["Gift Cards","giftcards"]].map(([label,route,intent]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent||null);}}>{label}</a></li>
+            {[
+              ["All Bikes",        "shop",        null],
+              ["Mountain",         "shop",        {type:"Mountain"}],
+              ["Gravel",           "shop",        {type:"Gravel"}],
+              ["E-Bikes",          "shop",        {type:"E-Bike"}],
+              ["Commuter",         "shop",        {type:"Commuter"}],
+              ["Kids",             "shop",        {type:"Kids"}],
+              ["Classifieds",      "classifieds", null],
+              ["Gift Cards",       "giftcards",   null],
+            ].map(([label,route,intent]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div className="footer-col">
+          <h4>Parts & Accessories</h4>
+          <ul>
+            {[
+              ["Components",       "components",  {tab:"drivetrain"}],
+              ["Drivetrain",       "components",  {tab:"drivetrain"}],
+              ["Brakes",           "components",  {tab:"brakes"}],
+              ["Wheels & Tires",   "components",  {tab:"wheels"}],
+              ["Accessories",      "accessories", {tab:"helmets"}],
+              ["Helmets",          "accessories", {tab:"helmets"}],
+              ["Tools & Pumps",    "accessories", {tab:"tools"}],
+              ["Bags & Lights",    "accessories", {tab:"bags"}],
+            ].map(([label,route,intent]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
             ))}
           </ul>
         </div>
         <div className="footer-col">
           <h4>Services</h4>
           <ul>
-            {[["Book a Service","book"],["Book a Demo","demo"],["Bike Fitting","fitting"],["Custom Builds","services"],["Storage Program","storage"],["Warranty","warranty"]].map(([label,route]) => (
-              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent||null);}}>{label}</a></li>
+            {[
+              ["Book a Service",   "book",        null],
+              ["Bike Fitting",     "fitting",     null],
+              ["Custom Builds",    "services",    null],
+              ["Demo Fleet",       "demo",        null],
+              ["Storage",          "storage",     null],
+              ["Warranty",         "warranty",    null],
+            ].map(([label,route,intent]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
+            ))}
+          </ul>
+          <h4 style={{marginTop:20}}>Explore</h4>
+          <ul>
+            {[
+              ["Group Rides",      "rides",       null],
+              ["Trails",           "trails",      null],
+              ["Events",           "events",      null],
+              ["MTBCO",            "mtbco",       null],
+              ["About Us",         "about",       null],
+              ["Contact",          "contact",     null],
+            ].map(([label,route,intent]) => (
+              <li key={label}><a href="#" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go(route,intent);}}>{label}</a></li>
             ))}
           </ul>
         </div>
