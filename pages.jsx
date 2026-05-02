@@ -2898,16 +2898,27 @@ const useTabInventory = (tabId) => {
 
 // ── PartCard (replaces PartRow) ───────────────────────────────────────────
 const PartCard = React.memo(({ item, tabId, tabEmoji }) => {
-  const [imgSrc, setImgSrc] = React.useState(() => {
+  const resolveImg = () => {
     if (item.image) return item.image;
     if (window.resolvePartImg) {
-      const fromParts = window.resolvePartImg(item, tabId);
-      if (fromParts) return fromParts;
+      const p = window.resolvePartImg(item, tabId);
+      if (p) return p;
     }
     return resolvePartImg(item.name, item.department) || null;
-  });
+  };
+  const [imgSrc, setImgSrc] = React.useState(resolveImg);
   const [imgFailed, setImgFailed] = React.useState(false);
   const [proxyTried, setProxyTried] = React.useState(false);
+
+  // Re-resolve image when R2 index loads (parts-data.js fires this event)
+  React.useEffect(() => {
+    const onIndex = () => {
+      const newSrc = resolveImg();
+      if (newSrc && newSrc !== imgSrc) { setImgSrc(newSrc); setImgFailed(false); setProxyTried(false); }
+    };
+    window.addEventListener('part-img-index:loaded', onIndex);
+    return () => window.removeEventListener('part-img-index:loaded', onIndex);
+  }, [item.sku]);
 
   const price    = item.price > 0 ? `$${item.price % 1 === 0 ? item.price : item.price.toFixed(2)}` : null;
   const lowStock = item.qty > 0 && item.qty <= 5;

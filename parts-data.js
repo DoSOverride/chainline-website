@@ -1,36 +1,33 @@
 // parts-data.js — per-SKU image resolution
-// Extends resolvePartImg in pages.jsx. Resolution chain:
-// 1. PART_R2_OVERRIDES — explicit R2 URLs for manually-uploaded images
-// 2. BRAND_CDN_MAP — auto-construct URL from brand + product name
-// 3. Falls through to pages.jsx ITEM_IMG_PATTERNS + DEPT_IMG
+// Resolution chain:
+// 1. R2 index (from /api/sync-part-images run) — real product photos hosted on R2
+// 2. Shopify skuImageMap — our Shopify product images
+// 3. PART_R2_OVERRIDES — manual R2 uploads
+// 4. Falls through to pages.jsx ITEM_IMG_PATTERNS + DEPT_IMG
 
-const _R2 = 'https://still-term-f1ec.taocaruso77.workers.dev/r2';
-const _PROXY = 'https://still-term-f1ec.taocaruso77.workers.dev/api/img?url=';
+const _WORKER = 'https://still-term-f1ec.taocaruso77.workers.dev';
+const _R2 = `${_WORKER}/r2`;
 
-// Explicit R2 overrides — keyed by slugified product name prefix
-// slug = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
-// Uncomment and add entries as images are uploaded to R2 under parts/
-const PART_R2_OVERRIDES = {
-  // Drivetrain
-  // 'sram-xx-sl-eagle-transmission-cassette': `${_R2}/parts/sram-eagle-cassette.jpg`,
-  // 'shimano-deore-xt-cassette':              `${_R2}/parts/shimano-xt-cassette.jpg`,
+// Loaded from /api/part-img-index — populated by /api/sync-part-images
+// Maps sku → R2 image URL for all parts synced to R2
+window.PART_IMG_INDEX = {};
 
-  // Helmets
-  // 'giro-montaro-mips':   `${_R2}/parts/giro-montaro.jpg`,
-  // 'smith-forefront-2':   `${_R2}/parts/smith-forefront.jpg`,
-  // 'fox-speedframe-mips': `${_R2}/parts/fox-speedframe.jpg`,
+// Fetch the R2 image index in the background on page load
+(async () => {
+  try {
+    const res = await fetch(`${_WORKER}/api/part-img-index`);
+    if (res.ok) {
+      const data = await res.json();
+      window.PART_IMG_INDEX = data;
+      // Dispatch event so any mounted PartCards can refresh
+      window.dispatchEvent(new CustomEvent('part-img-index:loaded', { detail: data }));
+    }
+  } catch {}
+})();
 
-  // Tires
-  // 'maxxis-minion-dhf': `${_R2}/parts/maxxis-minion-dhf.jpg`,
-  // 'maxxis-aggressor':  `${_R2}/parts/maxxis-aggressor.jpg`,
-};
-
-// Brand CDN URL builders — return null if URL can't be constructed
-// Add brands here as CDN patterns are verified with: curl -I <url>
-const BRAND_CDN_MAP = {
-  // Future: add brands with predictable CDN URL patterns here
-  // e.g.: 'maxxis': (item) => `https://cdn.maxxis.com/products/${_slugify(item.name)}.jpg`
-};
+// Manual R2 overrides — keyed by slugified product name prefix
+// Uncomment and add as images are manually uploaded under parts/
+const PART_R2_OVERRIDES = {};
 
 function _slugify(str) {
   return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -38,24 +35,22 @@ function _slugify(str) {
 
 // Override window.resolvePartImg — called by PartCard before pages.jsx fallback
 window.resolvePartImg = function(item, tab) {
+  const sku   = item.sku  || '';
   const slug  = _slugify(item.name || '');
-  const sku   = item.sku || '';
-  const brand = (item.manufacturer || '').toLowerCase();
 
-  // 1. Explicit R2 override (manual uploads or synced via /api/sync-part-images)
-  for (const key of Object.keys(PART_R2_OVERRIDES)) {
-    if (slug.startsWith(key) || slug === key) return PART_R2_OVERRIDES[key];
+  // 1. R2 image index — synced product photos (Shimano, Giro, Bell, Maxxis, etc.)
+  if (sku && window.PART_IMG_INDEX[sku]) {
+    return window.PART_IMG_INDEX[sku];
   }
 
-  // 2. Shopify product image — populated by shopify.js on page init
+  // 2. Shopify product image — populated by shopify.js
   if (sku && window.CL_SHOP?.skuImageMap?.[sku]) {
     return window.CL_SHOP.skuImageMap[sku];
   }
 
-  // 3. Brand CDN
-  if (brand && BRAND_CDN_MAP[brand]) {
-    const url = BRAND_CDN_MAP[brand](item);
-    if (url) return url;
+  // 3. Manual R2 override
+  for (const key of Object.keys(PART_R2_OVERRIDES)) {
+    if (slug.startsWith(key) || slug === key) return PART_R2_OVERRIDES[key];
   }
 
   // 4. Fall through — pages.jsx resolvePartImg handles ITEM_IMG_PATTERNS + DEPT_IMG
@@ -63,4 +58,3 @@ window.resolvePartImg = function(item, tab) {
 };
 
 window.PART_R2_OVERRIDES = PART_R2_OVERRIDES;
-window.BRAND_CDN_MAP = BRAND_CDN_MAP;
