@@ -451,9 +451,9 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
           { label:"Sunglasses",        go:["accessories",{tab:"protection",search:"Sunglass"}] },
         ]},
         { h: "Clothing & Shoes", route: "accessories", items: [
-          { label:"Jerseys",           go:["accessories",{tab:"shoes",search:"Jersey"}] },
-          { label:"Arm & Leg Warmers", go:["accessories",{tab:"shoes",search:"Warmer"}] },
-          { label:"Socks",             go:["accessories",{tab:"shoes",search:"Sock"}] },
+          { label:"Jerseys",           go:["accessories",{tab:"clothing",search:"Jersey"}] },
+          { label:"Arm & Leg Warmers", go:["accessories",{tab:"clothing",search:"Warmer"}] },
+          { label:"Socks",             go:["accessories",{tab:"clothing",search:"Sock"}] },
           { label:"Shoes",             go:["accessories",{tab:"shoes",search:"Shoe"}] },
           { label:"Cleats",            go:["accessories",{tab:"shoes",search:"Cleat"}] },
         ]},

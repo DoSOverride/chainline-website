@@ -2680,7 +2680,7 @@ const cleanDept = (d) => {
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
-const ACC_TAB_IDS  = ['helmets','protection','shoes','tools','bags','lights','locks','racks'];
+const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
   const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
