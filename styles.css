@@ -2205,3 +2205,27 @@ a:hover .bike-hover { transform: translateY(0); }
 @media (max-width: 768px) {
   .parts-cat-tile > div:first-child { aspect-ratio: 2/1 !important; }
 }
+
+/* ── aspect-ratio fallback for Safari <15 ──────────────────── */
+@supports not (aspect-ratio: 4/5) {
+  .bike-card-img-wrap {
+    height: 0;
+    padding-bottom: 125%;
+  }
+}
+
+/* ── Hide scrollbar on shop filter tab rows (Chrome/Safari) ─── */
+.shop-scroll-row::-webkit-scrollbar { display: none; }
+
+/* ── Custom cursor elements — hidden until cursor JS is implemented ─ */
+.cursor-ring, .cursor-dot {
+  position: fixed;
+  pointer-events: none;
+  display: none;
+}
+
+/* ── Mobile nav panel scroll — momentum on iOS <13 ───────────── */
+.mob-panel > div { -webkit-overflow-scrolling: touch; }
+
+/* ── Sort select — ensure readable size on all screens ─────── */
+.shop-filter-sticky select { font-size: 16px !important; }

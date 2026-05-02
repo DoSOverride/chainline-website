@@ -822,7 +822,7 @@ const ShopPage = () => {
           )}
           <div style={{ marginLeft:"auto" }}>
             <select value={sort} onChange={e => setSort(e.target.value)}
-              style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"5px 10px", background:"var(--white)", outline:"none" }}>
+              style={{ fontFamily:"var(--mono)", letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"5px 10px", background:"var(--white)", outline:"none" }}>
               <option value="featured">Sort: Featured</option>
               <option value="price-asc">Price: Low → High</option>
               <option value="price-desc">Price: High → Low</option>
@@ -831,13 +831,13 @@ const ShopPage = () => {
         </div>
 
         {/* Row 2: type tabs */}
-        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"6px", paddingBottom:"2px", overflowX:"auto", scrollbarWidth:"none" }}>
+        <div className="container-wide shop-scroll-row" style={{ display:"flex", alignItems:"center", paddingTop:"6px", paddingBottom:"2px", overflowX:"auto", scrollbarWidth:"none" }}>
           {TYPE_TABS.map(t => (
             <button key={t} className={"shop-filter-tab" + (type === t ? " active" : "")} data-cursor="link" onClick={() => setType(t)} style={tabStyle(type === t)}>{t}</button>
           ))}
         </div>
         {/* Row 3: brand chips */}
-        <div className="container-wide" style={{ display:"flex", alignItems:"center", paddingTop:"2px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
+        <div className="container-wide shop-scroll-row" style={{ display:"flex", alignItems:"center", paddingTop:"2px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
           {ALL_BRANDS.map(br => {
             const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br && b.inStock !== false).length;
             if (cnt === 0) return null;
@@ -882,7 +882,7 @@ const ShopPage = () => {
               )}
               {filtered.length > 0 && (
                 <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"40px 28px", alignItems:"start" }}>
-                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3 && window.innerWidth >= 768} />)}
+                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3 && window.matchMedia('(min-width: 768px)').matches} />)}
                 </div>
               )}
             </>

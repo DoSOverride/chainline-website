@@ -57,7 +57,7 @@ const AnnounceFormModal = ({ item, onClose }) => {
   const [data, setData] = React.useState({});
   const [sent, setSent] = React.useState(false);
   const upd = (k, v) => setData(d => ({ ...d, [k]: v }));
-  const inp = { width:"100%", padding:"10px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:14, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", marginBottom:16 };
+  const inp = { width:"100%", padding:"10px 0", border:"none", borderBottom:"1px solid var(--hairline)", fontSize:16, fontFamily:"var(--body)", background:"transparent", outline:"none", color:"var(--black)", marginBottom:16 };
 
   const submit = () => {
     const lines = item.form.fields.map(f => `${f.label}: ${data[f.key]||'–'}`).join('\n');
@@ -892,6 +892,10 @@ const StickyCTA = ({ show }) => (
 
 // Cart drawer
 const CartDrawer = ({ open, onClose, items, onRemove }) => {
+  React.useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
   const totalQty  = items.reduce((s, i) => s + (i.qty || 1), 0);
   const subtotal  = items.reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0);
   return (
