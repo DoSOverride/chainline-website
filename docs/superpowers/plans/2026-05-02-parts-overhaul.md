@@ -9,8 +9,8 @@
 **Tech Stack:** Cloudflare Worker (no npm), Workers AI (`@cf/meta/llama-3.3-70b-instruct-fp8-fast`), KV (`BIKE_DATA` namespace), React + Babel standalone, plain JS scripts
 
 **Current script versions (index.html):**
-- `bike-data.js?v=11`, `lightspeed.js?v=5`
-- `components.jsx?v=38`, `pages.jsx?v=47`, `app.jsx?v=30`
+- `bike-data.js?v=12`, `lightspeed.js?v=6`
+- `components.jsx?v=39`, `pages.jsx?v=47`, `app.jsx?v=30`
 
 ---
 
@@ -344,7 +344,7 @@ window.BRAND_CDN_MAP = BRAND_CDN_MAP;
 
 In `/Users/taocaruso/chainline-website/index.html`, after the line:
 ```html
-<script src="/bike-data.js?v=11"></script>
+<script src="/bike-data.js?v=12"></script>
 ```
 Add:
 ```html
