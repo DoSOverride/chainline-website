@@ -635,13 +635,55 @@ const SHOP_BIKES = [
   { brand:"Revel", name:"Rail GX",   handle:"revel-rail-gx-eagle",     type:"Mountain", tags:"Mountain Bike, Enduro, Full Suspension, 29\"", price:6200, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/revel-rail-gx-eagle.jpg" },
 ];
 
+const SPECIAL_ORDER_BRANDS = new Set(["Salsa","Bianchi","Moots","Knolly","Revel"]);
+
+const BrandSaleWidget = () => {
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+  const [sales, setSales] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(() => {
+    fetch(`${WORKER}/api/brand-sales`)
+      .then(r => r.json()).then(d => { setSales(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+  if (loading) return <div style={{ padding:"40px 0", textAlign:"center", fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-400)", letterSpacing:".1em" }}>Checking brand sales…</div>;
+  const hasBrandSales = sales && Object.values(sales).some(items => items.length > 0);
+  if (!hasBrandSales) return null;
+  return (
+    <div style={{ paddingTop:48 }}>
+      <div className="eyebrow" style={{ marginBottom:24 }}>What's on sale at our brands right now</div>
+      {Object.entries(sales).filter(([,items]) => items.length > 0).map(([brand, items]) => (
+        <div key={brand} style={{ marginBottom:40 }}>
+          <div style={{ fontFamily:"var(--display)", fontSize:18, fontWeight:500, marginBottom:16 }}>{brand}</div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:12 }}>
+            {items.map((item, i) => (
+              <a key={i} href={item.url} target="_blank" rel="noopener" data-cursor="link"
+                style={{ display:"block", border:"1px solid var(--hairline)", padding:20, textDecoration:"none", color:"inherit", transition:"border-color .2s" }}
+                onMouseEnter={e=>e.currentTarget.style.borderColor="var(--black)"}
+                onMouseLeave={e=>e.currentTarget.style.borderColor="var(--hairline)"}>
+                {item.image && <img src={item.image} alt={item.title} style={{ width:"100%", height:140, objectFit:"contain", marginBottom:12, background:"#f5f5f5" }} loading="lazy" />}
+                <div style={{ fontFamily:"var(--display)", fontSize:14, fontWeight:500, marginBottom:8, lineHeight:1.3 }}>{item.title}</div>
+                <div style={{ display:"flex", gap:10, alignItems:"baseline", flexWrap:"wrap" }}>
+                  <span style={{ fontFamily:"var(--mono)", fontSize:15, fontWeight:700, color:"#dc2626" }}>${item.price.toLocaleString()}</span>
+                  <span style={{ fontFamily:"var(--mono)", fontSize:11, color:"var(--gray-400)", textDecoration:"line-through" }}>${item.compareAt.toLocaleString()}</span>
+                  <span style={{ fontFamily:"var(--mono)", fontSize:9, background:"#dc2626", color:"#fff", padding:"2px 8px" }}>{item.pct}% OFF</span>
+                </div>
+                <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", marginTop:8, letterSpacing:".1em", textTransform:"uppercase" }}>Ask us to order</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // SHOP
 const ShopPage = ({ intentState }) => {
   const intent = window.cl?.intent || intentState || null;
   const saved  = window.cl?.shopFilter || {};
   const [brand, setBrand] = React.useState(intent?.brand || saved.brand || "All");
-  const [type,  setType]  = React.useState(intent?.type  || saved.type  || "All");
-  const [sale,  setSale]  = React.useState(intent?.sale  || false);
+  const [type,  setType]  = React.useState(intent?.sale ? "Sale" : (intent?.type || saved.type || "All"));
   const [sort, setSort]   = React.useState("featured");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
@@ -653,9 +695,9 @@ const ShopPage = ({ intentState }) => {
   // Apply intent when navigating to shop (including same-page re-nav via intentState prop)
   React.useEffect(() => {
     const src = intentState || window.cl?.intent;
-    if (src?.sale) { setSale(true); setBrand("All"); setType("All"); }
-    else if (src?.brand) { setBrand(src.brand); setType("All"); setSale(false); }
-    else if (src?.type) { setType(src.type); setBrand("All"); setSale(false); }
+    if (src?.sale) { setType("Sale"); setBrand("All"); }
+    else if (src?.brand) { setBrand(src.brand); setType("All"); }
+    else if (src?.type) { setType(src.type); setBrand("All"); }
     if (window.cl?.intent) window.cl.intent = null;
   }, [intentState]);
 
@@ -798,18 +840,20 @@ const ShopPage = ({ intentState }) => {
   }, [liveProducts]);
 
   const ALL_BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
-  const TYPE_TABS = ["All","Mountain","Adventure","Gravel","Road","E-Bike","Commuter","Comfort","Kids"];
+  const TYPE_TABS = ["All","Mountain","Adventure","Gravel","Road","E-Bike","Commuter","Comfort","Kids","Sale"];
+  const isAvail = b => b.inStock !== false || SPECIAL_ORDER_BRANDS.has(b.brand || b.vendor || '');
 
-  // Always show only in-stock bikes
+  // Always show only in-stock or special-order bikes
   let filtered = brand !== "All"
-    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand && b.inStock !== false)
-    : allProducts.filter(b => b.inStock !== false);
+    ? allProducts.filter(b => (b.brand || b.vendor || '') === brand && isAvail(b))
+    : allProducts.filter(isAvail);
 
-  // Type filter
-  if (type !== "All") filtered = filtered.filter(b => b.type === type);
-
-  // Sale filter
-  if (sale && window.CL_LS?.saleHandles?.length) filtered = filtered.filter(b => window.CL_LS.saleHandles.includes(b.handle));
+  // Type / Sale filter
+  if (type === "Sale") {
+    filtered = filtered.filter(b => window.CL_LS?.saleHandles?.includes(b.handle));
+  } else if (type !== "All") {
+    filtered = filtered.filter(b => b.type === type);
+  }
 
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
@@ -833,13 +877,6 @@ const ShopPage = ({ intentState }) => {
           <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
             {liveLoading ? "Loading…" : `${filtered.length} bikes${liveProducts ? " · Live" : ""}`}
           </div>
-          {sale && (
-            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"3px 10px", background:"#dc2626", color:"#fff", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
-              Sale
-              <button onClick={() => setSale(false)} data-cursor="link"
-                style={{ background:"none", border:"none", color:"#fff", cursor:"pointer", fontSize:12, lineHeight:1, padding:0, opacity:.7 }}>×</button>
-            </div>
-          )}
           {brand !== "All" && (
             <div style={{ display:"flex", alignItems:"center", gap:6, padding:"3px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
               {brand}
@@ -866,7 +903,7 @@ const ShopPage = ({ intentState }) => {
         {/* Row 3: brand chips */}
         <div className="container-wide shop-scroll-row" style={{ display:"flex", alignItems:"center", paddingTop:"2px", paddingBottom:"10px", overflowX:"auto", scrollbarWidth:"none" }}>
           {ALL_BRANDS.map(br => {
-            const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br && b.inStock !== false).length;
+            const cnt = allProducts.filter(b => (b.brand || b.vendor || '') === br && isAvail(b)).length;
             if (cnt === 0) return null;
             const active = brand === br;
             const inactiveColor = "var(--gray-600)";
@@ -889,9 +926,20 @@ const ShopPage = ({ intentState }) => {
         <div className="container-wide">
           {filtered.length === 0 && !liveLoading ? (
             <div style={{ textAlign:"center", padding:"80px 0" }}>
-              <div className="display-m" style={{ marginBottom:16 }}>No bikes found.</div>
-              <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Try a different filter or check back when we get new stock in.</p>
-              <button className="btn btn-outline" data-cursor="link" onClick={() => { setBrand("All"); setType("All"); }}>Show All Bikes <ArrowRight /></button>
+              {type === "Sale" ? (
+                <>
+                  <div className="display-m" style={{ marginBottom:16 }}>No bikes on sale right now.</div>
+                  <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Check back soon — we'll post deals here when they happen. In the meantime, here's what's on sale at our brands directly.</p>
+                  <button className="btn btn-outline" data-cursor="link" onClick={() => { setBrand("All"); setType("All"); }}>Show All Bikes <ArrowRight /></button>
+                  <BrandSaleWidget />
+                </>
+              ) : (
+                <>
+                  <div className="display-m" style={{ marginBottom:16 }}>No bikes found.</div>
+                  <p style={{ color:"var(--gray-500)", marginBottom:32 }}>Try a different filter or check back when we get new stock in.</p>
+                  <button className="btn btn-outline" data-cursor="link" onClick={() => { setBrand("All"); setType("All"); }}>Show All Bikes <ArrowRight /></button>
+                </>
+              )}
             </div>
           ) : (
             <>
@@ -908,9 +956,12 @@ const ShopPage = ({ intentState }) => {
                 </div>
               )}
               {filtered.length > 0 && (
-                <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"40px 28px", alignItems:"start" }}>
-                  {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3 && window.matchMedia('(min-width: 768px)').matches} />)}
-                </div>
+                <>
+                  <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"40px 28px", alignItems:"start" }}>
+                    {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3 && window.matchMedia('(min-width: 768px)').matches} />)}
+                  </div>
+                  {type === "Sale" && <BrandSaleWidget />}
+                </>
               )}
             </>
           )}
@@ -1003,6 +1054,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
   const brand   = b.brand || b.vendor || "";
   const price   = selected?.price || b.price || 0;
   const inStock = selected ? selected.inStock : b.inStock !== false;
+  const isSpecialOrder = SPECIAL_ORDER_BRANDS.has(brand);
   const qty     = selected?.qty ?? b.qty ?? null;
   const selSku  = selected?.sku || b.sku;
   const lowStock  = qty !== null && qty > 0 && qty <= 2;
@@ -1070,10 +1122,16 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
                 onError={e => { e.target.style.display='none'; }} />
             : <div className="ph ph-corners" style={{ position:'absolute', inset:0 }}><span className="ph-label">{brand.toUpperCase()} · {b.type}</span></div>
           }
-          <div className="bike-card-badge" style={{ top:16, left:16 }}>
-            <span className="stock-dot" style={{ width:6, height:6 }} />
-            <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
-          </div>
+          {isSpecialOrder ? (
+            <div className="bike-card-badge" style={{ top:16, left:16, background:"rgba(217,119,6,0.92)", borderColor:"rgba(217,119,6,0.3)" }}>
+              <span>Special Order</span>
+            </div>
+          ) : (
+            <div className="bike-card-badge" style={{ top:16, left:16 }}>
+              <span className="stock-dot" style={{ width:6, height:6 }} />
+              <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
+            </div>
+          )}
           {b.badge && <div className="bike-card-model-badge" style={{ top:16, right:16 }}>{b.badge}</div>}
           <div className="bike-card-type-pill" style={{ bottom:16, left:16, right:'auto', color:accentColor }}>{b.type}</div>
         </div>
@@ -1144,10 +1202,16 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
             </div>
         }
         {/* Stock badge */}
-        <div className="bike-card-badge">
-          <span className="stock-dot" style={{ width:6, height:6 }} />
-          <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
-        </div>
+        {isSpecialOrder ? (
+          <div className="bike-card-badge" style={{ background:"rgba(217,119,6,0.92)", borderColor:"rgba(217,119,6,0.3)" }}>
+            <span>Special Order</span>
+          </div>
+        ) : (
+          <div className="bike-card-badge">
+            <span className="stock-dot" style={{ width:6, height:6 }} />
+            <span>In Stock{lowStock ? ` — ${qty} left` : ''}</span>
+          </div>
+        )}
         {b.badge && <div className="bike-card-model-badge">{b.badge}</div>}
         <div className="bike-card-type-pill" style={{ color: accentColor }}>{b.type}</div>
       </div>
@@ -3153,35 +3217,136 @@ const ClassifiedsPage = () => {
 };
 
 // BIKES BY BRAND PAGE
+const VENDOR_BRANDS = [
+  { cat:"Protection & Safety", brands:[
+    { name:"Giro",         desc:"Helmets, shoes, gloves and eyewear. Safety-first design since 1985." },
+    { name:"Bell",         desc:"Iconic bike helmets from road to MTB. Bold protection for every rider." },
+    { name:"100%",         desc:"Performance goggles, helmets, gloves and apparel. Race-bred since 2012." },
+    { name:"Troy Lee Designs", desc:"Premium MTB helmets, pads and apparel — built with world champions." },
+    { name:"POC",          desc:"Swedish safety innovation. Helmets, goggles and protective gear." },
+    { name:"Smith",        desc:"Helmets and sunglasses engineered for performance and protection." },
+  ]},
+  { cat:"Electronics & Navigation", brands:[
+    { name:"Garmin",       desc:"GPS computers, fitness trackers and sensors. The standard in cycling navigation." },
+    { name:"Wahoo",        desc:"Smart trainers, computers and sensors. Built for the connected athlete." },
+    { name:"Cygolite",     desc:"High-output bike lights for road and trail. Rechargeable and reliable." },
+    { name:"NiteRider",    desc:"Powerful lighting systems for night riding and low-visibility conditions." },
+  ]},
+  { cat:"Locks & Security", brands:[
+    { name:"Kryptonite",   desc:"Best-in-class bike locks. The industry benchmark for security since 1971." },
+    { name:"OnGuard",      desc:"Tough, affordable locks and security solutions for every budget." },
+  ]},
+  { cat:"Racks & Storage", brands:[
+    { name:"Thule",        desc:"Premium car racks, bike carriers and travel gear. Swedish quality." },
+    { name:"Steady Rack",  desc:"Space-saving vertical wall-mount bike storage. Via Podium Exports." },
+    { name:"Topeak",       desc:"Racks, bags, pumps and tools. Practical cycling solutions since 1991." },
+  ]},
+  { cat:"Hydration & Bags", brands:[
+    { name:"CamelBak",     desc:"Hydration packs, water bottles and bike bags. The original hands-free hydration." },
+    { name:"Osprey",       desc:"Technical packs and hydration systems for trail and backcountry riding." },
+    { name:"Ortlieb",      desc:"Waterproof bags and panniers. German engineering for bikepacking and commuting." },
+    { name:"Revelate Designs", desc:"Bikepacking bags built for real adventure. Designed and made in Alaska." },
+    { name:"Apidura",      desc:"Ultra-light bikepacking bags trusted by endurance racers worldwide." },
+  ]},
+  { cat:"Tires & Wheels", brands:[
+    { name:"Maxxis",       desc:"The tire of choice for elite riders worldwide. Trail, enduro, XC and road." },
+    { name:"Continental",  desc:"German precision rubber. Road, gravel and MTB tires of exceptional quality." },
+    { name:"Vittoria",     desc:"Italian performance tires in graphene compounds. Road, gravel and MTB." },
+    { name:"Schwalbe",     desc:"German-engineered tires for every surface — from city commuter to enduro." },
+    { name:"WTB",          desc:"Tires, saddles, rims and grips designed in Marin, tested on Northern California trails." },
+    { name:"Stan's NoTubes", desc:"Tubeless pioneers. Sealant, rims and wheels that started a revolution." },
+  ]},
+  { cat:"Drivetrain & Components", brands:[
+    { name:"Shimano",      desc:"The world's leading drivetrain and components manufacturer. Deore to Dura-Ace." },
+    { name:"SRAM",         desc:"Wireless groupsets, drivetrains and suspension. American cycling innovation." },
+    { name:"Fox",          desc:"Forks, shocks and dropper posts. Setting the MTB suspension benchmark." },
+    { name:"RockShox",     desc:"Pike, Lyrik, ZEB, Super Deluxe. Industry-leading suspension from SRAM." },
+    { name:"OneUp Components", desc:"Canadian brand. XL cassettes, dropper posts and EDC tools." },
+    { name:"Wolftooth",    desc:"Precision-machined chainrings, cassettes and shift accessories." },
+    { name:"Race Face",    desc:"Vancouver-built cranks, bars, stems and packs. MTB through and through." },
+    { name:"e*thirteen",   desc:"Extended-range cassettes, chainrings and wheels for big mountain riding." },
+  ]},
+  { cat:"Saddles & Ergonomics", brands:[
+    { name:"Ergon",        desc:"Ergonomically engineered grips, saddles and packs. Science-driven comfort." },
+    { name:"Brooks",       desc:"Hand-stitched leather saddles from Birmingham, UK. A century of heritage." },
+    { name:"SDG",          desc:"Saddles and seatposts trusted by world-class gravity riders." },
+  ]},
+  { cat:"Tools & Maintenance", brands:[
+    { name:"Park Tool",    desc:"Professional bike tools since 1963. The standard in every serious workshop." },
+    { name:"Pedro's",      desc:"Eco-minded lubricants, degreasers and tools. Made for real riders." },
+    { name:"Muc-Off",      desc:"UK-born bike cleaning and protection products. Used by pro teams worldwide." },
+    { name:"Finish Line",  desc:"Lubricants, cleaners and degreasers trusted by mechanics worldwide." },
+    { name:"Motorex",      desc:"Swiss precision lubricants and care products for high-performance drivetrains." },
+  ]},
+];
+const SPECIAL_ORDER_BRANDS_LIST = ["Salsa","Bianchi","Moots","Knolly","Revel"];
 const BrandPage = () => {
-  const brands = [
-    { name:"Marin", desc:"San Rafael, CA — Trail, Road, Gravel, City, Kids. California ride culture since 1986.", count: SHOP_BIKES.filter(b=>b.brand==="Marin").length },
-    { name:"Transition", desc:"Bellingham, WA — High-performance trail and enduro bikes built by riders, for riders.", count: SHOP_BIKES.filter(b=>b.brand==="Transition").length },
-    { name:"Surly", desc:"Minneapolis, MN — Steel bikes built to go anywhere. Gravel, touring, fatbike, adventure.", count: SHOP_BIKES.filter(b=>b.brand==="Surly").length },
-    { name:"Salsa", desc:"Minneapolis, MN — Adventure bikes for the long haul. Gravel, touring, fatbike.", count: 0 },
-    { name:"Pivot", desc:"Scottsdale, AZ — Carbon trail and enduro bikes with dw-link suspension.", count: SHOP_BIKES.filter(b=>b.brand==="Pivot").length },
-    { name:"Bianchi", desc:"Milan, Italy — The oldest bicycle brand in the world. Road, gravel, and MTB.", count: 0 },
-    { name:"Moots", desc:"Steamboat Springs, CO — Hand-welded titanium bikes. Made in America.", count: 0 },
-    { name:"Knolly", desc:"North Vancouver, BC — No-compromise full-suspension mountain bikes engineered for Pacific Northwest trails.", count: 0 },
-    { name:"Revel", desc:"Carbondale, CO — Obsessively engineered mountain bikes with CBF suspension for unmatched small-bump compliance.", count: 0 },
+  const [activeVendorCat, setActiveVendorCat] = React.useState(null);
+  const bikeBrands = [
+    { name:"Marin",       desc:"San Rafael, CA. Trail, road, gravel, city, kids. California ride culture since 1986.", inStock:true  },
+    { name:"Transition",  desc:"Bellingham, WA. High-performance trail and enduro bikes built by riders, for riders.", inStock:true  },
+    { name:"Surly",       desc:"Minneapolis, MN. Steel bikes built to go anywhere. Gravel, touring, fatbike, adventure.", inStock:true  },
+    { name:"Pivot",       desc:"Scottsdale, AZ. Carbon trail and enduro bikes with dw-link suspension.",               inStock:true  },
+    { name:"Salsa",       desc:"Minneapolis, MN. Adventure bikes for the long haul. Gravel, touring, fatbike.",        inStock:false },
+    { name:"Bianchi",     desc:"Milan, Italy. The oldest bicycle brand in the world. Road, gravel, and MTB.",          inStock:false },
+    { name:"Moots",       desc:"Steamboat Springs, CO. Hand-welded titanium bikes. Made in America.",                  inStock:false },
+    { name:"Knolly",      desc:"North Vancouver, BC. No-compromise full-suspension MTB for Pacific Northwest trails.",  inStock:false },
+    { name:"Revel",       desc:"Carbondale, CO. Obsessively engineered MTB with CBF suspension for unmatched feel.",   inStock:false },
   ];
+  const tileStyle = { padding:"16px 20px", border:"1px solid var(--hairline)", cursor:"pointer", transition:"border-color .2s", display:"flex", flexDirection:"column", gap:6 };
   return (
     <div className="page-fade">
-      <SubHero eyebrow="Shop  /  Brands" title="Our brands." italic="Curated with care." />
-      <section style={{ padding:"60px 0 100px", background:"var(--white)" }}>
+      <SubHero eyebrow="Shop  /  Brands" title="Brands." italic="Bikes, parts and gear we stand behind." />
+      <section style={{ padding:"60px 0 80px", background:"var(--white)" }}>
         <div className="container-wide">
+          <div className="eyebrow" style={{ marginBottom:24 }}>Bike Brands</div>
           <div style={{ borderTop:"1px solid var(--hairline)" }}>
-            {brands.map((br, i) => (
-              <div key={i} className="reveal page-wide-row" style={{ display:"grid", gridTemplateColumns:"240px 1fr 160px 120px", gap:32, padding:"40px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
+            {bikeBrands.map((br, i) => (
+              <div key={i} className="reveal" style={{ display:"grid", gridTemplateColumns:"200px 1fr auto auto", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
                 <div className="display-m">{br.name}</div>
-                <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6 }}>{br.desc}</p>
-                <div className="eyebrow">{br.count > 0 ? `${br.count} bikes in stock` : "Coming soon"}</div>
-                {br.count > 0
-                  ? <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("shop", { brand: br.name })} style={{ justifyContent:"center", fontSize:11 }}>Shop {br.name} <ArrowRight /></button>
+                <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6, margin:0 }}>{br.desc}</p>
+                <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", whiteSpace:"nowrap",
+                  color: br.inStock ? "#16a34a" : "#d97706",
+                  background: br.inStock ? "#f0fdf4" : "#fffbeb",
+                  padding:"4px 10px", borderRadius:20 }}>
+                  {br.inStock ? "In Stock" : "Special Order"}
+                </div>
+                {br.inStock
+                  ? <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("shop", { brand: br.name })} style={{ justifyContent:"center", fontSize:11, whiteSpace:"nowrap" }}>Shop {br.name} <ArrowRight /></button>
                   : <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go("contact")} style={{ justifyContent:"center", fontSize:11 }}>Enquire <ArrowRight /></button>
                 }
               </div>
             ))}
+          </div>
+          <p style={{ marginTop:24, fontSize:13, color:"var(--gray-400)", fontFamily:"var(--mono)" }}>
+            Special order bikes typically arrive within 1-3 weeks. Contact us to confirm availability and pricing.
+          </p>
+        </div>
+      </section>
+      <section style={{ padding:"60px 0 100px", background:"var(--paper)" }}>
+        <div className="container-wide">
+          <div className="eyebrow" style={{ marginBottom:8 }}>Vendors & Partners</div>
+          <p style={{ fontSize:15, color:"var(--gray-500)", marginBottom:40, maxWidth:600 }}>We stock products from these brands and can special order almost anything they make. Usually here in a few days.</p>
+          {VENDOR_BRANDS.map(({ cat, brands }) => (
+            <div key={cat} style={{ marginBottom:48 }}>
+              <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:16, paddingBottom:10, borderBottom:"1px solid var(--hairline)" }}>{cat}</div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(220px, 1fr))", gap:12 }}>
+                {brands.map(brand => (
+                  <div key={brand.name} style={tileStyle}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = "var(--black)"}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = "var(--hairline)"}>
+                    <div style={{ fontFamily:"var(--display)", fontSize:16, fontWeight:500 }}>{brand.name}</div>
+                    <div style={{ fontSize:12, color:"var(--gray-500)", lineHeight:1.5 }}>{brand.desc}</div>
+                    <div style={{ fontFamily:"var(--mono)", fontSize:9, color:"var(--gray-400)", marginTop:4, letterSpacing:".1em", textTransform:"uppercase" }}>Special order available</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div style={{ marginTop:40, padding:24, background:"var(--white)", border:"1px solid var(--hairline)" }}>
+            <div className="display-s" style={{ marginBottom:8 }}>Don't see what you need?</div>
+            <p style={{ fontSize:14, color:"var(--gray-500)", margin:"0 0 16px" }}>We work with LTP, OGC, QBP, NRG Lanctot, and Podium Exports. If a brand ships to Canada, we can probably get it. Ask us.</p>
+            <button className="btn" data-cursor="link" onClick={() => window.cl.go("contact")}>Ask About a Brand <ArrowRight /></button>
           </div>
         </div>
       </section>

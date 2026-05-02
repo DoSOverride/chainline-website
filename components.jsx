@@ -469,7 +469,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     },
     more: {
       cols: [
-        { h: "About Us", items: ["About", "Contact", "Our Brands"] },
+        { h: "About Us", items: ["About", "Contact", "Brands"] },
         { h: "Shop", items: ["Gift Cards", "Sale"] },
       ],
     },
@@ -563,20 +563,14 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
                 <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", margin:"8px 0 8px" }}>By Style</div>
                 <ul>
                   {d.styleCol.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
-                  {saleState.checked ? (
-                    saleState.hasSale ? (
-                      <li style={{ marginTop:8, paddingTop:8, borderTop:"1px solid var(--hairline)" }}>
-                        <a href="/bikes" data-cursor="link" style={{ color:"#dc2626", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}
-                          onClick={e => { e.preventDefault(); onClose(); window.cl.go("shop", { sale:true }); }}>
-                          Sale <span style={{ fontFamily:"var(--mono)", fontSize:9, background:"#dc2626", color:"#fff", padding:"2px 6px", borderRadius:10 }}>{saleState.count}</span>
-                        </a>
-                      </li>
-                    ) : (
-                      <li style={{ marginTop:8, paddingTop:8, borderTop:"1px solid var(--hairline)", opacity:.4 }}>
-                        <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase" }}>No Sale</span>
-                      </li>
-                    )
-                  ) : null}
+                  {saleState.hasSale && (
+                    <li style={{ marginTop:8, paddingTop:8, borderTop:"1px solid var(--hairline)" }}>
+                      <a href="/bikes" data-cursor="link" style={{ color:"#dc2626", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}
+                        onClick={e => { e.preventDefault(); onClose(); window.cl.go("shop", { sale:true }); }}>
+                        Sale <span style={{ fontFamily:"var(--mono)", fontSize:9, background:"#dc2626", color:"#fff", padding:"2px 6px", borderRadius:10 }}>{saleState.count}</span>
+                      </a>
+                    </li>
+                  )}
                 </ul>
               </div>
               <div className="mega-col">
@@ -851,7 +845,7 @@ const MobileNav = ({ open, onClose }) => {
               {[
                 { label:"About",      route:"about"  },
                 { label:"Contact",    route:"contact" },
-                { label:"Our Brands", route:"brands"  },
+                { label:"Brands",     route:"brands"  },
               ].map(it => (
                 <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
