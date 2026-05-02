@@ -1,4 +1,4 @@
-const CACHE = 'chainline-v7';
+const CACHE = 'chainline-v8';
 
 const PRECACHE = [
   '/',

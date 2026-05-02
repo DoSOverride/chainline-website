@@ -1002,15 +1002,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
 
   React.useEffect(() => setImgFallback(false), [primaryImgResolved]);
 
-  const hoverImg = (() => {
-    const _ci = findColorImgs(colorImages, selColor);
-    if (selColor && _ci?.[1]) return _ci[1];
-    if (!primaryImg) return null;
-    const colorPrimaries = new Set(Object.values(colorImages).map(a => a[0]).filter(Boolean));
-    return allBikeImgs.find(u => u && u !== primaryImg && !colorPrimaries.has(u))
-      || allBikeImgs.find(u => u && u !== primaryImg)
-      || null;
-  })();
+
 
   const availColors = (w) => [...new Set(variants.filter(v => (!hasWheels || v.wheel === w) && v.inStock).map(v => v.color).filter(Boolean))];
   const availSizes  = (w, c) => {
@@ -1113,7 +1105,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
     <div className="bike-card" onClick={() => window.cl.go("bike", { bike: b })}>
 
       {/* ── Image ── */}
-      <div className={"bike-card-img-wrap" + (hoverImg && hoverImg !== primaryImg ? " has-hover" : "")}>
+      <div className="bike-card-img-wrap">
         {primaryImg
           ? <img src={primaryImg} alt={brand + " " + name} className="bike-card-img-primary bike-img"
               loading={idx < 6 ? "eager" : "lazy"} decoding="async"
@@ -1125,12 +1117,6 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
               <span className="ph-label">{brand.toUpperCase()} · {b.type}</span>
             </div>
         }
-        {hoverImg && hoverImg !== primaryImg &&
-          <img src={hoverImg} alt="" className="bike-card-img-hover bike-img"
-            loading="lazy" decoding="async"
-            onError={e => { e.target.style.display='none'; }} />
-        }
-
         {/* Stock badge */}
         <div className="bike-card-badge">
           <span className="stock-dot" style={{ width:6, height:6 }} />

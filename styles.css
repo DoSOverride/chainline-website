@@ -259,7 +259,6 @@
 [data-theme="dark"] .bike-scroller-item      { background: #d4d0cb !important; }
 
 [data-theme="dark"] .bike-card-img-primary,
-[data-theme="dark"] .bike-card-img-hover,
 [data-theme="dark"] .bike-card-featured-img .bike-img,
 [data-theme="dark"] .shop-bike-card-img .bike-img,
 [data-theme="dark"] .bike-scroller-item img {
@@ -964,8 +963,7 @@ img {
   border-left: 1px solid var(--hairline);
 }
 
-.bike-card-img-primary,
-.bike-card-img-hover {
+.bike-card-img-primary {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -973,18 +971,7 @@ img {
   object-fit: contain;
   padding: 8%;
   mix-blend-mode: multiply;
-  will-change: opacity;
-  transition: opacity 0.4s ease;
-}
-
-.bike-card-img-primary { opacity: 1; z-index: 1; }
-.bike-card-img-hover   { opacity: 0; z-index: 2; }
-
-.bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-primary {
-  opacity: 0;
-}
-.bike-card:hover .bike-card-img-wrap.has-hover .bike-card-img-hover {
-  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 .bike-card-badge {
