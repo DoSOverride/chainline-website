@@ -328,8 +328,24 @@ window.lightspeedReady = (async () => {
     if (bikeData.bikes && bikeData.bikes.length > 0) {
       window.CL_LS.bikes  = bikeData.bikes;
       window.CL_LS.loaded = true;
+      window.CL_LS.saleChecked = false;
       console.log(`[ChainLine] Lightspeed bikes loaded: ${bikeData.count} bikes with stock data`);
       window.dispatchEvent(new CustomEvent('lightspeed:ready', { detail: { count: bikeData.count } }));
+      // Detect sale bikes (live price < static SHOP_BIKES price by >3%)
+      // Deferred so SHOP_BIKES (from pages.jsx Babel) has time to compile
+      (function checkSale() {
+        if (!window.SHOP_BIKES) { setTimeout(checkSale, 300); return; }
+        const map = {};
+        window.SHOP_BIKES.forEach(b => { if (b.handle && b.price) map[b.handle] = b.price; });
+        const sale = new Set();
+        window.CL_LS.bikes.forEach(b => {
+          if (map[b.handle] && b.price > 0 && b.price < map[b.handle] * 0.97) sale.add(b.handle);
+        });
+        window.CL_LS.saleHandles = [...sale];
+        window.CL_LS.hasSale = sale.size > 0;
+        window.CL_LS.saleChecked = true;
+        if (sale.size > 0) console.log(`[ChainLine] Sale bikes: ${[...sale].join(', ')}`);
+      })();
 
       // Auto-enrich any bikes not in the static BIKE_DATA catalogue (fire-and-forget)
       const unknown = bikeData.bikes.filter(b => b.handle && !window.BIKE_DATA?.[b.handle]);

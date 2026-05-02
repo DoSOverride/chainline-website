@@ -539,14 +539,32 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
         <div className="container-wide">
-          {/* Bikes: By Style | Brands col1 | Brands col2 */}
+          {/* Bikes: All Bikes | By Style + Sale | Brands col1 | Brands col2 */}
           {d.styleCol ? (
             <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:48 }}>
               <div className="mega-col">
-                <h4>By Style</h4>
+                <h4>
+                  <a href="/bikes" data-cursor="link" style={{ color:"var(--black)", display:"flex", alignItems:"center", gap:6 }} onClick={(e) => handleClick(e, "All Bikes")}>
+                    All Bikes <ArrowRight size={10} />
+                  </a>
+                </h4>
+                <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", margin:"8px 0 8px" }}>By Style</div>
                 <ul>
-                  <li><a href="/bikes" data-cursor="link" onClick={(e) => handleClick(e, "All Bikes")}>All Bikes</a></li>
                   {d.styleCol.map(it => <li key={it}><a href={pageHref(...routeFor(it))} data-cursor="link" onClick={(e) => handleClick(e, it)}>{it}</a></li>)}
+                  {window.CL_LS?.saleChecked ? (
+                    window.CL_LS.hasSale ? (
+                      <li style={{ marginTop:8, paddingTop:8, borderTop:"1px solid var(--hairline)" }}>
+                        <a href="#" data-cursor="link" style={{ color:"#dc2626", fontWeight:600, display:"flex", alignItems:"center", gap:6 }}
+                          onClick={e => { e.preventDefault(); onClose(); window.cl.go("shop", { sale:true }); }}>
+                          Sale <span style={{ fontFamily:"var(--mono)", fontSize:9, background:"#dc2626", color:"#fff", padding:"2px 6px", borderRadius:10 }}>{window.CL_LS.saleHandles.length}</span>
+                        </a>
+                      </li>
+                    ) : (
+                      <li style={{ marginTop:8, paddingTop:8, borderTop:"1px solid var(--hairline)", opacity:.4 }}>
+                        <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".1em", textTransform:"uppercase" }}>No Sale</span>
+                      </li>
+                    )
+                  ) : null}
                 </ul>
               </div>
               <div className="mega-col">
@@ -558,28 +576,31 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
               </div>
             </div>
           ) : d.searchPage ? (
-            /* Parts / Accessories: "All X" CTA + 4 category cols */
-            <>
-              <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", paddingBottom:16, marginBottom:16, borderBottom:"1px solid var(--hairline)" }}>
-                <a href={"/" + d.searchPage} data-cursor="link"
-                  onClick={e => { e.preventDefault(); onClose(); window.cl.go(d.searchPage); }}
-                  style={{ ...linkStyle, color:"var(--black)", fontWeight:600, fontSize:12, display:"flex", alignItems:"center", gap:6, letterSpacing:".1em" }}>
-                  {d.allLabel} <ArrowRight size={10} />
-                </a>
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.cols.length}, 1fr)`, gap:40 }}>
-                {d.cols.map((col, ci) => (
-                  <div key={ci} className="mega-col">
+            /* Parts / Accessories: "All X" as first-column header + category cols — same style as Bikes */
+            <div style={{ display:"grid", gridTemplateColumns:`repeat(${d.cols.length}, 1fr)`, gap:40 }}>
+              {d.cols.map((col, ci) => (
+                <div key={ci} className="mega-col">
+                  {ci === 0 ? (
+                    <>
+                      <h4>
+                        <a href={"/" + d.searchPage} data-cursor="link" style={{ color:"var(--black)", display:"flex", alignItems:"center", gap:6 }}
+                          onClick={e => { e.preventDefault(); onClose(); window.cl.go(d.searchPage); }}>
+                          {d.allLabel} <ArrowRight size={10} />
+                        </a>
+                      </h4>
+                      <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-400)", margin:"8px 0 8px" }}>{col.h}</div>
+                    </>
+                  ) : (
                     <h4>{col.h}</h4>
-                    <ul>{col.items.map(item => (
-                      <li key={item.label}>
-                        <a href={pageHref(item.go[0], item.go[1])} data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
-                      </li>
-                    ))}</ul>
-                  </div>
-                ))}
-              </div>
-            </>
+                  )}
+                  <ul>{col.items.map(item => (
+                    <li key={item.label}>
+                      <a href={pageHref(item.go[0], item.go[1])} data-cursor="link" onClick={e => { e.preventDefault(); onClose(); window.cl.go(item.go[0], item.go[1]); }}>{item.label}</a>
+                    </li>
+                  ))}</ul>
+                </div>
+              ))}
+            </div>
           ) : d.cols ? (
             /* Services / Explore / More: 3-col layout */
             <div className="mega-grid">

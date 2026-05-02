@@ -641,6 +641,7 @@ const ShopPage = ({ intentState }) => {
   const saved  = window.cl?.shopFilter || {};
   const [brand, setBrand] = React.useState(intent?.brand || saved.brand || "All");
   const [type,  setType]  = React.useState(intent?.type  || saved.type  || "All");
+  const [sale,  setSale]  = React.useState(intent?.sale  || false);
   const [sort, setSort]   = React.useState("featured");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
@@ -652,8 +653,9 @@ const ShopPage = ({ intentState }) => {
   // Apply intent when navigating to shop (including same-page re-nav via intentState prop)
   React.useEffect(() => {
     const src = intentState || window.cl?.intent;
-    if (src?.brand) { setBrand(src.brand); setType("All"); }
-    else if (src?.type) { setType(src.type); setBrand("All"); }
+    if (src?.sale) { setSale(true); setBrand("All"); setType("All"); }
+    else if (src?.brand) { setBrand(src.brand); setType("All"); setSale(false); }
+    else if (src?.type) { setType(src.type); setBrand("All"); setSale(false); }
     if (window.cl?.intent) window.cl.intent = null;
   }, [intentState]);
 
@@ -806,6 +808,9 @@ const ShopPage = ({ intentState }) => {
   // Type filter
   if (type !== "All") filtered = filtered.filter(b => b.type === type);
 
+  // Sale filter
+  if (sale && window.CL_LS?.saleHandles?.length) filtered = filtered.filter(b => window.CL_LS.saleHandles.includes(b.handle));
+
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
 
@@ -828,6 +833,13 @@ const ShopPage = ({ intentState }) => {
           <div style={{ fontFamily:"var(--mono)", fontSize:11, letterSpacing:".14em", textTransform:"uppercase", color:"var(--gray-500)" }}>
             {liveLoading ? "Loading…" : `${filtered.length} bikes${liveProducts ? " · Live" : ""}`}
           </div>
+          {sale && (
+            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"3px 10px", background:"#dc2626", color:"#fff", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
+              Sale
+              <button onClick={() => setSale(false)} data-cursor="link"
+                style={{ background:"none", border:"none", color:"#fff", cursor:"pointer", fontSize:12, lineHeight:1, padding:0, opacity:.7 }}>×</button>
+            </div>
+          )}
           {brand !== "All" && (
             <div style={{ display:"flex", alignItems:"center", gap:6, padding:"3px 10px", background:"var(--black)", color:"var(--white)", fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase" }}>
               {brand}
