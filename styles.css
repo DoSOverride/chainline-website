@@ -2302,3 +2302,41 @@ a:hover .bike-hover { transform: translateY(0); }
 @media (max-width: 768px) {
   .compare-bar-sticky { bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important; }
 }
+
+/* ── Parts filter slide-out panel ── */
+.parts-filter-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background: var(--white);
+  z-index: 250;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 32px rgba(0,0,0,0.12);
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.parts-filter-panel.open {
+  transform: translateX(0);
+}
+.parts-filter-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 249;
+  animation: backdropFadeIn 0.2s ease;
+}
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@media (max-width: 768px) {
+  .parts-filter-panel { width: 85vw; max-width: 320px; }
+}
+[data-theme="dark"] .parts-filter-panel {
+  background: var(--paper);
+  box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+}
+[data-theme="dark"] .parts-filter-backdrop { background: rgba(0,0,0,0.6); }
