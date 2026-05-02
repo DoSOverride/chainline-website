@@ -2877,7 +2877,7 @@ const PartsPage = ({ pageType = 'components' }) => {
         const pr = p.price || 0;
         if (priceRange === '<50')     return pr < 50;
         if (priceRange === '50-150')  return pr >= 50 && pr <= 150;
-        if (priceRange === '150-300') return pr > 150 && pr <= 300;
+        if (priceRange === '150-300') return pr >= 150 && pr <= 300;
         if (priceRange === '300+')    return pr > 300;
         return true;
       });
