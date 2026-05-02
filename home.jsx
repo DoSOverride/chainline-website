@@ -95,10 +95,10 @@ const FEATURED_BIKES = [
   {"brand":"Pivot",     "name":"Switchblade","type":"Mountain","rawType":"Mountain Bike","price":8000,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-switchblade.jpg","handle":"pivot-switchblade-ride-eagle-70-90"},
   {"brand":"Transition","name":"Regulator CX","type":"E-Bike","rawType":"Electric Bike","price":13000,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/ext-c8-2026-regulator-cx.avif","handle":"transition-regulator-cx-eagle-90"},
   {"brand":"Marin",     "name":"Pine Mountain 1","type":"Mountain","rawType":"Mountain Bike","price":1960,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg","handle":"marin-pine-mountain-1-29"},
-  {"brand":"Surly",     "name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"img":W+"https://surlybikes.com/cdn/shop/files/surly-bridge-club-bike-lingering-cranberry-BK01508.jpg?v=1773411087&width=1946","handle":"surly-bridge-club"},
-  {"brand":"Pivot",     "name":"Shuttle AM","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-shuttle-am.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
+  {"brand":"Surly",     "name":"Bridge Club","type":"Gravel","rawType":"Gravel Bike","price":1850,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-bridge-club.jpg","handle":"surly-bridge-club"},
+  {"brand":"Pivot",     "name":"Shuttle AM","type":"E-Bike","rawType":"Electric Bike","price":11500,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-shuttle-am-side.jpg","handle":"pivot-shuttle-am-ride-eagle-70-90"},
   {"brand":"Knolly",    "name":"Fugitive","type":"Mountain","rawType":"Mountain Bike","price":4550,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/knolly-fugitive.png","handle":"knolly-fugitive"},
-  {"brand":"Surly",     "name":"Sorceress","type":"Mountain","rawType":"Fat Bike","price":3400,"img":W+"https://surlybikes.com/cdn/shop/files/surly-sorceress-eagle-90-bike-purple-BK01561.jpg?v=1774378038&width=1946","handle":"surly-sorceress"},
+  {"brand":"Surly",     "name":"Sorceress","type":"Mountain","rawType":"Fat Bike","price":3400,"img":"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-sorceress.jpg","handle":"surly-sorceress"},
 ];
 
 
