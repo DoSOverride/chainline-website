@@ -4481,4 +4481,408 @@ const MTBCOPage = () => {
     </div>
   );
 };
+
+const QUOTE_SERVICES = {
+  completed: [
+    "Basic tune-up (brakes + derailleurs)",
+    "Full tune-up",
+    "E-bike tune-up",
+    "Complete overhaul",
+    "Brake bleed (per caliper)",
+    "Fork lower leg service",
+    "Full fork service",
+    "Rear shock service",
+    "Dropper post service",
+    "Cable & housing package",
+    "Tubeless set-up (per wheel)",
+    "Wheel true",
+    "Safety inspection",
+    "Custom (see notes)",
+  ],
+  recommendations: [
+    { id:"chain-std",    label:"Chain",                          price:55,  urgency:"soon"      },
+    { id:"chain-ebike",  label:"Chain (e-bike)",                 price:75,  urgency:"soon"      },
+    { id:"cassette-10",  label:"Cassette (10-speed)",            price:75,  urgency:"soon"      },
+    { id:"cassette-11",  label:"Cassette (11-speed)",            price:95,  urgency:"soon"      },
+    { id:"cassette-12s", label:"Cassette (12sp SRAM Eagle)",     price:135, urgency:"soon"      },
+    { id:"cassette-12d", label:"Cassette (12sp Shimano)",        price:115, urgency:"soon"      },
+    { id:"housing",      label:"Full cable & housing",           price:85,  urgency:"soon"      },
+    { id:"shift-r",      label:"Rear shift cable",               price:30,  urgency:"soon"      },
+    { id:"shift-f",      label:"Front shift cable",              price:30,  urgency:"soon"      },
+    { id:"brake-cable",  label:"Brake cable (each)",             price:30,  urgency:"soon"      },
+    { id:"pads-mech",    label:"Brake pads — mechanical (pair)", price:30,  urgency:"attention" },
+    { id:"pads-hydro",   label:"Brake pads — hydraulic (pair)",  price:55,  urgency:"attention" },
+    { id:"tire",         label:"Tire replacement (labour)",      price:20,  urgency:"attention" },
+    { id:"tube",         label:"Tube replacement",               price:20,  urgency:"attention" },
+    { id:"bleed",        label:"Hydraulic brake bleed",          price:45,  urgency:"soon"      },
+    { id:"hanger",       label:"Derailleur hanger",              price:25,  urgency:"urgent"    },
+    { id:"headset",      label:"Headset bearing replacement",    price:55,  urgency:"soon"      },
+    { id:"bb",           label:"Bottom bracket replacement",     price:75,  urgency:"soon"      },
+    { id:"custom1",      label:"",                               price:0,   urgency:"soon", custom:true },
+    { id:"custom2",      label:"",                               price:0,   urgency:"soon", custom:true },
+  ],
+};
+
+const InspectionPage = () => {
+  const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
+  const [step,       setStep]       = React.useState(1);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [quoteUrl,   setQuoteUrl]   = React.useState('');
+  const [copied,     setCopied]     = React.useState(false);
+  const [form, setForm] = React.useState({
+    mechanic: '', customerName: '', customerPhone: '', customerEmail: '',
+    bikeBrand: '', bikeModel: '', bikeYear: '', bikeColor: '',
+    completed: [],
+    recs: QUOTE_SERVICES.recommendations.map(r => ({ ...r, selected: false, customLabel: '', customPrice: '' })),
+    notes: '',
+  });
+  const upd = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const toggleCompleted = (svc) => setForm(f => {
+    const has = f.completed.includes(svc);
+    return { ...f, completed: has ? f.completed.filter(s => s !== svc) : [...f.completed, svc] };
+  });
+  const toggleRec = (id) => setForm(f => ({ ...f, recs: f.recs.map(r => r.id === id ? { ...r, selected: !r.selected } : r) }));
+  const updRec = (id, k, v) => setForm(f => ({ ...f, recs: f.recs.map(r => r.id === id ? { ...r, [k]: v } : r) }));
+  const urgencyColor = (u) => ({ urgent:'#dc2626', soon:'#d97706', attention:'#2563eb', good:'#16a34a' }[u] || '#666');
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      const selectedRecs = form.recs.filter(r => r.selected).map(r => ({
+        id: r.id,
+        label: r.custom ? (r.customLabel || 'Custom item') : r.label,
+        price: r.custom ? (parseFloat(r.customPrice) || 0) : r.price,
+        urgency: r.urgency,
+      }));
+      const res = await fetch(`${WORKER}/api/quote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mechanic: form.mechanic || 'ChainLine Mechanic',
+          customer: { name: form.customerName, phone: form.customerPhone, email: form.customerEmail },
+          bike: { brand: form.bikeBrand, model: form.bikeModel, year: form.bikeYear, color: form.bikeColor },
+          completed: form.completed,
+          recommendations: selectedRecs,
+          notes: form.notes,
+        }),
+      });
+      const json = await res.json();
+      if (json.ok) { setQuoteUrl(json.url); setStep(4); }
+      else alert('Error creating quote: ' + (json.error || 'unknown'));
+    } catch(e) { alert('Error creating quote. Check connection.'); }
+    setSubmitting(false);
+  };
+  const copyLink = () => navigator.clipboard.writeText(quoteUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2500); });
+  const inp = { width:'100%', padding:'11px 0', border:'none', borderBottom:'1px solid var(--hairline)', fontSize:16, fontFamily:'var(--body)', background:'transparent', outline:'none', color:'var(--black)', marginBottom:20 };
+  const lbl = { fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', display:'block', marginBottom:4 };
+  return (
+    <div className="page-fade" style={{ paddingTop:114 }}>
+      <SubHero eyebrow="Mechanic  /  N°01" title="Inspection Quote." italic="Send it to the customer." />
+      <section className="section section-pad bg-white">
+        <div className="container-narrow">
+          <div style={{ display:'flex', gap:8, marginBottom:40 }}>
+            {['Customer & Bike','Completed Work','Recommend Extras','Send Link'].map((s,i) => (
+              <div key={i} style={{ flex:1, padding:'8px 0', textAlign:'center', fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase',
+                borderBottom:`2px solid ${step===i+1?'var(--black)':'var(--hairline)'}`, color:step===i+1?'var(--black)':'var(--gray-400)' }}>{s}</div>
+            ))}
+          </div>
+          {step === 1 && (
+            <div>
+              <div className="eyebrow" style={{ marginBottom:24 }}>Your name</div>
+              <input style={inp} placeholder="Mechanic name" value={form.mechanic} onChange={e => upd('mechanic', e.target.value)} />
+              <div className="eyebrow" style={{ marginBottom:16, marginTop:8 }}>Customer info</div>
+              <label style={lbl}>Name</label>
+              <input style={inp} placeholder="Jane Smith" value={form.customerName} onChange={e => upd('customerName', e.target.value)} />
+              <label style={lbl}>Phone</label>
+              <input style={inp} placeholder="250-555-1234" value={form.customerPhone} onChange={e => upd('customerPhone', e.target.value)} />
+              <label style={lbl}>Email (optional)</label>
+              <input style={inp} placeholder="jane@email.com" value={form.customerEmail} onChange={e => upd('customerEmail', e.target.value)} />
+              <div className="eyebrow" style={{ marginBottom:16, marginTop:8 }}>Bike</div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                <div><label style={lbl}>Brand</label><input style={inp} placeholder="Transition" value={form.bikeBrand} onChange={e => upd('bikeBrand', e.target.value)} /></div>
+                <div><label style={lbl}>Model</label><input style={inp} placeholder="Sentinel" value={form.bikeModel} onChange={e => upd('bikeModel', e.target.value)} /></div>
+                <div><label style={lbl}>Year</label><input style={inp} placeholder="2024" value={form.bikeYear} onChange={e => upd('bikeYear', e.target.value)} /></div>
+                <div><label style={lbl}>Colour</label><input style={inp} placeholder="Glacier White" value={form.bikeColor} onChange={e => upd('bikeColor', e.target.value)} /></div>
+              </div>
+              <button className="btn" data-cursor="link" disabled={!form.customerName || !form.customerPhone}
+                onClick={() => setStep(2)} style={{ marginTop:16 }}>Next: Completed Work <ArrowRight /></button>
+            </div>
+          )}
+          {step === 2 && (
+            <div>
+              <p style={{ color:'var(--gray-500)', marginBottom:24, fontSize:15 }}>What did you do today? (check all that apply)</p>
+              <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
+                {QUOTE_SERVICES.completed.map(svc => (
+                  <label key={svc} style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 0', borderBottom:'1px solid var(--hairline)', cursor:'pointer' }}>
+                    <input type="checkbox" checked={form.completed.includes(svc)} onChange={() => toggleCompleted(svc)}
+                      style={{ width:18, height:18, accentColor:'var(--black)', cursor:'pointer' }} />
+                    <span style={{ fontSize:15 }}>{svc}</span>
+                  </label>
+                ))}
+              </div>
+              <div style={{ display:'flex', gap:12, marginTop:32 }}>
+                <button className="btn btn-outline" onClick={() => setStep(1)}>← Back</button>
+                <button className="btn" onClick={() => setStep(3)} data-cursor="link">Next: Recommendations <ArrowRight /></button>
+              </div>
+            </div>
+          )}
+          {step === 3 && (
+            <div>
+              <p style={{ color:'var(--gray-500)', marginBottom:8, fontSize:15 }}>Select items to recommend. Set urgency and price.</p>
+              <div style={{ display:'flex', gap:16, marginBottom:24, fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.1em', textTransform:'uppercase' }}>
+                <span style={{ color:'#dc2626' }}>● Urgent</span>
+                <span style={{ color:'#d97706' }}>● Soon</span>
+                <span style={{ color:'#2563eb' }}>● Attention</span>
+              </div>
+              {form.recs.map(r => (
+                <div key={r.id} style={{ display:'flex', alignItems:'flex-start', gap:12, padding:'12px 0', borderBottom:'1px solid var(--hairline)' }}>
+                  <input type="checkbox" checked={r.selected} onChange={() => toggleRec(r.id)}
+                    style={{ width:18, height:18, accentColor:'var(--black)', cursor:'pointer', marginTop:2, flexShrink:0 }} />
+                  <div style={{ flex:1 }}>
+                    {r.custom
+                      ? <input placeholder="Custom item description" value={r.customLabel} onChange={e => updRec(r.id, 'customLabel', e.target.value)}
+                          style={{ ...inp, marginBottom:0, fontSize:14 }} />
+                      : <span style={{ fontSize:15 }}>{r.label}</span>
+                    }
+                    {r.selected && (
+                      <div style={{ display:'flex', gap:12, marginTop:8 }}>
+                        <div>
+                          <label style={{ ...lbl, marginBottom:2 }}>Urgency</label>
+                          <select value={r.urgency} onChange={e => updRec(r.id, 'urgency', e.target.value)}
+                            style={{ fontFamily:'var(--mono)', fontSize:10, border:'1px solid var(--hairline)', padding:'4px 8px', background:'var(--white)', color:urgencyColor(r.urgency) }}>
+                            <option value="urgent">Urgent — Safety</option>
+                            <option value="soon">Soon — 1-3 months</option>
+                            <option value="attention">Attention — Monitor</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{ ...lbl, marginBottom:2 }}>Price ($)</label>
+                          {r.custom
+                            ? <input type="number" value={r.customPrice} onChange={e => updRec(r.id, 'customPrice', e.target.value)}
+                                style={{ width:80, padding:'4px 8px', border:'1px solid var(--hairline)', fontFamily:'var(--mono)', fontSize:12, background:'var(--white)' }} />
+                            : <span style={{ fontFamily:'var(--mono)', fontSize:13, fontWeight:600 }}>${r.price}</span>
+                          }
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <label style={{ ...lbl, marginTop:24 }}>Mechanic notes (visible to customer)</label>
+              <textarea value={form.notes} onChange={e => upd('notes', e.target.value)} rows={3}
+                placeholder="Front tire shows sidewall cracking."
+                style={{ ...inp, resize:'vertical', borderBottom:'none', border:'1px solid var(--hairline)', padding:12, fontSize:15 }} />
+              {form.recs.filter(r => r.selected).length > 0 && (
+                <div style={{ background:'var(--paper)', padding:20, marginTop:16, marginBottom:16 }}>
+                  <div className="eyebrow" style={{ marginBottom:12 }}>Quote summary</div>
+                  {form.recs.filter(r => r.selected).map(r => {
+                    const label = r.custom ? (r.customLabel || 'Custom item') : r.label;
+                    const price = r.custom ? (parseFloat(r.customPrice) || 0) : r.price;
+                    return (
+                      <div key={r.id} style={{ display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid var(--hairline)', fontSize:14 }}>
+                        <span style={{ color:urgencyColor(r.urgency) }}>● </span>
+                        <span style={{ flex:1, marginLeft:6 }}>{label}</span>
+                        <span style={{ fontFamily:'var(--mono)', fontSize:12 }}>${price}</span>
+                      </div>
+                    );
+                  })}
+                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:12, fontWeight:700 }}>
+                    <span>Estimated total</span>
+                    <span>${form.recs.filter(r=>r.selected).reduce((s,r)=>s+(r.custom?parseFloat(r.customPrice)||0:r.price),0)}</span>
+                  </div>
+                </div>
+              )}
+              <div style={{ display:'flex', gap:12, marginTop:8 }}>
+                <button className="btn btn-outline" onClick={() => setStep(2)}>← Back</button>
+                <button className="btn" onClick={submit} disabled={submitting} data-cursor="link">
+                  {submitting ? 'Creating…' : 'Generate Quote Link'} <ArrowRight />
+                </button>
+              </div>
+            </div>
+          )}
+          {step === 4 && (
+            <div style={{ textAlign:'center', padding:'40px 0' }}>
+              <div style={{ fontSize:48, marginBottom:16 }}>✓</div>
+              <h2 className="display-m" style={{ marginBottom:8 }}>Quote created.</h2>
+              <p style={{ color:'var(--gray-500)', marginBottom:32 }}>Copy the link below and text it to <strong>{form.customerName}</strong> ({form.customerPhone}).</p>
+              <div style={{ background:'var(--paper)', padding:20, marginBottom:20, wordBreak:'break-all', fontFamily:'var(--mono)', fontSize:13, letterSpacing:'.02em' }}>
+                {quoteUrl}
+              </div>
+              <div style={{ display:'flex', gap:12, justifyContent:'center' }}>
+                <button className="btn" onClick={copyLink} data-cursor="link">{copied ? 'Copied ✓' : 'Copy Link'}</button>
+                <a href={`sms:${form.customerPhone}&body=${encodeURIComponent('Hi '+form.customerName+'! Your ChainLine inspection report is ready: '+quoteUrl)}`}
+                  className="btn btn-outline" data-cursor="link">Open in Messages</a>
+              </div>
+              <button className="link-underline" onClick={() => {
+                setStep(1);
+                setForm({ mechanic:form.mechanic, customerName:'', customerPhone:'', customerEmail:'', bikeBrand:'', bikeModel:'', bikeYear:'', bikeColor:'',
+                  completed:[], recs:QUOTE_SERVICES.recommendations.map(r=>({...r,selected:false,customLabel:'',customPrice:''})), notes:'' });
+              }} style={{ display:'block', margin:'32px auto 0', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.14em', textTransform:'uppercase', cursor:'pointer', background:'none', border:'none' }}>
+                New Quote →
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const QuotePage = () => {
+  const WORKER  = "https://still-term-f1ec.taocaruso77.workers.dev";
+  const id      = window.cl?.intent?.quoteId || window.location.pathname.split('/').pop();
+  const [quote,      setQuote]     = React.useState(null);
+  const [loading,    setLoading]   = React.useState(true);
+  const [notFound,   setNotFound]  = React.useState(false);
+  const [decisions,  setDecisions] = React.useState({});
+  const [custNote,   setCustNote]  = React.useState('');
+  const [custName,   setCustName]  = React.useState('');
+  const [submitting, setSubmitting]= React.useState(false);
+  const [done,       setDone]      = React.useState(false);
+
+  React.useEffect(() => {
+    if (!id) { setNotFound(true); setLoading(false); return; }
+    fetch(`${WORKER}/api/quote/${id}`)
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => {
+        setQuote(data);
+        setCustName(data.customer?.name || '');
+        const init = {};
+        (data.recommendations || []).forEach(r => { init[r.id] = null; });
+        setDecisions(init);
+      })
+      .catch(() => setNotFound(true))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  const decide = (recId, val) => setDecisions(d => ({ ...d, [recId]: val }));
+  const allDecided = quote?.recommendations?.length > 0 && quote.recommendations.every(r => decisions[r.id] !== null && decisions[r.id] !== undefined);
+  const approvedTotal = (quote?.recommendations || []).filter(r => decisions[r.id] === true).reduce((s, r) => s + (r.price || 0), 0);
+
+  const urgencyConfig = {
+    urgent:    { color:'#dc2626', bg:'#fef2f2', label:'Safety — Urgent',   icon:'🔴' },
+    soon:      { color:'#d97706', bg:'#fffbeb', label:'Soon — 1–3 months', icon:'🟡' },
+    attention: { color:'#2563eb', bg:'#eff6ff', label:'Monitor',           icon:'🔵' },
+    good:      { color:'#16a34a', bg:'#f0fdf4', label:'Good',              icon:'🟢' },
+  };
+
+  const submit = async () => {
+    if (!custName.trim()) { alert('Please enter your name to confirm.'); return; }
+    setSubmitting(true);
+    try {
+      const approved = (quote.recommendations || []).filter(r => decisions[r.id] === true);
+      const declined = (quote.recommendations || []).filter(r => decisions[r.id] === false);
+      const res = await fetch(`${WORKER}/api/quote/${id}/respond`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approved, declined, note: custNote, customerName: custName }),
+      });
+      const json = await res.json();
+      if (json.ok) setDone(true);
+      else alert('Error submitting. Please call us at (250) 860-1968.');
+    } catch { alert('Error submitting. Please call us at (250) 860-1968.'); }
+    setSubmitting(false);
+  };
+
+  if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}><div style={{ fontFamily:'var(--mono)', fontSize:12, color:'var(--gray-400)', letterSpacing:'.14em', textTransform:'uppercase' }}>Loading…</div></div>;
+  if (notFound) return <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:24 }}><div className="display-m" style={{ marginBottom:8 }}>Quote not found</div><p style={{ color:'var(--gray-500)' }}>This link may have expired. Call us at <a href="tel:+12508601968">(250) 860-1968</a>.</p></div>;
+  if (quote?.status === 'responded' && !done) return <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:24 }}><div style={{ fontSize:48, marginBottom:12 }}>✓</div><div className="display-m" style={{ marginBottom:8 }}>Already submitted.</div><p style={{ color:'var(--gray-500)' }}>We have your response. Questions? Call <a href="tel:+12508601968">(250) 860-1968</a>.</p></div>;
+  if (done) return <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:24 }}><div style={{ fontSize:48, marginBottom:12 }}>✓</div><div className="display-m" style={{ marginBottom:8 }}>Got it, thanks!</div><p style={{ color:'var(--gray-500)', maxWidth:340 }}>ChainLine has your approvals. We'll get your bike sorted and reach out when it's done.</p><p style={{ color:'var(--gray-400)', marginTop:16, fontFamily:'var(--mono)', fontSize:11 }}>Questions? Call <a href="tel:+12508601968">(250) 860-1968</a></p></div>;
+
+  return (
+    <div style={{ maxWidth:560, margin:'0 auto', padding:'40px 20px 80px' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:32 }}>
+        <img src="/logo.png" alt="ChainLine" style={{ height:32 }} />
+        <div>
+          <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.18em', textTransform:'uppercase', color:'var(--gray-400)' }}>Inspection Report</div>
+          <div style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:500, textTransform:'uppercase', letterSpacing:'-.01em' }}>ChainLine Cycle</div>
+        </div>
+      </div>
+      <div style={{ background:'var(--paper)', padding:20, marginBottom:24 }}>
+        <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:8 }}>Your bike</div>
+        <div style={{ fontFamily:'var(--display)', fontSize:22, fontWeight:500 }}>{quote.bike.brand} {quote.bike.model}</div>
+        {quote.bike.year && <div style={{ color:'var(--gray-500)', fontSize:14 }}>{quote.bike.year}{quote.bike.color ? ` · ${quote.bike.color}` : ''}</div>}
+        <div style={{ marginTop:12, fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)' }}>Prepared by {quote.mechanic} · {new Date(quote.created).toLocaleDateString('en-CA', { month:'long', day:'numeric', year:'numeric' })}</div>
+      </div>
+      {quote.completed?.length > 0 && (
+        <div style={{ marginBottom:24 }}>
+          <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:12 }}>Work completed today</div>
+          {quote.completed.map((svc, i) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderBottom:'1px solid var(--hairline)', fontSize:15 }}><span style={{ color:'#16a34a' }}>✓</span> {svc}</div>
+          ))}
+        </div>
+      )}
+      {quote.notes && (
+        <div style={{ background:'var(--paper)', borderLeft:'3px solid var(--hairline)', padding:'14px 16px', marginBottom:24, fontSize:14, color:'var(--gray-600)', lineHeight:1.6 }}>
+          <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', display:'block', marginBottom:4 }}>Mechanic notes</span>
+          {quote.notes}
+        </div>
+      )}
+      {quote.recommendations?.length > 0 && (
+        <div style={{ marginBottom:32 }}>
+          <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:6 }}>Recommended additional work</div>
+          <p style={{ fontSize:13, color:'var(--gray-500)', marginBottom:16 }}>Tap each item to approve or decline. We won't do anything without your OK.</p>
+          {quote.recommendations.map(r => {
+            const urg = urgencyConfig[r.urgency] || urgencyConfig.soon;
+            const dec = decisions[r.id];
+            return (
+              <div key={r.id} style={{ border:`1px solid ${dec===true?'#16a34a':'var(--hairline)'}`, borderRadius:4, padding:16, marginBottom:12,
+                background:dec===true?'#f0fdf4':dec===false?'var(--paper)':'var(--white)', opacity:dec===false?0.6:1, transition:'all .2s' }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:8, marginBottom:8 }}>
+                  <div>
+                    <span style={{ fontSize:15, fontWeight:500 }}>{r.label}</span>
+                    <span style={{ display:'inline-flex', alignItems:'center', gap:4, marginLeft:10, padding:'2px 8px', background:urg.bg, borderRadius:20 }}>
+                      <span style={{ fontSize:10 }}>{urg.icon}</span>
+                      <span style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.08em', color:urg.color }}>{urg.label}</span>
+                    </span>
+                  </div>
+                  <span style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:600, flexShrink:0 }}>${r.price}</span>
+                </div>
+                <div style={{ display:'flex', gap:8 }}>
+                  <button onClick={() => decide(r.id, true)} style={{ flex:1, padding:'10px 0', border:'none', borderRadius:4, cursor:'pointer', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.1em', textTransform:'uppercase', background:dec===true?'#16a34a':'#f0fdf4', color:dec===true?'#fff':'#16a34a', fontWeight:dec===true?700:400 }}>
+                    {dec === true ? '✓ Approved' : 'Approve'}
+                  </button>
+                  <button onClick={() => decide(r.id, false)} style={{ flex:1, padding:'10px 0', border:'none', borderRadius:4, cursor:'pointer', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.1em', textTransform:'uppercase', background:dec===false?'#f0f0f0':'#f9f9f9', color:'var(--gray-500)', fontWeight:dec===false?700:400 }}>
+                    {dec === false ? 'Declined' : 'Decline'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {allDecided && (
+        <div style={{ background:approvedTotal>0?'#f0fdf4':'var(--paper)', padding:16, marginBottom:24, borderTop:`2px solid ${approvedTotal>0?'#16a34a':'var(--hairline)'}` }}>
+          <div style={{ display:'flex', justifyContent:'space-between', fontFamily:'var(--display)', fontSize:20, fontWeight:600 }}>
+            <span>Approved total</span>
+            <span style={{ color:approvedTotal>0?'#16a34a':'var(--gray-400)' }}>${approvedTotal}</span>
+          </div>
+          <div style={{ fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)', marginTop:4 }}>Does not include labour from completed work above</div>
+        </div>
+      )}
+      <div style={{ marginBottom:20 }}>
+        <label style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', display:'block', marginBottom:6 }}>Any questions or notes for us?</label>
+        <textarea value={custNote} onChange={e => setCustNote(e.target.value)} rows={3} placeholder="Optional..."
+          style={{ width:'100%', padding:12, border:'1px solid var(--hairline)', fontSize:15, fontFamily:'var(--body)', background:'var(--white)', resize:'vertical', outline:'none', color:'var(--black)' }} />
+      </div>
+      <div style={{ marginBottom:24 }}>
+        <label style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', display:'block', marginBottom:6 }}>Your name (confirms your choices)</label>
+        <input value={custName} onChange={e => setCustName(e.target.value)} placeholder="Full name"
+          style={{ width:'100%', padding:'12px 0', border:'none', borderBottom:'2px solid var(--black)', fontSize:18, fontFamily:'var(--display)', background:'transparent', outline:'none', color:'var(--black)' }} />
+      </div>
+      <button className="btn" onClick={submit} disabled={submitting || !allDecided || !custName.trim()}
+        style={{ width:'100%', justifyContent:'center', padding:'16px 24px', fontSize:15, opacity:(!allDecided||!custName.trim())?0.5:1 }}>
+        {submitting ? 'Sending…' : 'Send to ChainLine'} {!submitting && <ArrowRight />}
+      </button>
+      {!allDecided && quote?.recommendations?.length > 0 && (
+        <p style={{ textAlign:'center', fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)', marginTop:10, letterSpacing:'.1em', textTransform:'uppercase' }}>Approve or decline each item above to continue</p>
+      )}
+      <div style={{ textAlign:'center', marginTop:24, fontFamily:'var(--mono)', fontSize:11, color:'var(--gray-400)' }}>
+        Questions? Call <a href="tel:+12508601968" style={{ color:'var(--gray-600)' }}>(250) 860-1968</a>
+      </div>
+    </div>
+  );
+};
+
 window.MTBCOPage = MTBCOPage;
+window.InspectionPage = InspectionPage;
+window.QuotePage = QuotePage;
