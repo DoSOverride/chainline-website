@@ -58,7 +58,8 @@ window.lightspeedGetTab = async function(tabId) {
     const res  = await fetch(`${window.CL_LS.workerUrl}/api/parts?tab=${tabId}`);
     const data = await res.json();
     const items = data.error ? [] : (data.items || []);
-    if (!data.error) window.CL_LS.tabCache[tabId] = items;
+    // Only cache if items returned — don't cache rate-limited empty responses
+    if (!data.error && items.length > 0) window.CL_LS.tabCache[tabId] = items;
     return items;
   } catch { return []; }
 };
@@ -69,7 +70,7 @@ window.lightspeedWarmCache = async function(tabs) {
   for (const tab of tabs) {
     if (!window.CL_LS.tabCache?.[tab]) {
       await window.lightspeedGetTab(tab);
-      await new Promise(r => setTimeout(r, 250)); // space out requests
+      await new Promise(r => setTimeout(r, 500)); // space out requests — KV cache on worker means 2nd+ loads are instant
     }
   }
 };

@@ -319,9 +319,12 @@ const App = () => {
     return () => clearTimeout(t);
   }, []);
 
-  // Silent background cache warmer — starts 4s after initial load
+  // Silent background cache warmer — staggered to avoid LS rate limits
+  // Worker now caches /api/parts in KV (10min), so warmCache is cheap on repeat loads
   React.useEffect(() => {
-    const t = setTimeout(() => window.lightspeedWarmCache?.(), 4000);
+    const t = setTimeout(() => {
+      window.lightspeedWarmCache?.(['brakes', 'cockpit', 'suspension', 'protection', 'tools']);
+    }, 8000);
     return () => clearTimeout(t);
   }, []);
 
