@@ -975,11 +975,11 @@ const Footer = () => (
           <h4>Parts & Accessories</h4>
           <ul>
             {[
-              ["Components",       "components",  {tab:"drivetrain"}],
+              ["Components",       "components",  null],
               ["Drivetrain",       "components",  {tab:"drivetrain"}],
               ["Brakes",           "components",  {tab:"brakes"}],
               ["Wheels & Tires",   "components",  {tab:"wheels"}],
-              ["Accessories",      "accessories", {tab:"helmets"}],
+              ["Accessories",      "accessories", null],
               ["Helmets",          "accessories", {tab:"helmets"}],
               ["Tools & Pumps",    "accessories", {tab:"tools"}],
               ["Bags & Lights",    "accessories", {tab:"bags"}],
