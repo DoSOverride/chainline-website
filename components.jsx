@@ -237,7 +237,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           </nav>
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
-            <CurrencySelector />
+            <span className="currency-desktop-only"><CurrencySelector /></span>
             <DarkToggle on={darkMode} onToggle={onToggleDark} />
             <div ref={accountRef} style={{ position: "relative" }}>
               <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
@@ -952,6 +952,29 @@ const MobileNav = ({ open, onClose }) => {
               ].map(it => (
                 <a key={it.label} href={pageHref(it.route)} style={{ ...subA, fontSize:18, padding:"9px 0" }} onClick={e => { e.preventDefault(); dismiss(() => window.cl.go(it.route)); }}>{it.label}</a>
               ))}
+            </div>
+          </div>
+          {/* Currency selector — mobile */}
+          <div style={{ marginTop:32, paddingTop:24, borderTop:"1px solid rgba(255,255,255,0.1)" }}>
+            <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".18em", textTransform:"uppercase", color:"var(--gray-500)", marginBottom:14 }}>Currency</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+              {CURRENCIES.map(c => {
+                const isActive = (localStorage.getItem('cl-currency') || 'CAD') === c.code;
+                return (
+                  <button key={c.code}
+                    onClick={() => {
+                      localStorage.setItem('cl-currency', c.code);
+                      localStorage.setItem('cl-currency-set', '1');
+                      const r = window.CL_CURRENCY?.rate || 1;
+                      window.CL_CURRENCY = { code: c.code, symbol: c.symbol, rate: r };
+                      window.dispatchEvent(new CustomEvent('currency:changed', { detail: window.CL_CURRENCY }));
+                      window.location.reload();
+                    }}
+                    style={{ background: isActive ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.06)', border: isActive ? '1px solid rgba(255,255,255,0.35)' : '1px solid rgba(255,255,255,0.1)', color:'var(--white)', fontFamily:'var(--mono)', fontSize:11, letterSpacing:'.08em', padding:'8px 12px', cursor:'pointer', display:'flex', alignItems:'center', gap:6 }}>
+                    <span style={{ fontSize:15 }}>{c.flag}</span> {c.code}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
