@@ -4927,7 +4927,7 @@ const AllShopPage = () => {
   const sections = [
     { id:'components',  label:'Components',  sub:'Drivetrain · Brakes · Suspension · Wheels · Cockpit', img:`${R2}/shop/interior-parts.jpg`,   items:['Drivetrain','Brakes','Suspension','Wheels','Cockpit'] },
     { id:'parts',       label:'Parts',        sub:'Tires · Tubes · Chains · Brake Pads · Lube',          img:`${R2}/shop/interior-tires.jpg`,   items:['Tires 29"','Tires 700C','Tubes','Chains','Brake Pads'] },
-    { id:'accessories', label:'Accessories',  sub:'Helmets · Clothing · Bags · Lights · Tools',          img:`${R2}/shop/interior-surly.jpg`,   items:['Helmets','Clothing','Bags','Lights','Tools'] },
+    { id:'accessories', label:'Accessories',  sub:'Helmets · Protection · Bags · Lights · Tools',          img:`${R2}/shop/interior-surly.jpg`,   items:['Helmets','Protection','Bags','Lights','Tools'] },
   ];
 
   const quickCats = [
