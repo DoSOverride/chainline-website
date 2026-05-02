@@ -4709,7 +4709,7 @@ const InspectionPage = () => {
               </div>
               <div style={{ display:'flex', gap:12, justifyContent:'center' }}>
                 <button className="btn" onClick={copyLink} data-cursor="link">{copied ? 'Copied ✓' : 'Copy Link'}</button>
-                <a href={`sms:${form.customerPhone}&body=${encodeURIComponent('Hi '+form.customerName+'! Your ChainLine inspection report is ready: '+quoteUrl)}`}
+                <a href={`sms:${form.customerPhone}?body=${encodeURIComponent('Hi '+form.customerName+'! Your ChainLine inspection report is ready: '+quoteUrl)}`}
                   className="btn btn-outline" data-cursor="link">Open in Messages</a>
               </div>
               <button className="link-underline" onClick={() => {
