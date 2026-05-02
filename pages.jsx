@@ -2824,6 +2824,11 @@ const PartsPage = ({ pageType = 'components' }) => {
     return window.cl?.intent?.search || '';
   });
   const [pg,     setPg]     = React.useState(0);
+  const [filterBrands, setFilterBrands] = React.useState(new Set());
+  const [priceRange,   setPriceRange]   = React.useState(null);
+  const [sortBy,       setSortBy]       = React.useState('price-asc');
+  const clearFilters = () => { setFilterBrands(new Set()); setPriceRange(null); setSortBy('price-asc'); };
+  const hasFilters = filterBrands.size > 0 || priceRange !== null || sortBy !== 'price-asc';
   const PAGE = 60;
   const searchRef = React.useRef(null);
 
@@ -2843,19 +2848,47 @@ const PartsPage = ({ pageType = 'components' }) => {
   const { items, loading } = useTabInventory(safeCat);
   const visibleTabs = PART_TABS.filter(t => validTabIds.includes(t.id));
   const activeTab = PART_TABS.find(t => t.id === safeCat) || visibleTabs[0];
+  const availableBrands = React.useMemo(() => {
+    const brands = [...new Set(items.map(i => i.manufacturer).filter(Boolean))].sort();
+    return brands;
+  }, [items]);
 
   const filtered = React.useMemo(() => {
+    let pool = items;
     const q = search.trim();
-    if (q.length < 2) return [...items].sort((a, b) => (a.price||0) - (b.price||0));
-    const tabPool = items.filter(p => {
-      const hay = (p.name || '') + ' ' + (p.department || '') + ' ' + (p.sku || '');
-      return window.fuzzyMatch ? window.fuzzyMatch(q, hay) : hay.toLowerCase().includes(q.toLowerCase());
+    if (q.length >= 2) {
+      const tabPool = items.filter(p => {
+        const hay = [p.name, p.department, p.sku, p.manufacturer].filter(Boolean).join(' ');
+        return window.fuzzyMatch ? window.fuzzyMatch(q, hay) : hay.toLowerCase().includes(q.toLowerCase());
+      });
+      if (tabPool.length > 0) {
+        pool = tabPool;
+      } else {
+        const globalPool = (window.lightspeedSearch?.(q) || [])
+          .filter(p => !['labour','food','shop use','consignments','bikes'].some(x => (p.department||'').toLowerCase().includes(x)));
+        pool = globalPool;
+      }
+    }
+    if (filterBrands.size > 0) {
+      pool = pool.filter(p => p.manufacturer && filterBrands.has(p.manufacturer));
+    }
+    if (priceRange) {
+      pool = pool.filter(p => {
+        const pr = p.price || 0;
+        if (priceRange === '<50')     return pr < 50;
+        if (priceRange === '50-150')  return pr >= 50 && pr <= 150;
+        if (priceRange === '150-300') return pr > 150 && pr <= 300;
+        if (priceRange === '300+')    return pr > 300;
+        return true;
+      });
+    }
+    return [...pool].sort((a, b) => {
+      if (sortBy === 'price-asc')  return (a.price||0) - (b.price||0);
+      if (sortBy === 'price-desc') return (b.price||0) - (a.price||0);
+      if (sortBy === 'name-az')    return (a.name||'').localeCompare(b.name||'');
+      return (a.price||0) - (b.price||0);
     });
-    if (tabPool.length > 0) return [...tabPool].sort((a, b) => (a.price||0) - (b.price||0));
-    const globalPool = (window.lightspeedSearch?.(q) || [])
-      .filter(p => !['labour','food','shop use','consignments','bikes'].some(x => (p.department||'').toLowerCase().includes(x)));
-    return [...globalPool].sort((a, b) => (a.price||0) - (b.price||0));
-  }, [items, search]);
+  }, [items, search, filterBrands, priceRange, sortBy]);
 
   const searchIsGlobal = search.trim().length >= 2 && filtered.length > 0 && !items.some(p => filtered.includes(p));
 
@@ -2872,7 +2905,7 @@ const PartsPage = ({ pageType = 'components' }) => {
 
   const visible = filtered.slice(0, (pg + 1) * PAGE);
   const hasMore = visible.length < filtered.length;
-  const switchCat = (id) => { setCat(remapTab(id)); setSearch(''); setPg(0); window.scrollTo({ top:0, behavior:'smooth' }); };
+  const switchCat = (id) => { setCat(remapTab(id)); setSearch(''); setPg(0); clearFilters(); window.scrollTo({ top:0, behavior:'smooth' }); };
 
   // Subcategory chips — granular nav at the top, all screen sizes
   const subCats = pageType === 'accessories' ? [
@@ -2970,6 +3003,41 @@ const PartsPage = ({ pageType = 'components' }) => {
           {search && !loading && <span className="parts-search-result-count" style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", flexShrink:0 }}>{filtered.length} results</span>}
         </div>
 
+        {availableBrands.length > 0 && (
+          <div className="parts-filter-chips">
+            <div className="parts-filter-row">
+              <button onClick={() => { setFilterBrands(new Set()); setPg(0); }}
+                className={'parts-filter-chip' + (filterBrands.size === 0 ? ' active' : '')}>All</button>
+              {availableBrands.map(brand => (
+                <button key={brand} onClick={() => {
+                  setFilterBrands(prev => {
+                    const next = new Set(prev);
+                    next.has(brand) ? next.delete(brand) : next.add(brand);
+                    return next;
+                  });
+                  setPg(0);
+                }} className={'parts-filter-chip' + (filterBrands.has(brand) ? ' active' : '')}>
+                  {brand}{filterBrands.has(brand) ? ' ✕' : ''}
+                </button>
+              ))}
+            </div>
+            <div className="parts-filter-row">
+              {[['<50','<$50'],['50-150','$50–$150'],['150-300','$150–$300'],['300+','$300+']].map(([val, label]) => (
+                <button key={val} onClick={() => { setPriceRange(prev => prev === val ? null : val); setPg(0); }}
+                  className={'parts-filter-chip' + (priceRange === val ? ' active' : '')}>
+                  {label}{priceRange === val ? ' ✕' : ''}
+                </button>
+              ))}
+              <select value={sortBy} onChange={e => { setSortBy(e.target.value); setPg(0); }}
+                className="parts-sort-select">
+                <option value="price-asc">Price ↑</option>
+                <option value="price-desc">Price ↓</option>
+                <option value="name-az">A–Z</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         <div className="parts-layout">
 
           {/* Sidebar — full category tree on desktop */}
@@ -3017,6 +3085,50 @@ const PartsPage = ({ pageType = 'components' }) => {
                 </div>
               );
             })}
+            {availableBrands.length > 0 && (
+              <div style={{ padding:'12px 16px 0', borderTop:'1px solid var(--hairline)', marginTop:8 }}>
+                {hasFilters && (
+                  <button onClick={clearFilters} data-cursor="link"
+                    style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--black)', background:'none', border:'1px solid var(--hairline)', padding:'4px 8px', cursor:'pointer', marginBottom:10, width:'100%' }}>
+                    Clear all ✕
+                  </button>
+                )}
+                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:6 }}>Brand</div>
+                {availableBrands.map(brand => (
+                  <label key={brand} style={{ display:'flex', alignItems:'center', gap:7, padding:'3px 0', cursor:'pointer' }}>
+                    <input type="checkbox" checked={filterBrands.has(brand)}
+                      onChange={e => {
+                        setFilterBrands(prev => {
+                          const next = new Set(prev);
+                          e.target.checked ? next.add(brand) : next.delete(brand);
+                          return next;
+                        });
+                        setPg(0);
+                      }}
+                      style={{ accentColor:'var(--black)', width:11, height:11, cursor:'pointer' }} />
+                    <span style={{ fontFamily:'var(--mono)', fontSize:9, color: filterBrands.has(brand) ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{brand}</span>
+                  </label>
+                ))}
+                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginTop:12, marginBottom:6 }}>Price</div>
+                {[['<50','Under $50'],['50-150','$50–$150'],['150-300','$150–$300'],['300+','$300+']].map(([val, label]) => (
+                  <label key={val} style={{ display:'flex', alignItems:'center', gap:7, padding:'3px 0', cursor:'pointer' }}>
+                    <input type="checkbox" checked={priceRange === val}
+                      onChange={e => { setPriceRange(e.target.checked ? val : null); setPg(0); }}
+                      style={{ accentColor:'var(--black)', width:11, height:11, cursor:'pointer' }} />
+                    <span style={{ fontFamily:'var(--mono)', fontSize:9, color: priceRange === val ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{label}</span>
+                  </label>
+                ))}
+                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginTop:12, marginBottom:6 }}>Sort</div>
+                {[['price-asc','Price: Low → High'],['price-desc','Price: High → Low'],['name-az','Name A–Z']].map(([val, label]) => (
+                  <label key={val} style={{ display:'flex', alignItems:'center', gap:7, padding:'3px 0', cursor:'pointer' }}>
+                    <input type="radio" name="parts-sort" checked={sortBy === val}
+                      onChange={() => { setSortBy(val); setPg(0); }}
+                      style={{ accentColor:'var(--black)', width:11, height:11, cursor:'pointer' }} />
+                    <span style={{ fontFamily:'var(--mono)', fontSize:9, color: sortBy === val ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{label}</span>
+                  </label>
+                ))}
+              </div>
+            )}
             <div style={{ margin:"16px 16px 0", paddingTop:14, borderTop:"1px solid var(--hairline)" }}>
               <p style={{ fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)", lineHeight:1.8, margin:0 }}>Live · Lightspeed inventory</p>
             </div>

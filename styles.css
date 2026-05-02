@@ -2217,3 +2217,57 @@ a:hover .bike-hover { transform: translateY(0); }
 
 /* ── Sort select — ensure readable size on all screens ─────── */
 .shop-filter-sticky select { font-size: 16px !important; }
+
+/* ── Parts filter chips (mobile only) ── */
+.parts-filter-chips {
+  display: none;
+  flex-direction: column;
+  background: var(--white);
+  border-bottom: 1px solid var(--hairline);
+}
+.parts-filter-row {
+  display: flex;
+  gap: 6px;
+  padding: 6px 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.parts-filter-row::-webkit-scrollbar { display: none; }
+.parts-filter-chip {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  background: var(--white);
+  color: var(--gray-500);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .1s;
+}
+.parts-filter-chip.active {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+}
+.parts-sort-select {
+  flex-shrink: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  background: var(--white);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gray-500);
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .parts-filter-chips { display: flex; }
+}
+[data-theme="dark"] .parts-filter-chip { background: var(--paper); color: var(--gray-300); border-color: var(--hairline); }
+[data-theme="dark"] .parts-filter-chip.active { background: var(--white); color: var(--black); }
+[data-theme="dark"] .parts-sort-select { background: var(--paper); color: var(--gray-300); }
