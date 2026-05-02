@@ -860,29 +860,29 @@ const ShopPage = ({ intentState }) => {
 
     function parseVariantLabel(label) {
       let s = label.trim();
-      // Strip drivetrain/spec words that appear in product variant names (e.g. "Ride Eagle 70/90")
+      // Strip drivetrain/spec words (handles Pivot-style names like "Ride Eagle 70/90")
       s = s.replace(/\b(?:ride|eagle|gx|sx|nx|xt|xo|di2|axs|grx|deore|sram|shimano|alloy|carbon|coil|boost|comp|elite|pro|race|trail|enduro|single|crown|custom|frame|performance|line)\b/gi, ' ')
-           .replace(/\b\d+[\/\*]\d+\b/g, ' ')  // e.g. 70/90
-           .replace(/\s+/g, ' ').trim();
-      // Frame size at end (Color Size format — e.g. "Blue Small")
+           .replace(/\b\d+[\/\*]\d+\b/g, ' ').replace(/\s+/g,' ').trim();
+      const SIZE_RE = /^(Extra\s+Small|Extra\s+Large|X-Small|X-Large|Small|Medium|Large|XS|XL|XXL|\d+cm|[SMLX][SML]?)$/i;
+      const SIZE_END = /\b(Extra\s+Small|Extra\s+Large|X-Small|X-Large|Small|Medium|Large|XS|XL|XXL|\d+cm|[SMLX][SML]?)\s*$/i;
+      const SIZE_FRONT = /^(Extra\s+Small|Extra\s+Large|X-Small|X-Large|Small|Medium|Large|XS|XL|XXL|\d+cm|[SMLX][SML]?)\s+/i;
       let size = null;
-      const fmatch = s.match(FRAME_RE);
-      if (fmatch) { size = fmatch[1]; s = s.slice(0, s.lastIndexOf(fmatch[1])).trim(); }
-      // Strip leading model artifacts
-      s = s.replace(/^(\d+\s+|[A-Z]{1,3}\s+)+/, '').trim();
-      // Frame size at front (Size Color format — e.g. "Large Olive" or "M Black")
+      // Check size at END first (e.g. "Blue Small" or "Graphite Grey M")
+      const fe = s.match(SIZE_END);
+      if (fe && SIZE_RE.test(fe[1])) { size = fe[1].trim(); s = s.slice(0, fe.index).trim(); }
+      // Check size at FRONT before stripping codes (e.g. "Large Olive" or "M Black")
       if (!size) {
-        const fm2 = s.match(/^(Extra\s+Small|Extra\s+Large|X-Small|X-Large|Small|Medium|Large|XS|XL|XXL|\d+cm|[SMLX]{1,2}L?)\s+/i);
-        if (fm2 && /^(xs|s|sm|m|md|l|lg|xl|xxl|extra\s+small|extra\s+large|x-small|x-large|small|medium|large|\d+cm)$/i.test(fm2[1].trim())) {
-          size = fm2[1].trim(); s = s.slice(fm2[0].length).trim();
-        }
+        const ff = s.match(SIZE_FRONT);
+        if (ff && SIZE_RE.test(ff[1])) { size = ff[1].trim(); s = s.slice(ff[0].length).trim(); }
       }
-      // Wheel size — whitelist only valid bicycle sizes
+      // Strip remaining leading model code artifacts (digits, short uppercase non-size tokens)
+      s = s.replace(/^(\d+\s+|[A-Z]{1,3}\s+)+/, '').trim();
+      // Wheel size
       const wmatch = s.match(VALID_WHEELS);
       const wheel = wmatch ? wmatch[1].replace(/c$/i,'C').replace(/b$/i,'B') + '"' : null;
       if (wheel) s = s.slice(wmatch[0].length).trim();
-      // Color is what remains
-      const color = s.replace(/^[-–\s]+/, '').trim() || null;
+      // Color
+      const color = s.replace(/^[-\u2013\s]+/, '').trim() || null;
       return { wheel, color, size };
     }
 
