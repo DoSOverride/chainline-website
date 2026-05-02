@@ -1,4 +1,4 @@
-const CACHE = 'chainline-v6';
+const CACHE = 'chainline-v7';
 
 const PRECACHE = [
   '/',
@@ -14,25 +14,14 @@ const PRECACHE = [
   '/shopify.js',
 ];
 
-// CDN scripts that must be cached for offline PWA to function
-const CDN_PRECACHE = [
-  'https://unpkg.com/react@18.3.1/umd/react.production.min.js',
-  'https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js',
-  'https://unpkg.com/@babel/standalone@7.29.0/babel.min.js',
-];
+// NOTE: CDN scripts (React, Babel) must NOT be cached by the SW.
+// Caching with no-cors produces opaque responses (status 0) which
+// browsers refuse to execute as scripts → ERR_FAILED blank page.
+// unpkg.com serves these with long max-age; the HTTP cache handles them.
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(async c => {
-      await c.addAll(PRECACHE);
-      // Cache CDN scripts with no-cors (opaque responses) for offline support
-      for (const url of CDN_PRECACHE) {
-        try {
-          const resp = await fetch(url, { mode: 'no-cors' });
-          await c.put(url, resp);
-        } catch {}
-      }
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
   );
 });
 
@@ -49,19 +38,8 @@ self.addEventListener('fetch', e => {
 
   if (e.request.method !== 'GET') return;
 
-  // Cache CDN scripts (React, ReactDOM, Babel) for offline support
-  if (CDN_PRECACHE.includes(e.request.url)) {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request, { mode: 'no-cors' }).then(resp => {
-        const clone = resp.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return resp;
-      }))
-    );
-    return;
-  }
-
-  // Skip all other cross-origin requests: API, fonts, Shopify, R2, etc.
+  // Skip ALL cross-origin requests (CDN scripts, API, fonts, etc.)
+  // Let the browser + HTTP cache handle them directly.
   if (url.origin !== location.origin) return;
 
   // App shell: always serve index.html for navigation requests (SPA routing)
