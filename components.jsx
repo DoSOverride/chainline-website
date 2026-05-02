@@ -361,7 +361,6 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
           { label:"Helmets",           go:["accessories",{tab:"helmets"}] },
           { label:"Gloves & Armour",   go:["accessories",{tab:"protection"}] },
           { label:"Shoes & Cleats",    go:["accessories",{tab:"shoes"}] },
-          { label:"Clothing",          go:["accessories",{tab:"clothing"}] },
           { label:"Bags & Packs",      go:["accessories",{tab:"bags"}] },
           { label:"Lights & Computers",go:["accessories",{tab:"lights"}] },
           { label:"Locks",             go:["accessories",{tab:"locks"}] },
@@ -411,7 +410,6 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
           { label:"Helmets",           go:["accessories",{tab:"helmets"}] },
           { label:"Gloves & Armour",   go:["accessories",{tab:"protection"}] },
           { label:"Shoes & Cleats",    go:["accessories",{tab:"shoes"}] },
-          { label:"Clothing",          go:["accessories",{tab:"clothing"}] },
           { label:"Bags & Packs",      go:["accessories",{tab:"bags"}] },
           { label:"Lights & Computers",go:["accessories",{tab:"lights"}] },
           { label:"Locks",             go:["accessories",{tab:"locks"}] },
@@ -455,7 +453,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     // Brand filters → shop page filtered by brand
     if (["marin", "transition", "surly", "salsa", "pivot", "bianchi", "moots", "knolly", "revel", "revel cycles"].includes(l)) return ["shop", { brand: l.charAt(0).toUpperCase() + l.slice(1).replace(/ cycles$/,'') }];
     // Components vs Accessories split — tabs in ACC_TABS go to /accessories, rest to /components
-    const ACC_TABS = ["helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","accessories"];
+    const ACC_TABS = ["helmets","protection","shoes","tools","bags","lights","locks","racks","accessories"];
     const tabPage  = (tab) => ACC_TABS.includes(tab) ? "accessories" : "components";
     const PM={"cassette":{dept:"Cassette",tab:"drivetrain"},"chains":{dept:"Chains",tab:"drivetrain"},"chainrings":{dept:"Chainrings",tab:"drivetrain"},"cranks":{dept:"Cranks",tab:"drivetrain"},"derailleurs":{dept:"Derailleur Rear",tab:"drivetrain"},"shifters":{dept:"Shifters MTB",tab:"drivetrain"},"bottom brackets":{dept:"Bottom Brackets",tab:"drivetrain"},"cables":{dept:"Cables",tab:"drivetrain"},"brake pads":{dept:"Brake pads",tab:"brakes"},"brake levers":{dept:"Brake Lever U",tab:"brakes"},"rims":{dept:"Rims",tab:"wheels"},"hubs":{dept:"Hubs",tab:"wheels"},"spokes":{dept:"Spokes",tab:"wheels"},"wheelsets":{dept:"Wheelset (FR+RR)",tab:"wheels"},"skewers":{dept:"Skewers QR",tab:"wheels"}};
     const PM2={'tires 29"':{dept:'Tires 29"',tab:"wheels"},"tires 700c":{dept:"Tires 700C",tab:"wheels"},'tires 27.5"':{dept:'Tires 27" & 26x1&1/4 etc...',tab:"wheels"},'tires 26"':{dept:'Tires 26"',tab:"wheels"},"fat bike tires":{dept:"Tires Fatbike",tab:"wheels"},"tubes":{dept:"Tubes",tab:"wheels"},"tire sealant":{dept:"Tire Sealant",tab:"wheels"},"tire protection":{dept:"Tire Protection",tab:"wheels"},"forks":{dept:"Forks",tab:"suspension"},"rear shock":{dept:"Rear Shock",tab:"suspension"},"handlebar":{dept:"Handlebar",tab:"cockpit"},"stem":{dept:"Stem",tab:"cockpit"},"grips":{dept:"Grips",tab:"cockpit"},"bar tape":{dept:"Bar tape",tab:"cockpit"},"headsets":{dept:"Headsets",tab:"cockpit"},"seat post":{dept:"Seat post",tab:"cockpit"},"saddles":{dept:"Saddles",tab:"cockpit"},"helmets":{dept:"Helmet",tab:"helmets"},"armour":{dept:"Armour",tab:"protection"},"gloves":{dept:"Gloves",tab:"protection"},"sunglasses":{dept:"Sunglasses",tab:"protection"},"clothing":{dept:"Clothing",tab:"clothing"},"socks":{dept:"Socks",tab:"clothing"},"arm warmers":{dept:"Arm Warmers",tab:"clothing"},"leg warmers":{dept:"Leg Warmers",tab:"clothing"},"shoes":{dept:"Shoes Mountain",tab:"shoes"},"cleats":{dept:"Cleats",tab:"shoes"},"pumps":{dept:"Pumps",tab:"tools"},"tools":{dept:"Tools",tab:"tools"},"bags":{dept:"Bags",tab:"bags"},"packs":{dept:"Packs",tab:"bags"},"hydration":{dept:"Hydration",tab:"bags"},"lights":{dept:"Lights",tab:"lights"},"computers":{dept:"Computers",tab:"lights"},"locks":{dept:"Locks",tab:"locks"},"fenders":{dept:"Fenders",tab:"racks"},"bells":{dept:"Bells",tab:"racks"},"kickstands":{dept:"Kickstands",tab:"racks"},"bike racks":{dept:"Bike Racks",tab:"racks"},"water bottles":{dept:"Water Bottle",tab:"bags"}};
@@ -608,7 +606,7 @@ const MobileNav = ({ open, onClose }) => {
 
   const BRANDS = ["Marin","Transition","Surly","Pivot","Salsa","Bianchi","Moots","Knolly","Revel"];
   const TYPES  = ["All Bikes","Mountain","Gravel","Road","E-Bike","Commuter","Comfort","Kids"];
-  const ACC_TABS_MOB = ["helmets","protection","shoes","clothing","tools","bags","lights","locks","racks","accessories"];
+  const ACC_TABS_MOB = ["helmets","protection","shoes","tools","bags","lights","locks","racks","accessories"];
   const mobPage = (tab) => ACC_TABS_MOB.includes(tab) ? "accessories" : "components";
   const COMP_CATS = [
     { label:"Drivetrain",   tab:"drivetrain", items:["Cassette","Chains","Chainrings","Cranks","Derailleurs","Shifters","Bottom Brackets","Cables"] },
@@ -622,7 +620,6 @@ const MobileNav = ({ open, onClose }) => {
     { label:"Helmets",         tab:"helmets",    items:["Helmets","MTB Helmets","Road Helmets"] },
     { label:"Gloves & Armour", tab:"protection", items:["Gloves","Knee Pads","Elbow Pads","Sunglasses"] },
     { label:"Shoes & Cleats",  tab:"shoes",      items:["MTB Shoes","Road Shoes","SPD Cleats"] },
-    { label:"Clothing",        tab:"clothing",   items:["Jerseys","Shorts","Arm Warmers","Socks"] },
     { label:"Tools & Pumps",   tab:"tools",      items:["Pumps","Tools","Lube","Degreasers"] },
     { label:"Bags & Hydration",tab:"bags",       items:["Bags","Packs","Hydration"] },
     { label:"Lights",          tab:"lights",     items:["Lights","Computers"] },
@@ -730,7 +727,6 @@ const MobileNav = ({ open, onClose }) => {
             { label:"Helmets",             tab:"helmets" },
             { label:"Gloves & Armour",     tab:"protection" },
             { label:"Shoes & Cleats",      tab:"shoes" },
-            { label:"Clothing",            tab:"clothing" },
             { label:"Bags & Packs",        tab:"bags" },
             { label:"Lights & Computers",  tab:"lights" },
             { label:"Locks",               tab:"locks" },
@@ -1327,7 +1323,7 @@ const BottomNav = ({ page, cartCount, onSearch, onCart }) => {
   const shopSections = [
     { label:'Components', sub:'Drivetrain · Brakes · Suspension',  route:'components', emoji:'⚙️' },
     { label:'Parts',      sub:'Tires · Tubes · Chains · Lube',     route:'parts',      emoji:'🔩' },
-    { label:'Accessories',sub:'Helmets · Clothing · Bags · Lights', route:'accessories',emoji:'⛑️' },
+    { label:'Accessories',sub:'Helmets · Shoes · Bags · Lights', route:'accessories',emoji:'⛑️' },
   ];
   return (
     <>

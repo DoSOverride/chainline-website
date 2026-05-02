@@ -2381,49 +2381,91 @@ const isBikeDept = (dept) => BIKE_EXCLUDE.some(x => (dept||'').toLowerCase().inc
 // Unsplash images are free, CDN-served, no hotlink blocking
 const UNS = 'https://images.unsplash.com/';
 const DEPT_IMG = {
-  // Drivetrain — close-up bike mechanics
-  'cassette':          UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'chains':            UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'chainrings':        UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'cranks':            UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'bottom brackets':   UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'derailleur rear':   UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'derailleur front':  UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'shifters mtb':      UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  // Brakes
-  'brake pads':        UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'brake':             UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'brake parts':       UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  // Suspension
-  'forks':             UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'rear shock':        UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'forks parts':       UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
+  // Drivetrain — R2 shop photo
+  'cassette':                       `${R2}/parts/drivetrain-hero.jpg`,
+  'chains':                         `${R2}/parts/drivetrain-hero.jpg`,
+  'chainrings':                     `${R2}/parts/drivetrain-hero.jpg`,
+  'chain retention':                `${R2}/parts/drivetrain-hero.jpg`,
+  'cranks':                         `${R2}/parts/drivetrain-hero.jpg`,
+  'bottom brackets':                `${R2}/parts/drivetrain-hero.jpg`,
+  'derailleur rear':                `${R2}/parts/drivetrain-hero.jpg`,
+  'derailleur front':               `${R2}/parts/drivetrain-hero.jpg`,
+  'deraileur hangers':              `${R2}/parts/drivetrain-hero.jpg`,
+  'shifters mtb':                   `${R2}/parts/drivetrain-hero.jpg`,
+  'shifters - road':                `${R2}/parts/drivetrain-hero.jpg`,
+  'cables':                         `${R2}/parts/drivetrain-hero.jpg`,
+  'free hub body':                  `${R2}/parts/drivetrain-hero.jpg`,
+  'freewheel':                      `${R2}/parts/drivetrain-hero.jpg`,
+  // Brakes — R2 shop photo
+  'brake pads':                     `${R2}/parts/brakes-hero.jpg`,
+  'brake':                          `${R2}/parts/brakes-hero.jpg`,
+  'brake parts':                    `${R2}/parts/brakes-hero.jpg`,
+  'brake lever u':                  `${R2}/parts/brakes-hero.jpg`,
+  'brake lever v':                  `${R2}/parts/brakes-hero.jpg`,
+  'brake adapter disc':             `${R2}/parts/brakes-hero.jpg`,
+  // Suspension — fork/shock close-up
+  'forks':             UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
+  'rear shock':        UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
+  'fork parts':        UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
+  'seals':             UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
   // Tires & wheels
-  'tires 29"':         UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
-  'tires 700c':        UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
-  'tires 27" & 26x1&1/4 etc...': UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
-  'tires fatbike':     UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
-  'tubes':             UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
-  'tire sealant':      UNS + 'photo-1518655048521-f130df041f66?w=300&q=80',
+  'tires 29"':                      `${R2}/shop/interior-tires.jpg`,
+  'tires 700c':                     `${R2}/shop/interior-tires.jpg`,
+  'tires 27" & 26x1&1/4 etc...':   `${R2}/shop/interior-tires.jpg`,
+  'tires 24"':                      `${R2}/shop/interior-tires.jpg`,
+  'tires 26"':                      `${R2}/shop/interior-tires.jpg`,
+  'tires fatbike':                  `${R2}/shop/interior-tires.jpg`,
+  'tires tubular':                  `${R2}/shop/interior-tires.jpg`,
+  'tires 12, 16, 20':              `${R2}/shop/interior-tires.jpg`,
+  'tubes':                          `${R2}/shop/interior-tires.jpg`,
+  'tire sealant':                   `${R2}/shop/interior-tires.jpg`,
+  'tire protection':                `${R2}/shop/interior-tires.jpg`,
   'wheels':            UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
   'wheelset (fr+rr)':  UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
   'rims':              UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  // Cockpit
-  'handlebar':         UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'stem':              UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  'grips':             UNS + 'photo-1571068316344-75bc76f77890?w=300&q=80',
-  // Comfort
+  'hubs':              UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  'hub parts':         UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  'spokes':            UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  'skewers qr':        UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  // Cockpit — handlebar/stem/grips
+  'handlebar':         UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
+  'stem':              UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
+  'grips':             UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
+  'bar tape':          UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
+  'headsets':          UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
+  // Saddle / seatpost
   'saddles':           UNS + 'photo-1590674899484-d5640e854abe?w=300&q=80',
   'seat post':         UNS + 'photo-1590674899484-d5640e854abe?w=300&q=80',
-  // Apparel & protection
+  // Helmets & protection
   'helmet':            UNS + 'photo-1558618666-fcd25c85cd64?w=300&q=80',
   'gloves':            UNS + 'photo-1571333250630-f0230c320b6d?w=300&q=80',
-  // Accessories & maintenance
-  'tools':             UNS + 'photo-1505705694340-019e1e335916?w=300&q=80',
+  'armour':            UNS + 'photo-1527549993586-dff825b37782?w=300&q=80',
+  'sunglasses':        UNS + 'photo-1541625602330-2277a4c46182?w=300&q=80',
+  // Shoes & cleats — cycling shoe photo
+  'shoes mountain':    UNS + 'photo-1606107557195-0e29a4b5b4aa?w=300&q=80',
+  'shoes road':        UNS + 'photo-1606107557195-0e29a4b5b4aa?w=300&q=80',
+  'cleats':            UNS + 'photo-1606107557195-0e29a4b5b4aa?w=300&q=80',
+  // Clothing
+  'clothing':          UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
+  'arm warmers':       UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
+  'leg warmers':       UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
+  'socks':             UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
+  // Tools & maintenance — R2 shop photo
+  'tools':             `${R2}/parts/tools-hero.jpg`,
   'pumps':             UNS + 'photo-1556909114-f6e7ad7d3136?w=300&q=80',
-  'lube':              UNS + 'photo-1581093804475-577d72e38aa0?w=300&q=80',
-  'locks':             UNS + 'photo-1449426468159-d96dbf08f19f?w=300&q=80',
+  'lube':              `${R2}/parts/tools-hero.jpg`,
+  'trainers':          `${R2}/parts/tools-hero.jpg`,
+  // Accessories
   'lights':            UNS + 'photo-1542291026-7eec264c27ff?w=300&q=80',
+  'computers':         UNS + 'photo-1544620347-c4fd4a3d5957?w=300&q=80',
+  'locks':             UNS + 'photo-1449426468159-d96dbf08f19f?w=300&q=80',
+  'bags':              UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
+  'packs':             UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
+  'hydration ':        UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
+  'water bottle':      UNS + 'photo-1580261450046-d0a30080dc9b?w=300&q=80',
+  'water bottle cage': UNS + 'photo-1580261450046-d0a30080dc9b?w=300&q=80',
+  'car racks':         UNS + 'photo-1469395446868-fb6a048d5ca3?w=300&q=80',
+  'bike racks':        UNS + 'photo-1469395446868-fb6a048d5ca3?w=300&q=80',
 };
 
 // Dept-level emoji — more specific than tab emoji
@@ -2564,7 +2606,7 @@ const cleanDept = (d) => {
 
 // ── PartsPage ─────────────────────────────────────────────────────────────
 const COMP_TAB_IDS = ['drivetrain','brakes','wheels','cockpit','suspension'];
-const ACC_TAB_IDS  = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+const ACC_TAB_IDS  = ['helmets','protection','shoes','tools','bags','lights','locks','racks'];
 
 const PartsPage = ({ pageType = 'components' }) => {
   const defaultTab = pageType === 'accessories' ? 'helmets' : 'drivetrain';
@@ -2641,9 +2683,6 @@ const PartsPage = ({ pageType = 'components' }) => {
     { label:'Gloves',     tab:'protection', search:'Glove',    emoji:'🧤' },
     { label:'Armour',     tab:'protection', search:'Armour',   emoji:'🛡️' },
     { label:'Sunglasses', tab:'protection', search:'Sunglass', emoji:'🕶️' },
-    { label:'Jerseys',    tab:'clothing',   search:'Jersey',   emoji:'👕' },
-    { label:'Warmers',    tab:'clothing',   search:'Warmer',   emoji:'🧣' },
-    { label:'Socks',      tab:'clothing',   search:'Sock',     emoji:'🧦' },
     { label:'Shoes',      tab:'shoes',                         emoji:'👟' },
     { label:'Cleats',     tab:'shoes',      search:'Cleat',    emoji:'🔩' },
     { label:'Bags',       tab:'bags',                          emoji:'🎒' },
@@ -3683,7 +3722,7 @@ const StorePage = () => {
   const cats = [
     { route:'components',  label:'Components',  emoji:'⚙️', desc:'Drivetrain, brakes, suspension, cockpit' },
     { route:'parts',       label:'Parts',       emoji:'🔗', desc:'Tires, tubes, chains, cables, brake pads, lube' },
-    { route:'accessories', label:'Accessories', emoji:'🎒', desc:'Helmets, clothing, lights, locks, bags, tools' },
+    { route:'accessories', label:'Accessories', emoji:'🎒', desc:'Helmets, shoes, lights, locks, bags, tools' },
   ];
 
   return (
@@ -3862,7 +3901,7 @@ const PartsCategoryLanding = ({ eyebrow, title, italic, sections, sectionTabIds,
 
   const resultGo = (p) => {
     const tab = window.PART_TABS?.find(t => t.depts.some(d => d.toLowerCase() === (p.department || '').toLowerCase()))?.id;
-    const accTabs = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+    const accTabs = ['helmets','protection','shoes','tools','bags','lights','locks','racks'];
     const destPage = accTabs.includes(tab) ? 'accessories' : 'components';
     window.cl.go(destPage, { tab, search: p.name });
   };
@@ -4050,12 +4089,7 @@ const AccessoriesLandingPage = () => (
         { label:'Gloves',          emoji:'🧤', desc:'Trail, XC, road — all seasons',          page:'accessories', tab:'protection', search:'Glove' },
         { label:'Armour & Pads',   emoji:'🛡️', desc:'Knee, elbow, back protection',           page:'accessories', tab:'protection', search:'Armour' },
         { label:'Sunglasses',      emoji:'🕶️', desc:'Sport eyewear, photochromic lenses',     page:'accessories', tab:'protection', search:'Sunglass' },
-      ]},
-      { heading:'Clothing', tiles:[
-        { label:'Jerseys & Shorts',  emoji:'👕', desc:'MTB & road jerseys, bibs, shorts',       page:'accessories', tab:'clothing', search:'Jersey' },
-        { label:'Arm & Leg Warmers', emoji:'🧣', desc:'Wind jackets, arm & leg warmers',         page:'accessories', tab:'clothing', search:'Warmer' },
-        { label:'Shoes & Cleats',    emoji:'👟', desc:'Mountain & road shoes, SPD & road cleats',page:'accessories', tab:'shoes' },
-        { label:'Socks',             emoji:'🧦', desc:'Wool, synthetic — all lengths',           page:'accessories', tab:'clothing', search:'Sock' },
+        { label:'Shoes & Cleats',  emoji:'👟', desc:'Mountain & road shoes, SPD & road cleats',page:'accessories', tab:'shoes' },
       ]},
       { heading:'Bags & Hydration', tiles:[
         { label:'Packs & Bags',      emoji:'🎒', desc:'Hydration packs, frame bags, saddle bags', page:'accessories', tab:'bags' },
@@ -4098,7 +4132,7 @@ const AllShopPage = () => {
 
   const resultGo = (p) => {
     const tab = window.PART_TABS?.find(t => t.depts.some(d => d.toLowerCase() === (p.department||'').toLowerCase()))?.id;
-    const accTabs = ['helmets','protection','shoes','clothing','tools','bags','lights','locks','racks'];
+    const accTabs = ['helmets','protection','shoes','tools','bags','lights','locks','racks'];
     window.cl.go(accTabs.includes(tab) ? 'accessories' : 'components', { tab, search: p.name });
   };
 
@@ -4115,7 +4149,7 @@ const AllShopPage = () => {
     { label:'Brake Pads', page:'components',  tab:'brakes',     search:'Brake pad',emoji:'🛑' },
     { label:'Chains',     page:'components',  tab:'drivetrain', search:'Chain',    emoji:'🔗' },
     { label:'Tubes',      page:'components',  tab:'wheels',     search:'Tube',     emoji:'🫧' },
-    { label:'Clothing',   page:'accessories', tab:'clothing',                      emoji:'👕' },
+    { label:'Shoes',      page:'accessories', tab:'shoes',                         emoji:'👟' },
     { label:'Forks',      page:'components',  tab:'suspension', search:'Fork',     emoji:'🔩' },
     { label:'Saddles',    page:'components',  tab:'cockpit',    search:'Saddle',   emoji:'💺' },
     { label:'Lights',     page:'accessories', tab:'lights',     search:'Light',    emoji:'💡' },
