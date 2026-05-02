@@ -4557,6 +4557,7 @@ const InspectionPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          siteOrigin: window.location.origin,
           mechanic: form.mechanic || 'ChainLine Mechanic',
           customer: { name: form.customerName, phone: form.customerPhone, email: form.customerEmail },
           bike: { brand: form.bikeBrand, model: form.bikeModel, year: form.bikeYear, color: form.bikeColor },
