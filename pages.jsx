@@ -2654,7 +2654,7 @@ const isBikeDept = (dept) => BIKE_EXCLUDE.some(x => (dept||'').toLowerCase().inc
 
 // Per-department fallback images (used when Lightspeed has no image for an item)
 // Unsplash images are free, CDN-served, no hotlink blocking
-const UNS = 'https://images.unsplash.com/';
+const UNS = 'https://still-term-f1ec.taocaruso77.workers.dev/r2/fallbacks/';
 const DEPT_IMG = {
   // Drivetrain — R2 shop photo
   'cassette':                       `${R2}/parts/drivetrain-hero.jpg`,
@@ -2679,10 +2679,10 @@ const DEPT_IMG = {
   'brake lever v':                  `${R2}/parts/brakes-hero.jpg`,
   'brake adapter disc':             `${R2}/parts/brakes-hero.jpg`,
   // Suspension — fork/shock close-up
-  'forks':             UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
-  'rear shock':        UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
-  'fork parts':        UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
-  'seals':             UNS + 'photo-1597484661973-ee6cd0b6482c?w=300&q=80',
+  'forks':             UNS + '1597484661973-ee6cd0b6482c.jpg',
+  'rear shock':        UNS + '1597484661973-ee6cd0b6482c.jpg',
+  'fork parts':        UNS + '1597484661973-ee6cd0b6482c.jpg',
+  'seals':             UNS + '1597484661973-ee6cd0b6482c.jpg',
   // Tires & wheels
   'tires 29"':                      `${R2}/shop/interior-tires.jpg`,
   'tires 700c':                     `${R2}/shop/interior-tires.jpg`,
@@ -2695,71 +2695,71 @@ const DEPT_IMG = {
   'tubes':                          `${R2}/shop/interior-tires.jpg`,
   'tire sealant':                   `${R2}/shop/interior-tires.jpg`,
   'tire protection':                `${R2}/shop/interior-tires.jpg`,
-  'wheels':            UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  'wheelset (fr+rr)':  UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  'rims':              UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  'hubs':              UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  'hub parts':         UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  'spokes':            UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
-  'skewers qr':        UNS + 'photo-1532298229144-0ec0c57515c7?w=300&q=80',
+  'wheels':            UNS + '1532298229144-0ec0c57515c7.jpg',
+  'wheelset (fr+rr)':  UNS + '1532298229144-0ec0c57515c7.jpg',
+  'rims':              UNS + '1532298229144-0ec0c57515c7.jpg',
+  'hubs':              UNS + '1532298229144-0ec0c57515c7.jpg',
+  'hub parts':         UNS + '1532298229144-0ec0c57515c7.jpg',
+  'spokes':            UNS + '1532298229144-0ec0c57515c7.jpg',
+  'skewers qr':        UNS + '1532298229144-0ec0c57515c7.jpg',
   // Cockpit — handlebar/stem/grips
-  'handlebar':         UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
-  'stem':              UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
-  'grips':             UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
-  'bar tape':          UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
-  'headsets':          UNS + 'photo-1578662996442-48f60103fc96?w=300&q=80',
+  'handlebar':         UNS + '1578662996442-48f60103fc96.jpg',
+  'stem':              UNS + '1578662996442-48f60103fc96.jpg',
+  'grips':             UNS + '1578662996442-48f60103fc96.jpg',
+  'bar tape':          UNS + '1578662996442-48f60103fc96.jpg',
+  'headsets':          UNS + '1578662996442-48f60103fc96.jpg',
   // Saddle / seatpost
-  'saddles':           UNS + 'photo-1590674899484-d5640e854abe?w=300&q=80',
-  'seat post':         UNS + 'photo-1590674899484-d5640e854abe?w=300&q=80',
+  'saddles':           UNS + '1590674899484-d5640e854abe.jpg',
+  'seat post':         UNS + '1590674899484-d5640e854abe.jpg',
   // Helmets & protection
-  'helmet':            UNS + 'photo-1558618666-fcd25c85cd64?w=300&q=80',
-  'gloves':            UNS + 'photo-1571333250630-f0230c320b6d?w=300&q=80',
-  'armour':            UNS + 'photo-1527549993586-dff825b37782?w=300&q=80',
-  'sunglasses':        UNS + 'photo-1541625602330-2277a4c46182?w=300&q=80',
+  'helmet':            UNS + '1558618666-fcd25c85cd64.jpg',
+  'gloves':            UNS + '1571333250630-f0230c320b6d.jpg',
+  'armour':            UNS + '1527549993586-dff825b37782.jpg',
+  'sunglasses':        UNS + '1541625602330-2277a4c46182.jpg',
   // Shoes & cleats — cycling shoe photo
-  'shoes mountain':    UNS + 'photo-1606107557195-0e29a4b5b4aa?w=300&q=80',
-  'shoes road':        UNS + 'photo-1606107557195-0e29a4b5b4aa?w=300&q=80',
-  'cleats':            UNS + 'photo-1606107557195-0e29a4b5b4aa?w=300&q=80',
+  'shoes mountain':    UNS + '1606107557195-0e29a4b5b4aa.jpg',
+  'shoes road':        UNS + '1606107557195-0e29a4b5b4aa.jpg',
+  'cleats':            UNS + '1606107557195-0e29a4b5b4aa.jpg',
   // Clothing
-  'clothing':          UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
-  'arm warmers':       UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
-  'leg warmers':       UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
-  'socks':             UNS + 'photo-1539571696357-5a69c17a67c6?w=300&q=80',
+  'clothing':          UNS + '1539571696357-5a69c17a67c6.jpg',
+  'arm warmers':       UNS + '1539571696357-5a69c17a67c6.jpg',
+  'leg warmers':       UNS + '1539571696357-5a69c17a67c6.jpg',
+  'socks':             UNS + '1539571696357-5a69c17a67c6.jpg',
   // Tools & maintenance — R2 shop photo
   'tools':             `${R2}/parts/tools-hero.jpg`,
-  'pumps':             UNS + 'photo-1556909114-f6e7ad7d3136?w=300&q=80',
+  'pumps':             UNS + '1556909114-f6e7ad7d3136.jpg',
   'lube':              `${R2}/parts/tools-hero.jpg`,
   'trainers':          `${R2}/parts/tools-hero.jpg`,
   // Accessories
-  'lights':            UNS + 'photo-1542291026-7eec264c27ff?w=300&q=80',
-  'computers':         UNS + 'photo-1544620347-c4fd4a3d5957?w=300&q=80',
-  'locks':             UNS + 'photo-1449426468159-d96dbf08f19f?w=300&q=80',
-  'bags':              UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
-  'packs':             UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
-  'hydration':         UNS + 'photo-1535914254981-b5012eebbd15?w=300&q=80',
-  'water bottle':      UNS + 'photo-1580261450046-d0a30080dc9b?w=300&q=80',
-  'water bottle cage': UNS + 'photo-1580261450046-d0a30080dc9b?w=300&q=80',
-  'car racks':         UNS + 'photo-1469395446868-fb6a048d5ca3?w=300&q=80',
-  'bike racks':        UNS + 'photo-1469395446868-fb6a048d5ca3?w=300&q=80',
+  'lights':            UNS + '1542291026-7eec264c27ff.jpg',
+  'computers':         UNS + '1544620347-c4fd4a3d5957.jpg',
+  'locks':             UNS + '1449426468159-d96dbf08f19f.jpg',
+  'bags':              UNS + '1535914254981-b5012eebbd15.jpg',
+  'packs':             UNS + '1535914254981-b5012eebbd15.jpg',
+  'hydration':         UNS + '1535914254981-b5012eebbd15.jpg',
+  'water bottle':      UNS + '1580261450046-d0a30080dc9b.jpg',
+  'water bottle cage': UNS + '1580261450046-d0a30080dc9b.jpg',
+  'car racks':         UNS + '1469395446868-fb6a048d5ca3.jpg',
+  'bike racks':        UNS + '1469395446868-fb6a048d5ca3.jpg',
 };
 
 // Name-pattern → image. More specific than DEPT_IMG — matches on item name keywords.
 // First match wins. Most specific patterns (brand+model) first, generic last.
 const ITEM_IMG_PATTERNS = [
   // Suspension
-  [/\bfork\b|suspension fork|rockshox|fox 36|fox 34|lyrik|pike\b|zeb\b|marzocchi/i,   UNS+'photo-1597484661973-ee6cd0b6482c?w=300&q=80'],
-  [/rear shock|shock\b|dpx2|super deluxe|monarch|ohlins|vivid/i,                       UNS+'photo-1597484661973-ee6cd0b6482c?w=300&q=80'],
-  [/dropper|reverb|transfer|one.?up.*post|pnw.*post/i,                                 UNS+'photo-1590674899484-d5640e854abe?w=300&q=80'],
+  [/\bfork\b|suspension fork|rockshox|fox 36|fox 34|lyrik|pike\b|zeb\b|marzocchi/i,   UNS+'1597484661973-ee6cd0b6482c.jpg'],
+  [/rear shock|shock\b|dpx2|super deluxe|monarch|ohlins|vivid/i,                       UNS+'1597484661973-ee6cd0b6482c.jpg'],
+  [/dropper|reverb|transfer|one.?up.*post|pnw.*post/i,                                 UNS+'1590674899484-d5640e854abe.jpg'],
   // Drivetrain — specific
-  [/cassette|cs-\w|pg-\d|xg-\d|eg-\d/i,                                               UNS+'photo-1558981806-ec527fa84c39?w=300&q=80'],
-  [/\bchain\b|hg-x|t-type.*chain|eagle.*chain/i,                                       UNS+'photo-1571068316344-75bc76f77890?w=300&q=80'],
-  [/derailleur|rear der|front der|rd-\w|fd-\w/i,                                        UNS+'photo-1605152276897-4f618f831968?w=300&q=80'],
-  [/crank|chainring|crankset|hollowtech|fc-m/i,                                         UNS+'photo-1551698618-1dfe5d97d256?w=300&q=80'],
-  [/bottom bracket|bb\d|pressfit/i,                                                     UNS+'photo-1571068316344-75bc76f77890?w=300&q=80'],
-  [/shifter|trigger.*shift/i,                                                            UNS+'photo-1565098772267-60af42b81ef2?w=300&q=80'],
+  [/cassette|cs-\w|pg-\d|xg-\d|eg-\d/i,                                               UNS+'1558981806-ec527fa84c39.jpg'],
+  [/\bchain\b|hg-x|t-type.*chain|eagle.*chain/i,                                       UNS+'1571068316344-75bc76f77890.jpg'],
+  [/derailleur|rear der|front der|rd-\w|fd-\w/i,                                        UNS+'1605152276897-4f618f831968.jpg'],
+  [/crank|chainring|crankset|hollowtech|fc-m/i,                                         UNS+'1551698618-1dfe5d97d256.jpg'],
+  [/bottom bracket|bb\d|pressfit/i,                                                     UNS+'1571068316344-75bc76f77890.jpg'],
+  [/shifter|trigger.*shift/i,                                                            UNS+'1565098772267-60af42b81ef2.jpg'],
   [/cable\b|housing|shift.*cable|brake.*cable/i,                                        `${R2}/parts/drivetrain-hero.jpg`],
   // Brakes
-  [/brake pad|b01s|b03s|l02|resin pad|metallic pad|sintered/i,                         UNS+'photo-1558980394-0a06c4631733?w=300&q=80'],
+  [/brake pad|b01s|b03s|l02|resin pad|metallic pad|sintered/i,                         UNS+'1558980394-0a06c4631733.jpg'],
   [/brake\b|caliper|hydraulic|bleed kit|guide.*brake|maven|saint.*brake/i,             `${R2}/parts/brakes-hero.jpg`],
   [/brake lever|lever\b|brifter/i,                                                      `${R2}/parts/brakes-hero.jpg`],
   // Tires — by model name first, then generic
@@ -2770,45 +2770,45 @@ const ITEM_IMG_PATTERNS = [
   [/sealant|stans|orange seal|muc-off.*seal/i,                                          `${R2}/shop/interior-tires.jpg`],
   [/tire.*insert|cushcore|rimpact/i,                                                     `${R2}/shop/interior-tires.jpg`],
   // Wheels
-  [/hub\b|hubs\b|hope.*hub|dt.*hub/i,                                                   UNS+'photo-1532298229144-0ec0c57515c7?w=300&q=80'],
-  [/rim\b|rims\b|wheelset|wheel\b|spoke/i,                                              UNS+'photo-1532298229144-0ec0c57515c7?w=300&q=80'],
+  [/hub\b|hubs\b|hope.*hub|dt.*hub/i,                                                   UNS+'1532298229144-0ec0c57515c7.jpg'],
+  [/rim\b|rims\b|wheelset|wheel\b|spoke/i,                                              UNS+'1532298229144-0ec0c57515c7.jpg'],
   // Cockpit
-  [/handlebar|riser bar|drop bar|flat bar/i,                                             UNS+'photo-1578662996442-48f60103fc96?w=300&q=80'],
-  [/\bstem\b|headset|starnut/i,                                                          UNS+'photo-1578662996442-48f60103fc96?w=300&q=80'],
-  [/grip\b|grips\b|lock.on|ergon.*grip/i,                                               UNS+'photo-1578662996442-48f60103fc96?w=300&q=80'],
-  [/bar tape/i,                                                                           UNS+'photo-1578662996442-48f60103fc96?w=300&q=80'],
+  [/handlebar|riser bar|drop bar|flat bar/i,                                             UNS+'1578662996442-48f60103fc96.jpg'],
+  [/\bstem\b|headset|starnut/i,                                                          UNS+'1578662996442-48f60103fc96.jpg'],
+  [/grip\b|grips\b|lock.on|ergon.*grip/i,                                               UNS+'1578662996442-48f60103fc96.jpg'],
+  [/bar tape/i,                                                                           UNS+'1578662996442-48f60103fc96.jpg'],
   // Saddle / seatpost
-  [/saddle|wtb.*saddle|fizik|selle|fabric.*saddle/i,                                    UNS+'photo-1590674899484-d5640e854abe?w=300&q=80'],
-  [/seatpost\b|seat post/i,                                                              UNS+'photo-1590674899484-d5640e854abe?w=300&q=80'],
+  [/saddle|wtb.*saddle|fizik|selle|fabric.*saddle/i,                                    UNS+'1590674899484-d5640e854abe.jpg'],
+  [/seatpost\b|seat post/i,                                                              UNS+'1590674899484-d5640e854abe.jpg'],
   // Helmets & protection
-  [/helmet/i,                                                                             UNS+'photo-1558618666-fcd25c85cd64?w=300&q=80'],
-  [/gloves\b|glove\b/i,                                                                  UNS+'photo-1571333250630-f0230c320b6d?w=300&q=80'],
-  [/armour|armor|knee.*pad|elbow.*pad|body.*armour/i,                                   UNS+'photo-1527549993586-dff825b37782?w=300&q=80'],
-  [/sunglasses|glasses|eyewear|goggle/i,                                                 UNS+'photo-1541625602330-2277a4c46182?w=300&q=80'],
+  [/helmet/i,                                                                             UNS+'1558618666-fcd25c85cd64.jpg'],
+  [/gloves\b|glove\b/i,                                                                  UNS+'1571333250630-f0230c320b6d.jpg'],
+  [/armour|armor|knee.*pad|elbow.*pad|body.*armour/i,                                   UNS+'1527549993586-dff825b37782.jpg'],
+  [/sunglasses|glasses|eyewear|goggle/i,                                                 UNS+'1541625602330-2277a4c46182.jpg'],
   // Shoes & cleats
-  [/shoe\b|shoes\b|cleat|spd\b|speedplay/i,                                             UNS+'photo-1606107557195-0e29a4b5b4aa?w=300&q=80'],
+  [/shoe\b|shoes\b|cleat|spd\b|speedplay/i,                                             UNS+'1606107557195-0e29a4b5b4aa.jpg'],
   // Pedals
-  [/pedal/i,                                                                              UNS+'photo-1565098772267-60af42b81ef2?w=300&q=80'],
+  [/pedal/i,                                                                              UNS+'1565098772267-60af42b81ef2.jpg'],
   // Lighting
-  [/light\b|lights\b|lezyne|blackburn.*light|exposure/i,                                UNS+'photo-1542291026-7eec264c27ff?w=300&q=80'],
+  [/light\b|lights\b|lezyne|blackburn.*light|exposure/i,                                UNS+'1542291026-7eec264c27ff.jpg'],
   // Security
-  [/lock\b|u-lock|chain.*lock|abus|kryptonite/i,                                        UNS+'photo-1449426468159-d96dbf08f19f?w=300&q=80'],
+  [/lock\b|u-lock|chain.*lock|abus|kryptonite/i,                                        UNS+'1449426468159-d96dbf08f19f.jpg'],
   // Bags & packs
-  [/hydration|camelbak|osprey/i,                                                         UNS+'photo-1535914254981-b5012eebbd15?w=300&q=80'],
-  [/bag\b|bags\b|pack\b|frame bag|saddle bag|bar bag/i,                                 UNS+'photo-1535914254981-b5012eebbd15?w=300&q=80'],
+  [/hydration|camelbak|osprey/i,                                                         UNS+'1535914254981-b5012eebbd15.jpg'],
+  [/bag\b|bags\b|pack\b|frame bag|saddle bag|bar bag/i,                                 UNS+'1535914254981-b5012eebbd15.jpg'],
   // Bottles
-  [/water bottle|bottle\b/i,                                                             UNS+'photo-1580261450046-d0a30080dc9b?w=300&q=80'],
+  [/water bottle|bottle\b/i,                                                             UNS+'1580261450046-d0a30080dc9b.jpg'],
   // Computers
-  [/computer\b|gps\b|garmin|wahoo|sigma|edge \d/i,                                      UNS+'photo-1544620347-c4fd4a3d5957?w=300&q=80'],
+  [/computer\b|gps\b|garmin|wahoo|sigma|edge \d/i,                                      UNS+'1544620347-c4fd4a3d5957.jpg'],
   // Pumps
-  [/pump\b|floor pump|mini pump|co2\b|topeak.*pump/i,                                   UNS+'photo-1556909114-f6e7ad7d3136?w=300&q=80'],
+  [/pump\b|floor pump|mini pump|co2\b|topeak.*pump/i,                                   UNS+'1556909114-f6e7ad7d3136.jpg'],
   // Tools & maintenance
   [/lube\b|lubricant|degreaser|cleaner|muc-off|finish.*line|squirt/i,                   `${R2}/parts/tools-hero.jpg`],
   [/tool|torque|hex.*key|allen|multi.?tool|park.*tool/i,                                `${R2}/parts/tools-hero.jpg`],
   [/trainer\b|smart.*trainer|kickr|tacx/i,                                              `${R2}/parts/tools-hero.jpg`],
   // Racks & fenders
-  [/car rack|roof rack|yakima|thule|hitch.*rack/i,                                      UNS+'photo-1469395446868-fb6a048d5ca3?w=300&q=80'],
-  [/fender|mudguard|kickstand|rack\b/i,                                                  UNS+'photo-1511497584788-876760111969?w=300&q=80'],
+  [/car rack|roof rack|yakima|thule|hitch.*rack/i,                                      UNS+'1469395446868-fb6a048d5ca3.jpg'],
+  [/fender|mudguard|kickstand|rack\b/i,                                                  UNS+'1511497584788-876760111969.jpg'],
 ];
 
 function resolvePartImg(name, dept) {

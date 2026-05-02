@@ -247,16 +247,15 @@ const StatsBar = () => (
 
 // Brand logos grid — tiles flip on hover to show each brand's actual logo
 const BRAND_LOGOS = {
-  // Marin: no static CDN URL found (JS-rendered) — text fallback used
   "MARIN":       null,
-  "TRANSITION":  "https://www.transitionbikes.com/images/Nav_TransitionLogoTopLeftCornerShadow2.png",
-  "SURLY":       "https://surlybikes.com/cdn/shop/files/Surly-Logo-White.svg?v=1741038664&width=600",
-  "SALSA":       "https://www.salsacycles.com/cdn/shop/files/Salsa-Logo.svg?v=1740002630&width=600",
-  "PIVOT":       "https://cdn.shopify.com/oxygen-v2/29487/77993/161582/3468523/assets/pvt-logo-C6F70W5d.svg",
-  "BIANCHI":     "https://www.bianchi.com/wp-content/themes/bianchi/inc/assets/images/logo-bianchi-black.svg",
-  "MOOTS":       "https://moots.com/cdn/shop/files/image_1.png?v=1758088868&width=600",
-  "KNOLLY":      "https://knollybikes.com/cdn/shop/files/logo-knolly-white.svg?v=1687721502&width=180",
-  "REVEL":       "https://revelbikes.com/cdn/shop/files/high-resolation-logo.png?v=1764233115&width=600",
+  "TRANSITION":  "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/transition.png",
+  "SURLY":       "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/surly.svg",
+  "SALSA":       "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/salsa.svg",
+  "PIVOT":       "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/pivot.svg",
+  "BIANCHI":     "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/bianchi.svg",
+  "MOOTS":       "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/moots.png",
+  "KNOLLY":      "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/knolly.svg",
+  "REVEL":       "https://still-term-f1ec.taocaruso77.workers.dev/r2/brand-logos/revel.png",
 };
 
 // Which logos are dark (need white background) vs white (need dark background)
