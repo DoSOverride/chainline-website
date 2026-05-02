@@ -4799,8 +4799,8 @@ const QuotePage = () => {
       </div>
       <div style={{ background:'var(--paper)', padding:20, marginBottom:24 }}>
         <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:8 }}>Your bike</div>
-        <div style={{ fontFamily:'var(--display)', fontSize:22, fontWeight:500 }}>{quote.bike.brand} {quote.bike.model}</div>
-        {quote.bike.year && <div style={{ color:'var(--gray-500)', fontSize:14 }}>{quote.bike.year}{quote.bike.color ? ` · ${quote.bike.color}` : ''}</div>}
+        <div style={{ fontFamily:'var(--display)', fontSize:22, fontWeight:500 }}>{quote.bike?.brand} {quote.bike?.model}</div>
+        {quote.bike?.year && <div style={{ color:'var(--gray-500)', fontSize:14 }}>{quote.bike.year}{quote.bike.color ? ` · ${quote.bike.color}` : ''}</div>}
         <div style={{ marginTop:12, fontFamily:'var(--mono)', fontSize:10, color:'var(--gray-400)' }}>Prepared by {quote.mechanic} · {new Date(quote.created).toLocaleDateString('en-CA', { month:'long', day:'numeric', year:'numeric' })}</div>
       </div>
       {quote.completed?.length > 0 && (
