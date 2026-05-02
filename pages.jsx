@@ -2735,27 +2735,8 @@ const PartsPage = ({ pageType = 'components' }) => {
           {/* Main */}
           <div className="parts-main" style={{ minWidth:0, overflow:"hidden" }}>
 
-            {/* Hero banner */}
-            {!search && (
-              <div style={{ position:"relative", height:140, background:"#0a0a0a", overflow:"hidden" }}>
-                {activeTab.img && <img src={activeTab.img} alt={activeTab.label}
-                  loading="lazy" decoding="async" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.4 }} />}
-                <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 100%)" }} />
-                <div style={{ position:"relative", height:"100%", display:"flex", alignItems:"center", padding:"0 28px", gap:16 }}>
-                  <span style={{ fontSize:36, lineHeight:1 }}>{activeTab.emoji}</span>
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(20px,2.5vw,28px)", fontWeight:600, textTransform:"uppercase", letterSpacing:"-.02em", color:"#fafafa", lineHeight:1 }}>{activeTab.label}</div>
-                    <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:5 }}>{activeTab.sub}</div>
-                  </div>
-                  {!loading && filtered.length > 0 && (
-                    <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"rgba(255,255,255,0.45)", letterSpacing:".08em", textTransform:"uppercase" }}>{filtered.length} in stock</span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Sticky search bar */}
-            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:64, zIndex:10 }}>
+            {/* Sticky search bar — above hero so it's always visible near the top */}
+            <div style={{ padding:"12px 20px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", gap:10, background:"var(--white)", position:"sticky", top:136, zIndex:10 }}>
               <div style={{ flex:1, display:"flex", alignItems:"center", gap:8, background:"var(--paper)", border:"1px solid var(--hairline)", padding:"0 12px", transition:"border-color .15s" }}
                 onFocusCapture={e => e.currentTarget.style.borderColor='var(--black)'}
                 onBlurCapture={e => e.currentTarget.style.borderColor='var(--hairline)'}>
@@ -2773,6 +2754,25 @@ const PartsPage = ({ pageType = 'components' }) => {
             {searchIsGlobal && search && (
               <div style={{ padding:"8px 20px", background:"#fef9c3", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"#92400e" }}>
                 No results in {activeTab.label} — showing all inventory
+              </div>
+            )}
+
+            {/* Hero banner — below search bar so search is always accessible */}
+            {!search && (
+              <div style={{ position:"relative", height:120, background:"#0a0a0a", overflow:"hidden" }}>
+                {activeTab.img && <img src={activeTab.img} alt={activeTab.label}
+                  loading="lazy" decoding="async" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 40%", opacity:.4 }} />}
+                <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 100%)" }} />
+                <div style={{ position:"relative", height:"100%", display:"flex", alignItems:"center", padding:"0 28px", gap:16 }}>
+                  <span style={{ fontSize:32, lineHeight:1 }}>{activeTab.emoji}</span>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontFamily:"var(--display)", fontSize:"clamp(18px,2.5vw,24px)", fontWeight:600, textTransform:"uppercase", letterSpacing:"-.02em", color:"#fafafa", lineHeight:1 }}>{activeTab.label}</div>
+                    <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".14em", textTransform:"uppercase", color:"rgba(255,255,255,0.5)", marginTop:4 }}>{activeTab.sub}</div>
+                  </div>
+                  {!loading && filtered.length > 0 && (
+                    <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"rgba(255,255,255,0.45)", letterSpacing:".08em", textTransform:"uppercase" }}>{filtered.length} in stock</span>
+                  )}
+                </div>
               </div>
             )}
 
