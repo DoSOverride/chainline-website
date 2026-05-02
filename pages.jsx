@@ -113,6 +113,7 @@ const useBikeVariants = (bike) => {
 
     const IMPORTANT_SHORT = new Set(['jr','sx','gx','cx','rs','sl','29','27','26','20','16','e','st','ls']);
     const STOP = new Set(['the','and','for','with','ride','comp','elite','race','pro','base','alloy','carbon','plus','size']);
+    const EXCLUSIVE = new Set(['e','st','ls','cx','jr']); // sub-model discriminators
 
     const buildVariants = () => {
       const lsBikes = window.CL_LS?.bikes || [];
@@ -127,12 +128,25 @@ const useBikeVariants = (bike) => {
         return (wl.length >= 3 || IMPORTANT_SHORT.has(wl)) && !STOP.has(wl);
       });
 
+      // IMPORTANT_SHORT tokens use word-boundary match: prevents 'e' matching 'eagle', 'st' in 'stinson'
+      const tokenMatch = (t, n) => {
+        const wl = t.replace(/[^a-z0-9]/g, '');
+        if (IMPORTANT_SHORT.has(wl))
+          return new RegExp('(?:^|\\s)' + t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '(?:\\s|$)').test(n);
+        return n.includes(t);
+      };
+
       const matches = lsBikes.filter(ls => {
         const n = (ls.name || '').toLowerCase();
         // Brand must appear at start of Lightspeed name
         if (brand && !n.startsWith(brand + ' ') && !n.startsWith(brand + '-')) return false;
         // All model tokens must appear in the Lightspeed name
-        return tokens.every(t => n.includes(t));
+        if (!tokens.every(t => tokenMatch(t, n))) return false;
+        // Reject: LS name has a sub-model discriminator not required by this bike
+        for (const disc of EXCLUSIVE) {
+          if (new RegExp('(?:^|\\s)' + disc + '(?:\\s|$)').test(n) && !tokens.includes(disc)) return false;
+        }
+        return true;
       });
 
       if (!matches.length) { setVarLoading(false); return true; }
@@ -1134,6 +1148,19 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
 
         {/* Key spec tagline */}
         {(() => { const tl = getCardTagline(b, bikeData); return tl ? <div className="bike-card-tagline">{tl}</div> : null; })()}
+
+        {/* Static wheel size — when no variant data yet */}
+        {!hasWheels && !hasSizes && (() => {
+          const wsRaw = (b.tags || '').match(/(700[cC]?|27\.5|29|26|24|20)/)?.[1]
+            || (b.name || '').match(/(27\.5|29|26|700)/)?.[1];
+          if (!wsRaw) return null;
+          const ws = wsRaw.match(/^700/i) ? '700c' : wsRaw + '"';
+          return (
+            <div className="bike-card-chips" onClick={e => e.stopPropagation()}>
+              <span className="bcc" style={{ opacity:0.55, cursor:'default', pointerEvents:'none' }}>{ws}</span>
+            </div>
+          );
+        })()}
 
         {/* Color swatches */}
         {hasColors && clrList.length > 0 && (
