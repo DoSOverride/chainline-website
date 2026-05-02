@@ -237,6 +237,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           </nav>
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
+            <CurrencySelector />
             <DarkToggle on={darkMode} onToggle={onToggleDark} />
             <div ref={accountRef} style={{ position: "relative" }}>
               <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
@@ -351,6 +352,86 @@ const pageHref = (page, intent) => {
   if (page === 'accessories') return intent?.tab ? `/accessories/${intent.tab}` : '/accessories';
   if (page === 'parts') return intent?.tab ? `/parts/${intent.tab}` : '/parts';
   return `/${page}`;
+};
+
+// ── Currency selector ─────────────────────────────────────────
+const CURRENCIES = [
+  { code:'CAD', symbol:'$',  flag:'🇨🇦', name:'Canadian Dollar'   },
+  { code:'USD', symbol:'$',  flag:'🇺🇸', name:'US Dollar'         },
+  { code:'GBP', symbol:'£',  flag:'🇬🇧', name:'British Pound'     },
+  { code:'EUR', symbol:'€',  flag:'🇪🇺', name:'Euro'              },
+  { code:'AUD', symbol:'$',  flag:'🇦🇺', name:'Australian Dollar' },
+  { code:'NZD', symbol:'$',  flag:'🇳🇿', name:'New Zealand Dollar'},
+  { code:'CHF', symbol:'Fr', flag:'🇨🇭', name:'Swiss Franc'       },
+  { code:'JPY', symbol:'¥',  flag:'🇯🇵', name:'Japanese Yen'      },
+  { code:'SEK', symbol:'kr', flag:'🇸🇪', name:'Swedish Krona'     },
+  { code:'NOK', symbol:'kr', flag:'🇳🇴', name:'Norwegian Krone'   },
+];
+const COUNTRY_CURRENCY = { US:'USD',GB:'GBP',AU:'AUD',NZ:'NZD',CH:'CHF',JP:'JPY',SE:'SEK',NO:'NOK',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',BE:'EUR',AT:'EUR',PT:'EUR',IE:'EUR',FI:'EUR',GR:'EUR' };
+// Initialize global price formatter (loaded before pages.jsx)
+window.CL_CURRENCY = window.CL_CURRENCY || (() => {
+  const code = localStorage.getItem('cl-currency') || 'CAD';
+  const info = CURRENCIES.find(c => c.code === code) || CURRENCIES[0];
+  return { code, symbol: info.symbol, rate: 1 };
+})();
+window.formatPrice = (cad) => {
+  const c = window.CL_CURRENCY;
+  const v = Math.round((cad || 0) * (c.rate || 1));
+  return `${c.symbol}${v.toLocaleString()} ${c.code}`;
+};
+const CurrencySelector = () => {
+  const [code, setCode] = React.useState(() => localStorage.getItem('cl-currency') || 'CAD');
+  const [rates, setRates] = React.useState({ CAD:1 });
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+  const applyRate = (c, ratesObj) => {
+    const r = ratesObj[c] || 1;
+    const info = CURRENCIES.find(x => x.code === c) || CURRENCIES[0];
+    window.CL_CURRENCY = { code: c, symbol: info.symbol, rate: r };
+    window.formatPrice = (cad) => { const v = Math.round((cad||0)*r); return `${info.symbol}${v.toLocaleString()} ${c}`; };
+    window.dispatchEvent(new CustomEvent('currency:changed', { detail: window.CL_CURRENCY }));
+    localStorage.setItem('cl-currency', c);
+  };
+  React.useEffect(() => {
+    fetch('https://open.er-api.com/v6/latest/CAD')
+      .then(r => r.json()).then(d => { if (d.rates) { setRates(d.rates); applyRate(code, d.rates); } })
+      .catch(() => {});
+    if (!localStorage.getItem('cl-currency-set')) {
+      fetch('https://ipapi.co/json/')
+        .then(r => r.json()).then(d => {
+          const detected = COUNTRY_CURRENCY[d.country_code] || 'CAD';
+          setCode(detected);
+          localStorage.setItem('cl-currency-set', '1');
+        }).catch(() => {});
+    }
+  }, []);
+  React.useEffect(() => { applyRate(code, rates); }, [code]);
+  React.useEffect(() => {
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
+  const curr = CURRENCIES.find(c => c.code === code) || CURRENCIES[0];
+  const btnStyle = { background:'none', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.1em', textTransform:'uppercase', color:'var(--gray-500)', display:'flex', alignItems:'center', gap:4, padding:'4px 6px' };
+  return (
+    <div ref={ref} style={{ position:'relative' }}>
+      <button style={btnStyle} onClick={() => setOpen(o => !o)} title="Change currency">
+        <span style={{ fontSize:14 }}>{curr.flag}</span> {curr.code}
+      </button>
+      {open && (
+        <div style={{ position:'absolute', top:'calc(100% + 8px)', right:0, background:'var(--white)', border:'1px solid var(--hairline)', zIndex:9999, minWidth:210, boxShadow:'0 8px 32px rgba(0,0,0,0.12)' }}>
+          {CURRENCIES.map(c => (
+            <button key={c.code} onClick={() => { setCode(c.code); setOpen(false); }}
+              style={{ ...btnStyle, width:'100%', padding:'10px 16px', justifyContent:'flex-start', gap:10, fontSize:11, color: c.code===code ? 'var(--black)' : 'var(--gray-500)', fontWeight: c.code===code ? 600 : 400 }}>
+              <span style={{ fontSize:16 }}>{c.flag}</span>
+              <span>{c.code}</span>
+              <span style={{ opacity:.45, fontSize:10, marginLeft:'auto' }}>{c.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 const MegaMenu = ({ open, onOpen, onClose }) => {
@@ -546,7 +627,7 @@ const MegaMenu = ({ open, onOpen, onClose }) => {
     window.cl.go(route, intent);
   };
   const d = open && data[open];
-  const linkStyle = { padding:"5px 0", fontFamily:"var(--mono)", fontSize:11, letterSpacing:".12em", textTransform:"uppercase", color:"var(--gray-500)", textDecoration:"none", transition:"color .2s", whiteSpace:"nowrap" };
+  const linkStyle = { padding:"6px 0", fontFamily:"var(--mono)", fontSize:13, letterSpacing:".08em", textTransform:"uppercase", color:"var(--gray-500)", textDecoration:"none", transition:"color .2s", whiteSpace:"nowrap" };
   return (
     <div className={"mega " + (open ? "open" : "")} onMouseEnter={() => onOpen(open)} onMouseLeave={onClose}>
       {d && (
@@ -1408,4 +1489,4 @@ const BottomNav = ({ page, cartCount, onSearch, onCart }) => {
   );
 };
 
-Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ContactBar, ChatWidget, SearchModal, BottomNav });
+Object.assign(window, { ChainLogo, Wordmark, Header, MobileNav, MegaMenu, StickyCTA, CartDrawer, Footer, useReveal, SplitText, Counter, BrandMarquee, ArrowRight, SearchIcon, AccountIcon, AccountDropdown, DarkToggle, Announce, ContactBar, ChatWidget, SearchModal, BottomNav, CurrencySelector, CURRENCIES });

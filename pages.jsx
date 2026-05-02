@@ -579,7 +579,7 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Bolinas Ridge 2 29",  handle:"marin-bolinas-ridge-2-29",  type:"Mountain", tags:"Mountain Bike, 29\" wheels",  price:800,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-bolinas-ridge-2-29.jpg" },
   { brand:"Marin", name:"Wildcat Trail 1 27.5",handle:"marin-wildcat-trail-1-27-5",type:"Mountain", tags:"Mountain Bike, 27.5\" wheels, Women's", price:860, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-wildcat-trail-1-275.png" },
   { brand:"Marin", name:"Pine Mountain 1 29",  handle:"marin-pine-mountain-1-29",  type:"Adventure", tags:"Adventure Bike, Bikepacking, 29\"", price:1960, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-pine-mountain-1-29.jpg" },
-  { brand:"Transition", name:"Sentinel",    handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-sentinel.jpg" },
+  { brand:"Transition", name:"Sentinel",    handle:"transition-sentinel",             type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8900, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/color-transition-sentinel-glacier-white.jpg" },
   { brand:"Transition", name:"Spire Carbon",handle:"transition-spire-carbon-eagle-90",type:"Mountain", tags:"Mountain Bike, Carbon, Full Suspension", price:9700, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-spire-carbon.avif" },
   { brand:"Pivot", name:"Switchblade",      handle:"pivot-switchblade-ride-eagle-70-90", type:"Mountain", tags:"Mountain Bike, Full Suspension", price:8000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-switchblade.jpg" },
   { brand:"Surly", name:"Sorceress",    handle:"surly-sorceress",    type:"Mountain", tags:"Mountain Bike, Hardtail, Trail", price:3400, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/surly-sorceress.jpg" },
@@ -592,7 +592,7 @@ const SHOP_BIKES = [
   { brand:"Marin", name:"Stinson E",    handle:"marin-stinson-e",    type:"E-Bike",  tags:"Electric Bike, City",      price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e.jpg" },
   { brand:"Marin", name:"Stinson E ST", handle:"marin-stinson-e-st", type:"E-Bike",  tags:"Electric Bike, Step-Through", price:2100, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-stinson-e-st.jpg" },
   { brand:"Pivot",      name:"Shuttle AM",   handle:"pivot-shuttle-am-ride-eagle-70-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:11500, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/pivot-shuttle-am.jpg" },
-  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/transition-regulator-cx.avif" },
+  { brand:"Transition", name:"Regulator CX", handle:"transition-regulator-cx-eagle-90",  type:"E-Bike", tags:"Electric Bike, Full Suspension", price:13000, img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/ext-c8-2026-regulator-cx.avif" },
   { brand:"Marin", name:"Fairfax 1",       handle:"marin-fairfax-1",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:700,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-1.jpg" },
   { brand:"Marin", name:"Fairfax 2",       handle:"marin-fairfax-2",      type:"Commuter", tags:"Dual-Sport, Commuter",    price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-fairfax-2.jpg" },
   { brand:"Marin", name:"San Anselmo DS2", handle:"marin-san-anselmo-ds2",type:"Commuter", tags:"Dual-Sport, Women's",     price:960,  img:"https://still-term-f1ec.taocaruso77.workers.dev/r2/bikes/marin-san-anselmo-ds2.jpg" },
@@ -716,7 +716,7 @@ const CompareBar = () => {
     <>
       {/* Sticky bar */}
       {list.length > 0 && !open && (
-        <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:200, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
+        '<div className="compare-bar-sticky" style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
           <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flex:1 }}>
             Comparing: {list.map(b => b.name || b.title).join(' vs ')}
           </div>
@@ -1110,6 +1110,12 @@ const SIZE_ORDER = ['XS','S','SM','M','MD','L','LG','XL','XXL','XXXL'];
 const TYPE_ACCENTS = { Mountain:'#2e5f2e', Gravel:'#7a5c1a', Road:'#8b1e1e', 'E-Bike':'#1a4a7a', Commuter:'#3d3d5c', Kids:'#7a3d1a', Comfort:'#4a5c4a' };
 
 const BikeCardLarge = React.memo(({ b, idx, featured }) => {
+  const [, forceCurrency] = React.useReducer(x => x+1, 0);
+  React.useEffect(() => {
+    window.addEventListener('currency:changed', forceCurrency);
+    return () => window.removeEventListener('currency:changed', forceCurrency);
+  }, []);
+  const fp = (p) => window.formatPrice ? window.formatPrice(p) : `$${(p||0).toLocaleString()} CAD`;
   const variants = b.variants || [];
   const wheels  = [...new Set(variants.map(v => v.wheel).filter(Boolean))];
   const colors  = [...new Set(variants.map(v => v.color).filter(Boolean))];
@@ -1252,7 +1258,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
             <div style={{ fontFamily:"var(--mono)", fontSize:10, letterSpacing:".22em", textTransform:"uppercase", color:"var(--gray-400)", marginBottom:14 }}>{brand} — Featured</div>
             <div style={{ fontFamily:"var(--display)", fontSize:"clamp(30px,4.5vw,60px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.025em", lineHeight:.9, marginBottom:22 }}>{name}</div>
             <div style={{ display:"flex", alignItems:"baseline", gap:12, marginBottom:24 }}>
-              <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.8vw,34px)", fontWeight:500 }}>${price.toLocaleString()} <span style={{ fontFamily:"var(--mono)", fontSize:12, fontWeight:400, opacity:.5 }}>CAD</span></div>
+              <div style={{ fontFamily:"var(--display)", fontSize:"clamp(22px,2.8vw,34px)", fontWeight:500 }}>{fp(price)}</div>
               {lowStock && <span style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", color:"#b85c00" }}>Low Stock</span>}
             </div>
             {desc && <p style={{ fontSize:14, lineHeight:1.72, color:"var(--gray-500)", margin:0, maxWidth:380 }}>{desc.length > 210 ? desc.slice(0,210) + "…" : desc}</p>}
@@ -1341,7 +1347,7 @@ const BikeCardLarge = React.memo(({ b, idx, featured }) => {
       <div className="bike-card-info">
         <div className="bike-card-brand">{brand}</div>
         <div className="bike-card-name">{name}</div>
-        <div className="bike-card-price">${price.toLocaleString()} <span style={{ fontFamily:'var(--mono)', fontSize:11, fontWeight:400, opacity:.5 }}>CAD</span></div>
+        <div className="bike-card-price">{fp(price)}</div>
 
         {/* Key spec tagline */}
         {(() => { const tl = getCardTagline(b, bikeData); return tl ? <div className="bike-card-tagline">{tl}</div> : null; })()}
@@ -1512,7 +1518,7 @@ const ServicesPage = () => {
   const T = ["Washed and re-lubed","Adjusted gears and brakes","Trued and tensioned wheels","Checked BB, hubs and headset","Checked stem and bar bolts"];
   const ALL_SERVICES = [
     // ── All Bikes: tune-ups, flat fix, overhaul, then misc ──
-    { cat:"all", n:"01", name:"Basic Tune Up",            price:60,  time:"SAME DAY",
+    { cat:"all", n:"01", name:"Basic Tune Up",            price:75,  time:"SAME DAY",
       includes:["Adjusted gears and brakes","Checked stem and bar bolts","Safety inspection"] },
     { cat:"all", n:"02", name:"Tune Up",                  price:120, time:"SAME DAY",
       includes:[...T] },
@@ -1540,8 +1546,8 @@ const ServicesPage = () => {
       desc:"CushCore insert installation. Per wheel." },
     { cat:"all", n:"14", name:"Accessory Install",        price:30,  time:"SAME DAY",
       desc:"Racks, fenders, lights, mirrors, computers and more." },
-    { cat:"all", n:"15", name:"Bike Assessment",          price:30,  time:"30 MIN",
-      desc:"Thorough inspection with written report. Cost applied toward any repair." },
+    { cat:"all", n:"15", name:"Bike Assessment",          price:0,   time:"30 MIN",
+      desc:"Free. Thorough inspection with written report. Cost applied toward any repair if you proceed." },
     // ── Mountain ──
     { cat:"mountain", n:"01", name:"Tune Up",             price:120, time:"SAME DAY",
       includes:[...T] },
