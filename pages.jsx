@@ -644,6 +644,28 @@ const SHOP_BIKES = [
 
 const SPECIAL_ORDER_BRANDS = new Set(["Salsa","Bianchi","Moots","Knolly","Revel"]);
 
+// Curated best-seller order — entry/accessible bikes first, premium/special-order last
+const BEST_SELLERS = [
+  "marin-bobcat-trail-4-27-5","marin-bobcat-trail-3-29","marin-bobcat-trail-4-29","marin-bobcat-trail-5-29",
+  "marin-stinson-1-27-5","marin-stinson-1-ls-27-5","marin-stinson-2-ls-27-5",
+  "marin-kentfield-st-1","marin-kentfield-st-2","marin-fairfax-1","marin-fairfax-2","marin-san-anselmo-ds2",
+  "marin-bolinas-ridge-1-27-5","marin-bolinas-ridge-1-29","marin-bolinas-ridge-2-29","marin-wildcat-trail-1-27-5",
+  "marin-san-quentin-1","marin-san-quentin-2",
+  "marin-stinson-e","marin-stinson-e-st",
+  "marin-rift-zone-2","transition-sentinel",
+  "marin-four-corners-1","marin-pine-mountain-1-29","surly-bridge-club","surly-karate-monkey",
+  "marin-gestalt-x10","marin-gestalt-2","marin-nicasio-2","marin-presidio-3",
+  "pivot-switchblade-ride-eagle-70-90","surly-sorceress","surly-ice-cream-truck",
+  "marin-bayview-trail","marin-donky-jr","marin-rift-zone-jr",
+  "pivot-shuttle-am-ride-eagle-70-90","transition-regulator-cx-eagle-90","transition-spire-carbon-eagle-90",
+  "transition-smuggler","transition-spur","transition-bottlerocket","transition-pbj",
+  "knolly-fugitive","revel-rascal-gx-eagle","revel-ranger-gx-eagle","revel-rail-gx-eagle",
+  "salsa-timberjack-sx-eagle","salsa-timberjack-gx-eagle","salsa-journeyman-sora",
+  "salsa-warbird-grx-600","salsa-spearfish-c-gx-eagle","salsa-cutthroat-grx",
+  "bianchi-impulso-pro","bianchi-grok-s-grx","bianchi-aria","bianchi-e-suv-comp","bianchi-oltre-rc",
+  "moots-routt-rsl-grx","moots-highline-gx-eagle","moots-baxter-grx","moots-ybb-sl-gx-eagle",
+];
+
 const BrandSaleWidget = () => {
   const WORKER = "https://still-term-f1ec.taocaruso77.workers.dev";
   const [sales, setSales] = React.useState(null);
@@ -776,7 +798,7 @@ const ShopPage = ({ intentState }) => {
   const saved  = window.cl?.shopFilter || {};
   const [brand, setBrand] = React.useState(intent?.brand || saved.brand || "All");
   const [type,  setType]  = React.useState(intent?.sale ? "Sale" : (intent?.type || saved.type || "All"));
-  const [sort, setSort]   = React.useState("featured");
+  const [sort, setSort]   = React.useState("best-selling");
   const [liveProducts, setLiveProducts] = React.useState(null);
   const [liveLoading, setLiveLoading]   = React.useState(true);
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -947,6 +969,7 @@ const ShopPage = ({ intentState }) => {
     filtered = filtered.filter(b => b.type === type);
   }
 
+  if (sort === "best-selling") { const bsIdx = h => { const i = BEST_SELLERS.indexOf(h); return i >= 0 ? i : 999; }; filtered = [...filtered].sort((a,b) => bsIdx(a.handle) - bsIdx(b.handle)); }
   if (sort === "price-asc")  filtered = [...filtered].sort((a,b) => a.price - b.price);
   if (sort === "price-desc") filtered = [...filtered].sort((a,b) => b.price - a.price);
 
@@ -979,7 +1002,7 @@ const ShopPage = ({ intentState }) => {
           <div style={{ marginLeft:"auto" }}>
             <select value={sort} onChange={e => setSort(e.target.value)}
               style={{ fontFamily:"var(--mono)", letterSpacing:".08em", textTransform:"uppercase", border:"1px solid var(--hairline)", padding:"5px 10px", background:"var(--white)", outline:"none" }}>
-              <option value="featured">Sort: Featured</option>
+              <option value="best-selling">Sort: Best Selling</option>
               <option value="price-asc">Price: Low → High</option>
               <option value="price-desc">Price: High → Low</option>
             </select>
@@ -1052,7 +1075,7 @@ const ShopPage = ({ intentState }) => {
               {filtered.length > 0 && (
                 <>
                   <div className="shop-grid" style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:"40px 28px", alignItems:"start" }}>
-                    {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} featured={i === 0 && brand === "All" && type === "All" && filtered.length >= 3 && window.matchMedia('(min-width: 768px)').matches} />)}
+                    {filtered.map((b, i) => <BikeCardLarge key={b.handle} b={b} idx={i} />)}
                   </div>
                   {type === "Sale" && <BrandSaleWidget />}
                 </>
@@ -3139,6 +3162,7 @@ const PartsPage = ({ pageType = 'components' }) => {
   const [sortBy,       setSortBy]       = React.useState('price-asc');
   const clearFilters = () => { setFilterBrands(new Set()); setPriceRange(null); setSortBy('price-asc'); };
   const hasFilters = filterBrands.size > 0 || priceRange !== null || sortBy !== 'price-asc';
+  const [filterPanelOpen, setFilterPanelOpen] = React.useState(false);
   const PAGE = 60;
   const searchRef = React.useRef(null);
 
@@ -3311,6 +3335,11 @@ const PartsPage = ({ pageType = 'components' }) => {
           </div>
           {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
           {search && !loading && <span className="parts-search-result-count" style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", flexShrink:0 }}>{filtered.length} results</span>}
+          <button onClick={() => setFilterPanelOpen(true)} data-cursor="link"
+            style={{ flexShrink:0, display:'flex', alignItems:'center', gap:5, padding:'6px 12px', border:'1px solid var(--hairline)', background:'var(--white)', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.08em', textTransform:'uppercase', cursor:'pointer', color:'var(--black)', position:'relative' }}>
+            Filters
+            {hasFilters && <span style={{ position:'absolute', top:-5, right:-5, width:16, height:16, borderRadius:'50%', background:'var(--black)', color:'#fff', fontFamily:'var(--mono)', fontSize:9, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700 }}>{filterBrands.size + (priceRange ? 1 : 0) + (sortBy !== 'price-asc' ? 1 : 0)}</span>}
+          </button>
         </div>
 
         {availableBrands.length > 0 && (
@@ -3347,6 +3376,70 @@ const PartsPage = ({ pageType = 'components' }) => {
             </div>
           </div>
         )}
+
+        {/* ── Filter slide-out panel ── */}
+        {filterPanelOpen && (
+          <div className="parts-filter-backdrop" onClick={() => setFilterPanelOpen(false)} />
+        )}
+        <div className={'parts-filter-panel' + (filterPanelOpen ? ' open' : '')}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px 12px', borderBottom:'1px solid var(--hairline)' }}>
+            <span style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', fontWeight:700, color:'var(--black)' }}>Filters</span>
+            <button onClick={() => setFilterPanelOpen(false)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:'var(--mono)', fontSize:16, color:'var(--gray-400)', lineHeight:1, padding:'0 4px' }}>✕</button>
+          </div>
+          <div style={{ flex:1, overflowY:'auto', padding:'16px 20px' }}>
+            {hasFilters && (
+              <button onClick={() => { clearFilters(); }} data-cursor="link"
+                style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--black)', background:'none', border:'1px solid var(--hairline)', padding:'5px 10px', cursor:'pointer', marginBottom:16, width:'100%' }}>
+                Clear all filters ✕
+              </button>
+            )}
+            {availableBrands.length > 0 && (
+              <>
+                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:8 }}>Brand</div>
+                {availableBrands.map(brand => (
+                  <label key={brand} style={{ display:'flex', alignItems:'center', gap:8, padding:'5px 0', cursor:'pointer' }}>
+                    <input type="checkbox" checked={filterBrands.has(brand)}
+                      onChange={e => {
+                        setFilterBrands(prev => {
+                          const next = new Set(prev);
+                          e.target.checked ? next.add(brand) : next.delete(brand);
+                          return next;
+                        });
+                        setPg(0);
+                      }}
+                      style={{ accentColor:'var(--black)', width:14, height:14, cursor:'pointer', flexShrink:0 }} />
+                    <span style={{ fontFamily:'var(--mono)', fontSize:10, color: filterBrands.has(brand) ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{brand}</span>
+                  </label>
+                ))}
+                <div style={{ height:16 }} />
+              </>
+            )}
+            <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:8 }}>Price</div>
+            {[['<50','Under $50'],['50-150','$50 – $150'],['150-300','$150 – $300'],['300+','$300+']].map(([val, label]) => (
+              <label key={val} style={{ display:'flex', alignItems:'center', gap:8, padding:'5px 0', cursor:'pointer' }}>
+                <input type="checkbox" checked={priceRange === val}
+                  onChange={e => { setPriceRange(e.target.checked ? val : null); setPg(0); }}
+                  style={{ accentColor:'var(--black)', width:14, height:14, cursor:'pointer', flexShrink:0 }} />
+                <span style={{ fontFamily:'var(--mono)', fontSize:10, color: priceRange === val ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{label}</span>
+              </label>
+            ))}
+            <div style={{ height:16 }} />
+            <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:8 }}>Sort</div>
+            {[['price-asc','Price: Low → High'],['price-desc','Price: High → Low'],['name-az','Name A–Z']].map(([val, label]) => (
+              <label key={val} style={{ display:'flex', alignItems:'center', gap:8, padding:'5px 0', cursor:'pointer' }}>
+                <input type="radio" name="parts-sort-panel" checked={sortBy === val}
+                  onChange={() => { setSortBy(val); setPg(0); }}
+                  style={{ accentColor:'var(--black)', width:14, height:14, cursor:'pointer', flexShrink:0 }} />
+                <span style={{ fontFamily:'var(--mono)', fontSize:10, color: sortBy === val ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{label}</span>
+              </label>
+            ))}
+          </div>
+          <div style={{ padding:'16px 20px', borderTop:'1px solid var(--hairline)' }}>
+            <button onClick={() => setFilterPanelOpen(false)} className="btn" style={{ width:'100%', fontSize:11 }}>
+              Apply Filters
+            </button>
+          </div>
+        </div>
 
         <div className="parts-layout">
 
@@ -3395,50 +3488,6 @@ const PartsPage = ({ pageType = 'components' }) => {
                 </div>
               );
             })}
-            {availableBrands.length > 0 && (
-              <div style={{ padding:'12px 16px 0', borderTop:'1px solid var(--hairline)', marginTop:8 }}>
-                {hasFilters && (
-                  <button onClick={clearFilters} data-cursor="link"
-                    style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--black)', background:'none', border:'1px solid var(--hairline)', padding:'4px 8px', cursor:'pointer', marginBottom:10, width:'100%' }}>
-                    Clear all ✕
-                  </button>
-                )}
-                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginBottom:6 }}>Brand</div>
-                {availableBrands.map(brand => (
-                  <label key={brand} style={{ display:'flex', alignItems:'center', gap:7, padding:'3px 0', cursor:'pointer' }}>
-                    <input type="checkbox" checked={filterBrands.has(brand)}
-                      onChange={e => {
-                        setFilterBrands(prev => {
-                          const next = new Set(prev);
-                          e.target.checked ? next.add(brand) : next.delete(brand);
-                          return next;
-                        });
-                        setPg(0);
-                      }}
-                      style={{ accentColor:'var(--black)', width:11, height:11, cursor:'pointer' }} />
-                    <span style={{ fontFamily:'var(--mono)', fontSize:9, color: filterBrands.has(brand) ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{brand}</span>
-                  </label>
-                ))}
-                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginTop:12, marginBottom:6 }}>Price</div>
-                {[['<50','Under $50'],['50-150','$50–$150'],['150-300','$150–$300'],['300+','$300+']].map(([val, label]) => (
-                  <label key={val} style={{ display:'flex', alignItems:'center', gap:7, padding:'3px 0', cursor:'pointer' }}>
-                    <input type="checkbox" checked={priceRange === val}
-                      onChange={e => { setPriceRange(e.target.checked ? val : null); setPg(0); }}
-                      style={{ accentColor:'var(--black)', width:11, height:11, cursor:'pointer' }} />
-                    <span style={{ fontFamily:'var(--mono)', fontSize:9, color: priceRange === val ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{label}</span>
-                  </label>
-                ))}
-                <div style={{ fontFamily:'var(--mono)', fontSize:8, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-400)', marginTop:12, marginBottom:6 }}>Sort</div>
-                {[['price-asc','Price: Low → High'],['price-desc','Price: High → Low'],['name-az','Name A–Z']].map(([val, label]) => (
-                  <label key={val} style={{ display:'flex', alignItems:'center', gap:7, padding:'3px 0', cursor:'pointer' }}>
-                    <input type="radio" name="parts-sort" checked={sortBy === val}
-                      onChange={() => { setSortBy(val); setPg(0); }}
-                      style={{ accentColor:'var(--black)', width:11, height:11, cursor:'pointer' }} />
-                    <span style={{ fontFamily:'var(--mono)', fontSize:9, color: sortBy === val ? 'var(--black)' : 'var(--gray-500)', letterSpacing:'.04em' }}>{label}</span>
-                  </label>
-                ))}
-              </div>
-            )}
             <div style={{ margin:"16px 16px 0", paddingTop:14, borderTop:"1px solid var(--hairline)" }}>
               <p style={{ fontFamily:"var(--mono)", fontSize:8, letterSpacing:".1em", textTransform:"uppercase", color:"var(--gray-400)", lineHeight:1.8, margin:0 }}>Live · Lightspeed inventory</p>
             </div>
