@@ -1816,14 +1816,14 @@ img {
     display: none !important;
   }
   .parts-page-section {
-    padding-top: 136px !important;
+    padding-top: 160px !important;
   }
   /* Mobile: fix sticky tops to account for safe area */
   .parts-mobile-tabs {
-    top: calc(100px + env(safe-area-inset-top, 0px));
+    top: calc(124px + env(safe-area-inset-top, 0px));
   }
   .parts-search-bar {
-    top: calc(142px + env(safe-area-inset-top, 0px)) !important;
+    top: calc(166px + env(safe-area-inset-top, 0px)) !important;
   }
   .parts-search-bar .parts-search-result-count { display: none; }
   /* Stats: 4th and 5th items don't need a left border when they wrap */
@@ -1874,12 +1874,12 @@ img {
   .display-s   { font-size: clamp(15px, 4.5vw, 21px) !important; }
   .serif-italic { font-size: clamp(18px, 5.5vw, 32px) !important; }
 
-  /* Bike detail back bar — mobile header is 36px announce + 64px nav = 100px */
-  .bike-back-bar { top: 100px !important; }
-  .bike-page { padding-top: 100px !important; }
+  /* Bike detail back bar — mobile header is 36px announce + 24px contact + 64px nav = 124px */
+  .bike-back-bar { top: 124px !important; }
+  .bike-page { padding-top: 124px !important; }
 
   /* ── Shop ── */
-  .shop-filter-sticky { top: 132px !important; }
+  .shop-filter-sticky { top: 156px !important; }
   .shop-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
   .bike-card-featured { display: none !important; }
 
@@ -2040,13 +2040,13 @@ button, a, input, select, textarea, [data-cursor="link"] {
 
 /* ── Safe-area adjusted offsets (add safe-area on top of existing values) ── */
 @media (max-width: 768px) {
-  .bike-back-bar      { top:  calc(100px + env(safe-area-inset-top, 0px)) !important; }
-  .bike-page          { padding-top: calc(100px + env(safe-area-inset-top, 0px)) !important; }
-  .shop-filter-sticky { top:  calc(132px + env(safe-area-inset-top, 0px)) !important; }
+  .bike-back-bar      { top:  calc(124px + env(safe-area-inset-top, 0px)) !important; }
+  .bike-page          { padding-top: calc(124px + env(safe-area-inset-top, 0px)) !important; }
+  .shop-filter-sticky { top:  calc(156px + env(safe-area-inset-top, 0px)) !important; }
   .hero-content       { padding-top: calc(190px + env(safe-area-inset-top, 0px)) !important; }
-  .parts-page-section { padding-top: calc(100px + env(safe-area-inset-top, 0px)) !important; }
+  .parts-page-section { padding-top: calc(124px + env(safe-area-inset-top, 0px)) !important; }
   /* SubHero pages (services, about, etc.) */
-  .sub-hero           { padding-top: calc(100px + env(safe-area-inset-top, 0px)) !important; }
+  .sub-hero           { padding-top: calc(124px + env(safe-area-inset-top, 0px)) !important; }
 }
 
 /* ── Bottom navigation bar ─────────────────────────────────── */
