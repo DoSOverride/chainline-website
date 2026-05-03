@@ -2403,3 +2403,31 @@ a:hover .bike-hover { transform: translateY(0); }
 @media (max-width: 400px) {
   .part-card-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ── Fixed-column grids: stack on mobile ── */
+@media (max-width: 768px) {
+  /* Fitting services (1fr 100px 80px 100px) → 2-col name+price on mobile */
+  .fitting-type-row {
+    grid-template-columns: 1fr auto !important;
+    gap: 8px !important;
+  }
+  .fitting-type-row > :nth-child(2) { display: none !important; }   /* hide duration */
+  .fitting-type-row > :nth-child(3) { grid-column: 2; grid-row: 1; } /* price col 2 */
+  .fitting-type-row > :nth-child(4) { grid-column: 1 / -1; }         /* book full width */
+
+  /* Brands page list (200px 1fr auto auto) → stack on mobile */
+  .brand-list-row {
+    grid-template-columns: 1fr auto !important;
+    gap: 12px !important;
+    align-items: start !important;
+  }
+  .brand-list-row > :nth-child(2) { grid-column: 1 / -1; order: 3; } /* desc below */
+  .brand-list-row > :nth-child(3) { order: 2; }
+  .brand-list-row > :nth-child(4) { grid-column: 1 / -1; order: 4; }
+
+  /* Timeline / history (120px 1fr) → narrow label on mobile */
+  .timeline-row {
+    grid-template-columns: 64px 1fr !important;
+    gap: 16px !important;
+  }
+}
