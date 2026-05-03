@@ -1531,8 +1531,9 @@ img {
   .nav-utility .nav-utility-text {
     display: none;
   }
-  /* Hide desktop currency selector on mobile — moved to mobile nav More panel */
+  /* Hide header currency on mobile — available in mobile More panel */
   .currency-desktop-only { display: none; }
+  .nav-currency-wrap { display: none; }
   /* Tighter nav utility gap so hamburger stays visible */
   .nav-utility { gap: 12px; }
   /* Pull hamburger slightly left so it's visually balanced with the logo */
