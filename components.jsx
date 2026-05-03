@@ -241,8 +241,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
             <DarkToggle on={darkMode} onToggle={onToggleDark} />
-            <span className="nav-currency-wrap"><CurrencySelector /></span>
-            <div ref={accountRef} style={{ position: "relative" }}>
+            <div ref={accountRef} className="nav-account-btn" style={{ position: "relative" }}>
               <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
                 <span className="nav-utility-text">Account</span><AccountIcon/>
               </button>
@@ -252,7 +251,7 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
               <span className="nav-utility-text">Cart</span>
               <CartIcon count={cartCount} />
             </button>
-            <button className="menu-toggle" data-cursor="link" onClick={onMobile} style={{ marginRight: 20 }}>
+            <button className="menu-toggle" data-cursor="link" onClick={onMobile}>
               <span/><span/><span/>
             </button>
           </div>
