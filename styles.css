@@ -2386,9 +2386,17 @@ a:hover .bike-hover { transform: translateY(0); }
   .bike-card-info { padding: 10px 0; }
 }
 
-/* Compare bar: safe-area bottom on notched iPhones */
-.compare-bar-mobile {
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+/* Compare bar: sits above bottom-nav on mobile (68px + safe area) */
+@media (max-width: 768px) {
+  .compare-bar-mobile {
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: 12px;
+  }
+}
+@media (min-width: 769px) {
+  .compare-bar-mobile {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Part card grid: single column on narrow phones */

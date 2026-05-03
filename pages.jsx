@@ -751,14 +751,14 @@ const CompareBar = () => {
       )}
       {/* Full comparison modal */}
       {open && (
-        <div style={{ position:'fixed', inset:0, zIndex:300, background:'rgba(0,0,0,0.85)', overflowY:'auto', padding:'80px 24px 40px' }} onClick={() => setOpen(false)}>
-          <div style={{ background:'var(--white)', maxWidth:960, margin:'0 auto', padding:40 }} onClick={e => e.stopPropagation()}>
+        <div style={{ position:'fixed', inset:0, zIndex:300, background:'rgba(0,0,0,0.85)', overflowY:'auto', padding:'clamp(16px,5vw,80px) 16px 40px' }} onClick={() => setOpen(false)}>
+          <div style={{ background:'var(--white)', maxWidth:960, margin:'0 auto', padding:'clamp(20px,5vw,40px)' }} onClick={e => e.stopPropagation()}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
               <div className="display-m">Compare</div>
               <button onClick={() => setOpen(false)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:28, lineHeight:1 }}>&#215;</button>
             </div>
             {/* Bike headers */}
-            <div style={{ display:'grid', gridTemplateColumns:`180px ${list.map(()=>'1fr').join(' ')}`, gap:24, marginBottom:24 }}>
+            <div style={{ display:'grid', gridTemplateColumns:`clamp(80px,25vw,180px) ${list.map(()=>'1fr').join(' ')}`, gap:'clamp(8px,3vw,24px)', marginBottom:24 }}>
               <div />
               {list.map(b => {
                 const d = window.BIKE_DATA?.[b.handle] || {};
@@ -775,7 +775,7 @@ const CompareBar = () => {
             </div>
             {/* Specs table */}
             {specRows().map((k, i) => (
-              <div key={k} style={{ display:'grid', gridTemplateColumns:`180px ${list.map(()=>'1fr').join(' ')}`, gap:24, padding:'12px 0', borderBottom:'1px solid var(--hairline)', background: i%2===0 ? 'transparent' : 'var(--paper)' }}>
+              <div key={k} style={{ display:'grid', gridTemplateColumns:`clamp(80px,25vw,180px) ${list.map(()=>'1fr').join(' ')}`, gap:'clamp(8px,3vw,24px)', padding:'12px 0', borderBottom:'1px solid var(--hairline)', background: i%2===0 ? 'transparent' : 'var(--paper)' }}>
                 <div style={{ fontFamily:'var(--mono)', fontSize:9, letterSpacing:'.14em', textTransform:'uppercase', color:'var(--gray-500)', paddingTop:2 }}>{k}</div>
                 {list.map(b => {
                   const d = window.BIKE_DATA?.[b.handle] || {};
