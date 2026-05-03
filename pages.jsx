@@ -2088,7 +2088,7 @@ const AboutPage = () => (
             ["2020", "Rode through the pandemic", "Bikes became essential. We stayed open, kept wrenching, kept riding."],
             ["2024", "15 years and counting", "Still local. Still answering our own phone. Still Kelowna's bike shop."],
           ].map(([year, title, desc], i) => (
-            <div key={year} className={"reveal"} className="timeline-row" style={{ display:"grid", gridTemplateColumns:"120px 1fr", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline)", alignItems:"start" }}>
+            <div key={year} className="reveal timeline-row" style={{ display:"grid", gridTemplateColumns:"120px 1fr", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline)", alignItems:"start" }}>
               <div style={{ fontFamily:"var(--display)", fontSize:28, fontWeight:500, letterSpacing:"-.02em", color:"var(--gray-400)", paddingTop:3 }}>{year}</div>
               <div>
                 <div style={{ fontFamily:"var(--display)", fontSize:"clamp(16px,1.8vw,20px)", fontWeight:500, textTransform:"uppercase", letterSpacing:"-.01em", marginBottom:6 }}>{title}</div>
@@ -3830,7 +3830,7 @@ const BrandPage = () => {
           <div className="eyebrow" style={{ marginBottom:24 }}>Bike Brands</div>
           <div style={{ borderTop:"1px solid var(--hairline)" }}>
             {bikeBrands.map((br, i) => (
-              <div key={i} className="reveal" className="brand-list-row" style={{ display:"grid", gridTemplateColumns:"200px 1fr auto auto", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
+              <div key={i} className="reveal brand-list-row" style={{ display:"grid", gridTemplateColumns:"200px 1fr auto auto", gap:32, padding:"32px 0", borderBottom:"1px solid var(--hairline)", alignItems:"center" }}>
                 <div className="display-m">{br.name}</div>
                 <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6, margin:0 }}>{br.desc}</p>
                 <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", whiteSpace:"nowrap",
