@@ -560,7 +560,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
       <Newsletter />
       {/* Image zoom lightbox */}
       {zoomedImg && (
-        <div onClick={() => setZoomedImg(null)} style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.92)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'zoom-out', padding:24 }}>
+        <div className='zoom-lightbox-overlay' onClick={() => setZoomedImg(null)} style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.92)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'zoom-out', padding:24 }}>
           <img src={zoomedImg} alt="" style={{ maxWidth:'90vw', maxHeight:'90vh', objectFit:'contain' }} onClick={e => e.stopPropagation()} />
           <button onClick={() => setZoomedImg(null)} style={{ position:'absolute', top:20, right:28, background:'none', border:'none', color:'#fff', fontSize:32, cursor:'pointer', lineHeight:1 }}>&#215;</button>
         </div>
@@ -739,7 +739,7 @@ const CompareBar = () => {
     <>
       {/* Sticky bar */}
       {list.length > 0 && !open && (
-        <div className='compare-bar-sticky' style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
+        <div className='compare-bar-sticky compare-bar-mobile' style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:201, background:'var(--black)', color:'var(--white)', display:'flex', alignItems:'center', gap:16, padding:'14px 24px' }}>
           <div style={{ fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.14em', textTransform:'uppercase', flex:1 }}>
             Comparing: {list.map(b => b.name || b.title).join(' vs ')}
           </div>

@@ -2343,3 +2343,55 @@ a:hover .bike-hover { transform: translateY(0); }
   box-shadow: 4px 0 32px rgba(0,0,0,0.5);
 }
 [data-theme="dark"] .parts-filter-backdrop { background: rgba(0,0,0,0.6); }
+
+/* ── Mobile UX polish ──────────────────────────────────────────────── */
+
+/* Color swatches: invisible 44px tap target around the 16px dot */
+.color-swatch {
+  position: relative;
+}
+.color-swatch::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+}
+
+/* Chip buttons: larger tap target on touch devices */
+@media (hover: none) {
+  .bcc {
+    padding: 8px 12px;
+    font-size: 10px;
+    min-height: 36px;
+  }
+  .shop-filter-tab {
+    padding: 8px 16px !important;
+    min-height: 36px;
+  }
+}
+
+/* Image zoom lightbox: respect notched-screen safe areas */
+.zoom-lightbox-overlay {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Bike spec table: narrower label column on small phones */
+@media (max-width: 380px) {
+  .spec-row { grid-template-columns: 90px 1fr !important; gap: 10px !important; }
+}
+
+/* Shop grid: prevent 2-col cards being too narrow between 400-480px */
+@media (max-width: 480px) {
+  .shop-grid { gap: 12px !important; }
+  .bike-card-info { padding: 10px 0; }
+}
+
+/* Compare bar: safe-area bottom on notched iPhones */
+.compare-bar-mobile {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Part card grid: single column on narrow phones */
+@media (max-width: 400px) {
+  .part-card-grid { grid-template-columns: 1fr !important; }
+}
