@@ -2344,6 +2344,55 @@ a:hover .bike-hover { transform: translateY(0); }
 }
 [data-theme="dark"] .parts-filter-backdrop { background: rgba(0,0,0,0.6); }
 
+/* ── Dark mode: comprehensive component overrides ─────────────────── */
+
+/* Parts global search warning bar */
+.parts-global-warning { background: #fef9c3; color: #92400e; }
+[data-theme="dark"] .parts-global-warning { background: rgba(120,83,15,0.2) !important; color: #d97706 !important; }
+
+/* Parts sidebar toggle / Categories button — ensure text inverts */
+[data-theme="dark"] .parts-search-bar { background: var(--white) !important; }
+
+/* Parts sidebar bg */
+[data-theme="dark"] .parts-sidebar { background: var(--white); border-right-color: var(--hairline); }
+
+/* Bike card info area */
+[data-theme="dark"] .bike-card-info { background: var(--white); }
+[data-theme="dark"] .bike-card-brand { color: var(--gray-400) !important; }
+[data-theme="dark"] .bike-card-tagline { color: var(--gray-500) !important; }
+
+/* Review cards — add bg */
+[data-theme="dark"] .review-card { background: var(--paper) !important; }
+
+/* Low stock badge */
+[data-theme="dark"] .part-card-low-stock { background: rgba(194,65,12,0.2) !important; color: #fb923c !important; }
+
+/* Parts cat tiles on landing pages */
+[data-theme="dark"] .parts-cat-tile { background: var(--paper) !important; border-color: var(--hairline) !important; }
+
+/* Currency selector dropdown */
+[data-theme="dark"] .currency-dropdown { background: var(--paper) !important; border-color: var(--hairline) !important; }
+
+/* Account dropdown */
+[data-theme="dark"] .account-dropdown-menu { background: var(--paper) !important; border-color: var(--hairline) !important; }
+
+/* Chat popup */
+[data-theme="dark"] .chat-popup { background: var(--paper) !important; border-color: var(--hairline) !important; }
+[data-theme="dark"] .chat-popup input { background: var(--gray-100) !important; color: var(--black) !important; }
+
+/* Search modal */
+[data-theme="dark"] .search-modal-panel { background: var(--paper) !important; }
+
+/* Compare bar already dark; compare modal */
+[data-theme="dark"] .compare-modal-content { background: var(--paper) !important; }
+
+/* Form inputs in inspection/quote pages */
+[data-theme="dark"] .inspection-input { background: var(--gray-100) !important; color: var(--black) !important; }
+
+/* Mobile: bottom-nav icon label */
+[data-theme="dark"] .bottom-nav-lbl { color: var(--gray-500); }
+[data-theme="dark"] .bottom-nav-btn.active .bottom-nav-lbl { color: #fafafa; }
+
 /* ── Mobile UX polish ──────────────────────────────────────────────── */
 
 /* Color swatches: invisible 44px tap target around the 16px dot */

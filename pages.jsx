@@ -3533,7 +3533,7 @@ const PartsPage = ({ pageType = 'components' }) => {
 
             {/* Global search indicator */}
             {searchIsGlobal && search && (
-              <div style={{ padding:"8px 20px", background:"#fef9c3", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase", color:"#92400e" }}>
+              <div className="parts-global-warning" style={{ padding:"8px 20px", borderBottom:"1px solid var(--hairline)", fontFamily:"var(--mono)", fontSize:9, letterSpacing:".12em", textTransform:"uppercase" }}>
                 Showing all inventory — no results in {activeTab.label}
               </div>
             )}
@@ -3835,7 +3835,7 @@ const BrandPage = () => {
                 <p style={{ fontSize:14, color:"var(--gray-500)", lineHeight:1.6, margin:0 }}>{br.desc}</p>
                 <div style={{ fontFamily:"var(--mono)", fontSize:9, letterSpacing:".14em", textTransform:"uppercase", whiteSpace:"nowrap",
                   color: br.inStock ? "#16a34a" : "#d97706",
-                  background: br.inStock ? "#f0fdf4" : "#fffbeb",
+                  background: br.inStock ? "rgba(22,163,74,0.12)" : "rgba(217,119,6,0.12)",
                   padding:"4px 10px", borderRadius:20 }}>
                   {br.inStock ? "In Stock" : "Special Order"}
                 </div>

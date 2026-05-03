@@ -318,7 +318,7 @@ const AccountDropdown = ({ onClose }) => {
   const divider = <div style={{ height: 1, background: "var(--hairline)", margin: "0 24px" }} />;
 
   return (
-    <div style={{ position: "absolute", top: "calc(100% + 16px)", right: 0, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.12)", minWidth: 220, zIndex: 200, padding: "8px 0" }}
+    <div className="account-dropdown-menu" style={{ position: "absolute", top: "calc(100% + 16px)", right: 0, background: "var(--white)", border: "1px solid var(--hairline)", boxShadow: "0 8px 40px rgba(0,0,0,0.12)", minWidth: 220, zIndex: 200, padding: "8px 0" }}
       onMouseLeave={onClose}>
       <a href={`${SHOPIFY_STORE}/account/login?return_url=${encodeURIComponent("https://chainline.ca")}`} style={rowStyle} onClick={onClose}
         onMouseEnter={e => e.currentTarget.style.background="var(--paper)"}
@@ -433,7 +433,7 @@ const CurrencySelector = () => {
         <span style={{ fontSize:14 }}>{curr.flag}</span> {curr.code}
       </button>
       {open && (
-        <div style={{ position:'absolute', top:'calc(100% + 8px)', right:0, background:'var(--white)', border:'1px solid var(--hairline)', zIndex:9999, minWidth:210, boxShadow:'0 8px 32px rgba(0,0,0,0.12)' }}>
+        <div className="currency-dropdown" style={{ position:'absolute', top:'calc(100% + 8px)', right:0, background:'var(--white)', border:'1px solid var(--hairline)', zIndex:9999, minWidth:210, boxShadow:'0 8px 32px rgba(0,0,0,0.12)' }}>
           {CURRENCIES.map(c => (
             <button key={c.code} onClick={() => { setCode(c.code); setOpen(false); }}
               style={{ ...btnStyle, width:'100%', padding:'10px 16px', justifyContent:'flex-start', gap:10, fontSize:11, color: c.code===code ? 'var(--black)' : 'var(--gray-500)', fontWeight: c.code===code ? 600 : 400 }}>
