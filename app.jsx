@@ -394,7 +394,7 @@ const App = () => {
         {page === "book" && <BookPage />}
         {page === "inspection" && <InspectionPage />}
         {page === "quote"      && <QuotePage />}
-        {page === "part"       && <PartPage key={intentState?.sku || window.cl?.intent?.sku} sku={intentState?.sku || window.cl?.intent?.sku} returnTab={intentState?.tab || window.cl?.intent?.tab} />}
+        {page === "part"       && <PartPage key={intentState?.sku || window.cl?.intent?.sku} sku={intentState?.sku || window.cl?.intent?.sku} returnTab={intentState?.tab || window.cl?.intent?.tab} preloadItem={intentState?.item || window.cl?.intent?.item} />}
         {page === "about" && <AboutPage />}
         {page === "rides" && <RidesPage />}
         {page === "trails" && <TrailsPage />}

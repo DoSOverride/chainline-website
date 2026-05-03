@@ -2937,7 +2937,7 @@ const PartCard = React.memo(({ item, tabId, tabEmoji }) => {
   };
 
   const handleClick = () => {
-    if (item.sku) window.cl.go('part', { sku: item.sku, tab: tabId });
+    if (item.sku) window.cl.go('part', { sku: item.sku, tab: tabId, item: item });
   };
 
   return (
@@ -3001,8 +3001,8 @@ const cleanDept = (d) => {
 };
 
 // ── PartPage ──────────────────────────────────────────────────────────────
-const PartPage = ({ sku, returnTab }) => {
-  const [data,       setData]       = React.useState(null);
+const PartPage = ({ sku, returnTab, preloadItem }) => {
+  const [data,       setData]       = React.useState(() => preloadItem ? { item: preloadItem, enrichment: null } : null);
   const [loading,    setLoading]    = React.useState(true);
   const [imgSrc,     setImgSrc]     = React.useState(null);
   const [imgErr,     setImgErr]     = React.useState(false);
@@ -3013,7 +3013,7 @@ const PartPage = ({ sku, returnTab }) => {
   React.useEffect(() => {
     if (!sku) return;
     setLoading(true);
-    setData(null);
+    if (!preloadItem) setData(null);
     fetch(`https://still-term-f1ec.taocaruso77.workers.dev/api/part/${encodeURIComponent(sku)}`)
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false); })
@@ -3122,14 +3122,24 @@ const PartPage = ({ sku, returnTab }) => {
                 </div>
               )}
 
-              <div style={{ display:'flex', gap:10, flexWrap:'wrap', marginTop:8, alignItems:'center' }}>
-                {item.sku && <PartCartBtn item={item} />}
-                <button className="btn" data-cursor="link" onClick={() => window.cl.go('book')} style={{ fontSize:12 }}>
+              <div style={{ display:'flex', flexDirection:'column', gap:10, marginTop:16 }}>
+                {/* Row 1: Book a Service — standalone, prominent */}
+                <button className="btn" data-cursor="link" onClick={() => window.cl.go('book')}
+                  style={{ fontSize:12, width:'100%', justifyContent:'center' }}>
                   Book a Service <ArrowRight />
                 </button>
-                <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go('contact')} style={{ fontSize:12 }}>
-                  Ask Us About This
-                </button>
+                {/* Row 2: Add to Cart + Ask About This — side by side */}
+                <div style={{ display:'flex', gap:8 }}>
+                  {item.sku && (
+                    <div style={{ flex:1 }}>
+                      <PartCartBtn item={item} />
+                    </div>
+                  )}
+                  <button className="btn btn-outline" data-cursor="link" onClick={() => window.cl.go('contact')}
+                    style={{ fontSize:12, flex:1, justifyContent:'center', textAlign:'center' }}>
+                    Ask Us About This
+                  </button>
+                </div>
               </div>
             </div>
           </div>
