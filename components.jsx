@@ -1272,6 +1272,7 @@ const ChatWidget = () => {
   const [thinking, setThinking] = React.useState(false);
   const bottomRef = React.useRef(null);
   const [btnBottom, setBtnBottom] = React.useState(window.innerWidth <= 768 ? 16 : 32);
+  const [compareActive, setCompareActive] = React.useState(!!(window.cl?.compareList?.length));
   const transcriptSent = React.useRef(false);
   const inactivityTimer = React.useRef(null);
 
@@ -1303,6 +1304,11 @@ const ChatWidget = () => {
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
+  React.useEffect(() => {
+    const onCompare = () => setCompareActive(!!(window.cl?.compareList?.length));
+    window.addEventListener('compare:update', onCompare);
+    return () => window.removeEventListener('compare:update', onCompare);
+  }, []);
 
   const send = async () => {
     const text = input.trim();
@@ -1330,7 +1336,8 @@ const ChatWidget = () => {
   };
 
   const chatRight = 16;
-  const chatBottom = window.innerWidth <= 768 ? 76 : 24;
+  const compareOffset = compareActive ? 60 : 0;
+  const chatBottom = (window.innerWidth <= 768 ? 76 : 24) + compareOffset;
   return (
     <>
       <button onClick={() => setOpen(o => !o)} data-cursor="link" className="chat-toggle-btn"
