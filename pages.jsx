@@ -241,6 +241,7 @@ const BikePage = ({ bike, onBack, onCart }) => {
   const [added,  setAdded]   = React.useState(false);
   const [enriched, setEnriched] = React.useState(null);
   const [cartQty, setCartQty] = React.useState(0);
+  const [zoomedImg, setZoomedImg] = React.useState(null);
 
   // Reset everything when the bike changes
   React.useEffect(() => {
