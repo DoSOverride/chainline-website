@@ -740,10 +740,28 @@ const MobileNav = ({ open, onClose }) => {
   // Reset to main panel when nav closes
   React.useEffect(() => { if (!open) setTimeout(() => setPanel('main'), 500); }, [open]);
 
-  // Lock body scroll when nav is open
+  // iOS-safe scroll lock: position:fixed preserves scroll pos, restores on close
   React.useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (open) {
+      const y = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${y}px`;
+      document.body.style.width = '100%';
+    } else {
+      const top = parseFloat(document.body.style.top || '0') * -1;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, top);
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
   }, [open]);
 
   const dismiss = (fn) => { onClose(); fn && fn(); };

@@ -3183,6 +3183,7 @@ const PartsPage = ({ pageType = 'components' }) => {
   const clearFilters = () => { setFilterBrands(new Set()); setPriceRange(null); setSortBy('price-asc'); };
   const hasFilters = filterBrands.size > 0 || priceRange !== null || sortBy !== 'price-asc';
   const [filterPanelOpen, setFilterPanelOpen] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const PAGE = 60;
   const searchRef = React.useRef(null);
 
@@ -3355,6 +3356,10 @@ const PartsPage = ({ pageType = 'components' }) => {
           </div>
           {loading && <span style={{ fontFamily:"var(--mono)", fontSize:10, color:"#b45309", letterSpacing:".08em", textTransform:"uppercase", flexShrink:0 }}>Loading…</span>}
           {search && !loading && <span className="parts-search-result-count" style={{ fontFamily:"var(--mono)", fontSize:10, color:"var(--gray-400)", flexShrink:0 }}>{filtered.length} results</span>}
+          <button onClick={() => setSidebarOpen(o => !o)} data-cursor="link"
+            style={{ flexShrink:0, display:'flex', alignItems:'center', gap:5, padding:'6px 12px', border:'1px solid ' + (sidebarOpen ? 'var(--black)' : 'var(--hairline)'), background: sidebarOpen ? 'var(--black)' : 'var(--white)', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.08em', textTransform:'uppercase', cursor:'pointer', color: sidebarOpen ? 'var(--white)' : 'var(--black)', transition:'all .15s' }}>
+            {sidebarOpen ? '← Categories' : 'Categories →'}
+          </button>
           <button onClick={() => setFilterPanelOpen(true)} data-cursor="link"
             style={{ flexShrink:0, display:'flex', alignItems:'center', gap:5, padding:'6px 12px', border:'1px solid var(--hairline)', background:'var(--white)', fontFamily:'var(--mono)', fontSize:10, letterSpacing:'.08em', textTransform:'uppercase', cursor:'pointer', color:'var(--black)', position:'relative' }}>
             Filters
@@ -3461,10 +3466,10 @@ const PartsPage = ({ pageType = 'components' }) => {
           </div>
         </div>
 
-        <div className="parts-layout">
+        <div className="parts-layout" style={{ gridTemplateColumns: sidebarOpen ? '220px 1fr' : '1fr' }}>
 
-          {/* Sidebar — full category tree on desktop */}
-          <div className="parts-sidebar">
+          {/* Sidebar — full category tree on desktop, toggle with Categories button */}
+          <div className="parts-sidebar" style={{ display: sidebarOpen ? undefined : 'none' }}>
             <div style={{ padding:"16px 16px 8px", fontFamily:"var(--mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--gray-400)" }}>
               {pageType === 'accessories' ? 'Accessories & Gear' : 'Parts'}
             </div>
@@ -4506,9 +4511,8 @@ const StorePage = () => {
   }, [allResults]);
 
   const cats = [
-    { route:'components',  label:'Components',  emoji:'⚙️', desc:'Drivetrain, brakes, suspension, cockpit' },
-    { route:'parts',       label:'Parts',       emoji:'🔗', desc:'Tires, tubes, chains, cables, brake pads, lube' },
-    { route:'accessories', label:'Accessories', emoji:'🎒', desc:'Helmets, shoes, lights, locks, bags, tools' },
+    { route:'components',  label:'Parts',       emoji:'🔩', desc:'Drivetrain, brakes, suspension, wheels, cockpit and all bike components' },
+    { route:'accessories', label:'Accessories', emoji:'🎒', desc:'Helmets, shoes, lights, locks, bags, tools and riding gear' },
   ];
 
   return (
