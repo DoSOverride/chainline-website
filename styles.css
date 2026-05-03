@@ -2028,9 +2028,9 @@ button, a, input, select, textarea, [data-cursor="link"] {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-/* ── Hide contact bar on mobile — header too tall otherwise ── */
+/* ── Contact bar: compact on mobile, full on desktop ── */
 @media (max-width: 768px) {
-  .contact-bar { display: none !important; }
+  .contact-bar { padding: 5px 0 !important; }
 }
 
 /* ── Always hide contact bar in standalone PWA mode ── */
