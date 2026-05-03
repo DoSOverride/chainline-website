@@ -237,7 +237,6 @@ const Header = ({ page, scrolled, onCart, cartCount, onMobile, onMega, megaOpen,
           </nav>
           <div className="nav-utility">
             <button className="nav-utility-btn" data-cursor="link" onClick={onSearch}><span className="nav-utility-text">Search</span><SearchIcon/></button>
-            <span className="currency-desktop-only"><CurrencySelector /></span>
             <DarkToggle on={darkMode} onToggle={onToggleDark} />
             <div ref={accountRef} style={{ position: "relative" }}>
               <button className="nav-utility-btn" data-cursor="link" onClick={() => setAccountOpen(o => !o)}>
@@ -1152,10 +1151,11 @@ const Footer = () => (
         <div style={{ display: "flex", gap: 18 }}>
           <span>VISA</span><span>MC</span><span>AMEX</span><span>APPLE PAY</span><span>SHOP PAY</span>
         </div>
-        <div style={{ display: "flex", gap: 18 }}>
+        <div style={{ display: "flex", gap: 18, alignItems:"center" }}>
           <a href="/privacy" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("privacy");}}>Privacy</a>
           <a href="/terms" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("terms");}}>Terms</a>
           <a href="/contact" className="link-underline" data-cursor="link" onClick={e=>{e.preventDefault();window.cl.go("contact");}}>Accessibility</a>
+          <CurrencySelector />
         </div>
       </div>
     </div>
